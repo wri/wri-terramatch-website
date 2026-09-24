@@ -91,8 +91,22 @@ export const useGetEditEntityHandler = ({
     }
   );
 
+  const goToEditForm = (targetStepId?: string | null) => {
+    if (targetStepId != null) {
+      router.push(
+        `/entity/${editEntityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(targetStepId)}`
+      );
+      return;
+    }
+
+    router.push(`/entity/${editEntityName}/edit/${entityUUID}?mode=edit`);
+  };
+
   const handleEdit = (stepId?: string | null) => {
-    if (awaitingApproval) {
+    if (entityStatus === "due") {
+      goToEditForm(stepId);
+      return;
+    } else if (awaitingApproval) {
       setOpenReviewInProgressModal(true);
     } else if (shouldShowInformationRequiredModal || (shouldShowStatusFeedbackModal && statusProps != null)) {
       setStepId(stepId);
@@ -100,7 +114,7 @@ export const useGetEditEntityHandler = ({
     } else {
       pendingStepId.current = stepId;
       if (entityStatus === "draft") {
-        router.push(`/entity/${editEntityName}/edit/${entityUUID}?mode=edit`);
+        goToEditForm(stepId);
         return;
       }
       setOpenConfirmEditModal(true);

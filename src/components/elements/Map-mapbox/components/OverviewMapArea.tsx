@@ -1,13 +1,14 @@
 import { Box } from "@chakra-ui/react";
-import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
+import type { PolygonEntityScope } from "@/components/elements/Map-mapbox/Map.d";
 import { resolveMapExtentBbox, useBoundingBox } from "@/connections/BoundingBox";
 import { useDelayedJobs } from "@/connections/DelayedJob";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
+import { pruneSitePolygonsCache, useSitePolygonMapIndex } from "@/connections/SitePolygons";
 import {
   POLYGON_APPROVED,
   POLYGON_DRAFT,
@@ -17,63 +18,67 @@ import {
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
-import MapPolygonPanel from "../../MapPolygonPanel/MapPolygonPanel";
 import { parsePolygonDataV3, storePolygon } from "../utils";
 import LoadingMap from "./LoadingMap";
 
 interface EntityAreaProps {
   entityModel: any;
   type: string;
-  refetch?: () => void;
-  polygonVersionData?: SitePolygonLightDto[];
-  refetchPolygonVersions?: () => void;
   className?: string;
-  disabledPolygonPanel?: boolean;
   hideFullscreenControl?: boolean;
   overviewPolygonPopup?: boolean;
 }
 
+const CLOSED_POLYGON_FROM_MAP = { isOpen: false, uuid: "" };
+
 const OverviewMapArea = ({
   entityModel,
   type,
-  refetch: refreshEntity,
-  polygonVersionData,
-  refetchPolygonVersions,
   className,
-  disabledPolygonPanel,
   hideFullscreenControl = false,
   overviewPolygonPopup = false
 }: EntityAreaProps) => {
-  const t = useT();
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
   const [isPolygonTilesLoading, setIsPolygonTilesLoading] = useState(false);
-  const [tabEditPolygon, setTabEditPolygon] = useState("Attributes");
-  const [stateViewPanel, setStateViewPanel] = useState(false);
-  const [checkedValues, setCheckedValues] = useState<string[]>([]);
-  const [sortField, setSortField] = useState<string>("createdAt");
-  const [sortDirection, setSortDirection] = useState<"ASC" | "DESC">("ASC");
-  const [polygonFromMap, setPolygonFromMap] = useState<any>({ isOpen: false, uuid: "" });
   const [processedPolyValidationJobs, setProcessedPolyValidationJobs] = useState<Set<string>>(new Set());
   const context = useSitePolygonData();
   const reloadSiteData = context?.reloadSiteData;
+  const entityType = type === "sites" ? "sites" : "projects";
 
   const {
-    editPolygon,
     shouldRefetchPolygonData,
     setEditPolygon,
-    setSelectedPolygonsInCheckbox,
     setPolygonCriteriaMap,
     setPolygonData,
     shouldRefetchValidation,
     setShouldRefetchValidation,
     setShouldRefetchPolygonData,
     polygonData: sitePolygonDataV3,
-    validFilter
+    validFilter,
+    setMediaFiles
   } = useMapAreaContext();
+
+  const mapIndexFilter = useMemo(() => {
+    const filter: Record<string, unknown> = {};
+    if (validFilter != null && validFilter !== "" && validFilter !== "all") {
+      filter["validationStatus[]"] = [validFilter];
+    }
+    return filter;
+  }, [validFilter]);
+
+  const [mapIndexLoaded, { data: mapIndex }] = useSitePolygonMapIndex({
+    entityName: entityType,
+    entityUuid: entityModel?.uuid,
+    enabled: entityModel?.uuid != null && entityModel.uuid !== "",
+    filter: mapIndexFilter
+  });
+  const mapPolygons = useMemo(() => mapIndex?.polygons ?? [], [mapIndex?.polygons]);
+
+  const refetch = useCallback(() => {
+    pruneSitePolygonsCache();
+  }, []);
 
   const [, { delayedJobs }] = useDelayedJobs();
   const onSave = (geojson: any) =>
@@ -92,15 +97,11 @@ const OverviewMapArea = ({
     enabled: entityModel?.uuid != null
   });
 
-  const {
-    data: polygonsData,
-    refetch,
-    polygonCriteriaMap,
-    loading
-  } = useLoadSitePolygonsData(entityModel.uuid, type, checkedValues.join(","), sortField, sortDirection, validFilter);
+  useEffect(() => {
+    setMediaFiles(mediaFiles ?? []);
+  }, [mediaFiles, setMediaFiles]);
 
-  const hasPolygons = polygonsData.length > 0;
-  const entityType = type === "sites" ? "sites" : "projects";
+  const hasPolygons = (mapIndex?.total ?? 0) > 0;
 
   const modelBbox = useBoundingBox(
     entityType === "sites" ? { siteUuid: entityModel.uuid } : { projectUuid: entityModel.uuid }
@@ -133,26 +134,18 @@ const OverviewMapArea = ({
     [countryBbox, entityModel?.projectUuid, entityType, hasPolygons, modelBbox, projectBbox]
   );
 
-  useValueChanged(loading, () => {
-    setPolygonCriteriaMap(polygonCriteriaMap);
-    setPolygonData(polygonsData);
-  });
   useEffect(() => {
-    refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checkedValues, sortField, sortDirection, validFilter]);
+    setPolygonCriteriaMap({});
+    setPolygonData([]);
+  }, [setPolygonCriteriaMap, setPolygonData]);
 
-  useEffect(() => {
-    if (disabledPolygonPanel) {
-      setPolygonFromMap({ isOpen: false, uuid: "" });
-      return;
-    }
-    const { isOpen, uuid } = editPolygon;
-    setPolygonFromMap({ isOpen, uuid });
-    if (isOpen) {
-      setSelectedPolygonsInCheckbox([]);
-    }
-  }, [editPolygon, disabledPolygonPanel, setSelectedPolygonsInCheckbox]);
+  const polygonEntityScope = useMemo<PolygonEntityScope | undefined>(
+    () =>
+      entityModel?.uuid != null && entityModel.uuid !== ""
+        ? { entityName: entityType, entityUuid: entityModel.uuid }
+        : undefined,
+    [entityType, entityModel?.uuid]
+  );
 
   useValueChanged(shouldRefetchPolygonData, async () => {
     if (shouldRefetchPolygonData) {
@@ -183,10 +176,10 @@ const OverviewMapArea = ({
       refetch();
     }
   }, [delayedJobs, processedPolyValidationJobs, refetch]);
+
   useEffect(() => {
-    if (polygonsData?.length > 0) {
-      const dataMap = parsePolygonDataV3(polygonsData);
-      setPolygonDataMap(dataMap);
+    if (mapPolygons.length > 0) {
+      setPolygonDataMap(parsePolygonDataV3(mapPolygons));
     } else {
       setPolygonDataMap({
         [POLYGON_PENDING_APPROVAL]: [],
@@ -195,72 +188,16 @@ const OverviewMapArea = ({
         [POLYGON_DRAFT]: []
       });
     }
-  }, [polygonsData]);
-
-  const handleCheckboxChange = (value: string, checked: boolean) => {
-    if (checked) {
-      setCheckedValues([...checkedValues, value]);
-    } else {
-      setCheckedValues(checkedValues.filter(val => val !== value));
-    }
-  };
-
-  const isSitesPolygonPanelEnabled = type === "sites" && !disabledPolygonPanel;
+  }, [mapPolygons]);
 
   const isMapLoading = useMemo(
-    () => loading || (polygonsData.length > 0 && isPolygonTilesLoading),
-    [loading, polygonsData.length, isPolygonTilesLoading]
-  );
-
-  const validationType = useMemo(() => {
-    if (!isSitesPolygonPanelEnabled) return "";
-    return editPolygon.isOpen ? "individualValidation" : "bulkValidation";
-  }, [isSitesPolygonPanelEnabled, editPolygon.isOpen]);
-
-  const validationStatus = useMemo(
-    () => isSitesPolygonPanelEnabled && (stateViewPanel || editPolygon.isOpen),
-    [isSitesPolygonPanelEnabled, stateViewPanel, editPolygon.isOpen]
+    () => !mapIndexLoaded || (mapPolygons.length > 0 && isPolygonTilesLoading),
+    [isPolygonTilesLoading, mapIndexLoaded, mapPolygons.length]
   );
 
   return (
     <AnrMapOverlayProvider>
-      {!disabledPolygonPanel && (
-        <MapPolygonPanel
-          title={type === "sites" ? t("Site Polygons") : t("Polygons")}
-          items={(polygonsData ?? []) as SitePolygonLightDto[]}
-          mapFunctions={mapFunctions}
-          polygonsData={polygonDataMap}
-          className="absolute z-[19] flex h-full w-[29vw] flex-col rounded-l bg-[#ffffff12] p-6 mobile:w-[30vw] mobile:px-1"
-          emptyText={t("No polygons are available.")}
-          checkedValues={checkedValues}
-          onCheckboxChange={handleCheckboxChange}
-          setSortOrder={setSortField}
-          sortField={sortField}
-          sortDirection={sortDirection}
-          setSortDirection={setSortDirection}
-          type={type}
-          onSelectItem={() => {}}
-          onLoadMore={() => {}}
-          stateViewPanel={stateViewPanel}
-          setStateViewPanel={setStateViewPanel}
-          tabEditPolygon={tabEditPolygon}
-          setTabEditPolygon={setTabEditPolygon}
-          recallEntityData={refetch}
-          polygonVersionData={polygonVersionData}
-          refetchPolygonVersions={refetchPolygonVersions}
-          refreshEntity={refreshEntity}
-          entityUuid={entityModel?.uuid}
-        />
-      )}
-      <Box
-        position="relative"
-        className={classNames(
-          "w-full",
-          disabledPolygonPanel && "overflow-hidden",
-          !disabledPolygonPanel && "h-full flex-1",
-          className
-        )}
-      >
+      <Box position="relative" className={classNames("w-full overflow-hidden", className)}>
         <LoadingMap loading={isMapLoading} />
         <MapContainer
           showBaseMapControl={false}
@@ -268,26 +205,25 @@ const OverviewMapArea = ({
           mapFunctions={mapFunctions}
           polygonsData={polygonDataMap}
           bbox={extentBbox}
-          tooltipType={disabledPolygonPanel ? "view" : type === "sites" ? "edit" : "goTo"}
+          tooltipType="view"
           showPopups
           showLegend
           siteData={true}
-          status={validationStatus}
-          validationType={validationType}
+          status={false}
+          validationType=""
           record={entityModel}
-          className={classNames(
-            "flex-1",
-            disabledPolygonPanel ? "h-full rounded" : "h-[650px] rounded-r-lg wide:h-[1225px]"
-          )}
-          polygonsExists={polygonsData.length > 0}
-          setPolygonFromMap={setPolygonFromMap}
-          polygonFromMap={polygonFromMap}
+          className="h-full flex-1 rounded"
+          polygonsExists={hasPolygons}
+          setPolygonFromMap={() => {}}
+          polygonFromMap={CLOSED_POLYGON_FROM_MAP}
           shouldBboxZoom={!shouldRefetchPolygonData}
           mediaFiles={mediaFiles}
           sitePolygonData={sitePolygonDataV3}
-          disabledPolygonPanel={disabledPolygonPanel}
+          polygonEntityScope={polygonEntityScope}
+          disabledPolygonPanel={true}
           hideFullscreenControl={hideFullscreenControl}
-          hideMediaPopupActions={disabledPolygonPanel}
+          hideMediaPopupActions={true}
+          hideMediaOnMap
           isPolygonGeometryLoading={isMapLoading}
           onPolygonTilesLoadingChange={setIsPolygonTilesLoading}
           overviewPolygonPopup={overviewPolygonPopup}

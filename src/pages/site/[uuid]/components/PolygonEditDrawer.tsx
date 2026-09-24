@@ -23,11 +23,12 @@ import SubmitPolygonConfirmation from "./Modals/SubmitPolygonConfirmation";
 import PolygonCommentContent from "./PolygonCommentContent";
 import type {
   PolygonOverlapFixCallback,
-  PolygonSaveCallback,
-  PolygonValidationJobsStartedCallback
+  PolygonRunValidationWithResultsCallback,
+  PolygonSaveCallback
 } from "./polygonEdit.types";
 import PolygonEditContent from "./PolygonEditContent";
 import type { SavePolygonFlowOptions } from "./polygonEditSave";
+import { hasRequiredPolygonAttributes, requiredPolygonAttributesFromSitePolygon } from "./polygonEditValidation";
 import PolygonSystemValidationContent from "./PolygonSystemValidationContent";
 import type { PolygonTableRow } from "./PolygonTableRow";
 import { mapSitePolygonToTableRow } from "./polygonTableRow.utils";
@@ -40,7 +41,7 @@ interface PolygonEditDrawerProps {
   onSaved?: PolygonSaveCallback;
   onOverlapFixed?: PolygonOverlapFixCallback;
   onRunValidation?: (geometryPolygonUuids: string[]) => Promise<void>;
-  onValidationJobsStarted?: PolygonValidationJobsStartedCallback;
+  onRunValidationWithResultsModal?: PolygonRunValidationWithResultsCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
   onDeletingChange?: (isDeleting: boolean, count?: number) => void;
@@ -58,7 +59,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   onSaved,
   onOverlapFixed,
   onRunValidation,
-  onValidationJobsStarted,
+  onRunValidationWithResultsModal,
   onPolygonUpdated,
   onSuppressMapSelectionHighlightChange,
   onDeletingChange,
@@ -76,7 +77,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   >(null);
   const deletePolygonRef = useRef<(() => Promise<void>) | null>(null);
   const submitPolygonRef = useRef<((comment: string) => Promise<void>) | null>(null);
-  const saveAndSubmitPolygonRef = useRef<((comment: string) => Promise<boolean>) | null>(null);
+  const saveAndRunValidationRef = useRef<(() => Promise<boolean>) | null>(null);
   const hasUnsavedChangesRef = useRef<(() => boolean) | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [showSaveConfirmationModal, setShowSaveConfirmationModal] = useState(false);
@@ -93,13 +94,17 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   const getPolygonNameForSaveRef = useRef<() => string>(() => polygon?.polygonName?.trim() ?? "");
   const [savePolygonName, setSavePolygonName] = useState("");
   const [hasPlantStartDate, setHasPlantStartDate] = useState(false);
+  const [hasRequiredAttributes, setHasRequiredAttributes] = useState(false);
+  const [hasUnsavedChangesInvalidatingValidation, setHasUnsavedChangesInvalidatingValidation] = useState(false);
   const isCreateMode = selectedPolygon?.primaryUuid == null || selectedPolygon.primaryUuid === "";
   const isPolygonNameMissing = savePolygonName.trim() === "";
   const isPlantStartDateMissing = !hasPlantStartDate;
+  const isRequiredAttributesMissing = !hasRequiredAttributes;
   const isSaveDisabled =
     (activeTab === "edit" && isCreateMode && draftPolygonGeometry == null) ||
     isPolygonNameMissing ||
-    isPlantStartDateMissing;
+    isPlantStartDateMissing ||
+    isRequiredAttributesMissing;
   const hasValidPolygonUuid = polygon?.polygonUuid != null;
   const resolvedSiteUuid = useMemo(
     () => selectedPolygon?.siteId ?? (siteData != null && "uuid" in siteData ? siteData.uuid : ""),
@@ -109,6 +114,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   const [, { data: auditStatusesData }] = useAuditStatuses({
     entity: "sitePolygons",
     uuid: selectedPolygon?.uuid ?? "",
+    types: ["comment"],
     enabled: hasValidPolygonUuid
   });
 
@@ -160,11 +166,13 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     setSaveEditContent(null);
     setIsSubmitWithUnsavedChangesModal(false);
     setShowSaveConfirmationModal(false);
+    setHasUnsavedChangesInvalidatingValidation(false);
     const initialName = polygon?.polygonName?.trim() ?? "";
     getPolygonNameForSaveRef.current = () => polygon?.polygonName?.trim() ?? "";
     setSavePolygonName(initialName);
     setHasPlantStartDate(selectedPolygon?.plantStart != null && selectedPolygon.plantStart !== "");
-  }, [selectedPolygonIdentityKey, polygon?.polygonName, selectedPolygon?.plantStart]);
+    setHasRequiredAttributes(hasRequiredPolygonAttributes(requiredPolygonAttributesFromSitePolygon(selectedPolygon)));
+  }, [selectedPolygonIdentityKey, polygon?.polygonName, selectedPolygon]);
 
   const registerSave = useCallback(
     (saveHandler: (options?: SavePolygonFlowOptions) => Promise<SitePolygonLightDto | null>) => {
@@ -181,8 +189,8 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     submitPolygonRef.current = submitHandler;
   }, []);
 
-  const registerSaveAndSubmit = useCallback((saveAndSubmitHandler: (comment: string) => Promise<boolean>) => {
-    saveAndSubmitPolygonRef.current = saveAndSubmitHandler;
+  const registerSaveAndRunValidation = useCallback((saveAndRunValidationHandler: () => Promise<boolean>) => {
+    saveAndRunValidationRef.current = saveAndRunValidationHandler;
   }, []);
 
   const registerHasUnsavedChanges = useCallback((hasUnsavedChanges: () => boolean) => {
@@ -198,6 +206,10 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     setHasPlantStartDate(getHasPlantStartDate());
   }, []);
 
+  const registerRequiredAttributes = useCallback((getHasRequiredAttributes: () => boolean) => {
+    setHasRequiredAttributes(getHasRequiredAttributes());
+  }, []);
+
   const saveConfirmationPolygonName = getPolygonNameForSaveRef.current().trim();
   const sitePolygonUuidForAnr = selectedPolygon?.uuid ?? "";
   const {
@@ -208,7 +220,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   } = useAnrMonitoringPlotActions({
     sitePolygonUuid: sitePolygonUuidForAnr
   });
-  const showSaveAndSubmitOption = !isCreateMode && (isSubmitWithUnsavedChangesModal || hasPendingOverlapFixSave);
+  const showSaveAndRunValidationOption = !isCreateMode && (isSubmitWithUnsavedChangesModal || hasPendingOverlapFixSave);
 
   const handleOverlapFixed = useCallback<PolygonOverlapFixCallback>(
     async params => {
@@ -268,8 +280,8 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     [saveEditContent]
   );
 
-  const handleSaveAndSubmit = useCallback(async () => {
-    const succeeded = (await saveAndSubmitPolygonRef.current?.("")) ?? false;
+  const handleSaveAndRunValidation = useCallback(async () => {
+    const succeeded = (await saveAndRunValidationRef.current?.()) ?? false;
     if (succeeded) {
       setHasPendingOverlapFixSave(false);
     }
@@ -391,10 +403,11 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                       onRegisterSave={registerSave}
                       onRegisterDelete={registerDelete}
                       onRegisterSubmit={registerSubmit}
-                      onRegisterSaveAndSubmit={registerSaveAndSubmit}
+                      onRegisterSaveAndRunValidation={registerSaveAndRunValidation}
                       onRegisterHasUnsavedChanges={registerHasUnsavedChanges}
                       onRegisterPolygonName={registerPolygonName}
                       onRegisterPlantStartDate={registerPlantStartDate}
+                      onRegisterRequiredAttributes={registerRequiredAttributes}
                       onRequestDeleteModal={handleRequestDeleteModal}
                       onRequestSubmitModal={handleRequestSubmitModal}
                       onRequestAnrUploadModal={mode => setAnrPlotsModal({ kind: "upload", mode })}
@@ -403,8 +416,9 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                       onRequestApproveModal={onRequestApproveModal}
                       onRequestInformationModal={onRequestInformationModal}
                       onSaved={onSaved}
-                      onValidationJobsStarted={onValidationJobsStarted}
+                      onRunValidationWithResultsModal={onRunValidationWithResultsModal}
                       onPolygonUpdated={onPolygonUpdated}
+                      onUnsavedChangesInvalidatingValidationChange={setHasUnsavedChangesInvalidatingValidation}
                       onSuppressMapSelectionHighlightChange={onSuppressMapSelectionHighlightChange}
                       onDeletingChange={onDeletingChange}
                       onSubmittingChange={onSubmittingChange}
@@ -414,6 +428,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                     <PolygonSystemValidationContent
                       siteUuid={resolvedSiteUuid}
                       polygon={selectedPolygon}
+                      treatValidationAsNotStarted={hasUnsavedChangesInvalidatingValidation}
                       onOverlapFixed={handleOverlapFixed}
                       onRunValidation={onRunValidation}
                     />
@@ -470,9 +485,9 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
         open={showSaveConfirmationModal}
         onOpenChange={handleSaveConfirmationModalChange}
         polygon={{ polygonName: saveConfirmationPolygonName } as unknown as PolygonTableRow}
-        showSaveAndSubmit={showSaveAndSubmitOption}
+        showSaveAndRunValidation={showSaveAndRunValidationOption}
         onSave={() => void handleSave(closeDrawer)}
-        onSaveAndSubmit={showSaveAndSubmitOption ? () => void handleSaveAndSubmit() : undefined}
+        onSaveAndRunValidation={showSaveAndRunValidationOption ? () => void handleSaveAndRunValidation() : undefined}
       />
 
       <DeletePolygon

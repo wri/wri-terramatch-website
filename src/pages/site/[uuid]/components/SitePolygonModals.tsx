@@ -276,6 +276,8 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
         pendingValidationPolygonIds={pendingValidationPolygonIds}
         isLoadingResults={isAwaitingValidationResults}
         onViewDetails={onViewValidationDetails}
+        modal={!isEditPolygonOpen}
+        restoreFocus={!isEditPolygonOpen}
       />
       <UploadError
         open={openUploadErrorModal}

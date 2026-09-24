@@ -4,12 +4,12 @@ import { Map as MapboxMap } from "mapbox-gl";
 
 import { loadPolygonGeoJson } from "@/connections/GeoJsonExport";
 import { updateProjectPolygonResource } from "@/connections/ProjectPolygons";
-import { GeoJsonExportDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
 import { zoomToBbox } from "../adapters/camera";
 import { convertToAcceptedGEOJSON } from "../adapters/geojson";
 import { BBox } from "../GeoJSON";
+import { extractGeoJsonFromResponse } from "../geojsonExportResponse";
 import { applyMapDrawStatusStyles, getPolygonStatusColor, PolygonDrawStatus } from "../mapStyle";
 
 export { applyMapDrawingCursor, preloadMapDrawingCursor, resetMapDrawingCursor } from "./mapDrawingCursor";
@@ -19,19 +19,6 @@ export type PolygonVersion = {
   polygonUuid?: string | null;
   isActive?: boolean;
   status?: string;
-};
-
-const extractGeoJsonFromResponse = (
-  response: GeoJsonExportDto | { data?: { attributes?: GeoJsonExportDto } } | undefined
-): GeoJSON.FeatureCollection | undefined => {
-  if (response == null) return undefined;
-  if ("type" in response && (response as { type: unknown }).type === "FeatureCollection")
-    return response as unknown as GeoJSON.FeatureCollection;
-  if ("data" in response) {
-    const nested = (response as { data?: { attributes?: { type?: string } } }).data?.attributes;
-    if (nested?.type === "FeatureCollection") return nested as unknown as GeoJSON.FeatureCollection;
-  }
-  return undefined;
 };
 
 export const startDrawing = (draw: MapboxDraw, map: MapboxMap): void => {

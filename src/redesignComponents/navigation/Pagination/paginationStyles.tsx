@@ -23,5 +23,9 @@ export const itemCountStyles = (css?: any) => ({
 });
 
 export const paginationTableStyles = {
-  ...baseItemCountStyles
+  ...baseItemCountStyles,
+  "& > p": {
+    flexShrink: 0,
+    whiteSpace: "nowrap"
+  }
 };

@@ -14,6 +14,7 @@ import {
 } from "@/components/elements/Map-mapbox/utils";
 import { loadAnrPlotGeometryGeoJson, useAnrPlotGeometry } from "@/connections/AnrPlotGeometry";
 import { pruneBoundingBoxesCache } from "@/connections/BoundingBox";
+import { usePolygonAttributeDefinitions } from "@/connections/PolygonAttributeDefinitions";
 import { updatePolygonVersionAsync, useListPolygonVersions } from "@/connections/PolygonVersion";
 import {
   bulkUpdateSitePolygonStatus,
@@ -23,6 +24,7 @@ import {
 } from "@/connections/SitePolygons";
 import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
+import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useRestorationPracticeOptions } from "@/hooks/translation/useRestorationPracticeOptions";
@@ -44,6 +46,7 @@ import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { DownloadIcon, RefreshIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/FloatingActionToolbar";
 import ApiSlice from "@/store/apiSlice";
+import Log from "@/utils/log";
 import { trackPolygonDownloaded, trackPolygonStatusChanged } from "@/utils/polygonAnalytics";
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
 import { getSingleSitePolygonApproveTooltip, isSitePolygonApprovable } from "@/utils/sitePolygonReview";
@@ -60,8 +63,7 @@ import {
   showPolygonErrorToast,
   showPolygonProgressToast
 } from "../utils/polygonOperationToasts";
-import UploadGeotaggedPhotos from "./Modals/GeotaggedPhotos/UploadGeotaggedPhotos";
-import type { PolygonSaveCallback, PolygonValidationJobsStartedCallback } from "./polygonEdit.types";
+import type { PolygonRunValidationWithResultsCallback, PolygonSaveCallback } from "./polygonEdit.types";
 import {
   type PolygonEditFormValues,
   type SavePolygonFlowOptions,
@@ -69,11 +71,23 @@ import {
   isValidPlantStartDate,
   isValidPolygonName,
   prunePolygonValidationCache,
+  resolveGeometryPolygonUuidAfterSave,
   runPolygonCacheCleanup,
   saveExistingPolygonVersion,
   saveNewSitePolygon
 } from "./polygonEditSave";
+import {
+  getMissingRequiredPolygonAttribute,
+  hasRequiredPolygonAttributes,
+  normalizeTargetSystem
+} from "./polygonEditValidation";
 import { normalizeSubmissionCycle, SUBMISSION_CYCLE_LABELS, SUBMISSION_CYCLE_OPTIONS } from "./polygonFilter.constants";
+import {
+  buildCustomAttributeFormValues,
+  selectActiveCustomAttributeDefinitions
+} from "./polygonOptionalAttributes/mappers";
+import OptionalAttributesAccordion from "./polygonOptionalAttributes/OptionalAttributesAccordion";
+import type { CustomAttributeFormValues } from "./polygonOptionalAttributes/types";
 import SubmissionValidationTags from "./SubmissionValidationTags";
 
 type PolygonEditContentProps = {
@@ -82,10 +96,11 @@ type PolygonEditContentProps = {
   onRegisterSave?: (saveHandler: (options?: SavePolygonFlowOptions) => Promise<SitePolygonLightDto | null>) => void;
   onRegisterDelete: (deleteHandler: () => Promise<void>) => void;
   onRegisterSubmit: (submitHandler: (comment: string) => Promise<void>) => void;
-  onRegisterSaveAndSubmit?: (saveAndSubmitHandler: (comment: string) => Promise<boolean>) => void;
+  onRegisterSaveAndRunValidation?: (saveAndRunValidationHandler: () => Promise<boolean>) => void;
   onRegisterHasUnsavedChanges?: (hasUnsavedChanges: () => boolean) => void;
   onRegisterPolygonName?: (getPolygonName: () => string) => void;
   onRegisterPlantStartDate?: (hasPlantStartDate: () => boolean) => void;
+  onRegisterRequiredAttributes?: (hasRequiredAttributes: () => boolean) => void;
   onRequestDeleteModal: () => void;
   onRequestSubmitModal: (hasUnsavedChanges: boolean) => void;
   onRequestAnrUploadModal?: (mode: "upload" | "replace") => void;
@@ -94,8 +109,9 @@ type PolygonEditContentProps = {
   onRequestApproveModal?: () => void;
   onRequestInformationModal?: () => void;
   onSaved?: PolygonSaveCallback;
-  onValidationJobsStarted?: PolygonValidationJobsStartedCallback;
+  onRunValidationWithResultsModal?: PolygonRunValidationWithResultsCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
+  onUnsavedChangesInvalidatingValidationChange?: (value: boolean) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
   onDeletingChange?: (isDeleting: boolean, count?: number) => void;
   onSubmittingChange?: (isSubmitting: boolean, count?: number) => void;
@@ -103,7 +119,7 @@ type PolygonEditContentProps = {
 
 type PolygonVersionRow = SitePolygonLightDto & { id: string };
 
-type PolygonEditAccordionSection = "details" | "monitoring-plots" | "geotagged-photos" | "versions";
+type PolygonEditAccordionSection = "details" | "optional-attributes" | "monitoring-plots" | "versions";
 
 const isoStringToDateValue = (value: string | null | undefined): DateValue[] => {
   if (value == null || value === "") return [];
@@ -118,9 +134,6 @@ const dateValueToIsoString = (value: DateValue | undefined): string | undefined 
   const dd = String(value.day).padStart(2, "0");
   return `${value.year}-${mm}-${dd}T00:00:00.000Z`;
 };
-
-const normalizeTargetSystem = (value: string | null | undefined): string[] =>
-  value != null && value !== "" ? value.split(",").map(item => item.trim()) : [];
 
 const waitForMapEditCleanup = async (): Promise<void> => {
   await new Promise<void>(resolve => {
@@ -151,7 +164,8 @@ const buildFormValuesFromPolygon = (source: SitePolygonLightDto | undefined): Po
   targetLandUseSystem: normalizeTargetSystem(source?.targetSys),
   treeDistribution: source?.distr ?? [],
   treesPlanted: source?.numTrees != null ? String(source.numTrees) : "",
-  submissionCycle: normalizeSubmissionCycle(source?.submissionCycle)
+  submissionCycle: normalizeSubmissionCycle(source?.submissionCycle),
+  customAttributes: {}
 });
 
 const applyFormValuesToState = (
@@ -164,6 +178,7 @@ const applyFormValuesToState = (
     setTreeDistribution: (value: string[]) => void;
     setTreesPlanted: (value: string) => void;
     setSubmissionCycle: (value: string[]) => void;
+    setCustomAttributes: (value: CustomAttributeFormValues) => void;
   }
 ): void => {
   setters.setPolygonName(values.polygonName);
@@ -173,6 +188,7 @@ const applyFormValuesToState = (
   setters.setTreeDistribution(values.treeDistribution);
   setters.setTreesPlanted(values.treesPlanted);
   setters.setSubmissionCycle(values.submissionCycle);
+  setters.setCustomAttributes(values.customAttributes);
 };
 
 const PolygonEditContent: FC<PolygonEditContentProps> = ({
@@ -181,10 +197,11 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   onRegisterSave,
   onRegisterDelete,
   onRegisterSubmit,
-  onRegisterSaveAndSubmit,
+  onRegisterSaveAndRunValidation,
   onRegisterHasUnsavedChanges,
   onRegisterPolygonName,
   onRegisterPlantStartDate,
+  onRegisterRequiredAttributes,
   onRequestDeleteModal,
   onRequestSubmitModal,
   onRequestAnrUploadModal,
@@ -193,14 +210,24 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   onRequestApproveModal,
   onRequestInformationModal,
   onSaved,
-  onValidationJobsStarted,
+  onRunValidationWithResultsModal,
   onPolygonUpdated,
+  onUnsavedChangesInvalidatingValidationChange,
   onSuppressMapSelectionHighlightChange,
   onDeletingChange,
   onSubmittingChange
 }) => {
   const t = useT();
   const isAdmin = useIsAdmin();
+  const { framework } = useFrameworkContext();
+  const [, { data: customAttributeDefinitionsData }] = usePolygonAttributeDefinitions({
+    frameworkKey: framework,
+    enabled: framework !== Framework.UNDEFINED
+  });
+  const activeCustomAttributeDefinitions = useMemo(
+    () => selectActiveCustomAttributeDefinitions(customAttributeDefinitionsData),
+    [customAttributeDefinitionsData]
+  );
   const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
   const showStatusToast = useCallback((type: "success" | "error" | "warning", label: string) => {
     if (type === "error") {
@@ -226,11 +253,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     invalidatePolygonMapTiles,
     setSelectedPolyVersion,
     setPreviewVersion,
-    setStatusSelectedPolygon,
-    showPhotosOnMap,
-    setShowPhotosOnMap,
-    setGeotaggedPhotosMapVisible,
-    mediaFiles
+    setStatusSelectedPolygon
   } = useMapAreaContext();
   const [polygonName, setPolygonName] = useState("");
   const [plantStartDate, setPlantStartDate] = useState<DateValue[]>([]);
@@ -239,9 +262,9 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
   const [submissionCycle, setSubmissionCycle] = useState<string[]>([]);
   const [treesPlanted, setTreesPlanted] = useState("");
+  const [customAttributes, setCustomAttributes] = useState<CustomAttributeFormValues>({});
   const [plotsVisible, setPlotsVisible] = useState(false);
   const [isVersionUpdating, setIsVersionUpdating] = useState(false);
-  const [showUploadPhotosModal, setShowUploadPhotosModal] = useState(false);
   const [openAccordionSection, setOpenAccordionSection] = useState<PolygonEditAccordionSection | null>("details");
   const formBaselineRef = useRef<PolygonEditFormValues | null>(null);
 
@@ -256,6 +279,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     []
   );
 
+  const handleCustomAttributeChange = useCallback((key: string, value: string[]) => {
+    setCustomAttributes(current => ({ ...current, [key]: value }));
+  }, []);
+
   const sitePolygonUuid = polygon?.uuid ?? "";
   const geometryPolygonUuid = polygon?.polygonUuid ?? "";
   const isCreateMode = polygon?.primaryUuid == null || polygon.primaryUuid === "";
@@ -263,13 +290,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const submitTooltip = getSingleSitePolygonSubmitTooltip(polygon, t);
   const isPolygonApprovable = isSitePolygonApprovable(polygon);
   const approveTooltip = getSingleSitePolygonApproveTooltip(polygon, t);
-  const shouldMapEditPolygon =
-    openAccordionSection !== "monitoring-plots" && openAccordionSection !== "geotagged-photos";
+  const shouldMapEditPolygon = openAccordionSection !== "monitoring-plots";
   const resolvedSiteUuid = polygon?.siteId ?? (siteData != null && "uuid" in siteData ? siteData.uuid : "");
-  const geotaggedPhotosCount = useMemo(
-    () => mediaFiles.filter(file => file.lat != null && file.lng != null).length,
-    [mediaFiles]
-  );
   const geometryChanged =
     !isCreateMode &&
     polygonGeometryEdit?.polygonUuid === geometryPolygonUuid &&
@@ -315,9 +337,18 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       setTargetLandUseSystem,
       setTreeDistribution,
       setTreesPlanted,
-      setSubmissionCycle
+      setSubmissionCycle,
+      setCustomAttributes
     });
   }, [polygon]);
+
+  useEffect(() => {
+    const values = buildCustomAttributeFormValues(activeCustomAttributeDefinitions, polygon?.customAttributes);
+    setCustomAttributes(values);
+    if (formBaselineRef.current != null) {
+      formBaselineRef.current = { ...formBaselineRef.current, customAttributes: values };
+    }
+  }, [polygon, activeCustomAttributeDefinitions]);
 
   const onSavedRef = useLatestRef(onSaved);
   const onCloseRef = useLatestRef(onClose);
@@ -332,7 +363,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       targetLandUseSystem,
       treeDistribution,
       treesPlanted,
-      submissionCycle
+      submissionCycle,
+      customAttributes
     }),
     [
       polygonName,
@@ -341,10 +373,24 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       targetLandUseSystem,
       treeDistribution,
       treesPlanted,
-      submissionCycle
+      submissionCycle,
+      customAttributes
     ]
   );
   const getFormValuesRef = useLatestRef(getFormValues);
+
+  const getRequiredAttributesError = useCallback((): string | null => {
+    switch (getMissingRequiredPolygonAttribute({ restorationPractice, targetLandUseSystem, treeDistribution })) {
+      case "restorationPractice":
+        return t("Restoration practice is required");
+      case "targetLandUse":
+        return t("Target land use is required");
+      case "treeDistribution":
+        return t("Tree distribution is required");
+      default:
+        return null;
+    }
+  }, [restorationPractice, t, targetLandUseSystem, treeDistribution]);
 
   const updateFormBaseline = useCallback(() => {
     formBaselineRef.current = getFormValuesRef.current();
@@ -401,6 +447,12 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     [geometryChanged, getFormValues]
   );
 
+  const hasUnsavedChangesInvalidatingValidation = checkHasUnsavedChanges();
+
+  useEffect(() => {
+    onUnsavedChangesInvalidatingValidationChange?.(hasUnsavedChangesInvalidatingValidation);
+  }, [hasUnsavedChangesInvalidatingValidation, onUnsavedChangesInvalidatingValidationChange]);
+
   const handleRequestSubmit = useCallback(() => {
     onRequestSubmitModal(checkHasUnsavedChanges());
   }, [checkHasUnsavedChanges, onRequestSubmitModal]);
@@ -417,6 +469,11 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       }
       if (!isValidPlantStartDate(plantStartDate)) {
         showStatusToast("error", t("Plant start date is required"));
+        return null;
+      }
+      const requiredAttributesError = getRequiredAttributesError();
+      if (requiredAttributesError != null) {
+        showStatusToast("error", requiredAttributesError);
         return null;
       }
       if (resolvedSiteUuid == null || resolvedSiteUuid === "") {
@@ -455,6 +512,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       draftPolygonGeometry,
       finalizeSuccessfulSave,
       getFormValues,
+      getRequiredAttributesError,
       isAdmin,
       plantStartDate,
       polygonName,
@@ -479,6 +537,11 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         showStatusToast("error", t("Plant start date is required"));
         return null;
       }
+      const requiredAttributesError = getRequiredAttributesError();
+      if (requiredAttributesError != null) {
+        showStatusToast("error", requiredAttributesError);
+        return null;
+      }
       if (geometryChanged && (polygon.siteId == null || polygon.siteId === "")) {
         showStatusToast("error", t("Missing site information"));
         return null;
@@ -495,7 +558,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
           geometryChanged,
           currentGeometry: polygonGeometryEdit?.currentGeometry,
           dateValueToIso: dateValueToIsoString,
-          isAdmin
+          isAdmin,
+          customAttributeDefinitions: activeCustomAttributeDefinitions
         });
         const savedPolygon = await finalizeSuccessfulSave(updatedPolygon, {
           geometryChanged,
@@ -516,10 +580,12 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       }
     },
     [
+      activeCustomAttributeDefinitions,
       finalizeSuccessfulSave,
       geometryChanged,
       geometryPolygonUuid,
       getFormValues,
+      getRequiredAttributesError,
       isAdmin,
       polygon?.primaryUuid,
       polygon?.siteId,
@@ -627,30 +693,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       anrMapOverlayRef.current?.resetAnrMapOverlay();
     },
     [anrMapOverlayRef]
-  );
-
-  useEffect(() => {
-    if (openAccordionSection !== "geotagged-photos") {
-      setShowPhotosOnMap(false);
-    }
-  }, [openAccordionSection, setShowPhotosOnMap]);
-
-  useEffect(() => {
-    if (geotaggedPhotosCount === 0 && showPhotosOnMap) {
-      setShowPhotosOnMap(false);
-    }
-  }, [geotaggedPhotosCount, showPhotosOnMap, setShowPhotosOnMap]);
-
-  useEffect(() => {
-    setGeotaggedPhotosMapVisible(openAccordionSection === "geotagged-photos" && showPhotosOnMap);
-  }, [openAccordionSection, showPhotosOnMap, setGeotaggedPhotosMapVisible]);
-
-  useEffect(
-    () => () => {
-      setShowPhotosOnMap(false);
-      setGeotaggedPhotosMapVisible(false);
-    },
-    [setGeotaggedPhotosMapVisible, setShowPhotosOnMap]
   );
 
   useEffect(() => {
@@ -772,7 +814,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     showPolygonProgressToast(t, getDownloadingPolygonsProgressLabel(t, 1), POLYGON_TOAST_IDS.downloading);
 
     try {
-      await downloadPolygonGeoJson(geometryPolygonUuid, polygon?.name ?? "polygon", { includeExtendedData: true });
+      await downloadPolygonGeoJson(geometryPolygonUuid, polygon?.name ?? "polygon");
       if (resolvedSiteUuid !== "") {
         trackPolygonDownloaded({
           siteUuid: resolvedSiteUuid,
@@ -825,9 +867,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         onClose?.();
         await waitForMapEditCleanup();
         await onSaved?.();
-        if (targetGeometryPolygonUuid !== "") {
-          onValidationJobsStarted?.([targetGeometryPolygonUuid], { trackBulkCompletion: false });
-        }
         return true;
       } catch (error) {
         closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
@@ -843,7 +882,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       onClose,
       onSaved,
       onSubmittingChange,
-      onValidationJobsStarted,
       resolvedSiteUuid,
       setIsUserDrawingEnabled,
       setPolygonGeometryEdit,
@@ -871,23 +909,50 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     [polygon, showStatusToast, submitPolygonWithData, t, toastLabels.submittingComplete]
   );
 
-  const handleSaveAndSubmitPolygon = useCallback(
-    async (comment: string): Promise<boolean> => {
-      const savedPolygon = await savePolygonData({ closeOnSave: false, deferSuccessToast: true });
-      if (savedPolygon == null) {
+  const handleSaveAndRunValidation = useCallback(async (): Promise<boolean> => {
+    const previousGeometryPolygonUuid = geometryChanged && geometryPolygonUuid !== "" ? geometryPolygonUuid : undefined;
+    const savedPolygon = await savePolygonData({ closeOnSave: false });
+    if (savedPolygon == null) {
+      return false;
+    }
+
+    const geometryPolygonUuidForValidation = await resolveGeometryPolygonUuidAfterSave(
+      savedPolygon,
+      resolvedSiteUuid,
+      previousGeometryPolygonUuid
+    );
+
+    if (geometryPolygonUuidForValidation == null || geometryPolygonUuidForValidation === "") {
+      showPolygonErrorToast(t("Failed to Validate Polygon"));
+      onClose?.();
+      return false;
+    }
+
+    if (onRunValidationWithResultsModal != null) {
+      try {
+        await onRunValidationWithResultsModal([geometryPolygonUuidForValidation], {
+          fallbackPolygons: [savedPolygon],
+          validationAfterCriteriaClear: true,
+          previousGeometryPolygonUuid
+        });
+      } catch (error) {
+        Log.error("Failed to run validation after saving polygon:", error);
+        showPolygonErrorToast(t("Failed to Validate Polygon"));
         return false;
       }
+    }
 
-      showPolygonProgressToast(t, getSubmittingProgressLabel(t, 1), POLYGON_TOAST_IDS.submitting);
-
-      const submitted = await submitPolygonWithData(savedPolygon, comment);
-      if (submitted) {
-        completePolygonProgressToast(POLYGON_TOAST_IDS.submitting, toastLabels.savedAndSubmittedComplete);
-      }
-      return submitted;
-    },
-    [savePolygonData, submitPolygonWithData, t, toastLabels.savedAndSubmittedComplete]
-  );
+    onClose?.();
+    return true;
+  }, [
+    geometryChanged,
+    geometryPolygonUuid,
+    onClose,
+    onRunValidationWithResultsModal,
+    resolvedSiteUuid,
+    savePolygonData,
+    t
+  ]);
 
   const handleDeletePolygon = useCallback(async () => {
     if (polygon?.uuid == null || polygon.uuid === "") {
@@ -941,8 +1006,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   }, [onRegisterSave, savePolygonData]);
 
   useEffect(() => {
-    onRegisterSaveAndSubmit?.(handleSaveAndSubmitPolygon);
-  }, [handleSaveAndSubmitPolygon, onRegisterSaveAndSubmit]);
+    onRegisterSaveAndRunValidation?.(handleSaveAndRunValidation);
+  }, [handleSaveAndRunValidation, onRegisterSaveAndRunValidation]);
 
   useEffect(() => {
     onRegisterHasUnsavedChanges?.(checkHasUnsavedChanges);
@@ -964,6 +1029,12 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     onRegisterPlantStartDate?.(() => hasPlantStartDateForDisplay(plantStartDate, polygon));
   }, [onRegisterPlantStartDate, plantStartDate, polygon]);
 
+  useEffect(() => {
+    onRegisterRequiredAttributes?.(() =>
+      hasRequiredPolygonAttributes({ restorationPractice, targetLandUseSystem, treeDistribution })
+    );
+  }, [onRegisterRequiredAttributes, restorationPractice, targetLandUseSystem, treeDistribution]);
+
   const submissionCycleOptions = useMemo(
     () => SUBMISSION_CYCLE_OPTIONS.map(value => ({ value, label: SUBMISSION_CYCLE_LABELS[value] })),
     []
@@ -971,13 +1042,11 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">
-      <UploadGeotaggedPhotos
-        open={showUploadPhotosModal}
-        siteUuid={resolvedSiteUuid}
-        onOpenChange={setShowUploadPhotosModal}
-      />
       <Flex className="mr-[0.25rem] min-h-0 flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden py-5 px-2 pl-6 pr-7">
-        <SubmissionValidationTags polygon={polygon} />
+        <SubmissionValidationTags
+          polygon={polygon}
+          treatValidationAsNotStarted={hasUnsavedChangesInvalidatingValidation}
+        />
         <Accordion
           header={<AccordionHeader title={t("Details")} />}
           open={openAccordionSection === "details"}
@@ -1007,6 +1076,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               onChange={setRestorationPractice}
               placeholder={t("Select...")}
               multiple
+              required
             />
             <SelectInput
               items={targetOptions}
@@ -1014,6 +1084,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               value={targetLandUseSystem}
               onChange={value => setTargetLandUseSystem(value.slice(0, 1))}
               placeholder={t("Select...")}
+              required
             />
             <SelectInput
               key={`tree-distribution-${sitePolygonUuid}-${(polygon?.distr ?? []).join("|")}`}
@@ -1023,6 +1094,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               onChange={setTreeDistribution}
               placeholder={t("Select...")}
               multiple
+              required
             />
             <TextInput
               label={t("Trees Planted")}
@@ -1058,6 +1130,16 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
             )}
           </Flex>
         </Accordion>
+        {!isCreateMode && (
+          <OptionalAttributesAccordion
+            definitions={activeCustomAttributeDefinitions}
+            values={customAttributes}
+            onChange={handleCustomAttributeChange}
+            open={openAccordionSection === "optional-attributes"}
+            onOpenChange={handleAccordionOpenChange("optional-attributes")}
+            instanceKey={sitePolygonUuid}
+          />
+        )}
         {isAnrEligible ? (
           <Accordion
             header={<AccordionHeader title={t("Monitoring Plots")} />}
@@ -1131,40 +1213,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
             </Flex>
           </Accordion>
         ) : null}
-        <Accordion
-          header={<AccordionHeader title={t("Geotagged Photos")} />}
-          open={openAccordionSection === "geotagged-photos"}
-          onOpenChange={handleAccordionOpenChange("geotagged-photos")}
-          actions={
-            <Button
-              leftIcon={<UploadIcon />}
-              onClick={() => setShowUploadPhotosModal(true)}
-              size="small"
-              variant="secondary"
-            >
-              {t("Upload")}
-            </Button>
-          }
-        >
-          <Flex className="mb-4 flex-1 flex-col gap-4">
-            <Flex className="items-center gap-1">
-              <Text textStyle="400-bold" color="neutral.900">{`${geotaggedPhotosCount} ${t("Photos")}`}</Text>
-              <Text textStyle="400" color="neutral.900">
-                {t("available")}
-              </Text>
-            </Flex>
-            <Switch
-              name="showPhotosOnMap"
-              checked={showPhotosOnMap}
-              disabled={geotaggedPhotosCount === 0}
-              onCheckedChange={({ checked }: { checked?: boolean | "indeterminate" }) =>
-                setShowPhotosOnMap(checked === true)
-              }
-            >
-              {t("Show Photos on Map")}
-            </Switch>
-          </Flex>
-        </Accordion>
         <Accordion
           header={t("Versions")}
           open={openAccordionSection === "versions"}

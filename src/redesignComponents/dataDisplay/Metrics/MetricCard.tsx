@@ -24,6 +24,66 @@ import { getIconWithProgressColor } from "./utils/getIconWithProgressColor";
 const shouldRenderSuffix = (progressLabel?: string, suffix?: string): boolean =>
   progressLabel == null && suffix != null && suffix !== "";
 
+type MetricContextItemProps = {
+  label: string;
+  value: number | null;
+  suffix?: string;
+};
+
+const MetricContextItem: FC<MetricContextItemProps> = ({ label, value, suffix }) => {
+  const valueSuffix = value != null && suffix != null && suffix !== "" ? suffix : undefined;
+
+  return (
+    <Flex gap={1} className="items-center whitespace-nowrap">
+      <Text color="neutral.700" textStyle="200">
+        {label}
+      </Text>
+      <Text color="neutral.900" textStyle="300-bold">
+        {value == null ? "-" : formatNumberLocaleString(value)}
+      </Text>
+      {valueSuffix != null ? (
+        <Text color="neutral.900" textStyle="300-bold">
+          {valueSuffix}
+        </Text>
+      ) : null}
+    </Flex>
+  );
+};
+
+type MetricContextItemConfig = {
+  key: string;
+  label: string;
+  value: number | null;
+};
+
+type MetricContextDetailsProps = {
+  selection?: number | null;
+  filtered?: number | null;
+  suffix?: string;
+};
+
+const MetricContextDetails: FC<MetricContextDetailsProps> = ({ selection, filtered, suffix }) => {
+  const t = useT();
+  const selectionItem = selection !== undefined ? { key: "selection", label: t("Selected:"), value: selection } : null;
+  const filteredItem = filtered !== undefined ? { key: "filtered", label: t("Filtered:"), value: filtered } : null;
+  const items = [filteredItem, selectionItem].filter((item): item is MetricContextItemConfig => item != null);
+
+  if (items.length === 0) {
+    return null;
+  }
+
+  return (
+    <Flex gap={2} className="items-center">
+      {items.map((item, itemIndex) => (
+        <Flex key={item.key} gap={2} className="items-center">
+          {itemIndex > 0 && <SimpleDivider variant="vertical" className="!h-3 shrink-0" />}
+          <MetricContextItem label={item.label} value={item.value} suffix={suffix} />
+        </Flex>
+      ))}
+    </Flex>
+  );
+};
+
 type MetricTooltipTriggerProps = {
   tooltipContent: ReactNode;
   metricLabel?: string;
@@ -88,8 +148,6 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
   title,
   progress,
   progressLabel,
-  filtered,
-  selection,
   progressSuffix,
   color,
   iconWithColor,
@@ -97,57 +155,34 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
   classNameTitle,
   metricLabel,
   type
-}) => {
-  const t = useT();
-  return (
-    <Flex direction="column" gap={1}>
-      <Flex gap={1} color={color} alignItems="center">
-        {iconWithColor}
-        <Text
-          textStyle="300"
-          color="neutral.800"
-          paddingLeft={1}
-          className={twMerge("whitespace-nowrap", classNameTitle)}
-        >
-          {title}
-        </Text>
-        {tooltipContent != null && (
-          <MetricTooltipTrigger tooltipContent={tooltipContent} metricLabel={metricLabel} type={type} />
-        )}
-      </Flex>
-      <Flex gap={2} className="flex-wrap items-center">
-        <Flex gap={1} className="items-center">
-          <Text textStyle="400-bold" color="neutral.900">
-            {progressLabel ?? formatNumberLocaleString(progress)}
-          </Text>
-          {shouldRenderSuffix(progressLabel, progressSuffix) ? (
-            <Text textStyle="400-bold" color="neutral.900">
-              {progressSuffix}
-            </Text>
-          ) : null}
-        </Flex>
-        {filtered !== undefined ? (
-          <MetricCardExtraLayer
-            label={t("Filtered:")}
-            value={filtered}
-            progressSuffix={progressSuffix}
-            labelTextStyle="200"
-            valueTextStyle="300-bold"
-          />
-        ) : null}
-        {selection !== undefined ? (
-          <MetricCardExtraLayer
-            label={t("Selected:")}
-            value={selection}
-            progressSuffix={progressSuffix}
-            labelTextStyle="200"
-            valueTextStyle="300-bold"
-          />
-        ) : null}
-      </Flex>
+}) => (
+  <Flex direction="column" gap={2}>
+    <Flex gap={1} color={color} alignItems="center">
+      {iconWithColor}
+      <Text
+        textStyle="300"
+        color="neutral.800"
+        paddingLeft={1}
+        className={twMerge("whitespace-nowrap", classNameTitle)}
+      >
+        {title}
+      </Text>
+      {tooltipContent != null && (
+        <MetricTooltipTrigger tooltipContent={tooltipContent} metricLabel={metricLabel} type={type} />
+      )}
     </Flex>
-  );
-};
+    <Flex gap={1} className="items-center">
+      <Text textStyle="400-bold" color="neutral.900">
+        {progressLabel ?? formatNumberLocaleString(progress)}
+      </Text>
+      {shouldRenderSuffix(progressLabel, progressSuffix) ? (
+        <Text textStyle="400-bold" color="neutral.900">
+          {progressSuffix}
+        </Text>
+      ) : null}
+    </Flex>
+  </Flex>
+);
 
 const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
   title,
@@ -158,58 +193,33 @@ const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
   iconWithColor,
   tooltipContent,
   classNameTitle,
-  filtered,
-  selection,
   metricLabel,
   type
-}) => {
-  const t = useT();
-  return (
-    <Flex gap={3} color={color} alignItems="center">
-      {iconWithColor}
-      <Flex direction="column" gap={0}>
-        <Flex gap={1} alignItems="center">
-          <Text textStyle="400" color="neutral.800" className={twMerge("whitespace-nowrap", classNameTitle)}>
-            {title}
+}) => (
+  <Flex gap={3} color={color} alignItems="center">
+    {iconWithColor}
+    <Flex direction="column" gap={0}>
+      <Flex gap={1} alignItems="center">
+        <Text textStyle="400" color="neutral.800" className={twMerge("whitespace-nowrap", classNameTitle)}>
+          {title}
+        </Text>
+        {tooltipContent != null && (
+          <MetricTooltipTrigger tooltipContent={tooltipContent} metricLabel={metricLabel} type={type} />
+        )}
+      </Flex>
+      <Flex gap={1} className="items-center">
+        <Text textStyle="600-bold" color="neutral.900">
+          {progressLabel ?? formatNumberLocaleString(progress)}
+        </Text>
+        {shouldRenderSuffix(progressLabel, progressSuffix) ? (
+          <Text textStyle="600-bold" color="neutral.900">
+            {progressSuffix}
           </Text>
-          {tooltipContent != null && (
-            <MetricTooltipTrigger tooltipContent={tooltipContent} metricLabel={metricLabel} type={type} />
-          )}
-        </Flex>
-        <Flex gap={2} className="flex-wrap items-center">
-          <Flex gap={1} className="items-center">
-            <Text textStyle="600-bold" color="neutral.900">
-              {progressLabel ?? formatNumberLocaleString(progress)}
-            </Text>
-            {shouldRenderSuffix(progressLabel, progressSuffix) ? (
-              <Text textStyle="600-bold" color="neutral.900">
-                {progressSuffix}
-              </Text>
-            ) : null}
-          </Flex>
-          {filtered !== undefined ? (
-            <MetricCardExtraLayer
-              label={t("Filtered:")}
-              value={filtered}
-              progressSuffix={progressSuffix}
-              labelTextStyle="500"
-              valueTextStyle="600-bold"
-            />
-          ) : null}
-          {selection !== undefined ? (
-            <MetricCardExtraLayer
-              label={t("Selected:")}
-              value={selection}
-              progressSuffix={progressSuffix}
-              labelTextStyle="500"
-              valueTextStyle="600-bold"
-            />
-          ) : null}
-        </Flex>
+        ) : null}
       </Flex>
     </Flex>
-  );
-};
+  </Flex>
+);
 
 const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
   title,
@@ -241,7 +251,7 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
         )}
       </Flex>
       <Flex gap={2} alignItems="center">
-        <ProgressBar progress={progressValue} color={color} width={widthProgressBar} />
+        <ProgressBar progress={progressValue} color={color} width={widthProgressBar} className="min-w-[5rem]" />
         <Flex gap={1} alignItems="center">
           <Flex gap={1} className="items-center">
             <Text textStyle="400-bold" color="neutral.900">
@@ -366,8 +376,8 @@ const MetricCard: FC<MetricCardProps> = props => {
     className,
     classNameTitle,
     frameworkKey,
-    filtered,
     selection,
+    filtered,
     metricLabel,
     widthProgressBar
   } = props;
@@ -427,8 +437,6 @@ const MetricCard: FC<MetricCardProps> = props => {
           iconWithColor={iconWithColor14}
           tooltipContent={tooltipContent}
           classNameTitle={classNameTitle}
-          filtered={filtered}
-          selection={selection}
           metricLabel={metricLabel}
           type={type}
         />
@@ -445,8 +453,6 @@ const MetricCard: FC<MetricCardProps> = props => {
           iconWithColor={iconWithColor50}
           tooltipContent={tooltipContent}
           classNameTitle={classNameTitle}
-          filtered={filtered}
-          selection={selection}
           metricLabel={metricLabel}
           type={type}
         />
@@ -456,6 +462,8 @@ const MetricCard: FC<MetricCardProps> = props => {
 
   return (
     <Flex
+      direction="column"
+      gap={2}
       padding={3}
       className={twMerge(
         "h-fit justify-start rounded-lg border border-theme-neutral-300 bg-theme-neutral-100 p-3",
@@ -463,6 +471,7 @@ const MetricCard: FC<MetricCardProps> = props => {
       )}
     >
       {content}
+      <MetricContextDetails selection={selection} filtered={filtered} suffix={progressSuffix} />
     </Flex>
   );
 };

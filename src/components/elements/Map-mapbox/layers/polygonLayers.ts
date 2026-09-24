@@ -8,7 +8,14 @@ import {
   layersList,
   POLYGON_GEOMETRY_VARIANTS
 } from "@/constants/layers";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import {
+  POLYGON_APPROVED,
+  POLYGON_DRAFT,
+  POLYGON_INFORMATION_REQUIRED,
+  POLYGON_PENDING_APPROVAL
+} from "@/constants/polygonStatuses";
+import { FORM_POLYGONS } from "@/constants/statuses";
+import { SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
 import { getGeoserverURL } from "../adapters/geoserver";
@@ -222,14 +229,16 @@ export function getMapTileVersion(map: MapboxMap | null | undefined): string {
 function resolveGeoserverLayerName(
   layer: LayerType,
   dashboardMode: string | undefined,
-  polygonGeometryVariant: PolygonGeometryVariant | undefined
+  polygonGeometryVariant: PolygonGeometryVariant | undefined,
+  polygonsData?: Record<string, string[]>
 ): string {
-  if (dashboardMode != null && layer.name === LAYERS_NAMES.POLYGON_GEOMETRY) {
-    return LAYERS_NAMES.POLYGON_GEOMETRY;
-  }
-
   if (layer.name !== LAYERS_NAMES.POLYGON_GEOMETRY) {
     return layer.geoserverLayerName;
+  }
+
+  // Project-pitch (form) polygons and dashboard tiles use unversioned polygon_geometry.
+  if (dashboardMode != null || polygonsData?.[FORM_POLYGONS] != null) {
+    return LAYERS_NAMES.POLYGON_GEOMETRY;
   }
 
   return getPolygonGeometryLayerName(polygonGeometryVariant ?? POLYGON_GEOMETRY_VARIANTS.Active);
@@ -248,7 +257,7 @@ export const addSourceToLayer = (
   try {
     if (map == null) return;
 
-    const geoserverLayerName = resolveGeoserverLayerName(layer, dashboardMode, polygonGeometryVariant);
+    const geoserverLayerName = resolveGeoserverLayerName(layer, dashboardMode, polygonGeometryVariant, polygonsData);
 
     const keys = getSourceCacheKeys(map);
     const layerNames = getSourceGeoserverLayerNames(map);
@@ -477,22 +486,20 @@ export const addPolygonCentroidsLayer = (
   }
 };
 
-type DataPolygonOverview = { status: string; status_key: string; count: number }[];
+export type PolygonMapStyleFields = Pick<SitePolygonMapEntryDto, "polygonUuid" | "status">;
 
-const POLYGON_STATUS_LABELS: Record<string, string> = {
-  draft: "Draft",
-  "pending-approval": "Pending Approval",
-  "information-required": "Information Required",
-  approved: "Approved"
+export const EMPTY_STATUS_POLYGON_MAP: Record<string, string[]> = {
+  [POLYGON_PENDING_APPROVAL]: [],
+  [POLYGON_APPROVED]: [],
+  [POLYGON_INFORMATION_REQUIRED]: [],
+  [POLYGON_DRAFT]: []
 };
 
-const POLYGON_STATUS_ORDER = Object.keys(POLYGON_STATUS_LABELS);
-
 export function parsePolygonDataV3(
-  sitePolygonData: SitePolygonLightDto[] | undefined,
+  sitePolygonData: PolygonMapStyleFields[] | undefined,
   forcedStatusBucket?: string
 ): Record<string, string[]> {
-  return (sitePolygonData ?? []).reduce((acc: Record<string, string[]>, data: SitePolygonLightDto) => {
+  return (sitePolygonData ?? []).reduce((acc: Record<string, string[]>, data: PolygonMapStyleFields) => {
     const status = forcedStatusBucket ?? data.status;
     if (status != null && data.polygonUuid != null) {
       if (acc[status] == null) acc[status] = [];
@@ -501,21 +508,3 @@ export function parsePolygonDataV3(
     return acc;
   }, {});
 }
-
-export const countStatusesV3 = (sitePolygonData: SitePolygonLightDto[]): DataPolygonOverview => {
-  const statusCountMap: Record<string, number> = {};
-
-  sitePolygonData.forEach(item => {
-    const statusKey = item.status;
-    if (statusKey == null) return;
-    statusCountMap[statusKey] = (statusCountMap[statusKey] ?? 0) + 1;
-  });
-
-  return Object.entries(statusCountMap)
-    .map(([status_key, count]) => ({
-      status_key,
-      status: POLYGON_STATUS_LABELS[status_key] ?? status_key,
-      count
-    }))
-    .sort((a, b) => POLYGON_STATUS_ORDER.indexOf(a.status_key) - POLYGON_STATUS_ORDER.indexOf(b.status_key));
-};

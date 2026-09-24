@@ -14,11 +14,22 @@ import {
   loadPolygonGeoJson,
   loadProjectPolygonsGeoJson,
   loadProjectSitePolygonsGeoJson,
-  loadSitePolygonsGeoJson
+  loadSitePolygonsGeoJson,
+  POLYGON_GEOJSON_DOWNLOAD_QUERY_PARAMS,
+  PolygonGeoJsonDownloadQueryParams
 } from "@/connections/GeoJsonExport";
-import { GetSitePolygonsGeoJsonQueryParams } from "@/generated/v3/researchService/researchServiceComponents";
-import { GeoJsonExportDto, SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
+
+import {
+  extractGeoJsonFromResponse,
+  GeoJsonExportApiResponse,
+  isValidGeoJsonFeatureCollection
+} from "./geojsonExportResponse";
+
+export { extractGeoJsonFromResponse, isValidGeoJsonFeatureCollection };
+export type { GeoJsonExportApiResponse };
 
 export const formatPlannedStartDate = (plantStartDate: Date | null | undefined): string => {
   return plantStartDate != null
@@ -48,25 +59,7 @@ export const formatFileName = (inputString: string): string => {
   return inputString.toLowerCase().replace(/\s+/g, "_");
 };
 
-export const extractGeoJsonFromResponse = (
-  response: GeoJsonExportDto | { data?: { attributes?: GeoJsonExportDto } } | undefined
-): GeoJSON.FeatureCollection | undefined => {
-  if (!response) return undefined;
-  if ("type" in response && (response as any).type === "FeatureCollection") {
-    return response as unknown as GeoJSON.FeatureCollection;
-  }
-  if ("data" in response && (response as any).data?.attributes) {
-    const attributes = (response as any).data.attributes;
-    if (attributes.type === "FeatureCollection") return attributes as unknown as GeoJSON.FeatureCollection;
-  }
-  return undefined;
-};
-
-export const isValidGeoJsonFeatureCollection = (data: any): data is GeoJSON.FeatureCollection => {
-  return data != null && typeof data === "object" && data.type === "FeatureCollection" && Array.isArray(data.features);
-};
-
-export function downloadGeoJsonFile(geojson: GeoJSON.FeatureCollection | any, filename: string): void {
+export function downloadGeoJsonFile(geojson: GeoJSON.FeatureCollection, filename: string): void {
   try {
     const blob = new Blob([JSON.stringify(geojson, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -84,12 +77,17 @@ export function downloadGeoJsonFile(geojson: GeoJSON.FeatureCollection | any, fi
 export async function downloadPolygonGeoJson(
   polygonUuid: string,
   filename?: string,
-  options?: Omit<GetSitePolygonsGeoJsonQueryParams, "uuid" | "siteUuid">
+  options?: PolygonGeoJsonDownloadQueryParams
 ): Promise<void> {
   try {
-    const result = await loadPolygonGeoJson({ uuid: polygonUuid, ...options });
+    ApiSlice.pruneCache("geojsonExports", [polygonUuid]);
+    const result = await loadPolygonGeoJson({
+      uuid: polygonUuid,
+      ...POLYGON_GEOJSON_DOWNLOAD_QUERY_PARAMS,
+      ...options
+    });
     const geojson = extractGeoJsonFromResponse(result.data);
-    if (!geojson) throw new Error("Failed to extract GeoJSON from response");
+    if (geojson == null) throw new Error("Failed to extract GeoJSON from response");
     downloadGeoJsonFile(geojson, formatFileName(filename ?? polygonUuid));
   } catch (error) {
     Log.error("Failed to download polygon GeoJSON:", error);
@@ -100,12 +98,16 @@ export async function downloadPolygonGeoJson(
 export async function downloadProjectSitePolygonsGeoJson(
   projectUuid: string,
   projectName: string,
-  options?: Omit<GetSitePolygonsGeoJsonQueryParams, "uuid" | "projectUuid">
+  options?: PolygonGeoJsonDownloadQueryParams
 ): Promise<void> {
   try {
-    const result = await loadProjectSitePolygonsGeoJson({ projectUuid, ...options });
+    const result = await loadProjectSitePolygonsGeoJson({
+      projectUuid,
+      ...POLYGON_GEOJSON_DOWNLOAD_QUERY_PARAMS,
+      ...options
+    });
     const geojson = extractGeoJsonFromResponse(result.data);
-    if (!geojson) throw new Error("Failed to extract GeoJSON from response");
+    if (geojson == null) throw new Error("Failed to extract GeoJSON from response");
     downloadGeoJsonFile(geojson, formatFileName(projectName));
   } catch (error) {
     Log.error("Failed to download project site polygons GeoJSON:", error);
@@ -116,12 +118,16 @@ export async function downloadProjectSitePolygonsGeoJson(
 export async function downloadSitePolygonsGeoJson(
   siteUuid: string,
   siteName: string,
-  options?: Omit<GetSitePolygonsGeoJsonQueryParams, "uuid" | "siteUuid">
+  options?: PolygonGeoJsonDownloadQueryParams
 ): Promise<void> {
   try {
-    const result = await loadSitePolygonsGeoJson({ siteUuid, ...options });
+    const result = await loadSitePolygonsGeoJson({
+      siteUuid,
+      ...POLYGON_GEOJSON_DOWNLOAD_QUERY_PARAMS,
+      ...options
+    });
     const geojson = extractGeoJsonFromResponse(result.data);
-    if (!geojson) throw new Error("Failed to extract GeoJSON from response");
+    if (geojson == null) throw new Error("Failed to extract GeoJSON from response");
     downloadGeoJsonFile(geojson, formatFileName(siteName));
   } catch (error) {
     Log.error("Failed to download site polygons GeoJSON:", error);
@@ -131,18 +137,23 @@ export async function downloadSitePolygonsGeoJson(
 
 export async function fetchMultiplePolygonsGeoJson(
   polygonUuids: string[],
-  includeExtendedData: boolean = true
+  options: PolygonGeoJsonDownloadQueryParams = POLYGON_GEOJSON_DOWNLOAD_QUERY_PARAMS
 ): Promise<GeoJSON.FeatureCollection> {
   try {
-    const results = await Promise.all(polygonUuids.map(uuid => loadPolygonGeoJson({ uuid, includeExtendedData })));
+    ApiSlice.pruneCache("geojsonExports", polygonUuids);
+    const results = await Promise.all(
+      polygonUuids.map(uuid => loadPolygonGeoJson({ uuid, ...POLYGON_GEOJSON_DOWNLOAD_QUERY_PARAMS, ...options }))
+    );
     const features: GeoJSON.Feature[] = [];
     results.forEach((result, index) => {
       const geojson = extractGeoJsonFromResponse(result.data);
-      if (geojson?.features) {
+      if (geojson?.features != null) {
         geojson.features.forEach(feature => {
-          if (!feature.properties) feature.properties = {};
-          if (!feature.properties.uuid) feature.properties.uuid = polygonUuids[index];
-          features.push(feature);
+          const properties = { ...(feature.properties ?? {}) };
+          if (properties.uuid == null) {
+            properties.uuid = polygonUuids[index];
+          }
+          features.push({ ...feature, properties });
         });
       }
     });
@@ -156,11 +167,11 @@ export async function fetchMultiplePolygonsGeoJson(
 export async function downloadMultiplePolygonsGeoJson(
   polygonUuids: string[],
   filename: string,
-  includeExtendedData: boolean = true
+  options: PolygonGeoJsonDownloadQueryParams = POLYGON_GEOJSON_DOWNLOAD_QUERY_PARAMS
 ): Promise<void> {
   try {
-    const combinedGeojson = await fetchMultiplePolygonsGeoJson(polygonUuids, includeExtendedData);
-    if (!combinedGeojson.features || combinedGeojson.features.length === 0) {
+    const combinedGeojson = await fetchMultiplePolygonsGeoJson(polygonUuids, options);
+    if (combinedGeojson.features == null || combinedGeojson.features.length === 0) {
       throw new Error("No polygons found to download");
     }
     downloadGeoJsonFile(combinedGeojson, formatFileName(filename));
@@ -171,19 +182,19 @@ export async function downloadMultiplePolygonsGeoJson(
 }
 
 export async function downloadSiteGeoJsonPolygons(siteUuid: string, siteName: string): Promise<void> {
-  await downloadSitePolygonsGeoJson(siteUuid, siteName, { includeExtendedData: true });
+  await downloadSitePolygonsGeoJson(siteUuid, siteName);
 }
 
 export async function downloadProjectPolygonsGeoJson(
   projectPitchUuid: string,
   projectName: string,
-  options?: Omit<GetSitePolygonsGeoJsonQueryParams, "uuid" | "siteUuid" | "projectUuid">
+  options?: PolygonGeoJsonDownloadQueryParams
 ): Promise<void> {
   try {
     const result = await loadProjectPolygonsGeoJson({ projectPitchUuid, ...options });
     const geojson = extractGeoJsonFromResponse(result.data);
-    if (!geojson) throw new Error("Failed to extract GeoJSON from response");
-    if (!geojson.features || geojson.features.length === 0) throw new Error("No polygons found to download");
+    if (geojson == null) throw new Error("Failed to extract GeoJSON from response");
+    if (geojson.features == null || geojson.features.length === 0) throw new Error("No polygons found to download");
     downloadGeoJsonFile(geojson, `${formatFileName(projectName)}_polygons`);
   } catch (error) {
     Log.error("Failed to download project polygons GeoJSON:", error);

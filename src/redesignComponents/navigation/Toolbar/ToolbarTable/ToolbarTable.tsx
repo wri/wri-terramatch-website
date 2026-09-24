@@ -1,4 +1,4 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { Search } from "@worldresources/wri-design-systems";
 import classNames from "classnames";
@@ -55,10 +55,10 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
       className={classNames("mobile:mb-6 mobile:flex-col mobile:!items-start mobile:gap-4", className)}
       classNameContentLeft={classNameContentLeft}
       contentLeft={
-        <div className="flex items-center gap-4 mobile:mb-5 mobile:flex-col mobile:items-start mobile:gap-0 mobile:gap-y-4">
+        <Flex className="items-center gap-4 mobile:mb-5 mobile:flex-col mobile:items-start mobile:gap-0 mobile:gap-y-4">
           {search != null && (
-            <div className="flex w-full min-w-max max-w-max items-center gap-4">
-              <div onKeyDown={handleKeyDown} className={classNameContentSearch}>
+            <Flex className="w-full min-w-max max-w-max items-center gap-4">
+              <Box onKeyDown={handleKeyDown} className={classNameContentSearch}>
                 <Search
                   key={search.resetKey ?? "search"}
                   {...({
@@ -72,9 +72,9 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
                     size: "default"
                   } as SearchProps)}
                 />
-              </div>
+              </Box>
 
-              <div className="flex items-center gap-1">
+              <Flex className="items-center gap-1">
                 <Text textStyle="400-bold" color="primary.900">
                   {search.count != null ? `${search.count}` : ""}
                 </Text>
@@ -82,23 +82,23 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
                 <Text textStyle="400" color="primary.900">
                   {search.label}
                 </Text>
-              </div>
-            </div>
+              </Flex>
+            </Flex>
           )}
 
           {((search != null && filters != null) || selectedFilters != null) && (
             <SimpleDivider backgroundColor="neutral.500" className="!h-4 !w-[0.0625rem] mobile:hidden" />
           )}
 
-          <div className="flex min-w-[0] items-center gap-4 mobile:w-full">
+          <Flex className="min-w-[0] items-center gap-4 mobile:w-full">
             {filters != null && filters.length > 0 ? (
-              <div className="text-14 flex flex-wrap items-center gap-3 text-theme-neutral-900">
+              <Flex className="text-14 flex-wrap items-center gap-3 text-theme-neutral-900">
                 {t("Filter by:")}
 
                 {filters.map((filter, index) => (
                   <MultiActionButton key={index} {...filter} size="small" />
                 ))}
-              </div>
+              </Flex>
             ) : (
               <Button variant="secondary" size="small" onClick={onClickFilterButton} leftIcon={<FilterIcon />}>
                 {selectedFilters && selectedFilters.length > 0
@@ -109,12 +109,12 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
             <FilterTag selectedFilters={selectedFilters} />
 
             {showClearFilters && (
-              <Button variant="borderless" size="small" leftIcon={<CloseIcon />} onClick={onClearFilters}>
+              <Button variant="secondary" size="small" leftIcon={<CloseIcon />} onClick={onClearFilters}>
                 {t("Clear All Filters")}
               </Button>
             )}
-          </div>
-        </div>
+          </Flex>
+        </Flex>
       }
       contentRight={
         <Flex gap={2} alignItems="center" justifyContent="right">

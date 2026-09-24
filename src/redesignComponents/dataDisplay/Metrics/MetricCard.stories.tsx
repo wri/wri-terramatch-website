@@ -31,6 +31,14 @@ const meta: Meta<typeof MetricCard> = {
     goalSuffix: {
       control: "text",
       description: "Suffix displayed next to goal value"
+    },
+    selection: {
+      control: "number",
+      description: "Selected total shown in the context row below the card. Pass null when unavailable"
+    },
+    filtered: {
+      control: "number",
+      description: "Filtered total shown in the context row below the card. Pass null when unavailable"
     }
   }
 };
@@ -126,6 +134,19 @@ export const ProgressBar: Story = {
     icon: <PlaceholderIcon />,
     tooltipContent: "This is a tooltip",
     className: "w-[30rem]"
+  }
+};
+
+export const ProgressBarWithBreakdown: Story = {
+  args: {
+    title: "Trees Growing",
+    progress: 25631,
+    goal: 0,
+    filtered: 0,
+    selection: 0,
+    variant: "progressBar",
+    icon: <PlaceholderIcon />,
+    className: "w-fit"
   }
 };
 

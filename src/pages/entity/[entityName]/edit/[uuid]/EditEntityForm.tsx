@@ -9,6 +9,7 @@ import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { EntityFullDto, pruneEntityCache, ReportFullDto, useFullEntity } from "@/connections/Entity";
 import { FormEntity } from "@/connections/Form";
+import { PENDING_APPROVAL } from "@/constants/statuses";
 import { CurrencyProvider } from "@/context/currency.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import {
@@ -55,6 +56,7 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
   const { openToast } = useToastContext();
   const loadFailureHandled = useRef(false);
   const reportOpenTracked = useRef(false);
+  const pendingApprovalRedirected = useRef(false);
   /** Only navigate to /confirm after an explicit Submit, not any future entity PATCH. */
   const pendingSubmissionConfirmationRef = useRef(false);
   const {
@@ -95,11 +97,15 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
 
   const isReport = isEntityReport(entityName);
 
+  const isClosedForEditing = entity?.status === PENDING_APPROVAL;
+
   const submitEntity = useCallback(() => {
+    if (entity?.status === PENDING_APPROVAL) return;
     pendingSubmissionConfirmationRef.current = true;
+    pendingApprovalRedirected.current = true;
     updateEntity({ status: "pending-approval" });
     ApiSlice.pruneCache("actions");
-  }, [updateEntity]);
+  }, [entity?.status, updateEntity]);
 
   useRequestComplete(
     isSubmitting,
@@ -107,13 +113,14 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
     useCallback(
       failure => {
         if (!pendingSubmissionConfirmationRef.current) return;
-        pendingSubmissionConfirmationRef.current = false;
         if (failure == null) {
           router.replace(`/entity/${entityName}/edit/${entityUUID}/confirm`);
-        } else {
-          Log.error("Request failed: Submission failed", failure);
-          openToast(t("Submission failed"), ToastType.ERROR);
+          return;
         }
+        pendingSubmissionConfirmationRef.current = false;
+        pendingApprovalRedirected.current = false;
+        Log.error("Request failed: Submission failed", failure);
+        openToast(t("Submission failed"), ToastType.ERROR);
       },
       [entityName, entityUUID, openToast, router, t]
     )
@@ -159,15 +166,17 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
 
   const onChange = useCallback(
     (data: Dictionary<any>) => {
+      if (entity?.status === PENDING_APPROVAL) return;
       updateEntityAnswers({ answers: normalizedFormData(data, fieldsProvider) });
     },
-    [fieldsProvider, updateEntityAnswers]
+    [entity?.status, fieldsProvider, updateEntityAnswers]
   );
 
   const hasLoadFailure = loadFailure != null || formLoadFailure != null;
 
   useEffect(() => {
-    if (!entityLoaded || entity == null || !isReport || reportOpenTracked.current) return;
+    if (!entityLoaded || entity == null || entity.status === PENDING_APPROVAL || !isReport || reportOpenTracked.current)
+      return;
 
     const reportEntityType = resolveReportEntityTypeFromEntityName(entityName);
     if (reportEntityType == null) return;
@@ -195,7 +204,16 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
     router.replace("/home");
   }, [formLoadFailure, hasLoadFailure, loadFailure, openToast, router, t]);
 
-  if (hasLoadFailure) return null;
+  useEffect(() => {
+    if (!entityLoaded || entity == null || entity.status !== PENDING_APPROVAL || pendingApprovalRedirected.current) {
+      return;
+    }
+    pendingApprovalRedirected.current = true;
+    openToast(t("This entity is under review and is closed for editing."), ToastType.ERROR);
+    router.replace(getEntityDetailPageLink(entityName, entityUUID));
+  }, [entity, entityLoaded, entityName, entityUUID, openToast, router, t]);
+
+  if (hasLoadFailure || (isClosedForEditing && !pendingApprovalRedirected.current)) return null;
 
   return (
     <LoadingContainer loading={isLoading || !isReady || orgLoading || !entityLoaded}>

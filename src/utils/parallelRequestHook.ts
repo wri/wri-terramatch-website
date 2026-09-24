@@ -2,7 +2,7 @@ import { defaultsDeep } from "lodash";
 import { useCallback } from "react";
 
 import { CreateAttributes } from "@/connections/util/apiConnectionFactory";
-import { ErrorPayload, RequestVariables, V3ApiEndpoint } from "@/generated/v3/utils";
+import { ErrorPayload, RequestVariables, V3ApiEndpoint, WithFormData } from "@/generated/v3/utils";
 import { useStableProps } from "@/hooks/useStableProps";
 import { ResourceType } from "@/store/apiSlice";
 
@@ -30,7 +30,10 @@ export const parallelRequestHook =
   (urlVariables: Omit<TVariables, "body">) => {
     const stableVariables = useStableProps(urlVariables);
     return useCallback(
-      (attributes: CreateAttributes<TVariables>, options: RequestOptions<TResponse, TError, TVariables> = {}) => {
+      (
+        attributes: WithFormData<CreateAttributes<TVariables>>,
+        options: RequestOptions<TResponse, TError, TVariables> = {}
+      ) => {
         const variables: TVariables = {
           ...defaultsDeep(options.urlVariablesOverride ?? {}, stableVariables),
           body: { data: { type: resource, attributes } }

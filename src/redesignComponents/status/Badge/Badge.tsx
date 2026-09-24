@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, type BoxProps } from "@chakra-ui/react";
 import { Badge as WriBadge } from "@worldresources/wri-design-systems";
 import type { ComponentProps, FC } from "react";
 
@@ -6,6 +6,8 @@ export type BadgeVariant = "notification" | "information";
 
 export type BadgeProps = ComponentProps<typeof WriBadge> & {
   variant?: BadgeVariant;
+  className?: BoxProps["className"];
+  css?: BoxProps["css"];
 };
 
 const INFORMATION_STYLES = {
@@ -17,13 +19,13 @@ const INFORMATION_STYLES = {
   }
 };
 
-const Badge: FC<BadgeProps> = ({ variant = "notification", ...props }) => {
+const Badge: FC<BadgeProps> = ({ variant = "notification", className, css, ...props }) => {
   if (variant === "notification") {
     return <WriBadge {...props} />;
   }
 
   return (
-    <Box css={INFORMATION_STYLES}>
+    <Box className={className} css={[INFORMATION_STYLES, css]}>
       <WriBadge {...props} />
     </Box>
   );

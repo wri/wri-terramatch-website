@@ -8,22 +8,16 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { type MapDrawSaveHandler, useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { CrossSiteOverlapPolygon, OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
-import type { PolygonFromMapState } from "@/components/elements/Map-mapbox/Map.d";
+import type { PolygonEntityScope, PolygonFromMapState } from "@/components/elements/Map-mapbox/Map.d";
 import { resolveMapExtentBbox, useBoundingBox } from "@/connections/BoundingBox";
 import { SupportedEntity, useAllMedias } from "@/connections/EntityAssociation";
-import {
-  POLYGON_APPROVED,
-  POLYGON_DRAFT,
-  POLYGON_INFORMATION_REQUIRED,
-  POLYGON_PENDING_APPROVAL
-} from "@/constants/polygonStatuses";
 import { DELETED_AUDIT_POLYGONS } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
-import { parsePolygonDataV3, storePolygon } from "../utils";
+import { storePolygon } from "../utils";
 import LoadingMap from "./LoadingMap";
 
 export type PolygonsMapEntityModel = {
@@ -39,7 +33,7 @@ type PolygonsMapEntityType = "sites" | "projects";
 interface PolygonsMapProps {
   entityModel: PolygonsMapEntityModel;
   type: PolygonsMapEntityType;
-  polygons: SitePolygonLightDto[];
+  polygons: SitePolygonMapEntryDto[];
   onRefetchPolygons: () => void | Promise<void>;
   isLoadingPolygons?: boolean;
   freezeCameraZoom?: boolean;
@@ -61,13 +55,6 @@ interface PolygonsMapProps {
   isDeletedAuditView?: boolean;
 }
 
-const EMPTY_POLYGON_MAP: Record<string, string[]> = {
-  [POLYGON_PENDING_APPROVAL]: [],
-  [POLYGON_APPROVED]: [],
-  [POLYGON_INFORMATION_REQUIRED]: [],
-  [POLYGON_DRAFT]: []
-};
-
 const PolygonsMap: FC<PolygonsMapProps> = ({
   entityModel,
   type,
@@ -84,7 +71,6 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
 }) => {
   const t = useT();
   const disabledPolygonPanel = true;
-  const [polygonDataMap, setPolygonDataMap] = useState<Record<string, string[]>>(() => ({ ...EMPTY_POLYGON_MAP }));
   const [polygonFromMap, setPolygonFromMap] = useState<PolygonFromMapState>({ isOpen: false, uuid: "" });
   const [isPolygonTilesLoading, setIsPolygonTilesLoading] = useState(false);
 
@@ -96,7 +82,6 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
     shouldRefetchPolygonData,
     shouldRefetchMediaData,
     setSelectedPolygonsInCheckbox,
-    setPolygonData,
     setMediaFiles,
     shouldRefetchValidation,
     setShouldRefetchValidation,
@@ -142,6 +127,11 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   });
 
   const hasPolygons = polygons.length > 0;
+
+  const polygonEntityScope = useMemo<PolygonEntityScope>(
+    () => ({ entityName: type, entityUuid: entityModel.uuid }),
+    [type, entityModel.uuid]
+  );
 
   const deletedAuditPolygonUuids = useMemo(() => {
     if (!isDeletedAuditView) {
@@ -189,10 +179,6 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   );
 
   useEffect(() => {
-    setPolygonData(polygons);
-  }, [polygons, setPolygonData]);
-
-  useEffect(() => {
     const { isOpen, uuid } = editPolygon;
     setPolygonFromMap({ isOpen, uuid });
     if (isOpen) {
@@ -214,15 +200,6 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
     }
   });
 
-  useEffect(() => {
-    if (polygons.length > 0) {
-      const dataMap = parsePolygonDataV3(polygons, isDeletedAuditView ? DELETED_AUDIT_POLYGONS : undefined);
-      setPolygonDataMap(dataMap);
-    } else {
-      setPolygonDataMap({ ...EMPTY_POLYGON_MAP });
-    }
-  }, [polygons, isDeletedAuditView]);
-
   const isPolygonGeometryLoading = isLoadingPolygons || (polygons.length > 0 && isPolygonTilesLoading);
 
   return (
@@ -231,7 +208,8 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
       <MapContainer
         championsMap={true}
         mapFunctions={mapFunctions}
-        polygonsData={polygonDataMap}
+        mapIndexPolygons={polygons}
+        mapPolygonsForcedStatus={isDeletedAuditView ? DELETED_AUDIT_POLYGONS : undefined}
         bbox={extentBbox}
         tooltipType={type === "sites" ? "edit" : "goTo"}
         showPopups={!isDeletedAuditView}
@@ -254,6 +232,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
         skipNextSiteBboxZoomNonce={skipNextSiteBboxZoomNonce}
         mediaFiles={mediaFiles}
         sitePolygonData={sitePolygonDataV3}
+        polygonEntityScope={polygonEntityScope}
         disabledPolygonPanel={disabledPolygonPanel}
         autoEditPolygon={editPolygon.isOpen}
         polygonTableHighlight={polygonTableHighlight}

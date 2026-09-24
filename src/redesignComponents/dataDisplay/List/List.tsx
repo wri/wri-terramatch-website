@@ -1,31 +1,23 @@
 import { Box } from "@chakra-ui/react";
-import { List as WriList } from "@worldresources/wri-design-systems";
-import { FC, ReactElement } from "react";
+import { List as WriList, ListProps as WriListProps } from "@worldresources/wri-design-systems";
+import { FC } from "react";
 
-type ListItemVariant = "data" | "navigation" | "select";
-interface ListItemProps {
-  id?: string;
-  label: string;
-  caption?: string;
-  icon?: ReactElement;
-  value?: string;
-  variant?: ListItemVariant;
-  isExpanded?: boolean;
-  onItemClick?: () => void;
-  ariaLabel?: string;
-  disabled?: boolean;
-  isHighlighted?: boolean;
-}
-export interface ListProps {
-  items: ListItemProps[];
-  noBorder?: boolean;
-  highlightedIndex?: number;
-}
+export type { WriListProps };
 
-const List: FC<ListProps> = ({ items, noBorder, highlightedIndex }) => {
+type ListProps = WriListProps & { itemsAlignItems?: boolean };
+const List: FC<ListProps> = ({ itemsAlignItems = true, ...props }) => {
   return (
-    <Box>
-      <WriList items={items} noBorder={noBorder} highlightedIndex={highlightedIndex} />
+    <Box
+      css={
+        itemsAlignItems && {
+          "& > div > div > div": {
+            display: "flex !important",
+            alignItems: "center !important"
+          }
+        }
+      }
+    >
+      <WriList {...props} />
     </Box>
   );
 };

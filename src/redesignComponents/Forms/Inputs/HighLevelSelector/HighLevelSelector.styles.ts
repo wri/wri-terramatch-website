@@ -113,7 +113,7 @@ export const getMenuItemStyles = (disabled = false) =>
       outline: "none"
     },
     _hover: { bg: disabled ? "transparent" : "primary.500/20" },
-    _active: { bg: disabled ? "transparent" : "rgba(120, 202, 237, 0.4)" },
+    _active: { bg: disabled ? "transparent" : "primary.500/40" },
     _focusVisible: menuItemFocusStyles,
     _checked: {
       bg: "transparent",
@@ -123,7 +123,7 @@ export const getMenuItemStyles = (disabled = false) =>
       ? undefined
       : {
           "&:active, &[data-active]": {
-            backgroundColor: "rgba(120, 202, 237, 0.4) !important"
+            backgroundColor: "color-mix(in srgb, var(--chakra-colors-primary-500) 40%, transparent) !important"
           },
           "&:focus-visible": {
             backgroundColor: "transparent !important"

@@ -10,19 +10,14 @@ import {
   openPolygonSubmitConfirmationFromMapPopup,
   runPolygonValidationFromMapPopup
 } from "@/context/mapArea.utils";
-import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { openPolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { isRestorationStrategy, isTargetLandUseType } from "@/pages/site/[uuid]/components/polygonTable.constants";
 import { showPolygonErrorToast } from "@/pages/site/[uuid]/utils/polygonOperationToasts";
 import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
 import PointMarker from "@/redesignComponents/geospatial/PointMarker/PointMarker";
 import Log from "@/utils/log";
 import { getSingleSitePolygonApproveTooltip, isSitePolygonApprovable } from "@/utils/sitePolygonReview";
-import {
-  getSingleSitePolygonSubmitTooltip,
-  isSitePolygonSubmittable,
-  shouldShowRunValidationAsPrimaryAction
-} from "@/utils/sitePolygonSubmit";
+import { getSingleSitePolygonSubmitTooltip, isSitePolygonSubmittable } from "@/utils/sitePolygonSubmit";
 
 import type { PopupComponentProps, TooltipType } from "../../Map.d";
 import {
@@ -31,10 +26,12 @@ import {
   resolveViewDetailsSiteUuid
 } from "../../sitePolygonNavigation";
 import {
+  type SitePolygonPopupFields,
   formatAreaHectaresForPopup,
   formatTreesPlantedForPopup,
   getSitePolygonGeometryUuid,
-  normalizePolygonValidationStatus
+  normalizePolygonValidationStatus,
+  POPUP_METRIC_UNAVAILABLE
 } from "../../sitePolygonPopupUtils";
 import PopupContentPolygon from "../PopupPolygon/PopupContentPolygon";
 import PopupFooterPolygon from "../PopupPolygon/PopupFooterPolygon";
@@ -43,7 +40,8 @@ import PopupHeaderPolygon from "../PopupPolygon/PopupHeaderPolygon";
 type PolygonPopupChampionsProps = {
   popup: PopupComponentProps["popup"];
   setShouldRefetchPolygonData?: PopupComponentProps["setShouldRefetchPolygonData"];
-  sitePolygon?: SitePolygonLightDto;
+  sitePolygon?: SitePolygonPopupFields;
+  isLoading?: boolean;
   tooltipType?: TooltipType;
   overviewPolygonPopup?: boolean;
 };
@@ -51,6 +49,7 @@ type PolygonPopupChampionsProps = {
 export function PolygonPopupChampions({
   popup,
   sitePolygon,
+  isLoading = false,
   tooltipType,
   overviewPolygonPopup = false
 }: PolygonPopupChampionsProps) {
@@ -66,6 +65,7 @@ export function PolygonPopupChampions({
   const [, { data: auditStatusesData }] = useAuditStatuses({
     entity: "sitePolygons",
     uuid: selectedSitePolygonUuid,
+    types: ["comment"],
     enabled: hasValidSitePolygonUuid && !overviewPolygonPopup
   });
 
@@ -83,19 +83,18 @@ export function PolygonPopupChampions({
       sitePolygon?.targetSys != null && isTargetLandUseType(sitePolygon.targetSys) ? sitePolygon.targetSys : null;
 
     return {
-      polygonName: sitePolygon?.name ?? undefined,
-      treesPlantedDisplay: formatTreesPlantedForPopup(sitePolygon?.numTrees),
-      areaHectaresDisplay: formatAreaHectaresForPopup(sitePolygon?.calcArea),
-      validationStatus,
-      commentsDisplay: commentsCount.toString(),
-      restorationPractice,
-      targetLandUse
+      polygonName: isLoading ? t("Loading...") : sitePolygon?.name ?? undefined,
+      treesPlantedDisplay: isLoading ? POPUP_METRIC_UNAVAILABLE : formatTreesPlantedForPopup(sitePolygon?.numTrees),
+      areaHectaresDisplay: isLoading ? POPUP_METRIC_UNAVAILABLE : formatAreaHectaresForPopup(sitePolygon?.calcArea),
+      validationStatus: isLoading ? ("not-started" as const) : validationStatus,
+      commentsDisplay: isLoading ? POPUP_METRIC_UNAVAILABLE : commentsCount.toString(),
+      restorationPractice: isLoading ? [] : restorationPractice,
+      targetLandUse: isLoading ? null : targetLandUse
     };
-  }, [commentsCount, sitePolygon]);
+  }, [commentsCount, isLoading, sitePolygon, t]);
 
   const submitDisabled = !isSitePolygonSubmittable(sitePolygon);
   const submitDisabledTooltip = getSingleSitePolygonSubmitTooltip(sitePolygon, t);
-  const showRunValidationAsPrimary = !isAdminReview && shouldShowRunValidationAsPrimaryAction(sitePolygon);
 
   const approveDisabled = !isSitePolygonApprovable(sitePolygon);
   const approveDisabledTooltip = getSingleSitePolygonApproveTooltip(sitePolygon, t);
@@ -131,12 +130,10 @@ export function PolygonPopupChampions({
   }, [sitePolygon?.uuid]);
 
   const handleEdit = useCallback(() => {
-    openPolygonEditDrawerForSitePolygon(sitePolygon, metrics.polygonName);
-    closeMapPopup();
-  }, [closeMapPopup, metrics.polygonName, sitePolygon]);
-
-  const handleComment = useCallback(() => {
-    openPolygonEditDrawerForSitePolygon(sitePolygon, metrics.polygonName, "comments");
+    openPolygonEditDrawer({
+      polygonUuid: getSitePolygonGeometryUuid(sitePolygon) ?? undefined,
+      polygonName: metrics.polygonName
+    });
     closeMapPopup();
   }, [closeMapPopup, metrics.polygonName, sitePolygon]);
 
@@ -192,14 +189,12 @@ export function PolygonPopupChampions({
             submitDisabledTooltip={submitDisabledTooltip}
             onSubmit={handleRequestSubmit}
             onEdit={handleEdit}
-            onComment={handleComment}
             onClose={closeMapPopup}
             onViewDetails={handleViewDetails}
             viewDetailsDisabled={!canNavigateToSitePolygonViewDetails(geometryUuid, siteUuid)}
             tooltipType={tooltipType}
             isAdminReview={isAdminReview}
-            onRunValidation={isAdminReview || showRunValidationAsPrimary ? handleRunValidation : undefined}
-            showRunValidationAsPrimary={showRunValidationAsPrimary}
+            onRunValidation={isAdminReview ? handleRunValidation : undefined}
             approveDisabled={approveDisabled}
             approveDisabledTooltip={approveDisabledTooltip}
             onApprove={handleApprove}
