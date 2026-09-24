@@ -2,8 +2,7 @@ import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback } from "react";
 
-import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
-import Modal from "@/redesignComponents/containers/Modal/Modal";
+import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
 
 export interface ExistingPolygonProps {
   open: boolean;
@@ -15,10 +14,6 @@ export interface ExistingPolygonProps {
 const ExistingPolygon: FC<ExistingPolygonProps> = ({ open, siteName, onOpenChange, onView }) => {
   const t = useT();
 
-  const handleClose = useCallback(() => {
-    onOpenChange(false);
-  }, [onOpenChange]);
-
   const handleView = useCallback(() => {
     onView();
     onOpenChange(false);
@@ -27,15 +22,12 @@ const ExistingPolygon: FC<ExistingPolygonProps> = ({ open, siteName, onOpenChang
   const displaySiteName = siteName.trim().length > 0 ? siteName : t("this site");
 
   return (
-    <Modal
+    <ModalConfirmation
       open={open}
-      onClose={handleClose}
+      onOpenChange={onOpenChange}
       size="medium"
-      header={
-        <Text textStyle="400-bold" color="neutral.800">
-          {t("Existing polygon")}
-        </Text>
-      }
+      title={t("Existing polygon")}
+      contentLayout="custom"
       content={
         <Box px={4}>
           <Text textStyle="400" color="neutral.900">
@@ -52,24 +44,12 @@ const ExistingPolygon: FC<ExistingPolygonProps> = ({ open, siteName, onOpenChang
           </Text>
         </Box>
       }
-      footer={
-        <ButtonGroup
-          buttons={[
-            {
-              id: "cancel",
-              variant: "secondary",
-              children: t("Cancel"),
-              onClick: handleClose
-            },
-            {
-              id: "view",
-              variant: "primary",
-              children: t("View"),
-              onClick: handleView
-            }
-          ]}
-        />
-      }
+      confirmButton={{
+        id: "view",
+        variant: "primary",
+        children: t("View"),
+        onClick: handleView
+      }}
     />
   );
 };
