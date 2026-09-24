@@ -1,5 +1,5 @@
 export { AgriculturalLandIcon } from "./RestorationAndLand/AgriculturalLandIcon";
-export { AgroforestyIcon } from "./RestorationAndLand/AgroforestyIcon";
+export { AgroforestryIcon } from "./RestorationAndLand/AgroforestryIcon";
 export { ApplicationsIcon } from "./NavigationSections/ApplicationsIcon";
 export { AreaHectaresIcon } from "./DataVisualisation/AreaHectaresIcon";
 export { AreaHectaresCircleIcon } from "./DataVisualisation/AreaHectaresCircleIcon";

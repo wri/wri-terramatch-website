@@ -1,4 +1,5 @@
 import { Flex, Spinner, Text } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import React, { FC, UIEvent, useCallback } from "react";
 
 import ImageGalleryCard, {
@@ -6,6 +7,8 @@ import ImageGalleryCard, {
 } from "@/redesignComponents/content/ContentCard/ImageGalleryCard/ImageGalleryCard";
 
 import Modal from "./Modal";
+
+const LOAD_MORE_THRESHOLD_PX = 80;
 
 interface ModalSelectGalleryImagesProps {
   open: boolean;
@@ -26,12 +29,15 @@ const ModalSelectGalleryImages: FC<ModalSelectGalleryImagesProps> = ({
   onLoadMore,
   onSelectImage
 }) => {
+  const t = useT();
   const handleScroll = useCallback(
     (event: UIEvent<HTMLDivElement>) => {
       const target = event.currentTarget;
-      const threshold = 80; // px from bottom
-
-      if (hasMore && !isLoading && target.scrollTop + target.clientHeight >= target.scrollHeight - threshold) {
+      if (
+        hasMore &&
+        !isLoading &&
+        target.scrollTop + target.clientHeight >= target.scrollHeight - LOAD_MORE_THRESHOLD_PX
+      ) {
         onLoadMore();
       }
     },
@@ -45,7 +51,7 @@ const ModalSelectGalleryImages: FC<ModalSelectGalleryImagesProps> = ({
       size="large"
       header={
         <Text textStyle="400-bold" color="neutral.800">
-          Select Images from Gallery
+          {t("Select Images from Gallery")}
         </Text>
       }
       maxHeight="100vh"

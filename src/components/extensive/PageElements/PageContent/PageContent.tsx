@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { FC, HTMLAttributes } from "react";
 import { twMerge } from "tailwind-merge";
 
-import { useLayoutShell } from "@/redesignComponents/Loayout/LayoutShell.provider";
+import { useLayoutShell } from "@/redesignComponents/Layout/LayoutShell.provider";
 
 export interface PageContentProps extends HTMLAttributes<HTMLDivElement> {
   heightFull?: boolean;

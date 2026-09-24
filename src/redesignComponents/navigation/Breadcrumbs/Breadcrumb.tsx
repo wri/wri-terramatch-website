@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { Breadcrumb as WriBreadcrumb } from "@worldresources/wri-design-systems";
-import { FC } from "react";
+import type { ComponentProps, FC } from "react";
 
 import { getThemedColor } from "@/lib/theme";
 
@@ -8,7 +8,7 @@ export interface BreadcrumbProps {
   links: { label: string; link: string; icon?: React.ReactNode }[];
   separator?: React.ReactNode;
   maxItems?: number;
-  linkRouter: any;
+  linkRouter: ComponentProps<typeof WriBreadcrumb>["linkRouter"];
   size?: "small" | "default";
   className?: string;
 }
@@ -27,7 +27,7 @@ const Breadcrumb: FC<BreadcrumbProps> = props => {
 
   return (
     <StyledBreadcrumbWrapper className={className}>
-      <WriBreadcrumb links={links} separator={separator} maxItems={maxItems} linkRouter={linkRouter!} size={size} />
+      <WriBreadcrumb links={links} separator={separator} maxItems={maxItems} linkRouter={linkRouter} size={size} />
     </StyledBreadcrumbWrapper>
   );
 };

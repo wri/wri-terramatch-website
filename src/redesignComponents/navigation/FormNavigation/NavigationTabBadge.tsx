@@ -12,8 +12,9 @@ interface NavigationTabBadgeProps {
 
 export const NavigationTabBadge: FC<NavigationTabBadgeProps> = ({ type, isSelected, index }) => {
   return (
-    <div className={twMerge("shrink-0", getBadgeClasses(type, isSelected))}>
+    <Box className={twMerge("shrink-0", getBadgeClasses(type, isSelected))}>
       {getBadgeContent(type, index + 1, isSelected)}
-    </div>
+    </Box>
   );
 };
+import { Box } from "@chakra-ui/react";

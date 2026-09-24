@@ -56,6 +56,7 @@ export interface ListSectionHeaderProps {
   captionHref?: string;
   statusLabels?: ReactNode;
   icon?: ReactNode;
+  open?: boolean;
   className?: string;
   dueDate?: string;
   dueIcon?: ReactNode;

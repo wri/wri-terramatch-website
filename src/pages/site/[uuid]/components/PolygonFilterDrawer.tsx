@@ -18,7 +18,7 @@ import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/Button
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import Drawer from "@/redesignComponents/containers/Drawer/Drawer";
 import FilterPanel from "@/redesignComponents/containers/FilterPanel/FilterPanel";
-import FilterCard from "@/redesignComponents/containers/FilterPanel/FilterPanelElements/FilteCards";
+import FilterCard from "@/redesignComponents/containers/FilterPanel/FilterPanelElements/FilterCards";
 import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
 import Switch from "@/redesignComponents/Forms/Actions/Switch/Switch";
 import DateRangeInput from "@/redesignComponents/Forms/Inputs/DateInputs/DateRangeInputs/DateRangeInput";

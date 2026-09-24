@@ -1,6 +1,8 @@
 import { Icon, IconProps } from "@chakra-ui/react";
 import React, { FC } from "react";
 
+import { getThemedColor } from "@/lib/theme";
+
 interface AreaHectaresCircleProps extends IconProps {
   color?: string;
   innerBgColor?: string;
@@ -9,7 +11,12 @@ interface AreaHectaresCircleProps extends IconProps {
 }
 
 export const AreaHectaresCircleIcon: FC<AreaHectaresCircleProps> = (props: AreaHectaresCircleProps) => {
-  const { color = "#284206", innerBgColor = "#E6F7CF", outerBgColor = "transparent", borderColor = "#ABDC6A" } = props;
+  const {
+    color = getThemedColor("secondary", 800),
+    innerBgColor = getThemedColor("secondary", 300),
+    outerBgColor = "transparent",
+    borderColor = getThemedColor("secondary", 500)
+  } = props;
 
   return (
     <Icon {...props}>

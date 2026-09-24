@@ -1,4 +1,5 @@
-import { Accordion as AccordionChakra, Button, Flex, Text } from "@chakra-ui/react";
+import { Accordion as AccordionChakra, Box, Button, Flex, Text } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import type { FC, KeyboardEvent, MouseEvent, ReactNode } from "react";
 
@@ -55,8 +56,9 @@ const SideNavigationItem: FC<SideNavigationItemProps> = props => {
     items = [],
     isCollapsed = false
   } = props;
+  const t = useT();
   const hasItems = items.length > 0;
-  const hasHref = Boolean(href);
+  const hasHref = href.length > 0;
 
   const handleAddClick = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
@@ -72,16 +74,19 @@ const SideNavigationItem: FC<SideNavigationItemProps> = props => {
       return;
     }
 
-    const target = event.target as HTMLElement;
-    const isActionKeyEvent = Boolean(target.closest("[data-side-navigation-item-actions]"));
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+    const isActionKeyEvent = target.closest("[data-side-navigation-item-actions]") != null;
 
     if (isActionKeyEvent) {
       return;
     }
 
-    const trigger = target.closest('[data-side-navigation-item="trigger"]') as HTMLElement | null;
+    const trigger = target.closest('[data-side-navigation-item="trigger"]');
 
-    if (!trigger) {
+    if (!(trigger instanceof HTMLElement)) {
       return;
     }
 
@@ -96,7 +101,7 @@ const SideNavigationItem: FC<SideNavigationItemProps> = props => {
       </Badge>
       {isCollapsed ? null : (
         <>
-          <Text textStyle="400">{label}</Text>
+          <Text textStyle="400">{t(label)}</Text>
           <NumberBadge count={notificationValue} />
         </>
       )}
@@ -105,7 +110,7 @@ const SideNavigationItem: FC<SideNavigationItemProps> = props => {
 
   const itemActions = (
     <Flex alignItems="center" gap={2} data-side-navigation-item-actions>
-      {onAddClick ? (
+      {onAddClick != null ? (
         <Button onClick={handleAddClick} className={actionButtonClassName}>
           <PlusIcon boxSize={4} />
         </Button>
@@ -128,7 +133,7 @@ const SideNavigationItem: FC<SideNavigationItemProps> = props => {
       data-side-navigation-item-row
       className={classNames(
         "h-9 w-full items-center justify-between gap-2",
-        "rounded-md border-2 border-theme-primary-800 px-3 py-2 text-theme-neutral-100",
+        "border-theme-primary-800 text-theme-neutral-100 rounded-md border-2 px-3 py-2",
         "hover:bg-theme-primary-500/20",
         "active:bg-theme-primary-500/40"
       )}
@@ -148,11 +153,11 @@ const SideNavigationItem: FC<SideNavigationItemProps> = props => {
   if (hasItems) {
     return (
       <AccordionChakra.Root collapsible onKeyDown={handleAccordionRootKeyDown}>
-        <AccordionChakra.Item value={label || "side-navigation-item"}>
+        <AccordionChakra.Item value={label.length === 0 ? "side-navigation-item" : label}>
           <AccordionChakra.ItemTrigger {...interactiveItemProps}>{itemRow}</AccordionChakra.ItemTrigger>
           <AccordionChakra.ItemContent>
             <Flex>
-              <div className="mr-1 ml-5 w-[0.125rem] shrink-0 bg-theme-neutral-100" />
+              <Box className="bg-theme-neutral-100 ml-5 mr-1 w-[0.125rem] shrink-0" />
               <Flex flexDirection="column" gap={1} width="100%">
                 {items.map(item => (
                   <SideNavigationLinkItem

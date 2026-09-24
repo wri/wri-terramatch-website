@@ -1,9 +1,9 @@
 import type { DatePickerRootProps, DateValue } from "@ark-ui/react";
 import { DatePicker, Portal, useDatePicker } from "@ark-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { Global } from "@emotion/react";
 import styled from "@emotion/styled";
 import { FieldWrapper, getThemedColor } from "@worldresources/wri-design-systems";
-import classNames from "classnames";
 import type { FC, KeyboardEvent as ReactKeyboardEvent } from "react";
 import { useCallback, useMemo, useRef, useState } from "react";
 
@@ -56,7 +56,7 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
   const isFilled = dates.length > 0;
   const setDates = useCallback(
     (next: DateValue[]) => {
-      if (valueProp !== undefined) {
+      if (valueProp != null) {
         onValueChange?.(next);
       } else {
         setUncontrolledDates(next);
@@ -80,19 +80,19 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
       return formatDateValue(date, dateFormat);
     },
     parse(value): DateValue | undefined {
-      return parseDateInput(value, dateFormat) as DateValue | undefined;
+      return parseDateInput(value, dateFormat);
     },
     onValueChange({ value }) {
       const preserved = preservedRef.current;
 
-      if (preserved && value.length === 1) {
+      if (preserved != null && value.length === 1) {
         preservedRef.current = null;
         const [a, b] = value[0].compare(preserved.date) > 0 ? [preserved.date, value[0]] : [value[0], preserved.date];
         setDates([a, b]);
         return;
       }
 
-      if (preserved && value.length === 0) return;
+      if (preserved != null && value.length === 0) return;
 
       preservedRef.current = null;
       setDates(value);
@@ -105,7 +105,7 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
 
   const handleClearDate = useCallback(
     (index: 0 | 1) => {
-      if (preservedRef.current) {
+      if (preservedRef.current != null) {
         preservedRef.current = null;
         setDates([]);
         picker.setOpen(true);
@@ -114,7 +114,7 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
 
       const keepDate = index === 0 ? dates[1] : dates[0];
 
-      if (!keepDate) {
+      if (keepDate == null) {
         preservedRef.current = null;
         setDates([]);
       } else {
@@ -129,7 +129,7 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
 
   const handleInputKeyDown = useCallback(
     (event: ReactKeyboardEvent<HTMLInputElement>) => {
-      if (disabled || picker.open) return;
+      if (disabled === true || picker.open) return;
       if (event.key === "ArrowDown" || event.key === "ArrowUp") {
         event.preventDefault();
         picker.setOpen(true);
@@ -155,30 +155,30 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
         data-invalid={errorMessage != null ? "" : undefined}
         data-open={picker.open ? "" : undefined}
         data-filled={isFilled ? "" : undefined}
-        data-disabled={disabled ? "" : undefined}
+        data-disabled={disabled === true ? "" : undefined}
       >
         <Global styles={calendarGlobalStyles} />
         <DatePicker.RootProvider value={picker}>
           <DatePicker.Control
-            onClick={() => !disabled && picker.setOpen(true)}
-            style={{ gap: "0.5rem", cursor: disabled ? "not-allowed" : "pointer" }}
+            onClick={() => disabled !== true && picker.setOpen(true)}
+            style={{ gap: "0.5rem", cursor: disabled === true ? "not-allowed" : "pointer" }}
           >
             <CalendarIcon style={{ color: getThemedColor("neutral", 600) }} />
-            <div className="flex justify-center">
+            <Box display="flex" justifyContent="center">
               <DatePicker.Input index={0} placeholder={dateFormat} onKeyDown={handleInputKeyDown} />
-            </div>
+            </Box>
 
-            <span
-              className={classNames("text-14-light text-theme-neutral-800", {
-                "!text-theme-neutral-500": !dates[0] && !dates[1]
-              })}
+            <Text
+              as="span"
+              textStyle="400"
+              color={dates[0] == null && dates[1] == null ? "neutral.500" : "neutral.800"}
             >
               —
-            </span>
+            </Text>
 
-            <div className="flex justify-center">
+            <Box display="flex" justifyContent="center">
               <DatePicker.Input index={1} placeholder={dateFormat} onKeyDown={handleInputKeyDown} />
-            </div>
+            </Box>
           </DatePicker.Control>
           <Portal>
             <DatePicker.Positioner>

@@ -1395,3 +1395,67 @@ export type UpdatePolygonAttributeDefinitionData = {
 export type UpdatePolygonAttributeDefinitionBody = {
   data: UpdatePolygonAttributeDefinitionData;
 };
+
+export type ResearchTreeCountDto = {
+  /**
+   * The UUID of the project this tree count belongs to
+   */
+  projectUuid: string;
+  verificationMethod: "field" | "remote";
+  reportedCount: number;
+  treeCountAdj: number;
+  upperBounds: number;
+  lowerBounds: number;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+};
+
+export type CreateResearchTreeCountAttributes = {
+  /**
+   * The UUID of the project this tree count belongs to
+   *
+   * @format uuid
+   */
+  projectUuid: string;
+  verificationMethod: "field" | "remote";
+  reportedCount: number;
+  treeCountAdj: number;
+  upperBounds: number;
+  lowerBounds: number;
+};
+
+export type CreateResearchTreeCountData = {
+  type: "researchTreeCounts";
+  attributes: CreateResearchTreeCountAttributes;
+};
+
+export type CreateResearchTreeCountBody = {
+  data: CreateResearchTreeCountData;
+};
+
+export type UpdateResearchTreeCountAttributes = {
+  verificationMethod?: "field" | "remote";
+  reportedCount?: number;
+  treeCountAdj?: number;
+  upperBounds?: number;
+  lowerBounds?: number;
+};
+
+export type UpdateResearchTreeCountData = {
+  type: "researchTreeCounts";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: UpdateResearchTreeCountAttributes;
+};
+
+export type UpdateResearchTreeCountBody = {
+  data: UpdateResearchTreeCountData;
+};

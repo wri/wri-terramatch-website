@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC, useMemo } from "react";
+import { FC } from "react";
 
 import {
   DisturbanceReportFullDto,
@@ -40,22 +40,15 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
   const t = useT();
   const router = useRouter();
 
-  const entityTitle = useMemo(() => {
-    if (entityName === "site-report") return (report as SiteReportFullDto)?.siteName ?? "";
-    if (entityName === "nursery-report") return (report as NurseryReportFullDto)?.nurseryName ?? "";
-    if (entityName === "project-report") return (report as ProjectReportFullDto)?.projectName ?? "";
-    if (entityName === "disturbance-report") return (report as DisturbanceReportFullDto)?.projectName ?? "";
-    if (entityName === "financial-report") return (report as FinancialReportFullDto)?.organisationName ?? "";
-    if (entityName === "srp-report") return (report as SrpReportFullDto)?.projectName ?? "";
-  }, [entityName, report]);
-
-  const reportTitle = useMemo(() => {
-    if (entityName === "site-report") return (report as SiteReportFullDto)?.reportTitle ?? "";
-    if (entityName === "nursery-report") return (report as NurseryReportFullDto)?.reportTitle ?? "";
-    if (entityName === "project-report") return (report as ProjectReportFullDto)?.reportTitle ?? "";
-    if (entityName === "financial-report") return (report as FinancialReportFullDto)?.reportTitle ?? "";
-    if (entityName === "srp-report") return (report as SrpReportFullDto)?.reportTitle ?? "";
-  }, [entityName, report]);
+  const entityTitle =
+    "siteName" in report
+      ? report.siteName ?? ""
+      : "nurseryName" in report
+      ? report.nurseryName ?? ""
+      : "projectName" in report
+      ? report.projectName ?? ""
+      : report.organisationName ?? "";
+  const reportTitle = "reportTitle" in report ? report.reportTitle ?? "" : "";
 
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler(entityName, report.uuid);
   const { handleEdit, EditModals } = useGetEditEntityHandler({
@@ -65,8 +58,8 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
     updateRequestStatus: report.updateRequestStatus,
     feedback: report.feedback,
     useStatusModal: true,
-    entityTitle: entityTitle ?? "",
-    reportTitle: reportTitle ?? "",
+    entityTitle,
+    reportTitle,
     useInformationRequiredModal: true
   });
 
@@ -106,14 +99,14 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
           <DateRange
             startDate={formatMonthYear(dueAt ?? report.dueAt)}
             endDate={formatMonthYear(report.updatedAt)}
-            startDateLabel={`${t("Due")}:`}
-            endDateLabel={`${t("Last updated")}:`}
+            startDateLabel={t("Due:")}
+            endDateLabel={t("Last updated:")}
           />
           <Flex gap={2} className="items-center" mb={2.5}>
             <Text textStyle="300" color="neutral.800" lineHeight="normal">
               {t("Submitted by:")}
             </Text>
-            {report.createdByFirstName !== null && report.createdByLastName !== null ? (
+            {report.createdByFirstName != null && report.createdByLastName != null ? (
               <>
                 <Avatar
                   ariaLabel={`${report.createdByFirstName} ${report.createdByLastName} avatar`}

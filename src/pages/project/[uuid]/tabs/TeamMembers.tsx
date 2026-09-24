@@ -7,8 +7,7 @@ import { bulkDeleteUserAssociations, useUserAssociations } from "@/connections/U
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { UserAssociationDto } from "@/generated/v3/userService/userServiceSchemas";
 import { getThemedColor } from "@/lib/theme";
-import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
-import Modal from "@/redesignComponents/containers/Modal/Modal";
+import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
 import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
 import CustomTableCell from "@/redesignComponents/dataDisplay/Table/components/TableCell";
 import Table, { type TableRenderRowContext } from "@/redesignComponents/dataDisplay/Table/Table";
@@ -285,12 +284,13 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
         open={showInviteModal}
         onClose={() => setShowInviteModal(false)}
       />
-      <Modal
-        open={!!deletePartnerData}
-        onClose={handleCloseDeleteModal}
+      <ModalConfirmation
+        open={deletePartnerData != null}
+        onOpenChange={handleCloseDeleteModal}
         size="medium"
         blocking
-        header={<b className="text-theme-neutral-800">{t("Remove Team Member")}</b>}
+        title={t("Remove Team Member")}
+        contentLayout="custom"
         content={
           <Text
             textStyle="400"
@@ -306,23 +306,12 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
             }}
           />
         }
-        footer={
-          <ButtonGroup
-            buttons={[
-              {
-                id: "cancel",
-                variant: "borderless",
-                children: t("Cancel"),
-                onClick: handleCloseDeleteModal
-              },
-              {
-                id: "confirm",
-                children: t("Confirm"),
-                onClick: handleConfirmDelete
-              }
-            ]}
-          />
-        }
+        confirmButton={{
+          id: "confirm",
+          children: t("Confirm"),
+          onClick: handleConfirmDelete
+        }}
+        cancelButton={{ variant: "borderless" }}
       />
     </Box>
   );

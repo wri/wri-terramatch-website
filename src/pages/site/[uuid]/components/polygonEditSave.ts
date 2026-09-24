@@ -4,7 +4,7 @@ import { pruneBoundingBoxesCache } from "@/connections/BoundingBox";
 import {
   createPolygonVersion,
   createSitePolygonsResource,
-  loadAllSitePolygons,
+  loadSitePolygonMapIndex,
   pruneSitePolygonsCache
 } from "@/connections/SitePolygons";
 import type {
@@ -357,12 +357,12 @@ export const resolveGeometryPolygonUuidAfterSave = async (
   }
 
   try {
-    const polygons = await loadAllSitePolygons({
+    const mapIndex = await loadSitePolygonMapIndex({
       entityName: "sites",
       entityUuid: siteUuid,
       enabled: true
     });
-    const freshPolygon = polygons.find(item => item.uuid === savedPolygon.uuid);
+    const freshPolygon = mapIndex.data?.polygons.find(item => item.uuid === savedPolygon.uuid);
     const resolvedUuid = freshPolygon?.polygonUuid ?? fromCreateResponse ?? null;
 
     if (resolvedUuid == null || resolvedUuid === "") {

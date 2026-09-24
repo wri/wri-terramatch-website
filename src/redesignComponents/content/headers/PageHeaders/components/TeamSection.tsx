@@ -36,7 +36,7 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
         }
       }}
     >
-      <div className="flex w-fit flex-col gap-2" onClick={gotoTeamMembers} role="button" tabIndex={0}>
+      <Flex width="fit-content" flexDirection="column" gap={2} onClick={gotoTeamMembers} role="button" tabIndex={0}>
         <Text color="primary.900" textStyle="300-bold">
           {t("Team:")}
         </Text>
@@ -74,7 +74,7 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
                 backgroundColor="transparent"
                 color="secondary.900"
                 width="auto"
-                className="flex items-center gap-1 group-hover:bg-theme-primary-500/20"
+                className="group-hover:bg-theme-primary-500/20 flex items-center gap-1"
               >
                 {t("Add Team Members")}
                 <ChevronRightIcon color="neutral.800" className="h-2.5 w-2.5" />
@@ -82,7 +82,7 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
             </Flex>
           )}
         </Flex>
-      </div>
+      </Flex>
 
       {/* Logos read framework from FrameworkProvider (project page); no frameworkKey prop. */}
       <ContextCondition frameworksShow={TERRAFUND_AFR100_BANNER_LOGO_FRAMEWORKS}>

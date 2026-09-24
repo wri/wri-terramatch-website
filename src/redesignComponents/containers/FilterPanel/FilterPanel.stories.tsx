@@ -9,7 +9,7 @@ import Search from "../../Forms/Actions/Search/Search";
 import CheckboxList from "../../Forms/Inputs/CheckboxList";
 import { LanguageIcon } from "../../foundations/Icons";
 import FilterPanel from "./FilterPanel";
-import FilterCard from "./FilterPanelElements/FilteCards";
+import FilterCard from "./FilterPanelElements/FilterCards";
 
 const sampleOptions = [
   {

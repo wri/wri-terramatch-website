@@ -13,7 +13,8 @@ import {
   ClippedVersionDto,
   ProjectPolygonDto,
   AnrPlotGeometryDto,
-  PolygonAttributeDefinitionDto
+  PolygonAttributeDefinitionDto,
+  ResearchTreeCountDto
 } from "./researchServiceSchemas";
 
 export const RESEARCH_SERVICE_RESOURCES = [
@@ -29,7 +30,8 @@ export const RESEARCH_SERVICE_RESOURCES = [
   "clippedVersions",
   "projectPolygons",
   "anrPlotGeometries",
-  "polygonAttributeDefinitions"
+  "polygonAttributeDefinitions",
+  "researchTreeCounts"
 ] as const;
 
 export type ResearchServiceApiResources = {
@@ -46,6 +48,7 @@ export type ResearchServiceApiResources = {
   projectPolygons: StoreResourceMap<ProjectPolygonDto>;
   anrPlotGeometries: StoreResourceMap<AnrPlotGeometryDto>;
   polygonAttributeDefinitions: StoreResourceMap<PolygonAttributeDefinitionDto>;
+  researchTreeCounts: StoreResourceMap<ResearchTreeCountDto>;
 };
 
 export const PolygonAttributeDefinitionConstants = {

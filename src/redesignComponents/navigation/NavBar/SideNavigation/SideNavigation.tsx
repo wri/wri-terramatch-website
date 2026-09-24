@@ -1,4 +1,5 @@
 import { Button, Flex, Text } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import React, { FC, useEffect, useState } from "react";
 
@@ -28,6 +29,7 @@ interface SideNavigationLink {
 }
 
 interface SideNavigationGroup {
+  id: string;
   links: SideNavigationLink[];
 }
 
@@ -40,6 +42,7 @@ interface SideNavigationProps {
 
 const SideNavigation: FC<SideNavigationProps> = ({ title, groups, collapsed = false, isCollapsedDisabled = false }) => {
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
+  const t = useT();
 
   useEffect(() => {
     if (isCollapsedDisabled) {
@@ -56,7 +59,7 @@ const SideNavigation: FC<SideNavigationProps> = ({ title, groups, collapsed = fa
   return (
     <Flex
       className={classNames(
-        "flex-col bg-theme-primary-800",
+        "bg-theme-primary-800 flex-col",
         shellTransition,
         isCollapsed ? COLLAPSED_WIDTH_CLASS : EXPANDED_WIDTH_CLASS
       )}
@@ -74,7 +77,7 @@ const SideNavigation: FC<SideNavigationProps> = ({ title, groups, collapsed = fa
           textStyle="400-bold"
           className={classNames(isCollapsed ? "max-w-0 opacity-0" : "max-w-[12.5rem] opacity-100")}
         >
-          {title}
+          {t(title)}
         </Text>
         <ChevronRightIcon
           boxSize={4}
@@ -84,8 +87,8 @@ const SideNavigation: FC<SideNavigationProps> = ({ title, groups, collapsed = fa
           )}
         />
       </Button>
-      {groups.map((group, index) => (
-        <React.Fragment key={index}>
+      {groups.map(group => (
+        <React.Fragment key={group.id}>
           <SimpleDivider backgroundColor="primary.700" />
           <Flex
             className={classNames(

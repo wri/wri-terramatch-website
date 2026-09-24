@@ -2,7 +2,7 @@ import { Box, Flex, List, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useMemo } from "react";
 
-import { useAllSitePolygons } from "@/connections/SitePolygons";
+import { useSitePolygonMapIndex } from "@/connections/SitePolygons";
 
 import type { GeometryUploadComparisonResult } from "../../hooks/useUploadPolygons";
 
@@ -15,7 +15,7 @@ const MatchingPolygonsContent: FC<MatchingPolygonsContentProps> = ({ siteUuid, c
   const t = useT();
   const { existingUuids, featuresForVersioning, featuresForCreation } = comparison;
 
-  const { data: sitePolygonData = [] } = useAllSitePolygons({
+  const [, { data: mapIndex }] = useSitePolygonMapIndex({
     entityName: "sites",
     entityUuid: siteUuid,
     enabled: siteUuid != null && siteUuid !== ""
@@ -24,11 +24,11 @@ const MatchingPolygonsContent: FC<MatchingPolygonsContentProps> = ({ siteUuid, c
   const versionedPolygons = useMemo(
     () =>
       existingUuids.map(uuid => {
-        const polygon = sitePolygonData.find(p => p.uuid === uuid);
-        const name = polygon?.name ?? polygon?.versionName ?? t("Unnamed Polygon");
+        const polygon = mapIndex?.polygons.find(p => p.uuid === uuid);
+        const name = polygon?.name ?? t("Unnamed Polygon");
         return { uuid, name, isKnown: polygon != null };
       }),
-    [existingUuids, sitePolygonData, t]
+    [existingUuids, mapIndex, t]
   );
 
   const hasVersioning = featuresForVersioning > 0;
