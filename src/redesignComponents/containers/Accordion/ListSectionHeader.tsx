@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import type { FC, MouseEvent } from "react";
 
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
+import { FolderIcon, FolderOpenIcon } from "@/redesignComponents/foundations/Icons";
 
 import type { ListSectionHeaderLevel, ListSectionHeaderProps } from "./types";
 
@@ -32,6 +33,7 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
   captionHref,
   statusLabels,
   icon,
+  open = false,
   className,
   dueDate,
   dueIcon,
@@ -40,6 +42,13 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
   const gap = levelStyles[level].gap;
   const isTopLevelLink = titleHref != null;
   const isCaptionLink = captionHref != null;
+  const resolvedIcon =
+    icon ??
+    (level === "top-level"
+      ? open
+        ? <FolderOpenIcon boxSize={5} color="primary.600" />
+        : <FolderIcon boxSize={5} color="primary.300" />
+      : null);
 
   const router = useRouter();
 
@@ -76,9 +85,9 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
   return (
     <Flex alignItems="center" justifyContent="space-between" width="100%" gap={3} className={className}>
       <Flex alignItems={level === "top-level" ? "flex-start" : "baseline"} gap={gap} minWidth={0} flex={1}>
-        {icon != null && (
+        {resolvedIcon != null && (
           <Box flexShrink={0} paddingTop={level === "top-level" ? 1 : 0}>
-            {icon}
+            {resolvedIcon}
           </Box>
         )}
         <Flex direction="column" minWidth={0} alignItems="flex-start">

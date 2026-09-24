@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
-import { EditIcon, FolderIcon, FolderOpenIcon } from "@/redesignComponents/foundations/Icons";
+import { EditIcon } from "@/redesignComponents/foundations/Icons";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
 import Accordion from "./Accordion";
@@ -136,9 +136,7 @@ export const ListSectionHeaderTopLevel: Story = {
             titleHref="#"
             onTitleClick={() => console.log("Title link clicked")}
             caption="caption"
-            icon={
-              open ? <FolderOpenIcon boxSize={5} color="primary.600" mt={2} mb='auto' /> : <FolderIcon boxSize={5} color="primary.600" mt={2} mb='auto' />
-            }
+            open={open}
             statusLabels={<TextBadge>Label</TextBadge>}
           />
         }
@@ -163,6 +161,7 @@ export const ListSectionHeaderSubLevel: Story = {
             level="sub-level"
             label="Label"
             title="Header Title"
+            open={open}
             dueDate="dd/mm/yyyy"
             statusLabels={
               <Flex alignItems="center" gap={2}>

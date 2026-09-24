@@ -7,7 +7,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalProps } from "@/components/extensive/Modal/Modal";
 import { ModalBaseSubmit } from "@/components/extensive/Modal/ModalsBases";
-import { useAllSitePolygons } from "@/connections/SitePolygons";
+import { useSitePolygonMapIndex } from "@/connections/SitePolygons";
 
 type IdentifiedPolygonItem = {
   id: number | string;
@@ -50,23 +50,23 @@ const ModalIdentified: FC<ModalApproveProps> = ({
 }) => {
   const t = useT();
 
-  const { data: sitePolygonData = [] } = useAllSitePolygons({
+  const [, { data: mapIndex }] = useSitePolygonMapIndex({
     entityName: "sites",
     entityUuid: siteUuid,
-    enabled: !!siteUuid
+    enabled: siteUuid != null && siteUuid !== ""
   });
 
   const transformedPolygons = useMemo<IdentifiedPolygonItem[]>(() => {
     return existingUuids.map(uuid => {
-      const polygon = sitePolygonData.find(p => p.uuid === uuid);
-      const displayName = polygon != null ? polygon.name ?? polygon.versionName ?? t("Unnamed Polygon") : uuid;
+      const polygon = mapIndex?.polygons.find(p => p.uuid === uuid);
+      const displayName = polygon != null ? polygon.name ?? t("Unnamed Polygon") : uuid;
       return {
         id: polygon?.uuid ?? uuid,
         name: displayName,
         is_present: polygon != null
       };
     });
-  }, [existingUuids, sitePolygonData, t]);
+  }, [existingUuids, mapIndex, t]);
 
   return (
     <ModalBaseSubmit {...rest}>

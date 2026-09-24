@@ -428,27 +428,6 @@ export type TaskLightDto = {
   updatedAt: string;
 };
 
-export type TaskFullDto = {
-  /**
-   * Indicates if this resource has the full resource definition.
-   */
-  lightResource: boolean;
-  uuid: string;
-  projectName: string;
-  organisationName: string;
-  frameworkKey: string;
-  status: string;
-  /**
-   * @format date-time
-   */
-  dueAt: string;
-  /**
-   * @format date-time
-   */
-  updatedAt: string;
-  treesPlantedCount: number;
-};
-
 export type ProjectReportLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -569,6 +548,13 @@ export type SiteReportLightDto = {
    */
   createdAt: string;
   nothingToReport: boolean | null;
+  totalTreesPlantedCount: number | null;
+  totalSeedsPlantedCount: number | null;
+  /**
+   * Sum of tree species amounts for collection 'anr' on this site report (disaggregated ANR reporting)
+   */
+  totalTreesRegeneratingSpeciesCount: number | null;
+  numTreesRegenerating: number | null;
 };
 
 export type NurseryReportLightDto = {
@@ -638,6 +624,7 @@ export type NurseryReportLightDto = {
    */
   createdAt: string;
   nothingToReport: boolean | null;
+  seedlingsYoungTrees: number | null;
 };
 
 export type SrpReportLightDto = {
@@ -693,6 +680,27 @@ export type SrpReportLightDto = {
    * @format date-time
    */
   submittedAt: string | null;
+};
+
+export type TaskFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  projectName: string;
+  organisationName: string;
+  frameworkKey: string;
+  status: string;
+  /**
+   * @format date-time
+   */
+  dueAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  treesPlantedCount: number;
 };
 
 export type TaskUpdateAttributes = {
@@ -1366,6 +1374,10 @@ export type SiteLightDto = {
    * @format date-time
    */
   updatedAt: string;
+  /**
+   * The associated project uuid
+   */
+  projectUuid: string | null;
 };
 
 export type NurseryLightDto = {
@@ -1418,6 +1430,7 @@ export type NurseryLightDto = {
    * @format date-time
    */
   updatedAt: string;
+  projectUuid: string | null;
 };
 
 export type FinancialReportLightDto = {
@@ -1852,6 +1865,10 @@ export type SiteFullDto = {
    */
   updatedAt: string;
   /**
+   * The associated project uuid
+   */
+  projectUuid: string | null;
+  /**
    * When true, report generation is paused for this site. Independent of project archival.
    */
   isArchived: boolean;
@@ -1910,10 +1927,6 @@ export type SiteFullDto = {
   treeSpecies: MediaDto[];
   documentFiles: MediaDto[];
   stratificationForHeterogeneity: MediaDto;
-  /**
-   * The associated project uuid
-   */
-  projectUuid: string | null;
   /**
    * The associated project country
    */
@@ -1981,6 +1994,7 @@ export type NurseryFullDto = {
    * @format date-time
    */
   updatedAt: string;
+  projectUuid: string | null;
   /**
    * When true, report generation is paused for this nursery. Independent of project archival.
    */
@@ -1992,7 +2006,6 @@ export type NurseryFullDto = {
   plantingContribution: string | null;
   oldModel: string | null;
   overdueNurseryReportsTotal: number | null;
-  projectUuid: string | null;
   media: MediaDto[];
   file: MediaDto[];
   otherAdditionalDocuments: MediaDto[];
@@ -2212,10 +2225,10 @@ export type NurseryReportFullDto = {
    */
   createdAt: string;
   nothingToReport: boolean | null;
+  seedlingsYoungTrees: number | null;
   projectReportTitle: string | null;
   feedback: string | null;
   feedbackFields: string[] | null;
-  seedlingsYoungTrees: number | null;
   interestingFacts: string | null;
   sitePrep: string | null;
   sharedDriveLink: string | null;
@@ -2296,6 +2309,13 @@ export type SiteReportFullDto = {
    */
   createdAt: string;
   nothingToReport: boolean | null;
+  totalTreesPlantedCount: number | null;
+  totalSeedsPlantedCount: number | null;
+  /**
+   * Sum of tree species amounts for collection 'anr' on this site report (disaggregated ANR reporting)
+   */
+  totalTreesRegeneratingSpeciesCount: number | null;
+  numTreesRegenerating: number | null;
   projectReportTitle: string | null;
   feedback: string | null;
   feedbackFields: string[] | null;
@@ -2305,7 +2325,6 @@ export type SiteReportFullDto = {
   createdByLastName: string | null;
   approvedByFirstName: string | null;
   approvedByLastName: string | null;
-  numTreesRegenerating: number | null;
   regenerationDescription: string | null;
   invasiveSpeciesRemoved: string | null;
   invasiveSpeciesManagement: string | null;
@@ -2318,12 +2337,6 @@ export type SiteReportFullDto = {
   polygonStatus: string | null;
   totalNonTreeSpeciesPlantedCount: number | null;
   totalTreeReplantingCount: number | null;
-  totalTreesPlantedCount: number | null;
-  /**
-   * Sum of tree species amounts for collection 'anr' on this site report (disaggregated ANR reporting)
-   */
-  totalTreesRegeneratingSpeciesCount: number | null;
-  totalSeedsPlantedCount: number | null;
   plantingStatus: string | null;
   survivalCalculation: string | null;
   survivalDescription: string | null;
