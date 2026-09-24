@@ -5,15 +5,15 @@ import { useMedia, useMedias } from "@/connections/EntityAssociation";
 import { useGadmOptions } from "@/connections/Gadm";
 import { deleteMedia, fileUploadOptions, prepareFileForUpload, updateMedia, useUploadFile } from "@/connections/Media";
 import { useUserAssociations } from "@/connections/UserAssociation";
-import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import type { MediaDto, ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useFiles } from "@/hooks/useFiles";
-import { getPlantingStatus } from "@/pages/project/[uuid]/tabs/constants/Detail.constants";
 import ModalSelectGalleryImages from "@/redesignComponents/containers/Modal/ModalSelectGalleryImages";
 import ModalUploadImage from "@/redesignComponents/containers/Modal/ModalUploadImage";
 import { GalleryImageType } from "@/redesignComponents/content/ContentCard/ImageGalleryCard/ImageGalleryCard";
 import {
   countryCodeToFlag,
-  formatMonthYear
+  formatMonthYear,
+  mapPlantingStatusToProgressState
 } from "@/redesignComponents/content/headers/PageHeaders/ProjectHeader/projectHeader.utils";
 import { ProfileImage } from "@/redesignComponents/content/Images/ProfileImage/ProfileImage";
 import { PhotoLibraryIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
@@ -32,12 +32,20 @@ export interface ProjectHeaderProps {
   gotoTeamMembers: () => void;
 }
 
+const getImagePosition = (value: unknown): { x: number; y: number } | null => {
+  if (typeof value !== "object" || value == null || !("x" in value) || !("y" in value)) return null;
+
+  const { x, y } = value;
+  return typeof x === "number" && typeof y === "number" ? { x, y } : null;
+};
+
+const toGalleryImage = (media: MediaDto): GalleryImageType | null =>
+  media.url == null || media.name == null ? null : { uuid: media.uuid, src: media.url, alt: media.name };
+
 const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTeamMembers }) => {
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [galleryPagination, setGalleryPagination] = useState({ page: 1, pageSize: 20 });
-  const [galleryImages, setGalleryImages] = useState<
-    { uuid: string; src: string; alt: string; url: string; name: string }[]
-  >([]);
+  const [galleryImages, setGalleryImages] = useState<GalleryImageType[]>([]);
   const [isLoadingMoreGallery, setIsLoadingMoreGallery] = useState(false);
   const [selectedCoverUrl, setSelectedCoverUrl] = useState<string | undefined>(undefined);
   const [selectedGalleryImage, setSelectedGalleryImage] = useState<{
@@ -76,7 +84,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
   });
 
   useEffect(() => {
-    if (coverImage?.uuid) {
+    if (coverImage?.uuid != null) {
       setCoverMediaUuid(coverImage.uuid);
     }
   }, [coverImage?.uuid]);
@@ -102,20 +110,18 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
 
   useEffect(() => {
     const rawScale = coverImage?.profileImageScale;
-    const rawPosition = coverImage?.profileImagePosition;
+    const imagePosition = getImagePosition(coverImage?.profileImagePosition);
     if (coverScale != null || coverPosition != null) return;
 
     if (rawScale == null) {
-      if (coverImage) {
+      if (coverImage != null) {
         setCoverScale(1);
       }
       return;
     }
 
-    if (rawPosition != null) {
-      if (coverImage) {
-        setCoverPosition(rawPosition as { x: number; y: number });
-      }
+    if (imagePosition != null && coverImage != null) {
+      setCoverPosition(imagePosition);
     }
 
     const numericScale =
@@ -125,29 +131,22 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
       setCoverScale(numericScale);
     }
 
-    if (rawPosition != null) {
-      setCoverPosition(rawPosition as { x: number; y: number });
-    }
+    if (imagePosition != null) setCoverPosition(imagePosition);
   }, [coverImage, coverScale, coverPosition]);
 
   useEffect(() => {
     if (!isGalleryLoaded || mediaList == null) return;
 
     setGalleryImages(prev => {
-      if (galleryPagination.page === 1) {
-        return mediaList.map(img => ({
-          uuid: img.uuid,
-          src: img.url!,
-          alt: img.name!,
-          url: img.url!,
-          name: img.name!
-        }));
-      }
+      const loadedImages = mediaList.flatMap(media => {
+        const image = toGalleryImage(media);
+        return image == null ? [] : [image];
+      });
+
+      if (galleryPagination.page === 1) return loadedImages;
 
       const existingIds = new Set(prev.map(img => img.uuid));
-      const newOnes = mediaList
-        .filter(img => !existingIds.has(img.uuid))
-        .map(img => ({ uuid: img.uuid, src: img.url!, alt: img.name!, url: img.url!, name: img.name! }));
+      const newOnes = loadedImages.filter(image => !existingIds.has(image.uuid));
       return [...prev, ...newOnes];
     });
 
@@ -186,8 +185,8 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
         await prepareFileForUpload(file, true, true, scale, position),
         fileUploadOptions(file, "media", {
           onSuccess: successFile => {
-            const updated: UploadedFile = {
-              ...(successFile as UploadedFile),
+            const updated = {
+              ...successFile,
               isCover: true,
               profileImageScale: scale,
               profileImagePosition: position
@@ -224,12 +223,6 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
     setCoverMediaUuid(undefined);
     ApiSlice.pruneCache("media", [uuidToDelete]);
   }, [files, removeFile, coverMediaUuid, coverImage?.uuid]);
-
-  const galleryImageItems = useMemo(() => {
-    return galleryImages?.map(media => {
-      return { uuid: media.uuid, src: media.url!, alt: media.alt!, url: media.url!, name: media.name! };
-    });
-  }, [galleryImages]);
 
   const handleSelectGalleryImage = (image: GalleryImageType) => {
     setSelectedGalleryImage({
@@ -284,6 +277,8 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
     };
   }, [coverPosition]);
 
+  const projectDescription = project.projectSummary?.trim();
+
   return (
     <Box
       position="relative"
@@ -296,13 +291,13 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
       className="mobile:flex-col"
     >
       <Flex gap={5}>
-        <div className={IMAGE_CONTAINER_CLASSES}>
+        <Box className={IMAGE_CONTAINER_CLASSES}>
           <ProfileImage
             size={IMAGE_SIZE}
             alt={project.name ?? ""}
             isAdd={selectedCoverUrl == null && coverImage?.uuid == null}
             onClickEdit={() => setOpen(true)}
-            src={selectedCoverUrl ?? coverImage?.thumbUrl!}
+            src={selectedCoverUrl ?? coverImage?.thumbUrl ?? undefined}
             scale={coverScale}
             position={headerPosition}
             menuItems={[
@@ -338,7 +333,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
           <ModalUploadImage
             open={open}
             onClose={handleCloseUploadModal}
-            imgSrc={headerPendingSrc ?? selectedCoverUrl ?? coverImage?.thumbUrl!}
+            imgSrc={headerPendingSrc ?? selectedCoverUrl ?? coverImage?.thumbUrl ?? undefined}
             mediaUuid={coverMediaUuid}
             initialFile={headerPendingFile ?? undefined}
             onOpenModalImageGallery={setIsGalleryOpen}
@@ -355,23 +350,23 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
             <ModalSelectGalleryImages
               open={isGalleryOpen}
               onClose={() => setIsGalleryOpen(false)}
-              images={galleryImageItems}
+              images={galleryImages}
               hasMore={hasMoreGallery}
               isLoading={(!isGalleryLoaded && galleryPagination.page === 1) || isLoadingMoreGallery}
               onLoadMore={handleLoadMoreGallery}
               onSelectImage={handleSelectGalleryImage}
             />
           )}
-        </div>
+        </Box>
         <ProjectInfo
           project={project}
           title={project.name ?? "-"}
-          tag={{ state: getPlantingStatus(project?.plantingStatus!) }}
+          tag={{ state: mapPlantingStatusToProgressState(project.plantingStatus) }}
           organization={project.organisationName ?? "-"}
           country={formatOptionsList(countryOptions ?? [], project.country ?? [])}
           startDate={formatMonthYear(project.plantingStartDate)}
           endDate={formatMonthYear(project.plantingEndDate)}
-          description={project.projectSummary?.trim() || undefined}
+          description={projectDescription == null || projectDescription.length === 0 ? undefined : projectDescription}
           countryFlag={countryCodeToFlag(project.country)}
         />
       </Flex>

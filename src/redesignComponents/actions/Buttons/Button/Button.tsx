@@ -1,7 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import { Button as WriButton, ButtonProps as WriButtonProps } from "@worldresources/wri-design-systems";
 import classNames from "classnames";
-import React from "react";
+import React, { FC } from "react";
 
 import { getThemedColor } from "@/lib/theme";
 
@@ -12,14 +12,14 @@ export interface IButtonProps extends WriButtonProps {
   classNameContainer?: string;
 }
 
-const Button = ({
+const Button: FC<IButtonProps> = ({
   children,
   className,
   variant = "primary",
   typeVariant = "light",
   classNameContainer,
   ...props
-}: IButtonProps) => {
+}) => {
   if (typeVariant === "dark") {
     return (
       <Box

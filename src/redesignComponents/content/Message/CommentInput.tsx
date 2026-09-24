@@ -35,8 +35,10 @@ const TEXTAREA_MIN_HEIGHT = `${TEXTAREA_LINE_HEIGHT_REM * TEXTAREA_MIN_ROWS}rem`
 const TEXTAREA_MAX_HEIGHT = `${TEXTAREA_LINE_HEIGHT_REM * TEXTAREA_MAX_ROWS}rem`;
 
 const FALLBACK_ROOT_FONT_SIZE_PX = 16;
-const getRootFontSize = () =>
-  parseFloat(getComputedStyle(document.documentElement).fontSize) || FALLBACK_ROOT_FONT_SIZE_PX;
+const getRootFontSize = () => {
+  const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+  return Number.isNaN(rootFontSize) ? FALLBACK_ROOT_FONT_SIZE_PX : rootFontSize;
+};
 
 interface CommentInputFile {
   name: string;
@@ -113,9 +115,9 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
 
   const isAuditMode = auditEntity != null && auditEntityUuid != null && auditEntityUuid !== "";
 
-  const isEditingControlled = isEditing !== undefined;
+  const isEditingControlled = isEditing != null;
   const currentIsEditing = isEditingControlled ? isEditing : internalIsEditing;
-  const isValueControlled = value !== undefined;
+  const isValueControlled = value != null;
   const currentValue = isValueControlled ? value : internalValue;
 
   const pendingFileUrlsRef = useRef<Map<File, string>>(new Map());
@@ -327,11 +329,12 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
 
   const adjustTextareaHeight = useCallback((target?: HTMLTextAreaElement | null) => {
     const textarea = target ?? textareaRef.current;
-    if (!textarea) return;
+    if (textarea == null) return;
 
     const rootFontSize = getRootFontSize();
     const computedStyles = getComputedStyle(textarea);
-    const lineHeightPx = parseFloat(computedStyles.lineHeight) || TEXTAREA_LINE_HEIGHT_REM * rootFontSize;
+    const parsedLineHeight = parseFloat(computedStyles.lineHeight);
+    const lineHeightPx = Number.isNaN(parsedLineHeight) ? TEXTAREA_LINE_HEIGHT_REM * rootFontSize : parsedLineHeight;
     const lineHeightRem = lineHeightPx / rootFontSize;
     const chromeHeightRem =
       (parseFloat(computedStyles.paddingTop) +
@@ -357,18 +360,18 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
   return (
     <Flex className={twMerge("w-full flex-col gap-2", className)}>
       <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
-      {label && (
+      {label != null && (
         <Text textStyle="400-bold" color="primary.900">
           {label}
-          {showOptionalLabel && (
+          {showOptionalLabel === true && (
             <Text as="span" textStyle="300" color="neutral.700">
               {" "}
-              {"(optional)"}
+              {t("(optional)")}
             </Text>
           )}
         </Text>
       )}
-      {caption && (
+      {caption != null && (
         <Text textStyle="400" color="neutral.900">
           {caption}
         </Text>
@@ -381,7 +384,7 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
           border="0.063rem solid"
           borderColor="neutral.400"
           borderRadius="0.25rem"
-          boxShadow="0 0.063rem 0.063rem 0 rgba(0, 0, 0, 0.05)"
+          boxShadow="sm"
           p={3}
           display="flex"
           flexDirection="column"

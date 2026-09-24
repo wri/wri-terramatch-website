@@ -36,7 +36,8 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons/NavigationSections/ProjectIcon";
-import ResponsiveBreadcrumbToolbar from "@/redesignComponents/navigation/Toolbar/ResponsiveBreadcrumbToolbar";
+import NextLinkAdapter from "@/redesignComponents/navigation/Breadcrumbs/NextLinkAdapter";
+import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import { toArray } from "@/utils/array";
 import Log from "@/utils/log";
@@ -676,14 +677,14 @@ function WizardForm(props: WizardFormProps) {
             {entity != null && (
               <Box background={"neutral.200"} className={classNames("sticky top-0 z-20 pb-1")}>
                 {!isAdmin && (
-                  <ResponsiveBreadcrumbToolbar
-                    breadcrumbs={linkHeaderMap}
+                  <ToolbarObject
+                    breadcrumbs={{ links: linkHeaderMap, linkRouter: NextLinkAdapter }}
                     suffix={
                       models[0]?.model.includes("Reports") && (
                         <Flex gap={1.5} alignItems="center">
                           {suffixButtons.map((button, index) => (
                             <Flex key={button.key} alignItems="center" gap={1.5}>
-                              {index > 0 && <span className="text-sm text-theme-neutral-300">|</span>}
+                              {index > 0 && <span className="text-theme-neutral-300 text-sm">|</span>}
                               <Button
                                 variant="borderless"
                                 size="small"

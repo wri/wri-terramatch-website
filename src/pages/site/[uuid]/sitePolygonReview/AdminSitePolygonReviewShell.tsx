@@ -7,7 +7,7 @@ import { getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.uti
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import SiteBanner from "@/redesignComponents/content/Banner/SiteBanner/SiteBanner";
 import { SiteIcon } from "@/redesignComponents/foundations/Icons";
-import Layout from "@/redesignComponents/Loayout/Layout";
+import Layout from "@/redesignComponents/Layout/Layout";
 
 import SitePolygonsWorkspace from "./SitePolygonsWorkspace";
 

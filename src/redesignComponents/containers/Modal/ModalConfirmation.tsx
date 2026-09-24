@@ -1,12 +1,13 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useCallback, useEffect } from "react";
+import { ComponentProps, FC, useCallback } from "react";
 
-import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
+import type { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 
-export interface ModalConfirmationProps {
+export interface ModalConfirmationProps
+  extends Omit<ComponentProps<typeof Modal>, "header" | "footer" | "onClose" | "content"> {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
@@ -14,7 +15,10 @@ export interface ModalConfirmationProps {
   buttonsCancel?: IButtonProps[];
   buttonsPrimary?: IButtonProps[];
   buttonsSecondary?: IButtonProps[];
-  size?: "small" | "medium" | "large";
+  confirmButton?: IButtonProps;
+  cancelButton?: Omit<IButtonProps, "onClick">;
+  contentLayout?: "text" | "custom";
+  footerBorderColor?: string;
   classNameGroup?: string;
 }
 
@@ -26,8 +30,13 @@ const ModalConfirmation: FC<ModalConfirmationProps> = ({
   buttonsCancel,
   buttonsPrimary,
   buttonsSecondary,
+  confirmButton,
+  cancelButton,
+  contentLayout = "text",
+  footerBorderColor,
   size = "medium",
-  classNameGroup
+  classNameGroup,
+  ...modalProps
 }) => {
   const t = useT();
 
@@ -36,59 +45,47 @@ const ModalConfirmation: FC<ModalConfirmationProps> = ({
   }, [onOpenChange]);
 
   const groups = [
-    buttonsCancel?.length && {
-      id: "cancel",
-      buttons: buttonsCancel.map(button => ({
-        ...button
-      }))
-    },
-    buttonsSecondary?.length && {
-      id: "secondary",
-      buttons: buttonsSecondary.map(button => ({
-        ...button
-      }))
-    },
-    buttonsPrimary?.length && {
-      id: "primary",
-      buttons: buttonsPrimary.map(button => ({
-        ...button
-      }))
-    }
-  ].filter(Boolean);
-
-  useEffect(() => {
-    if (!open) {
-      document.body.style.removeProperty("overflow");
-      document.body.style.removeProperty("pointer-events");
-    }
-    return () => {
-      document.body.style.removeProperty("overflow");
-      document.body.style.removeProperty("pointer-events");
-    };
-  }, [open]);
+    ...(buttonsCancel == null || buttonsCancel.length === 0 ? [] : [{ id: "cancel", buttons: buttonsCancel }]),
+    ...(buttonsSecondary == null || buttonsSecondary.length === 0
+      ? []
+      : [{ id: "secondary", buttons: buttonsSecondary }]),
+    ...(buttonsPrimary == null || buttonsPrimary.length === 0 ? [] : [{ id: "primary", buttons: buttonsPrimary }])
+  ];
 
   return (
     <Modal
+      {...modalProps}
       open={open}
       onClose={handleClose}
       size={size}
       header={
-        <Text textStyle="400-bold" className="text-theme-neutral-800">
+        <Text textStyle="400-bold" color="neutral.800">
           {t(title)}
         </Text>
       }
       content={
-        <Flex justifyContent="center" alignItems="center" flexDirection="column" pt={2} width="100%">
-          <Text textStyle="400" color="neutral.900" textAlign="left">
-            {content}
-          </Text>
-        </Flex>
+        contentLayout === "custom" ? (
+          content
+        ) : (
+          <Flex justifyContent="center" alignItems="center" flexDirection="column" pt={2} width="100%">
+            <Text textStyle="400" color="neutral.900" textAlign="left">
+              {content}
+            </Text>
+          </Flex>
+        )
       }
       footer={
-        <ButtonGroup
-          groups={groups as { id: string; buttons: IButtonProps[] }[]}
-          classNameGroup={classNameGroup ?? "!w-full"}
-        />
+        confirmButton != null ? (
+          <ButtonGroup
+            borderColor={footerBorderColor}
+            buttons={[
+              { id: "cancel", variant: "secondary", children: t("Cancel"), ...cancelButton, onClick: handleClose },
+              confirmButton
+            ]}
+          />
+        ) : (
+          <ButtonGroup borderColor={footerBorderColor} groups={groups} classNameGroup={classNameGroup ?? "!w-full"} />
+        )
       }
     />
   );
