@@ -93,7 +93,7 @@ const AdditionalReportsEntitySection = ({
   onRowRestored?: () => void;
 }) => {
   const t = useT();
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const reports = useMemo(() => collectAdditionalReports(section), [section]);
   const attentionCount = useMemo(() => getReportsRequiringAttention(reports), [reports]);
 
@@ -125,27 +125,29 @@ const AdditionalReportsEntitySection = ({
         />
       }
     >
-      <div className="space-y-1 bg-theme-neutral-200 pt-0.5">
-        {section.groups.map(group => (
-          <AdditionalReportGroupSection
-            key={group.id}
-            group={group}
-            indexHref={indexHref}
-            restoreReportId={group.id === restoreGroupId ? restoreReportId : undefined}
-            onRowRestored={onRowRestored}
-          />
-        ))}
-        {(section.children ?? []).map(child => (
-          <AdditionalReportsEntitySection
-            key={`${child.type}-${child.id}`}
-            section={child}
-            indexHref={indexHref}
-            restoreGroupId={restoreGroupId}
-            restoreReportId={restoreReportId}
-            onRowRestored={onRowRestored}
-          />
-        ))}
-      </div>
+      {open ? (
+        <div className="space-y-1 bg-theme-neutral-200 pt-0.5">
+          {section.groups.map(group => (
+            <AdditionalReportGroupSection
+              key={group.id}
+              group={group}
+              indexHref={indexHref}
+              restoreReportId={group.id === restoreGroupId ? restoreReportId : undefined}
+              onRowRestored={onRowRestored}
+            />
+          ))}
+          {(section.children ?? []).map(child => (
+            <AdditionalReportsEntitySection
+              key={`${child.type}-${child.id}`}
+              section={child}
+              indexHref={indexHref}
+              restoreGroupId={restoreGroupId}
+              restoreReportId={restoreReportId}
+              onRowRestored={onRowRestored}
+            />
+          ))}
+        </div>
+      ) : null}
     </Accordion>
   );
 };

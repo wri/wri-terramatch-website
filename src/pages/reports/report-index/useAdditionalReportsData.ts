@@ -1,10 +1,10 @@
 import { startCase } from "lodash";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   indexDisturbanceReportConnection,
-  indexFinancialReportConnection,
-  indexSRPReportConnection
+  indexSRPReportConnection,
+  loadFinancialReportIndex
 } from "@/connections/Entity";
 import { useOrganisation } from "@/connections/Organisation";
 import {
@@ -34,6 +34,40 @@ type AdditionalReportsDataState = {
 const INDEX_PROPS = {
   sortField: "updatedAt",
   sortDirection: "DESC" as const
+};
+
+const FINANCIAL_PAGE_SIZE = 100;
+
+type FollowedOrganisation = {
+  uuid: string;
+  name: string | null;
+};
+
+const NO_ORGANISATIONS: FollowedOrganisation[] = [];
+
+const loadFinancialReportsForOrganisation = async (organisationUuid: string): Promise<FinancialReportLightDto[]> => {
+  const reports: FinancialReportLightDto[] = [];
+  let pageNumber = 1;
+
+  while (pageNumber <= FINANCIAL_PAGE_SIZE) {
+    const page = await loadFinancialReportIndex({
+      pageNumber,
+      pageSize: FINANCIAL_PAGE_SIZE,
+      sortField: "updatedAt",
+      sortDirection: "DESC",
+      filter: { organisationUuid }
+    });
+
+    if (page.loadFailure != null) return reports;
+
+    const rows = page.data ?? [];
+    reports.push(...rows);
+    const total = page.indexTotal ?? reports.length;
+    if (rows.length === 0 || reports.length >= total) return reports;
+    pageNumber += 1;
+  }
+
+  return reports;
 };
 
 const getEntryValue = (entries: DisturbanceReportEntryDto[] | null, name: string): unknown => {
@@ -171,7 +205,8 @@ const toProjectSection = (draft: ProjectSectionDraft): AdditionalReportsEntitySe
 export const useAdditionalReportsData = (
   project: ProjectLightDto,
   enabled: boolean,
-  organisationUuid: string | null
+  organisationUuid: string | null,
+  organisations: FollowedOrganisation[] = NO_ORGANISATIONS
 ): AdditionalReportsDataState => {
   const loadOrganisationData = enabled && organisationUuid != null;
   const indexFilter = organisationUuid == null ? {} : { organisationUuid };
@@ -179,12 +214,6 @@ export const useAdditionalReportsData = (
   const [organisationLoaded, { data: organisation }] = useOrganisation(
     loadOrganisationData ? { id: organisationUuid } : {}
   );
-
-  const [financialLoaded, financialData, financialFailure] = useAllPages(indexFinancialReportConnection, {
-    ...INDEX_PROPS,
-    filter: indexFilter,
-    enabled
-  });
 
   const [srpLoaded, srpData, srpFailure] = useAllPages(indexSRPReportConnection, {
     ...INDEX_PROPS,
@@ -198,31 +227,79 @@ export const useAdditionalReportsData = (
     enabled
   });
 
+  const organisationIds = useMemo(() => {
+    if (!enabled || !srpLoaded || !disturbanceLoaded) return [];
+    if (organisationUuid != null) return [organisationUuid];
+
+    const ids = new Set<string>();
+    srpData.forEach(report => {
+      if (report.organisationUuid != null) ids.add(report.organisationUuid);
+    });
+    disturbanceData.forEach(report => {
+      if (report.organisationUuid != null) ids.add(report.organisationUuid);
+    });
+    return Array.from(ids).sort();
+  }, [disturbanceData, disturbanceLoaded, enabled, organisationUuid, srpData, srpLoaded]);
+
+  const [financialReports, setFinancialReports] = useState<FinancialReportLightDto[]>([]);
+  const [financialLoaded, setFinancialLoaded] = useState(false);
+  const organisationIdsKey = organisationIds.join("|");
+
+  useEffect(() => {
+    const ids = organisationIdsKey === "" ? [] : organisationIdsKey.split("|");
+
+    if (!enabled || ids.length === 0) {
+      setFinancialReports([]);
+      setFinancialLoaded(enabled && srpLoaded && disturbanceLoaded);
+      return;
+    }
+
+    let active = true;
+    setFinancialLoaded(false);
+
+    const load = async () => {
+      const batches = await Promise.all(ids.map(loadFinancialReportsForOrganisation));
+      if (!active) return;
+      setFinancialReports(batches.flat());
+      setFinancialLoaded(true);
+    };
+
+    load().catch(() => {
+      if (!active) return;
+      setFinancialReports([]);
+      setFinancialLoaded(true);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [disturbanceLoaded, enabled, organisationIdsKey, srpLoaded]);
+
   const organisationReady = !loadOrganisationData || organisationLoaded;
-  const loading = enabled && !(organisationReady && financialLoaded && srpLoaded && disturbanceLoaded);
-  // Financial reports are optional on this tab: a failed unfiltered "All" fetch must not hide SRP
-  // and disturbance reports that already loaded.
+  const loading = enabled && !(organisationReady && srpLoaded && disturbanceLoaded && financialLoaded);
   const error = enabled && (srpFailure != null || disturbanceFailure != null);
 
   const sections = useMemo((): AdditionalReportsEntitySection[] => {
     if (!enabled || loading || error) return [];
 
     const draftsByOrganisation = new Map<string, OrganisationSectionDraft>();
+    const namesByUuid = new Map(organisations.map(item => [item.uuid, item.name]));
 
     const organisationDraft = (uuid: string | null, name: string | null) => {
+      const resolvedName = name ?? (uuid == null ? null : namesByUuid.get(uuid) ?? null);
       const organisationId = uuid ?? UNKNOWN_ORGANISATION;
       let draft = draftsByOrganisation.get(organisationId);
       if (draft == null) {
         draft = {
           id: organisationId,
-          name,
+          name: resolvedName,
           organisationUuid: uuid,
           financialReports: [],
           projects: new Map()
         };
         draftsByOrganisation.set(organisationId, draft);
-      } else if (draft.name == null && name != null) {
-        draft.name = name;
+      } else if (draft.name == null && resolvedName != null) {
+        draft.name = resolvedName;
       }
       return draft;
     };
@@ -248,7 +325,7 @@ export const useAdditionalReportsData = (
       return draft;
     };
 
-    (financialFailure != null ? [] : financialData).forEach(report => {
+    financialReports.forEach(report => {
       const isScopedOrganisation = organisationUuid != null && report.organisationUuid === organisationUuid;
       organisationDraft(report.organisationUuid, report.organisationName).financialReports.push(
         toFinancialReport(
@@ -294,11 +371,11 @@ export const useAdditionalReportsData = (
     disturbanceData,
     enabled,
     error,
-    financialData,
-    financialFailure,
+    financialReports,
     loading,
     organisation?.currency,
     organisation?.finStartMonth,
+    organisations,
     project.name,
     project.organisationName,
     project.organisationUuid,
