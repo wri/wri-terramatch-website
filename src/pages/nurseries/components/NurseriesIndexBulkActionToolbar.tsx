@@ -40,7 +40,6 @@ const NurseriesIndexBulkActionToolbar: FC<NurseriesIndexBulkActionToolbarProps> 
   const selectedCount = selectedNurseries.length;
   const visible = selectedCount > 0;
   const canSubmit = selectedCount > 0 && selectedNurseries.every(isNurserySubmittable);
-  const isEditDisabled = selectedCount !== 1;
   const approvalLockReason = useMemo(() => getSelectionApprovalLockReason(selectedNurseries), [selectedNurseries]);
 
   useEffect(() => {
@@ -61,13 +60,10 @@ const NurseriesIndexBulkActionToolbar: FC<NurseriesIndexBulkActionToolbarProps> 
         : approvalLockReason === "mixed"
         ? t("One or more selected profile can't be submitted because they are already approved or awaiting approval")
         : null;
-    const lines = [statusLine, isEditDisabled ? t("Select one nursery to edit it.") : null].filter(
-      (line): line is string => line != null
-    );
 
-    if (lines.length === 0) return undefined;
-    return <ToolbarInfoTooltipContent lines={lines} />;
-  }, [approvalLockReason, isEditDisabled, selectedCount, t]);
+    if (statusLine == null) return undefined;
+    return <ToolbarInfoTooltipContent lines={[statusLine]} />;
+  }, [approvalLockReason, selectedCount, t]);
 
   const deleteTooltip = useMemo(() => {
     if (canDelete) return undefined;
@@ -106,12 +102,16 @@ const NurseriesIndexBulkActionToolbar: FC<NurseriesIndexBulkActionToolbarProps> 
             loading: isDownloading,
             disabled: isDownloading || isUpdating
           },
-          {
-            id: "edit",
-            children: t("Edit"),
-            onClick: onEdit,
-            disabled: !canEdit || isUpdating
-          }
+          ...(canEdit
+            ? [
+                {
+                  id: "edit",
+                  children: t("Edit"),
+                  onClick: onEdit,
+                  disabled: isUpdating
+                }
+              ]
+            : [])
         ]}
         primaryAction={{
           children: t("Submit"),
