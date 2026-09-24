@@ -282,17 +282,17 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
                 }}
               />
               <Box
-                className="bg-theme-neutral-100/60 absolute inset-0"
+                className="absolute inset-0 bg-theme-neutral-100/60"
                 style={{
                   maskImage: "radial-gradient(circle at center, transparent 0 70%, black 61%)",
                   WebkitMaskImage: "radial-gradient(circle at center, transparent 0 70%, black 61%)"
                 }}
               />
-              <Box className="border-theme-neutral-100 absolute top-0 right-0 h-full w-full rounded-full border-2 bg-transparent" />
+              <Box className="absolute top-0 right-0 h-full w-full rounded-full border-2 border-theme-neutral-100 bg-transparent" />
             </Box>
           ) : (
             <Box className="relative h-[18.75rem] w-[18.75rem] overflow-hidden">
-              <Flex className="bg-theme-neutral-200 h-full w-full items-center justify-center">
+              <Flex className="h-full w-full items-center justify-center bg-theme-neutral-200">
                 <PlaceholderIcon boxSize={8} color="neutral.600" />
               </Flex>
               <Box

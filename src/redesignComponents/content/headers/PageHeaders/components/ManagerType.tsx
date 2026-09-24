@@ -18,42 +18,42 @@ const useNurseryTypeMap = (): Record<string, NurseryTypeConfig> => {
   return useMemo(
     () => ({
       expanding: {
-        icon: <NurseryExpandingIcon className="text-theme-secondary-800 h-8 w-8" />,
+        icon: <NurseryExpandingIcon className="h-8 w-8 text-theme-secondary-800" />,
         label: t("Nursery Expansion"),
         tooltip: t(
           "An existing nursery that increases its production capacity for the project, such as by adding infrastructure, expanding structures, or increasing seedling output."
         )
       },
       building: {
-        icon: <NurseryBuildingIcon className="text-theme-secondary-800 h-8 w-8" />,
+        icon: <NurseryBuildingIcon className="h-8 w-8 text-theme-secondary-800" />,
         label: t("New Nursery"),
         tooltip: t(
           "A nursery that is newly established, including setting up infrastructure, sourcing materials, and starting seedling production."
         )
       },
       managing: {
-        icon: <NurseryManagingIcon className="text-theme-secondary-800 h-8 w-8" />,
+        icon: <NurseryManagingIcon className="h-8 w-8 text-theme-secondary-800" />,
         label: t("Co-Managed Nursery"),
         tooltip: t(
           "A nursery jointly operated with a community or partner, where the organization might be supporting maintenance, production management, and quality control to build skills or economic opportunities or any other activity."
         )
       },
       "new-nursery": {
-        icon: <NurseryBuildingIcon className="text-theme-secondary-800 h-8 w-8" />,
+        icon: <NurseryBuildingIcon className="h-8 w-8 text-theme-secondary-800" />,
         label: t("New Nursery"),
         tooltip: t(
           "A nursery that is newly established, including setting up infrastructure, sourcing materials, and starting seedling production."
         )
       },
       "co-managed-nursery": {
-        icon: <NurseryManagingIcon className="text-theme-secondary-800 h-8 w-8" />,
+        icon: <NurseryManagingIcon className="h-8 w-8 text-theme-secondary-800" />,
         label: t("Co-managed Nursery"),
         tooltip: t(
           "A nursery jointly operated with a community or partner, where the organization might be supporting maintenance, production management, and quality control to build skills or economic opportunities or any other activity."
         )
       },
       "nursery-expansion": {
-        icon: <NurseryExpandingIcon className="text-theme-secondary-800 h-8 w-8" />,
+        icon: <NurseryExpandingIcon className="h-8 w-8 text-theme-secondary-800" />,
         label: t("Nursery Expansion"),
         tooltip: t(
           "An existing nursery that increases its production capacity for the project, such as by adding infrastructure, expanding structures, or increasing seedling output."
@@ -97,7 +97,7 @@ const ManagerType: FC<{ nursery: NurseryFullDto }> = ({ nursery }) => {
                     </>
                   }
                 >
-                  <InfoIcon className="text-theme-neutral-800 h-3 w-3" />
+                  <InfoIcon className="h-3 w-3 text-theme-neutral-800" />
                 </Tooltip>
               </Text>
             </>
