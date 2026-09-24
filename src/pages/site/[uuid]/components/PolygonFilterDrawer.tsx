@@ -119,7 +119,10 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
       tags.push({ id: `submissionCycle:${cycle}`, label: SUBMISSION_CYCLE_LABELS[cycle] });
     }
     if (draftFilters.hasOverlap) {
-      tags.push({ id: "hasOverlap", label: "Overlap" });
+      tags.push({ id: "hasOverlap", label: t("Overlaps") });
+    }
+    if (draftFilters.hasDisturbance) {
+      tags.push({ id: "hasDisturbance", label: t("Disturbances") });
     }
     if (draftFilters.showDeleted) {
       tags.push({ id: "showDeleted", label: t("Deleted Polygons") });
@@ -148,6 +151,8 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
           return { ...current, plantStartTo: "" };
         case "hasOverlap":
           return { ...current, hasOverlap: false };
+        case "hasDisturbance":
+          return { ...current, hasDisturbance: false };
         case "showDeleted":
           return { ...current, showDeleted: false };
         default:
@@ -199,6 +204,10 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
 
   const handleOverlapChange = ({ checked }: CheckboxChange) => {
     setDraftFilters(current => ({ ...current, hasOverlap: checked === true }));
+  };
+
+  const handleDisturbanceChange = ({ checked }: CheckboxChange) => {
+    setDraftFilters(current => ({ ...current, hasDisturbance: checked === true }));
   };
 
   const handleShowDeletedChange = ({ checked }: CheckboxChange) => {
@@ -323,14 +332,22 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                   multiple
                 />
               </FilterCard>
-              <FilterCard label={t("Overlap")}>
+              <FilterCard label={t("Issues")}>
                 <Switch
                   name="overlap"
                   checked={draftFilters.hasOverlap}
                   disabled={draftFilters.showDeleted}
                   onCheckedChange={handleOverlapChange}
                 >
-                  {t("Show Polygon Overlaps")}
+                  {t("Show Overlaps")}
+                </Switch>
+                <Switch
+                  name="disturbance"
+                  checked={draftFilters.hasDisturbance}
+                  disabled={draftFilters.showDeleted}
+                  onCheckedChange={handleDisturbanceChange}
+                >
+                  {t("Show Disturbances")}
                 </Switch>
               </FilterCard>
               {isAdminReview && (
