@@ -33,7 +33,10 @@ export const DisturbancePolygonAffectedInput = ({
   const { data: polygonsData } = useAllSitePolygons({
     entityName: "sites",
     entityUuid: siteUuid,
-    enabled: !!siteUuid,
+    enabled: siteUuid != null && siteUuid !== "",
+    filter: {
+      "polygonStatus[]": ["approved"]
+    },
     sortField: "name",
     sortDirection: "ASC"
   });
@@ -70,7 +73,7 @@ export const DisturbancePolygonAffectedInput = ({
         const polygonsData = selectedValues
           .map(selectedValue => {
             const selectedPolygon = polygonChoices.find(polygon => polygon.value === selectedValue);
-            if (selectedPolygon) {
+            if (selectedPolygon != null) {
               return {
                 polyUuid: selectedPolygon.value,
                 polyName: selectedPolygon.title,
@@ -118,7 +121,9 @@ export const DisturbancePolygonAffectedInput = ({
       options={polygonChoices}
       value={dropdownValue}
       onChange={_onChange}
-      placeholder={siteUuid ? t("Search and select polygons...") : t("Please select a site first")}
+      placeholder={
+        siteUuid != null && siteUuid !== "" ? t("Search and select polygons...") : t("Please select a site first")
+      }
       description={DISTURBANCE_POLYGONS_FIELD_DESCRIPTION}
       className="w-full"
       multiSelect={true}
