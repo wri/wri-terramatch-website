@@ -113,14 +113,14 @@ export const SelectorMenu: FC<SelectorMenuProps> = ({
   </Portal>
 );
 
-export const toCollectionValue = (value?: string) => (value === undefined ? undefined : value ? [value] : []);
+export const toCollectionValue = (value?: string) => (value == null ? undefined : value.length > 0 ? [value] : []);
 
 export const useSelectorOpenState = (defaultOpen: boolean, controlledOpen?: boolean) => {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const open = controlledOpen ?? uncontrolledOpen;
 
   const updateOpen = (nextOpen: boolean) => {
-    if (controlledOpen === undefined) setUncontrolledOpen(nextOpen);
+    if (controlledOpen == null) setUncontrolledOpen(nextOpen);
   };
 
   return { open, updateOpen };

@@ -15,6 +15,10 @@ import {
   deleteSitePolygon as deleteSitePolygonEndpoint,
   sitePolygonsIndex,
   SitePolygonsIndexQueryParams,
+  sitePolygonsMapIndex,
+  SitePolygonsMapIndexQueryParams,
+  sitePolygonsSummary,
+  SitePolygonsSummaryQueryParams,
   updateSitePolygonStatus
 } from "@/generated/v3/researchService/researchServiceComponents";
 import type {
@@ -24,7 +28,9 @@ import type {
   SitePolygonBulkAttributeUpdateBodyDto,
   SitePolygonBulkDeleteBodyDto,
   SitePolygonLightDto,
-  SitePolygonStatusBulkUpdateBodyDto
+  SitePolygonMapIndexDto,
+  SitePolygonStatusBulkUpdateBodyDto,
+  SitePolygonSummaryDto
 } from "@/generated/v3/researchService/researchServiceSchemas";
 import { resolveUrl } from "@/generated/v3/utils";
 import { useStableProps } from "@/hooks/useStableProps";
@@ -52,11 +58,44 @@ export const sitePolygonsConnection = v3Resource("sitePolygons", sitePolygonsInd
   .buildConnection();
 
 export const useSitePolygons = connectionHook(sitePolygonsConnection);
+export const loadSitePolygons = connectionLoader(sitePolygonsConnection);
+
+export type SitePolygonMapIndexFilter = Omit<SitePolygonsMapIndexQueryParams, "siteId[]" | "projectId[]">;
+
+const sitePolygonMapIndexConnection = v3Resource("sitePolygonMapIndexes", sitePolygonsMapIndex)
+  .singleByFilter<SitePolygonMapIndexDto, SitePolygonsMapIndexQueryParams>()
+  .enabledProp()
+  .addProps<{ entityName?: "projects" | "sites"; entityUuid?: string }>(({ entityName, entityUuid }) => {
+    if (entityName === "projects" && entityUuid != null) return { queryParams: { "projectId[]": [entityUuid] } };
+    if (entityName === "sites" && entityUuid != null) return { queryParams: { "siteId[]": [entityUuid] } };
+    return {};
+  })
+  .buildConnection();
+
+export const useSitePolygonMapIndex = connectionHook(sitePolygonMapIndexConnection);
+export const loadSitePolygonMapIndex = connectionLoader(sitePolygonMapIndexConnection);
+
+export type SitePolygonSummaryFilter = Omit<SitePolygonsSummaryQueryParams, "siteId[]" | "projectId[]">;
+
+const sitePolygonSummaryConnection = v3Resource("sitePolygonSummaries", sitePolygonsSummary)
+  .singleByFilter<SitePolygonSummaryDto, SitePolygonsSummaryQueryParams>()
+  .enabledProp()
+  .addProps<{ entityName?: "projects" | "sites"; entityUuid?: string }>(({ entityName, entityUuid }) => {
+    if (entityName === "projects" && entityUuid != null) return { queryParams: { "projectId[]": [entityUuid] } };
+    if (entityName === "sites" && entityUuid != null) return { queryParams: { "siteId[]": [entityUuid] } };
+    return {};
+  })
+  .buildConnection();
+
+export const useSitePolygonSummary = connectionHook(sitePolygonSummaryConnection);
+export const loadSitePolygonSummary = connectionLoader(sitePolygonSummaryConnection);
 
 export const pruneSitePolygonsCache = (): void => {
   ApiSlice.pruneCache("sitePolygons");
   ApiSlice.pruneIndex("sitePolygons", "");
   ApiSlice.pruneCache("geojsonExports");
+  ApiSlice.pruneCache("sitePolygonMapIndexes");
+  ApiSlice.pruneCache("sitePolygonSummaries");
 };
 
 const createSitePolygonsConnection = v3Resource("sitePolygons", createSitePolygons)
@@ -293,6 +332,42 @@ export const loadAllSitePolygons = async (
   return allPolygons;
 };
 
+export const loadSitePolygonByUuid = async ({
+  entityUuid,
+  polygonId
+}: {
+  entityUuid: string;
+  polygonId: string;
+}): Promise<SitePolygonLightDto | undefined> => {
+  if (polygonId === "" || entityUuid === "") {
+    return undefined;
+  }
+
+  const byGeometryResponse = await loadSitePolygons({
+    entityName: "sites",
+    entityUuid,
+    enabled: true,
+    filter: { "polygonUuid[]": [polygonId] },
+    pageNumber: 1,
+    pageSize: 1
+  });
+
+  const byGeometry = (byGeometryResponse.data ?? []).find(
+    polygon => polygon.polygonUuid === polygonId || polygon.uuid === polygonId
+  );
+  if (byGeometry != null) {
+    return byGeometry;
+  }
+
+  const allSitePolygons = await loadAllSitePolygons({
+    entityName: "sites",
+    entityUuid,
+    enabled: true
+  });
+
+  return allSitePolygons.find(polygon => polygon.polygonUuid === polygonId || polygon.uuid === polygonId);
+};
+
 export const useAllSitePolygons = (
   props: Omit<ConnectionProps<typeof sitePolygonsConnection>, "pageNumber" | "pageSize"> & {
     sortField?: string;
@@ -317,8 +392,7 @@ export const useAllSitePolygons = (
 
       try {
         if (clearCache) {
-          ApiSlice.pruneCache("sitePolygons");
-          ApiSlice.pruneCache("geojsonExports");
+          pruneSitePolygonsCache();
 
           const currentState = ApiSlice.currentState;
           const sitePolygonsIndices = currentState.meta.indices.sitePolygons ?? {};

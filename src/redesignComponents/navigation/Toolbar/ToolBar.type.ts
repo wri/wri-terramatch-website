@@ -22,6 +22,7 @@ export type BulkToolbarAction = IButtonProps & {
   id: string;
   tone?: BulkToolbarActionTone;
   infoTooltip?: ReactNode;
+  tooltip?: ReactNode;
 };
 
 export interface BulkActionToolbarProps {

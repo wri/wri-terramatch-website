@@ -10,7 +10,7 @@ import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/Abo
 import { MapPlaceholder } from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
-import { useAllSitePolygons } from "@/connections/SitePolygons";
+import { useSitePolygonMapIndex } from "@/connections/SitePolygons";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { PENDING_APPROVAL } from "@/constants/statuses";
 import { shouldHideNurseries, useFrameworkContext } from "@/context/framework.provider";
@@ -131,7 +131,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
     return buttons;
   }, [goToTab, hideNurseries, t]);
 
-  const { data: projectPolygonDataV3, isLoading: isLoadingProjectPolygons } = useAllSitePolygons({
+  const [projectMapIndexLoaded, { data: projectMapIndex }] = useSitePolygonMapIndex({
     entityName: "projects",
     entityUuid: project.uuid,
     enabled: project.uuid != null
@@ -143,7 +143,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
     project.updateRequestStatus === PENDING_APPROVAL;
 
   const showSiteAreasMapPlaceholder =
-    !isLoadingProjectPolygons && (projectPolygonDataV3?.length ?? 0) === 0 && isDraftOrPendingApproval;
+    projectMapIndexLoaded && (projectMapIndex?.total ?? 0) === 0 && isDraftOrPendingApproval;
 
   const teamMemberItems = useMemo(
     () => [

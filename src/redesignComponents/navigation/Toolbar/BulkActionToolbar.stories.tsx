@@ -27,7 +27,8 @@ const meta: Meta<typeof BulkActionToolbar> = {
       description: "Configuration for the delete button"
     },
     actions: {
-      description: "Ordered secondary actions rendered between delete and the primary action"
+      description:
+        "Ordered secondary actions rendered between delete and the primary action. Each action may set `infoTooltip` for an always-visible info icon, or `tooltip` to explain why it is disabled."
     },
     primaryAction: {
       description: "Filled primary action (e.g. submit)"
@@ -108,5 +109,19 @@ export const DisabledSubmitWithTooltip: Story = {
       onClick: () => console.log("Submit clicked")
     },
     infoTooltip: "This report is missing mandatory information. Please complete the required fields before submitting."
+  }
+};
+
+export const DisabledActionTooltip: Story = {
+  args: {
+    ...Default.args,
+    deleteAction: {
+      id: "delete",
+      tone: "danger",
+      children: "Delete",
+      disabled: true,
+      tooltip: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
+      onClick: () => console.log("Delete clicked")
+    }
   }
 };
