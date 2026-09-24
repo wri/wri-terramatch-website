@@ -185,7 +185,13 @@ const Accordion: FC<AccordionProps> = ({
     >
       <AccordionChakra.Root multiple collapsible value={isOpen ? [ACCORDION_ITEM_VALUE] : []}>
         <AccordionChakra.Item value={ACCORDION_ITEM_VALUE}>
-          <Flex {...headerContainerStyles} gap={4} className={classNameHeader} alignItems="center" data-accordion-header="">
+          <Flex
+            {...headerContainerStyles}
+            gap={4}
+            className={classNameHeader}
+            alignItems="center"
+            data-accordion-header=""
+          >
             <AccordionChakra.ItemTrigger
               onPointerDown={handleTriggerPointerDown}
               onClick={handleTriggerClick}
