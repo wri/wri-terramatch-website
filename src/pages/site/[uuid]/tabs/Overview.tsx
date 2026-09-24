@@ -144,7 +144,6 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                 entityModel={site}
                 type="sites"
                 className="h-full min-h-0 rounded"
-                disabledPolygonPanel={true}
                 hideFullscreenControl={true}
                 overviewPolygonPopup={true}
               />

@@ -5,9 +5,9 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 
 import CheckIndividualPolygonControl from "../MapControls/CheckIndividualPolygonControl";
-import { GeotaggedPhotosControl } from "../MapControls/GeotaggedPhotosControl";
 import CheckPolygonControl from "../MapControls/CheckPolygonControl";
 import EditControl from "../MapControls/EditControl";
+import { GeotaggedPhotosControl } from "../MapControls/GeotaggedPhotosControl";
 import ImageControl from "../MapControls/ImageControl";
 import { PolygonHandler } from "../MapControls/PolygonHandler";
 import PolygonModifier from "../MapControls/PolygonModifier";
@@ -42,6 +42,7 @@ const MapControlsOverlayChampions: FC<MapControlsOverlayProps> = ({
     setAlertTitle,
     disabledPolygonPanel,
     hideFullscreenControl,
+    hideMediaOnMap,
     selectedPolygonsInCheckbox
   } = admin;
   const {
@@ -117,7 +118,7 @@ const MapControlsOverlayChampions: FC<MapControlsOverlayProps> = ({
           ) : null}
 
           <ControlGroup position="bottom-right" className="z-[19] gap-2">
-            <GeotaggedPhotosControl />
+            {!hideMediaOnMap ? <GeotaggedPhotosControl /> : null}
             <ZoomControl
               map={map}
               isFullscreen={isFullscreen}

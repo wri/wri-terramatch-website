@@ -114,6 +114,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   const [, { data: auditStatusesData }] = useAuditStatuses({
     entity: "sitePolygons",
     uuid: selectedPolygon?.uuid ?? "",
+    types: ["comment"],
     enabled: hasValidPolygonUuid
   });
 
