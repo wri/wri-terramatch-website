@@ -1,12 +1,9 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
-import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
-import Modal from "@/redesignComponents/containers/Modal/Modal";
+import ModalSubmit from "@/redesignComponents/containers/Modal/ModalSubmit";
 
 import type { SiteIndexSite } from "../siteIndex.types";
-import SiteNameList from "./SiteNameList";
 
 export interface SubmitSiteConfirmationProps {
   open: boolean;
@@ -18,21 +15,12 @@ export interface SubmitSiteConfirmationProps {
 const SubmitSiteConfirmation: FC<SubmitSiteConfirmationProps> = ({ open, onOpenChange, sites, onSubmit }) => {
   const t = useT();
   const [isSaving, setIsSaving] = useState(false);
-  const isSingleSite = sites.length === 1;
-
-  const handleClose = useCallback(() => {
-    onOpenChange(false);
-  }, [onOpenChange]);
+  const items = useMemo(() => sites.map(({ id, name }) => ({ id, label: name })), [sites]);
 
   const handleSubmit = useCallback(async () => {
-    if (onSubmit == null) {
-      onOpenChange(false);
-      return;
-    }
-
     try {
       setIsSaving(true);
-      await onSubmit();
+      await onSubmit?.();
       onOpenChange(false);
     } finally {
       setIsSaving(false);
@@ -40,52 +28,21 @@ const SubmitSiteConfirmation: FC<SubmitSiteConfirmationProps> = ({ open, onOpenC
   }, [onSubmit, onOpenChange]);
 
   return (
-    <Modal
+    <ModalSubmit
       open={open}
-      onClose={handleClose}
-      size="medium"
-      header={
-        <Text textStyle="400-bold" color="neutral.800">
-          {isSingleSite ? t("Submit site?") : t("Submit sites?")}
-        </Text>
-      }
-      content={
-        isSingleSite ? (
-          <Flex justifyContent="center" alignItems="center" flexDirection="column" pt={2} width="100%">
-            <Text textStyle="400" color="neutral.900" textAlign="center">
-              {t("Are you sure you want to submit")}
-            </Text>
-            <Text textStyle="500-bold" color="neutral.900" textAlign="center">
-              {t("{siteName}?", { siteName: sites[0].name })}
-            </Text>
-          </Flex>
-        ) : (
-          <Box px={4}>
-            <Text textStyle="400" color="neutral.900" mb={3}>
-              {t("Are you sure you want to submit the following Sites:")}
-            </Text>
-            <SiteNameList names={sites.map(site => site.name)} />
-          </Box>
-        )
-      }
-      footer={
-        <ButtonGroup
-          buttons={[
-            {
-              id: "cancel",
-              variant: "secondary",
-              children: t("Cancel"),
-              onClick: handleClose
-            },
-            {
-              id: "submit",
-              children: t("Submit"),
-              disabled: isSaving || sites.length === 0,
-              onClick: () => void handleSubmit()
-            }
-          ]}
-        />
-      }
+      onOpenChange={onOpenChange}
+      items={items}
+      singular={{
+        title: t("Submit site?"),
+        description: t("Are you sure you want to submit")
+      }}
+      plural={{
+        title: t("Submit sites?"),
+        description: t("Are you sure you want to submit the following Sites:")
+      }}
+      isLoading={isSaving}
+      confirmLabel={t("Submit")}
+      onConfirm={handleSubmit}
     />
   );
 };
