@@ -243,6 +243,12 @@ export type SitePolygonsIndexQueryParams = {
    */
   hasOverlap?: boolean;
   /**
+   * Filter to polygons linked to a disturbance (disturbance_id IS NOT NULL).
+   *
+   * @default false
+   */
+  hasDisturbance?: boolean;
+  /**
    * Soft-deleted polygons for one site. Search is supported; other filters are ignored.
    *
    * @default false
@@ -762,6 +768,12 @@ export type SitePolygonsMapIndexQueryParams = {
    */
   hasOverlap?: boolean;
   /**
+   * Filter to polygons linked to a disturbance (disturbance_id IS NOT NULL).
+   *
+   * @default false
+   */
+  hasDisturbance?: boolean;
+  /**
    * Soft-deleted polygons for one site. Requires exactly one siteId[] value.
    *
    * @default false
@@ -950,6 +962,12 @@ export type SitePolygonsSummaryQueryParams = {
    * @default false
    */
   hasOverlap?: boolean;
+  /**
+   * Filter to polygons linked to a disturbance (disturbance_id IS NOT NULL).
+   *
+   * @default false
+   */
+  hasDisturbance?: boolean;
   /**
    * Soft-deleted polygons for one site. Requires exactly one siteId[] value.
    *

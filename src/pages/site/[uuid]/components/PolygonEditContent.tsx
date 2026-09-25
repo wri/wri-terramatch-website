@@ -63,6 +63,7 @@ import {
   showPolygonErrorToast,
   showPolygonProgressToast
 } from "../utils/polygonOperationToasts";
+import DisturbanceReportedBanner from "./DisturbanceReportedBanner";
 import type { PolygonRunValidationWithResultsCallback, PolygonSaveCallback } from "./polygonEdit.types";
 import {
   type PolygonEditFormValues,
@@ -266,7 +267,21 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const [plotsVisible, setPlotsVisible] = useState(false);
   const [isVersionUpdating, setIsVersionUpdating] = useState(false);
   const [openAccordionSection, setOpenAccordionSection] = useState<PolygonEditAccordionSection | null>("details");
+  const [stickyDisturbanceReportUuid, setStickyDisturbanceReportUuid] = useState<string | null>(null);
   const formBaselineRef = useRef<PolygonEditFormValues | null>(null);
+
+  const polygonIdentityKey = polygon?.primaryUuid ?? polygon?.uuid ?? "";
+
+  useEffect(() => {
+    setStickyDisturbanceReportUuid(polygon?.disturbanceReportUuid ?? null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [polygonIdentityKey]);
+
+  useEffect(() => {
+    if (polygon?.disturbanceReportUuid != null && polygon.disturbanceReportUuid !== "") {
+      setStickyDisturbanceReportUuid(polygon.disturbanceReportUuid);
+    }
+  }, [polygon?.disturbanceReportUuid]);
 
   const handleAccordionOpenChange = useCallback(
     (section: PolygonEditAccordionSection) => (open: boolean) => {
@@ -1047,6 +1062,9 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
           polygon={polygon}
           treatValidationAsNotStarted={hasUnsavedChangesInvalidatingValidation}
         />
+        {stickyDisturbanceReportUuid != null && (
+          <DisturbanceReportedBanner disturbanceReportUuid={stickyDisturbanceReportUuid} />
+        )}
         <Accordion
           header={<AccordionHeader title={t("Details")} />}
           open={openAccordionSection === "details"}
