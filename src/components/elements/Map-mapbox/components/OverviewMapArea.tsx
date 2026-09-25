@@ -1,6 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import classNames from "classnames";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { type FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
@@ -9,38 +9,31 @@ import { resolveMapExtentBbox, useBoundingBox } from "@/connections/BoundingBox"
 import { useDelayedJobs } from "@/connections/DelayedJob";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { pruneSitePolygonsCache, useSitePolygonMapIndex } from "@/connections/SitePolygons";
-import {
-  POLYGON_APPROVED,
-  POLYGON_DRAFT,
-  POLYGON_INFORMATION_REQUIRED,
-  POLYGON_PENDING_APPROVAL
-} from "@/constants/polygonStatuses";
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
-import { parsePolygonDataV3, storePolygon } from "../utils";
+import { storePolygon } from "../utils";
 import LoadingMap from "./LoadingMap";
 
-interface EntityAreaProps {
+type OverviewMapAreaProps = {
   entityModel: any;
   type: string;
   className?: string;
   hideFullscreenControl?: boolean;
   overviewPolygonPopup?: boolean;
-}
+};
 
 const CLOSED_POLYGON_FROM_MAP = { isOpen: false, uuid: "" };
 
-const OverviewMapArea = ({
+const OverviewMapArea: FC<OverviewMapAreaProps> = ({
   entityModel,
   type,
   className,
   hideFullscreenControl = false,
   overviewPolygonPopup = false
-}: EntityAreaProps) => {
-  const [polygonDataMap, setPolygonDataMap] = useState<any>({});
+}) => {
   const [isPolygonTilesLoading, setIsPolygonTilesLoading] = useState(false);
   const [processedPolyValidationJobs, setProcessedPolyValidationJobs] = useState<Set<string>>(new Set());
   const context = useSitePolygonData();
@@ -177,19 +170,6 @@ const OverviewMapArea = ({
     }
   }, [delayedJobs, processedPolyValidationJobs, refetch]);
 
-  useEffect(() => {
-    if (mapPolygons.length > 0) {
-      setPolygonDataMap(parsePolygonDataV3(mapPolygons));
-    } else {
-      setPolygonDataMap({
-        [POLYGON_PENDING_APPROVAL]: [],
-        [POLYGON_APPROVED]: [],
-        [POLYGON_INFORMATION_REQUIRED]: [],
-        [POLYGON_DRAFT]: []
-      });
-    }
-  }, [mapPolygons]);
-
   const isMapLoading = useMemo(
     () => !mapIndexLoaded || (mapPolygons.length > 0 && isPolygonTilesLoading),
     [isPolygonTilesLoading, mapIndexLoaded, mapPolygons.length]
@@ -203,7 +183,7 @@ const OverviewMapArea = ({
           showBaseMapControl={false}
           championsMap={true}
           mapFunctions={mapFunctions}
-          polygonsData={polygonDataMap}
+          mapIndexPolygons={mapPolygons}
           bbox={extentBbox}
           tooltipType="view"
           showPopups

@@ -81,9 +81,27 @@ describe("polygonAnalytics", () => {
           targetSys: [],
           submissionCycle: [],
           hasOverlap: true,
+          hasDisturbance: false,
           showDeleted: false
         })
       ).toEqual(["status", "validation_result", "overlap"]);
+    });
+
+    it("includes disturbance when hasDisturbance is active", () => {
+      expect(
+        resolveActivePolygonFilterTypes({
+          polygonStatus: [],
+          validationStatus: [],
+          plantStartFrom: "",
+          plantStartTo: "",
+          practice: [],
+          targetSys: [],
+          submissionCycle: [],
+          hasOverlap: false,
+          hasDisturbance: true,
+          showDeleted: false
+        })
+      ).toEqual(["disturbance"]);
     });
   });
 });

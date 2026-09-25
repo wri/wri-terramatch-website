@@ -6,11 +6,12 @@ import {
   closeMapPopupsFromMapPopup,
   isSitePolygonAdminReviewMode,
   openPolygonApproveConfirmationFromMapPopup,
+  openPolygonEditDrawerByPolygonIdFromMapPopup,
   openPolygonRequestInformationConfirmationFromMapPopup,
   openPolygonSubmitConfirmationFromMapPopup,
   runPolygonValidationFromMapPopup
 } from "@/context/mapArea.utils";
-import { openPolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
+import type { SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { isRestorationStrategy, isTargetLandUseType } from "@/pages/site/[uuid]/components/polygonTable.constants";
 import { showPolygonErrorToast } from "@/pages/site/[uuid]/utils/polygonOperationToasts";
 import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
@@ -26,7 +27,6 @@ import {
   resolveViewDetailsSiteUuid
 } from "../../sitePolygonNavigation";
 import {
-  type SitePolygonPopupFields,
   formatAreaHectaresForPopup,
   formatTreesPlantedForPopup,
   getSitePolygonGeometryUuid,
@@ -40,7 +40,7 @@ import PopupHeaderPolygon from "../PopupPolygon/PopupHeaderPolygon";
 type PolygonPopupChampionsProps = {
   popup: PopupComponentProps["popup"];
   setShouldRefetchPolygonData?: PopupComponentProps["setShouldRefetchPolygonData"];
-  sitePolygon?: SitePolygonPopupFields;
+  sitePolygon?: SitePolygonMapEntryDto;
   isLoading?: boolean;
   tooltipType?: TooltipType;
   overviewPolygonPopup?: boolean;
@@ -130,12 +130,33 @@ export function PolygonPopupChampions({
   }, [sitePolygon?.uuid]);
 
   const handleEdit = useCallback(() => {
-    openPolygonEditDrawer({
-      polygonUuid: getSitePolygonGeometryUuid(sitePolygon) ?? undefined,
-      polygonName: metrics.polygonName
-    });
+    const polygonId =
+      getSitePolygonGeometryUuid(sitePolygon) ??
+      (sitePolygon?.uuid != null && sitePolygon.uuid !== "" ? sitePolygon.uuid : null);
+    if (polygonId == null) {
+      return;
+    }
+
     closeMapPopup();
-  }, [closeMapPopup, metrics.polygonName, sitePolygon]);
+
+    const openEdit = openPolygonEditDrawerByPolygonIdFromMapPopup(polygonId);
+    if (openEdit == null) {
+      Log.error("Polygon edit handler is not registered for map popup");
+      showPolygonErrorToast(t("Failed to open polygon for editing"));
+      return;
+    }
+
+    void openEdit
+      .then(opened => {
+        if (!opened) {
+          showPolygonErrorToast(t("Failed to open polygon for editing"));
+        }
+      })
+      .catch(error => {
+        Log.error("Failed to open polygon for editing from map popup:", error);
+        showPolygonErrorToast(t("Failed to open polygon for editing"));
+      });
+  }, [closeMapPopup, sitePolygon, t]);
 
   const geometryUuid = getSitePolygonGeometryUuid(sitePolygon);
 
