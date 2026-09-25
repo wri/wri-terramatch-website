@@ -165,7 +165,7 @@ const Accordion: FC<AccordionProps> = ({
         },
         ...(variant === "tertiary"
           ? {
-              "& [data-scope='accordion'][data-part='item'][data-state='open'] > [data-accordion-header]": {
+              "& [data-scope='accordion'][data-part='item'] > [data-accordion-header]": {
                 borderRadius:
                   "var(--Border-Radius-300, 0.25rem) var(--Border-Radius-300, 0.25rem) var(--Border-Radius-100, 0) var(--Border-Radius-100, 0)",
                 background: "var(--Primary-100, #F7FBFD)"

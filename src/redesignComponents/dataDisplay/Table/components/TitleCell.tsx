@@ -36,17 +36,17 @@ const TitleCell: React.FC<TitleCellProps> = ({
       })}
     >
       {showChevron && <ChevronDownAltIcon />}
-      <Box>
-        <Flex gap={2} items-center>
-          {image != null && <img src={image} alt={label} className="h-6 w-6 rounded border border-theme-neutral-300" />}
+      <Box width="100%">
+        <Flex gap={2} items-center width="100%">
+          {image != null && <img src={image} alt={label} className="border-theme-neutral-300 h-6 w-6 rounded border" />}
           {icon != null && icon}
           {avatar != null && <Avatar {...avatar} size="small" />}
-          <Box>
+          <Box width="100%">
             <Text
               as={link ? "a" : "p"}
               {...(link == null ? {} : { href: link, target: linkTarget, onClick })}
               textStyle="400-bold"
-              className="text-theme-neutral-800 underline decoration-theme-primary-700 decoration-dotted underline-offset-4"
+              className="text-theme-neutral-800 decoration-theme-primary-700 block w-full truncate underline decoration-dotted underline-offset-4"
             >
               {label}
             </Text>
