@@ -14,8 +14,10 @@ import { usePolygonValidations } from "@/connections/Validation";
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import {
+  registerOpenPolygonEditDrawerByPolygonIdFromMapPopup,
   registerRunPolygonValidationFromMapPopup,
   registerSitePolygonAdminReviewMode,
+  unregisterOpenPolygonEditDrawerByPolygonIdFromMapPopup,
   unregisterRunPolygonValidationFromMapPopup
 } from "@/context/mapArea.utils";
 import {
@@ -66,6 +68,7 @@ import { usePolygonDrawUndo } from "../hooks/usePolygonDrawUndo";
 import { usePolygonUploadErrorModal } from "../hooks/usePolygonUploadErrorModal";
 import { useSelectedSitePolygons } from "../hooks/useSelectedSitePolygons";
 import { useSitePolygonBulkActions } from "../hooks/useSitePolygonBulkActions";
+import { useSitePolygonDisturbanceMarkers } from "../hooks/useSitePolygonDisturbanceMarkers";
 import { useSitePolygonEditNavigation } from "../hooks/useSitePolygonEditNavigation";
 import { useSitePolygonFilters } from "../hooks/useSitePolygonFilters";
 import { useSitePolygonOverlap } from "../hooks/useSitePolygonOverlap";
@@ -241,6 +244,15 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     [mapPolygons]
   );
 
+  const disturbancePolygonUuids = useMemo(
+    () =>
+      mapPolygons
+        .filter(entry => entry.disturbanceReportUuid != null)
+        .map(entry => entry.polygonUuid ?? entry.uuid)
+        .filter((uuid): uuid is string => uuid != null),
+    [mapPolygons]
+  );
+
   const {
     polygonsWithOverlapCount,
     overlapPolygons,
@@ -320,6 +332,18 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     editPolygonUuid: editPolygon.uuid !== "" ? editPolygon.uuid : null
   });
 
+  const { disturbanceMarkerPoints } = useSitePolygonDisturbanceMarkers({
+    siteUuid: site.uuid,
+    disturbancePolygonUuids,
+    excludePolygonUuid: editDrawerPolygonUuid,
+    t
+  });
+
+  const mapAlertPolygons = useMemo(
+    () => [...overlapPolygonsForMap, ...disturbanceMarkerPoints],
+    [overlapPolygonsForMap, disturbanceMarkerPoints]
+  );
+
   const currentSiteGeometryUuids = useMemo(
     () =>
       mapPolygons
@@ -367,6 +391,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     setUploadedPolygonUuidToOpen,
     focusPolygonUuid,
     handleFocusPolygonConsumed,
+    openPolygonEditDrawerByPolygonId,
     handleViewOverlapFixPolygon,
     handleViewExistingPolygon
   } = useSitePolygonEditNavigation({
@@ -414,6 +439,10 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   const handleSelectOverlapPolygons = useCallback(() => {
     setSelectedRowIds(new Set(overlapPolygonUuids));
   }, [overlapPolygonUuids, setSelectedRowIds]);
+
+  const handleSelectDisturbancePolygons = useCallback(() => {
+    setSelectedRowIds(new Set(disturbancePolygonUuids));
+  }, [disturbancePolygonUuids, setSelectedRowIds]);
 
   const {
     bulkEditPayload,
@@ -519,11 +548,13 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   useEffect(() => {
     registerSitePolygonAdminReviewMode(isAdminReview);
     registerRunPolygonValidationFromMapPopup(runValidationWithResultsModal);
+    registerOpenPolygonEditDrawerByPolygonIdFromMapPopup(openPolygonEditDrawerByPolygonId);
     return () => {
       registerSitePolygonAdminReviewMode(false);
       unregisterRunPolygonValidationFromMapPopup();
+      unregisterOpenPolygonEditDrawerByPolygonIdFromMapPopup();
     };
-  }, [isAdminReview, runValidationWithResultsModal]);
+  }, [isAdminReview, openPolygonEditDrawerByPolygonId, runValidationWithResultsModal]);
 
   const handleViewValidationDetails = useCallback(
     (row: PolygonTableRow) => {
@@ -873,7 +904,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           freezeCameraZoom={freezeCameraZoom}
           skipNextSiteBboxZoomNonce={skipNextSiteBboxZoomNonce}
           polygonTableHighlight={polygonTableHighlight}
-          overlapPolygons={overlapPolygonsForMap}
+          overlapPolygons={mapAlertPolygons}
           crossSiteOverlapPolygons={crossSiteOverlapPolygons}
           onRefetchPolygons={refetchPolygons}
           showUndoButton={showPolygonUndoButton}
@@ -910,7 +941,9 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
                 selectedTreesPlanted={selectedTreesPlanted}
                 selectedRestorationAreaRounded={selectedRestorationAreaRounded}
                 polygonsWithOverlapCount={polygonsWithOverlapCount}
+                polygonsWithDisturbanceCount={disturbancePolygonUuids.length}
                 onSelectOverlapPolygons={handleSelectOverlapPolygons}
+                onSelectDisturbancePolygons={handleSelectDisturbancePolygons}
               />
             )}
             <SitePolygonTableSection

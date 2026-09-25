@@ -1,4 +1,5 @@
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
+import { isSitePolygonAdminReviewMode } from "@/context/mapArea.utils";
 
 import { TARGET_LAND_USE_VALUES } from "./polygonFilter.constants";
 
@@ -33,4 +34,15 @@ export const formatPolygonSource = (source: string | null | undefined): string =
     return "TerraMatch";
   }
   return source;
+};
+
+export const getDisturbanceReportViewPath = (disturbanceReportUuid: string): string => {
+  if (isSitePolygonAdminReviewMode()) {
+    return `/admin#/disturbanceReport/${disturbanceReportUuid}/show`;
+  }
+  return `/reports/disturbance-report/${disturbanceReportUuid}`;
+};
+
+export const openDisturbanceReportInNewTab = (disturbanceReportUuid: string): void => {
+  window.open(getDisturbanceReportViewPath(disturbanceReportUuid), "_blank", "noopener,noreferrer");
 };
