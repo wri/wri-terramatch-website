@@ -1,4 +1,4 @@
-import { Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
@@ -11,7 +11,7 @@ import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
-import { InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
+import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 interface InviteTeamMemberModalProps {
   organisationUUID: string;
   open: boolean;
@@ -86,18 +86,17 @@ const InviteTeamMemberModal = ({ organisationUUID, open, onClose, onSuccess }: I
       onClose={hideModal}
       header={<b className="text-theme-neutral-800">{t("Invite Monitoring Partner")}</b>}
       content={
-        <div className="flex flex-col gap-3">
-          <Text textStyle="400" color="neutral.900">
-            {t("Invite Team Member")}
+        <Flex className="flex-col gap-3">
+          <Text textStyle="300" color="neutral.800" lineHeight="20px">
+            {t(
+              "Enter an email address to invite a new user to create a TerraMatch account and join your organization."
+            )}
           </Text>
-          <div className="flex items-center gap-2">
-            <InformationRequiredIcon color="neutral.700" className="mb-[21px]" />
-            <Text textStyle="300" color="neutral.800" lineHeight="20px">
-              {t(
-                "Here, you can invite someone to create a TerraMatch account as member of your organization. This will allow them to access all your applications and project pitches."
-              )}
-            </Text>
-          </div>
+          <InlineMessage
+            label={t("This user will receive an email with a link to create a TerraMatch account and join your organization.")}
+            variant="warning"
+            size="small"
+          />
           <Controller
             name="email"
             control={control}
@@ -111,7 +110,7 @@ const InviteTeamMemberModal = ({ organisationUUID, open, onClose, onSuccess }: I
               />
             )}
           />
-        </div>
+        </Flex>
       }
       footer={
         <ButtonGroup
