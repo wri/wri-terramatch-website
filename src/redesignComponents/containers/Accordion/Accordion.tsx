@@ -40,7 +40,6 @@ const variantStyles = {
   },
   tertiary: {
     container: {
-      background: "primary.100",
       paddingX: 4,
       paddingY: 3,
       marginBottom: 4,
@@ -116,11 +115,24 @@ const Accordion: FC<AccordionProps> = ({
     variant === "tertiary"
       ? {
           ...container,
+          background: isOpen ? "primary.100" : "neutral.100",
           borderTopWidth: "0.25rem",
           borderTopStyle: "solid" as const,
           borderTopColor: isOpen ? "primary.500" : "primary.300"
         }
-      : container;
+      : variant === "quaternary"
+        ? {
+            ...container,
+            background: "neutral.100",
+            ...(isOpen
+              ? {
+                  borderBottomWidth: "0.063rem",
+                  borderBottomStyle: "solid" as const,
+                  borderBottomColor: "neutral.300"
+                }
+              : {})
+          }
+        : container;
 
   const setIsOpen = useCallback(
     (nextOpen: boolean) => {
@@ -162,25 +174,7 @@ const Accordion: FC<AccordionProps> = ({
           : {}),
         "& [data-scope='accordion'][data-part='item']": {
           overflow: "visible"
-        },
-        ...(variant === "tertiary"
-          ? {
-              "& [data-scope='accordion'][data-part='item'][data-state='open'] > [data-accordion-header]": {
-                borderRadius:
-                  "var(--Border-Radius-300, 0.25rem) var(--Border-Radius-300, 0.25rem) var(--Border-Radius-100, 0) var(--Border-Radius-100, 0)",
-                background: "var(--Primary-100, #F7FBFD)"
-              }
-            }
-          : {}),
-        ...(variant === "quaternary"
-          ? {
-              "& [data-scope='accordion'][data-part='item'][data-state='open'] > [data-accordion-header]": {
-                borderBottom: "var(--Border-Width-100, 0.0625rem) solid var(--Neutrals-300) !important",
-                borderTop: "none !important",
-                background: "neutral.100 !important"
-              }
-            }
-          : {})
+        }
       }}
     >
       <AccordionChakra.Root multiple collapsible value={isOpen ? [ACCORDION_ITEM_VALUE] : []}>
