@@ -202,6 +202,10 @@ export type SitePolygonMapEntryDto = {
    */
   polygonUuid: string | null;
   /**
+   * UUID of the parent site. Used for map popup navigation from project-scoped maps.
+   */
+  siteId: string | null;
+  /**
    * Approval status of the polygon, used for map styling and status counts.
    */
   status: "draft" | "pending-approval" | "information-required" | "approved" | null;
@@ -221,6 +225,26 @@ export type SitePolygonMapEntryDto = {
    * Validation status. Null means validation has not started.
    */
   validationStatus: "passed" | "partial" | "failed" | null;
+  /**
+   * Restoration practice slug(s) shown in overview map popups.
+   */
+  practice: ("tree-planting" | "direct-seeding" | "assisted-natural-regeneration")[] | null;
+  /**
+   * Target land use system slug shown in overview map popups.
+   */
+  targetSys:
+    | "agroforest"
+    | "agricultural-land"
+    | "grassland"
+    | "open-natural-ecosystem"
+    | "natural-forest"
+    | "mangrove"
+    | "peatland"
+    | "riparian-area-or-wetland"
+    | "silvopasture"
+    | "woodlot-or-plantation"
+    | "urban-forest"
+    | null;
   /**
    * UUID of the linked DisturbanceReport when this polygon has a disturbance owned by a report. Use for /reports/disturbance-report/{uuid}.
    */
