@@ -14,8 +14,10 @@ import { usePolygonValidations } from "@/connections/Validation";
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import {
+  registerOpenPolygonEditDrawerByPolygonIdFromMapPopup,
   registerRunPolygonValidationFromMapPopup,
   registerSitePolygonAdminReviewMode,
+  unregisterOpenPolygonEditDrawerByPolygonIdFromMapPopup,
   unregisterRunPolygonValidationFromMapPopup
 } from "@/context/mapArea.utils";
 import {
@@ -367,6 +369,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     setUploadedPolygonUuidToOpen,
     focusPolygonUuid,
     handleFocusPolygonConsumed,
+    openPolygonEditDrawerByPolygonId,
     handleViewOverlapFixPolygon,
     handleViewExistingPolygon
   } = useSitePolygonEditNavigation({
@@ -519,11 +522,13 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   useEffect(() => {
     registerSitePolygonAdminReviewMode(isAdminReview);
     registerRunPolygonValidationFromMapPopup(runValidationWithResultsModal);
+    registerOpenPolygonEditDrawerByPolygonIdFromMapPopup(openPolygonEditDrawerByPolygonId);
     return () => {
       registerSitePolygonAdminReviewMode(false);
       unregisterRunPolygonValidationFromMapPopup();
+      unregisterOpenPolygonEditDrawerByPolygonIdFromMapPopup();
     };
-  }, [isAdminReview, runValidationWithResultsModal]);
+  }, [isAdminReview, openPolygonEditDrawerByPolygonId, runValidationWithResultsModal]);
 
   const handleViewValidationDetails = useCallback(
     (row: PolygonTableRow) => {
