@@ -19,7 +19,7 @@ import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useReportsIndexAnalytics } from "@/hooks/useReportsIndexAnalytics";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
-import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
+import IndexMetricCardRow from "@/redesignComponents/dataDisplay/Metrics/IndexMetricCardRow";
 import { DueIcon, JobsIcon, RegenerationIcon, SeedlingsIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
 import { PAGE_CONTEXT_REPORTS_INDEX } from "@/utils/analytics/pageContext";
 
@@ -52,7 +52,6 @@ type ReportingPeriodMetricsRowProps = {
   hasReportSubset: boolean;
   projectReportUuid: string | null;
   frameworkKey: string | null;
-  className: string;
 };
 
 const usePeriodJobsTotal = (projectReportUuid: string | null, frameworkKey: string | null) => {
@@ -87,8 +86,7 @@ const ReportingPeriodMetricsRow = ({
   allReports,
   hasReportSubset,
   projectReportUuid,
-  frameworkKey,
-  className
+  frameworkKey
 }: ReportingPeriodMetricsRowProps) => {
   const jobsTotal = usePeriodJobsTotal(open ? projectReportUuid : null, frameworkKey);
   const { periodTotals, filteredTotals, selectionTotals, jobsProgress } = useReportingPeriodMetrics({
@@ -113,23 +111,20 @@ const ReportingPeriodMetricsRow = ({
   }
 
   const cardsRow = (
-    <div className="mb-5 flex flex-wrap gap-4">
-      {cards.map(card => (
-        <MetricCard
-          key={card.key}
-          title={card.title}
-          color={card.color}
-          progress={card.progress}
-          goal={0}
-          icon={metricIcon(card.key, card.color)}
-          tooltipContent={getTooltipContent({ title: card.title, tooltip: card.tooltip })}
-          selection={card.selection}
-          filtered={card.filtered}
-          metricLabel={card.metricName}
-          className={className}
-        />
-      ))}
-    </div>
+    <IndexMetricCardRow
+      cards={cards.map(card => ({
+        key: card.key,
+        title: card.title,
+        color: card.color,
+        progress: card.progress,
+        goal: 0,
+        icon: metricIcon(card.key, card.color),
+        tooltipContent: getTooltipContent({ title: card.title, tooltip: card.tooltip }),
+        selection: card.selection,
+        filtered: card.filtered,
+        metricLabel: card.metricName
+      }))}
+    />
   );
 
   if (projectReportUuid == null) {
@@ -181,7 +176,6 @@ const ReportingPeriodSection = ({
 
   const periodLabel = useReportingWindow(toFramework(period.frameworkKey), period.dueAt ?? undefined);
   const taskTitle = t("Reporting Task {window}", { window: periodLabel });
-  const metricCardClassName = "w-auto min-w-[12.5rem] border-[0.125rem] bg-theme-neutral-100";
   const projectReportUuid = metricsReady ? period.projectReportUuid : null;
 
   const [reportLoaded, { data: projectReport }] = useLightProjectReport({
@@ -239,7 +233,6 @@ const ReportingPeriodSection = ({
                   hasReportSubset={hasReportSubset}
                   projectReportUuid={projectReportUuid}
                   frameworkKey={frameworkKey}
-                  className={metricCardClassName}
                 />
               </FrameworkProvider>
             )}

@@ -15,7 +15,9 @@ import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackT
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
-import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
+import IndexMetricCardRow, {
+  type IndexMetricCardItem
+} from "@/redesignComponents/dataDisplay/Metrics/IndexMetricCardRow";
 import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
 import Table, {
   type TableColumn,
@@ -129,7 +131,6 @@ const SiteProjectMetrics: FC<{
   const selectedTrees = approvedSelectedSites.reduce((total, site) => total + site.treesPlantedCount, 0);
   const filteredArea = approvedSites.reduce((total, site) => total + site.totalHectaresRestoredSum, 0);
   const selectedArea = approvedSelectedSites.reduce((total, site) => total + site.totalHectaresRestoredSum, 0);
-  const metricCardClassName = "w-auto min-w-[12.5rem] border-[0.125rem] bg-theme-neutral-100";
   const isHbf = project.frameworkKey === Framework.HBF;
   const isTerraFund = isTerrafund(project.frameworkKey);
   const primaryMetric = isHbf
@@ -148,79 +149,83 @@ const SiteProjectMetrics: FC<{
     (isHbf ? "Saplings Growing" : isTerraFund ? "Trees Planted" : "Trees Growing");
   const areaTitle = keyIndicatorsTooltipContentItem?.hectaresRestored.title || t("Area restored (Ha)");
   const workdaysTitle = keyIndicatorsTooltipContentItem?.jobsCreated.title || t("Workdays");
+  const progressBarCard = {
+    progressSuffix: "",
+    variant: "progressBar" as const,
+    widthProgressBar: "5rem"
+  };
+  const cards: IndexMetricCardItem[] = [
+    ...(primaryMetric == null
+      ? []
+      : [
+          {
+            ...progressBarCard,
+            key: "primary",
+            title: t(primaryMetricTitle),
+            progress: primaryMetric.progress,
+            goal: primaryMetric.goal,
+            icon: primaryMetricIcon,
+            color: "secondary.600",
+            tooltipContent: keyIndicatorTooltip(
+              keyIndicatorsTooltipContentItem?.treesRestored.title,
+              keyIndicatorsTooltipContentItem?.treesRestored.content
+            ),
+            filtered: isFiltered ? filteredTrees : undefined,
+            selection: selectedSites.length > 0 ? selectedTrees : undefined
+          }
+        ]),
+    ...(isTerraFund && project.metrics.treesRegenerated != null
+      ? [
+          {
+            ...progressBarCard,
+            key: "trees-regenerated",
+            title: t(keyIndicatorsTooltipContentItem?.treesRegenerated.title ?? "Trees Regenerated"),
+            progress: project.metrics.treesRegenerated.progress,
+            goal: project.metrics.treesRegenerated.goal,
+            icon: <RegenerationIcon />,
+            color: "secondary.600",
+            filtered: isFiltered ? filteredMetric(project.metrics.treesRegenerated.progress) : undefined,
+            selection: selectedSites.length > 0 ? selectedMetric(project.metrics.treesRegenerated.progress) : undefined
+          }
+        ]
+      : []),
+    {
+      ...progressBarCard,
+      key: "area-restored",
+      title: t(areaTitle),
+      progress: project.metrics.areaRestored.progress,
+      goal: project.metrics.areaRestored.goal,
+      color: "secondary.700",
+      icon: <AreaHectaresIcon />,
+      tooltipContent: keyIndicatorTooltip(
+        keyIndicatorsTooltipContentItem?.hectaresRestored.title,
+        keyIndicatorsTooltipContentItem?.hectaresRestored.content
+      ),
+      filtered: isFiltered ? filteredArea : undefined,
+      selection: selectedSites.length > 0 ? selectedArea : undefined
+    },
+    ...(!isHbf && !isTerraFund && project.metrics.workdays != null
+      ? [
+          {
+            ...progressBarCard,
+            key: "workdays",
+            title: t(workdaysTitle),
+            progress: project.metrics.workdays.progress,
+            goal: project.metrics.workdays.goal,
+            icon: <JobsIcon />,
+            color: "primary.600",
+            tooltipContent: keyIndicatorTooltip(
+              keyIndicatorsTooltipContentItem?.jobsCreated.title,
+              keyIndicatorsTooltipContentItem?.jobsCreated.content
+            ),
+            filtered: isFiltered ? filteredMetric(project.metrics.workdays.progress) : undefined,
+            selection: selectedSites.length > 0 ? selectedMetric(project.metrics.workdays.progress) : undefined
+          }
+        ]
+      : [])
+  ];
 
-  return (
-    <div className="mb-5 flex flex-wrap gap-4">
-      {primaryMetric != null && (
-        <MetricCard
-          title={t(primaryMetricTitle)}
-          progress={primaryMetric.progress}
-          goal={primaryMetric.goal}
-          progressSuffix=""
-          variant="progressBar"
-          widthProgressBar="5rem"
-          icon={primaryMetricIcon}
-          color="secondary.600"
-          className={metricCardClassName}
-          tooltipContent={keyIndicatorTooltip(
-            keyIndicatorsTooltipContentItem?.treesRestored.title,
-            keyIndicatorsTooltipContentItem?.treesRestored.content
-          )}
-          filtered={isFiltered ? filteredTrees : undefined}
-          selection={selectedSites.length > 0 ? selectedTrees : undefined}
-        />
-      )}
-      {isTerraFund && project.metrics.treesRegenerated != null && (
-        <MetricCard
-          title={t(keyIndicatorsTooltipContentItem?.treesRegenerated.title ?? "Trees Regenerated")}
-          progress={project.metrics.treesRegenerated.progress}
-          goal={project.metrics.treesRegenerated.goal}
-          progressSuffix=""
-          variant="progressBar"
-          widthProgressBar="5rem"
-          icon={<RegenerationIcon />}
-          color="secondary.600"
-          className={metricCardClassName}
-          filtered={isFiltered ? filteredMetric(project.metrics.treesRegenerated.progress) : undefined}
-          selection={selectedSites.length > 0 ? selectedMetric(project.metrics.treesRegenerated.progress) : undefined}
-        />
-      )}
-      <MetricCard
-        title={t(areaTitle)}
-        progress={project.metrics.areaRestored.progress}
-        goal={project.metrics.areaRestored.goal}
-        variant="progressBar"
-        widthProgressBar="5rem"
-        color="secondary.700"
-        icon={<AreaHectaresIcon />}
-        className={metricCardClassName}
-        tooltipContent={keyIndicatorTooltip(
-          keyIndicatorsTooltipContentItem?.hectaresRestored.title,
-          keyIndicatorsTooltipContentItem?.hectaresRestored.content
-        )}
-        filtered={isFiltered ? filteredArea : undefined}
-        selection={selectedSites.length > 0 ? selectedArea : undefined}
-      />
-      {!isHbf && !isTerraFund && project.metrics.workdays != null && (
-        <MetricCard
-          title={t(workdaysTitle)}
-          progress={project.metrics.workdays.progress}
-          goal={project.metrics.workdays.goal}
-          variant="progressBar"
-          widthProgressBar="5rem"
-          icon={<JobsIcon />}
-          color="primary.600"
-          className={metricCardClassName}
-          tooltipContent={keyIndicatorTooltip(
-            keyIndicatorsTooltipContentItem?.jobsCreated.title,
-            keyIndicatorsTooltipContentItem?.jobsCreated.content
-          )}
-          filtered={isFiltered ? filteredMetric(project.metrics.workdays.progress) : undefined}
-          selection={selectedSites.length > 0 ? selectedMetric(project.metrics.workdays.progress) : undefined}
-        />
-      )}
-    </div>
-  );
+  return <IndexMetricCardRow cards={cards} />;
 };
 
 const SiteProjectTable: FC<{
