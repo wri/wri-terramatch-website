@@ -5,7 +5,7 @@ import { FC, useEffect, useMemo, useRef, useState } from "react";
 
 import { bulkDeleteUserAssociations, updateOrganisationUserStatuses } from "@/connections/UserAssociation";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
-import { useLayoutShell } from "@/redesignComponents/Loayout/LayoutShell.provider";
+import { useLayoutShell } from "@/redesignComponents/Layout/LayoutShell.provider";
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 import type { BulkToolbarAction } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 
