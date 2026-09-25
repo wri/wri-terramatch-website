@@ -243,6 +243,12 @@ export type SitePolygonsIndexQueryParams = {
    */
   hasOverlap?: boolean;
   /**
+   * Filter to polygons linked to a disturbance (disturbance_id IS NOT NULL).
+   *
+   * @default false
+   */
+  hasDisturbance?: boolean;
+  /**
    * Soft-deleted polygons for one site. Search is supported; other filters are ignored.
    *
    * @default false
@@ -762,6 +768,12 @@ export type SitePolygonsMapIndexQueryParams = {
    */
   hasOverlap?: boolean;
   /**
+   * Filter to polygons linked to a disturbance (disturbance_id IS NOT NULL).
+   *
+   * @default false
+   */
+  hasDisturbance?: boolean;
+  /**
    * Soft-deleted polygons for one site. Requires exactly one siteId[] value.
    *
    * @default false
@@ -950,6 +962,12 @@ export type SitePolygonsSummaryQueryParams = {
    * @default false
    */
   hasOverlap?: boolean;
+  /**
+   * Filter to polygons linked to a disturbance (disturbance_id IS NOT NULL).
+   *
+   * @default false
+   */
+  hasDisturbance?: boolean;
   /**
    * Soft-deleted polygons for one site. Requires exactly one siteId[] value.
    *
@@ -3895,6 +3913,413 @@ export const polygonAttributeDefinitionDelete = new V3ApiEndpoint<
   {}
 >("/research/v3/polygonAttributeDefinitions/{uuid}", "DELETE");
 
+export type ResearchTreeCountIndexQueryParams = {
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The last record before the page being requested. The value is a UUID. If page[after] is not provided, the first page is returned.
+   */
+  ["page[after]"]?: string;
+  /**
+   * Filter results by project UUID(s)
+   */
+  ["projectId[]"]?: string[];
+  /**
+   * Filter results by project short name(s)
+   */
+  ["projectShortNames[]"]?: string[];
+  /**
+   * Filter results by project cohort(s)
+   */
+  ["projectCohort[]"]?: string[];
+  /**
+   * Filter results by project landscape
+   */
+  landscape?: "gcb" | "grv" | "ikr";
+  /**
+   * Filter results by tree counts that have been modified since the date provided
+   *
+   * @format date-time
+   */
+  lastModifiedDate?: string;
+};
+
+export type ResearchTreeCountIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ResearchTreeCountIndexResponse = {
+  meta?: {
+    /**
+     * @example researchTreeCounts
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The cursor for the first record on this page.
+       */
+      cursor?: string;
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
+  };
+  data?: {
+    /**
+     * @example researchTreeCounts
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ResearchTreeCountDto;
+    meta?: {
+      page?: {
+        /**
+         * The cursor for this record.
+         */
+        cursor?: string;
+      };
+    };
+  }[];
+};
+
+export type ResearchTreeCountIndexVariables = {
+  queryParams?: ResearchTreeCountIndexQueryParams;
+};
+
+export const researchTreeCountIndex = new V3ApiEndpoint<
+  ResearchTreeCountIndexResponse,
+  ResearchTreeCountIndexError,
+  ResearchTreeCountIndexVariables,
+  {}
+>("/research/v3/treeCounts", "GET");
+
+export type ResearchTreeCountCreateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ResearchTreeCountCreateResponse = {
+  meta?: {
+    /**
+     * @example researchTreeCounts
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example researchTreeCounts
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ResearchTreeCountDto;
+  };
+};
+
+export type ResearchTreeCountCreateVariables = {
+  body: Schemas.CreateResearchTreeCountBody;
+};
+
+export const researchTreeCountCreate = new V3ApiEndpoint<
+  ResearchTreeCountCreateResponse,
+  ResearchTreeCountCreateError,
+  ResearchTreeCountCreateVariables,
+  {}
+>("/research/v3/treeCounts", "POST");
+
+export type ResearchTreeCountGetPathParams = {
+  /**
+   * @format uuid
+   */
+  projectUuid: string;
+};
+
+export type ResearchTreeCountGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ResearchTreeCountGetResponse = {
+  meta?: {
+    /**
+     * @example researchTreeCounts
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example researchTreeCounts
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ResearchTreeCountDto;
+  };
+};
+
+export type ResearchTreeCountGetVariables = {
+  pathParams: ResearchTreeCountGetPathParams;
+};
+
+export const researchTreeCountGet = new V3ApiEndpoint<
+  ResearchTreeCountGetResponse,
+  ResearchTreeCountGetError,
+  ResearchTreeCountGetVariables,
+  {}
+>("/research/v3/treeCounts/{projectUuid}", "GET");
+
+export type ResearchTreeCountUpdatePathParams = {
+  /**
+   * @format uuid
+   */
+  projectUuid: string;
+};
+
+export type ResearchTreeCountUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ResearchTreeCountUpdateResponse = {
+  meta?: {
+    /**
+     * @example researchTreeCounts
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example researchTreeCounts
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ResearchTreeCountDto;
+  };
+};
+
+export type ResearchTreeCountUpdateVariables = {
+  body: Schemas.UpdateResearchTreeCountBody;
+  pathParams: ResearchTreeCountUpdatePathParams;
+};
+
+export const researchTreeCountUpdate = new V3ApiEndpoint<
+  ResearchTreeCountUpdateResponse,
+  ResearchTreeCountUpdateError,
+  ResearchTreeCountUpdateVariables,
+  {}
+>("/research/v3/treeCounts/{projectUuid}", "PATCH");
+
+export type ResearchTreeCountDeletePathParams = {
+  /**
+   * @format uuid
+   */
+  projectUuid: string;
+};
+
+export type ResearchTreeCountDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ResearchTreeCountDeleteResponse = {
+  meta?: {
+    /**
+     * @example researchTreeCounts
+     */
+    resourceType?: string;
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type ResearchTreeCountDeleteVariables = {
+  pathParams: ResearchTreeCountDeletePathParams;
+};
+
+export const researchTreeCountDelete = new V3ApiEndpoint<
+  ResearchTreeCountDeleteResponse,
+  ResearchTreeCountDeleteError,
+  ResearchTreeCountDeleteVariables,
+  {}
+>("/research/v3/treeCounts/{projectUuid}", "DELETE");
+
 export const operationsByTag = {
   sitePolygons: {
     createSitePolygons,
@@ -3940,5 +4365,12 @@ export const operationsByTag = {
     polygonAttributeDefinitionGet,
     polygonAttributeDefinitionUpdate,
     polygonAttributeDefinitionDelete
+  },
+  researchTreeCounts: {
+    researchTreeCountIndex,
+    researchTreeCountCreate,
+    researchTreeCountGet,
+    researchTreeCountUpdate,
+    researchTreeCountDelete
   }
 };

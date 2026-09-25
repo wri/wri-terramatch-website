@@ -38,8 +38,8 @@ const SiteInfo: FC<SiteInfoProps> = ({
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "sites",
     entityUUID: site.uuid,
-    entityStatus: site.status as string,
-    updateRequestStatus: site.updateRequestStatus as string,
+    entityStatus: site.status ?? "draft",
+    updateRequestStatus: site.updateRequestStatus,
     feedback: site.feedback,
     useInformationRequiredModal: true
   });
@@ -105,7 +105,7 @@ const SiteInfo: FC<SiteInfoProps> = ({
               {site.ppcExternalId ?? "-"}
             </Text>
           </Flex>
-          <div className="flex w-fit gap-2">
+          <Flex width="fit-content" gap={2}>
             <Button
               variant="secondary"
               size="small"
@@ -125,7 +125,7 @@ const SiteInfo: FC<SiteInfoProps> = ({
             >
               {t("Download Site Files")}
             </Button>
-          </div>
+          </Flex>
         </>
       )}
     </Box>

@@ -67,7 +67,7 @@ const ResizableBox: FC<ResizableBoxProps> = ({
     if (!isDragging) return;
 
     const handleMouseMove = (event: MouseEvent) => {
-      if (!containerRef.current) return;
+      if (containerRef.current == null) return;
       const rect = containerRef.current.getBoundingClientRect();
       const nextHeightUnits = clampHeightUnits(pxToUnits(event.clientY - rect.top));
       setHeightUnits(nextHeightUnits);

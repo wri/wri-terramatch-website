@@ -40,7 +40,6 @@ const variantStyles = {
   },
   tertiary: {
     container: {
-      background: "neutral.100",
       paddingX: 4,
       paddingY: 3,
       marginBottom: 4,
@@ -48,8 +47,7 @@ const variantStyles = {
       alignItems: "center",
       justifyContent: "space-between",
       borderRadius:
-        "var(--Border-Radius-300, 4px) var(--Border-Radius-300, 4px) var(--Border-Radius-100, 0) var(--Border-Radius-100, 0)",
-      borderTop: "var(--Border-Width-200, 2px) solid var(--Neutrals-300, #E7E6E6)"
+        "var(--Border-Radius-300, 0.25rem) var(--Border-Radius-300, 0.25rem) var(--Border-Radius-100, 0) var(--Border-Radius-100, 0)"
     },
     header: {
       gap: 2
@@ -104,7 +102,8 @@ const Accordion: FC<AccordionProps> = ({
   classNameHeader,
   defaultOpen = false,
   open,
-  onOpenChange
+  onOpenChange,
+  isScrollable = true
 }) => {
   const { container, header: headerStyles } = variantStyles[variant];
   const isControlled = open !== undefined;
@@ -112,6 +111,28 @@ const Accordion: FC<AccordionProps> = ({
   const isOpen = isControlled ? open : uncontrolledOpen;
   const onOpenChangeRef = useRef(onOpenChange);
   onOpenChangeRef.current = onOpenChange;
+  const headerContainerStyles =
+    variant === "tertiary"
+      ? {
+          ...container,
+          background: isOpen ? "primary.100" : "neutral.100",
+          borderTopWidth: "0.25rem",
+          borderTopStyle: "solid" as const,
+          borderTopColor: isOpen ? "primary.500" : "primary.300"
+        }
+      : variant === "quaternary"
+        ? {
+            ...container,
+            background: "neutral.100",
+            ...(isOpen
+              ? {
+                  borderBottomWidth: "0.063rem",
+                  borderBottomStyle: "solid" as const,
+                  borderBottomColor: "neutral.300"
+                }
+              : {})
+          }
+        : container;
 
   const setIsOpen = useCallback(
     (nextOpen: boolean) => {
@@ -143,35 +164,28 @@ const Accordion: FC<AccordionProps> = ({
     <Box
       className={className}
       css={{
-        "& [data-scope='accordion'][data-part='item-content']": {
-          margin: "0 -2rem",
-          padding: "0 2rem"
-        },
-        "& [data-scope='accordion'][data-part='item']": {
-          overflow: "visible"
-        },
-        ...(variant === "tertiary"
+        ...(isScrollable
           ? {
-              "& [data-scope='accordion'][data-part='item'][data-state='open'] > [data-accordion-header]": {
-                borderRadius:
-                  "var(--Border-Radius-300, 4px) var(--Border-Radius-300, 4px) var(--Border-Radius-100, 0) var(--Border-Radius-100, 0)",
-                borderTop: "var(--Border-Width-300, 4px) solid var(--Primary-500, #78CAED)",
-                background: "var(--Primary-100, #F7FBFD)"
+              "& [data-scope='accordion'][data-part='item-content']": {
+                margin: "0 -2rem",
+                padding: "0 2rem"
               }
             }
           : {}),
-        ...(variant === "quaternary"
-          ? {
-              "& [data-scope='accordion'][data-part='item'][data-state='open'] > [data-accordion-header]": {
-                borderBottom: "var(--Border-Width-100, 1px) solid var(--Neutrals-300, #E7E6E6)"
-              }
-            }
-          : {})
+        "& [data-scope='accordion'][data-part='item']": {
+          overflow: "visible"
+        }
       }}
     >
       <AccordionChakra.Root multiple collapsible value={isOpen ? [ACCORDION_ITEM_VALUE] : []}>
         <AccordionChakra.Item value={ACCORDION_ITEM_VALUE}>
-          <Flex {...container} gap={4} className={classNameHeader} alignItems="center" data-accordion-header="">
+          <Flex
+            {...headerContainerStyles}
+            gap={4}
+            className={classNameHeader}
+            alignItems="center"
+            data-accordion-header=""
+          >
             <AccordionChakra.ItemTrigger
               onPointerDown={handleTriggerPointerDown}
               onClick={handleTriggerClick}

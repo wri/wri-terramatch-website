@@ -4,13 +4,19 @@ import {
   ExpandMore as ExpandMoreIcon,
   RemoveCircleOutline as RemoveCircleOutlineIcon
 } from "@mui/icons-material";
-import { Box, Card, CardContent, FormControlLabel, Stack, Switch, TextField, Typography } from "@mui/material";
+import { Box, Card, CardContent, MenuItem, Stack, TextField, Typography } from "@mui/material";
 import type { FC } from "react";
 
 import { AttributeOptionsList } from "./AttributeOptionsList";
 import { CircularIconButton } from "./CircularIconButton";
-import { previewKeyFromLabel } from "./mappers";
+import { isSelectType, previewKeyFromLabel } from "./mappers";
 import { LocalAttribute } from "./types";
+
+const FIELD_TYPE_OPTIONS: Array<{ value: LocalAttribute["inputType"]; label: string }> = [
+  { value: "single_select", label: "Single select" },
+  { value: "multi_select", label: "Multi select" },
+  { value: "date", label: "Date" }
+];
 
 type AttributeCardProps = {
   attribute: LocalAttribute;
@@ -104,6 +110,40 @@ export const AttributeCard: FC<AttributeCardProps> = ({
       {attribute.isExpanded && (
         <Box className="mt-3 space-y-3">
           <TextField
+            select
+            label="Field Type *"
+            value={attribute.inputType}
+            onChange={event => {
+              const inputType = event.target.value as LocalAttribute["inputType"];
+              onUpdate(attribute.localId, { inputType, options: isSelectType(inputType) ? attribute.options : [] });
+            }}
+            fullWidth
+            size="small"
+            disabled={attribute.uuid != null}
+          >
+            {FIELD_TYPE_OPTIONS.map(option => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
+          {attribute.uuid != null && (
+            <Typography variant="caption" color="text.secondary">
+              Field type cannot be changed after an attribute is created.
+            </Typography>
+          )}
+
+          <TextField
+            label="Label *"
+            value={attribute.label}
+            onChange={event => onUpdate(attribute.localId, { label: event.target.value })}
+            fullWidth
+            size="small"
+            error={attribute.label.trim() === ""}
+            helperText={attribute.label.trim() === "" ? "Label is required" : undefined}
+          />
+
+          <TextField
             label="Key"
             value={attribute.key ?? previewKeyFromLabel(attribute.label)}
             fullWidth
@@ -116,47 +156,16 @@ export const AttributeCard: FC<AttributeCardProps> = ({
             }
           />
 
-          <TextField
-            label="Label *"
-            value={attribute.label}
-            onChange={event => onUpdate(attribute.localId, { label: event.target.value })}
-            fullWidth
-            size="small"
-            error={attribute.label.trim() === ""}
-            helperText={attribute.label.trim() === "" ? "Label is required" : undefined}
-          />
-
-          <Stack direction="row" spacing={4}>
-            <FormControlLabel
-              control={
-                <Switch
-                  size="small"
-                  checked={attribute.inputType === "multi_select"}
-                  onChange={event =>
-                    onUpdate(attribute.localId, {
-                      inputType: event.target.checked ? "multi_select" : "single_select"
-                    })
-                  }
-                  disabled={attribute.uuid != null}
-                />
-              }
-              label="Multiselect"
+          {isSelectType(attribute.inputType) && (
+            <AttributeOptionsList
+              attributeLocalId={attribute.localId}
+              options={attribute.options}
+              onAdd={onAddOption}
+              onUpdate={onUpdateOption}
+              onRemove={onRemoveOption}
+              onMove={onMoveOption}
             />
-          </Stack>
-          {attribute.uuid != null && (
-            <Typography variant="caption" color="text.secondary">
-              Input type cannot be changed after an attribute is created.
-            </Typography>
           )}
-
-          <AttributeOptionsList
-            attributeLocalId={attribute.localId}
-            options={attribute.options}
-            onAdd={onAddOption}
-            onUpdate={onUpdateOption}
-            onRemove={onRemoveOption}
-            onMove={onMoveOption}
-          />
         </Box>
       )}
     </CardContent>

@@ -6,6 +6,7 @@ import { FC, memo, ReactNode, useCallback, useMemo } from "react";
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
 import { useTargetLandUseLabels } from "@/hooks/translation/useTargetLandUseLabels";
 import { TreeDistributionType, useTreeDistributionOptions } from "@/hooks/translation/useTreeDistributionOptions";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import MappedTag, { MappedTagState } from "@/redesignComponents/actions/Tags/MappedTag/MappedTag";
 import ValidationTag, { ValidationTagState } from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
@@ -13,7 +14,7 @@ import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import { type TableRenderRowContext, CHECKBOX_COLUMN_KEY } from "@/redesignComponents/dataDisplay/Table/Table";
 import {
   AgriculturalLandIcon,
-  AgroforestyIcon,
+  AgroforestryIcon,
   AssistedNaturalRegenIcon,
   CalendarIcon,
   DirectSeedingIcon,
@@ -32,6 +33,7 @@ import {
 import { formatNumberLocaleString } from "@/utils/dashboardUtils";
 
 import { type SubmissionCycleOption, formatSubmissionCycleDisplay } from "./polygonFilter.constants";
+import { openDisturbanceReportInNewTab } from "./polygonTable.constants";
 
 export type PolygonTableRow = {
   id: string;
@@ -50,12 +52,13 @@ export type PolygonTableRow = {
   submissionCycle: string[];
   submissionCycleSort: string;
   source: string;
+  disturbanceReportUuid: string | null;
 };
 
 type SiteTypeConfig = { icon: ReactNode; label: string };
 
 const TARGET_LAND_USE_ICONS: Record<targetLandUseType, ReactNode> = {
-  agroforest: <AgroforestyIcon boxSize={3.5} />,
+  agroforest: <AgroforestryIcon boxSize={3.5} />,
   "agricultural-land": <AgriculturalLandIcon boxSize={3.5} />,
   grassland: <GrasslandIcon boxSize={3.5} />,
   mangrove: <MangroveIcon boxSize={3.5} />,
@@ -133,6 +136,18 @@ const renderTreeDistribution = (
   }
 
   return <Text>{treeDistribution.map(value => labelByValue[value]).join(", ")}</Text>;
+};
+
+const renderDisturbance = (disturbanceReportUuid: string | null, viewReportLabel: string) => {
+  if (disturbanceReportUuid == null || disturbanceReportUuid === "") {
+    return <Text>—</Text>;
+  }
+
+  return (
+    <Button size="small" variant="secondary" onClick={() => openDisturbanceReportInNewTab(disturbanceReportUuid)}>
+      {viewReportLabel}
+    </Button>
+  );
 };
 
 interface PolygonRowProps {
@@ -244,6 +259,9 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
       </TableCell>
       <TableCell {...context?.getCellProps("source")}>
         <Text>{row.source === "uploaded" ? t("Uploaded") : row.source}</Text>
+      </TableCell>
+      <TableCell {...context?.getCellProps("disturbance")}>
+        {renderDisturbance(row.disturbanceReportUuid, t("View Report"))}
       </TableCell>
     </TableRow>
   );

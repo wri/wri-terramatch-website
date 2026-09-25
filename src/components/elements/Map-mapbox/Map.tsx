@@ -601,7 +601,6 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     hideMediaPopupActions,
     hideMediaOnMap,
     isPolygonGeometryLoading,
-    isEditFocusActive: editFocus.isEditFocusActive,
     overlapPolygons
   });
 
@@ -710,6 +709,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
             setAlertTitle,
             disabledPolygonPanel,
             hideFullscreenControl,
+            hideMediaOnMap,
             selectedPolygonsInCheckbox
           }}
           form={{

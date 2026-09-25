@@ -2,8 +2,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback } from "react";
 
-import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
-import Modal from "@/redesignComponents/containers/Modal/Modal";
+import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
 import { WarningIcon } from "@/redesignComponents/foundations/Icons/Function/WarningIcon";
 
 type DeleteAnrMonitoringPlotsProps = {
@@ -21,10 +20,6 @@ const DeleteAnrMonitoringPlots: FC<DeleteAnrMonitoringPlotsProps> = ({
 }) => {
   const t = useT();
 
-  const handleClose = useCallback(() => {
-    onOpenChange(false);
-  }, [onOpenChange]);
-
   const handleDelete = useCallback(async () => {
     const isDeleted = await onDelete();
     if (isDeleted) {
@@ -33,16 +28,13 @@ const DeleteAnrMonitoringPlots: FC<DeleteAnrMonitoringPlotsProps> = ({
   }, [onDelete, onOpenChange]);
 
   return (
-    <Modal
+    <ModalConfirmation
       modal={false}
       open={open}
-      onClose={handleClose}
+      onOpenChange={onOpenChange}
       size="medium"
-      header={
-        <Text textStyle="400-bold" color="neutral.800">
-          {t("Delete monitoring plots?")}
-        </Text>
-      }
+      title={t("Delete monitoring plots?")}
+      contentLayout="custom"
       content={
         <Flex justifyContent="center" alignItems="center" flexDirection="column" pt={2} width="100%">
           <WarningIcon boxSize={8} color={"warning.500"} mb={2} />
@@ -58,30 +50,17 @@ const DeleteAnrMonitoringPlots: FC<DeleteAnrMonitoringPlotsProps> = ({
           </Text>
         </Flex>
       }
-      footer={
-        <ButtonGroup
-          buttons={[
-            {
-              id: "cancel",
-              variant: "secondary",
-              children: t("Cancel"),
-              className: "!w-1/2",
-              disabled: isDeleting,
-              onClick: handleClose
-            },
-            {
-              id: "delete",
-              variant: "negative",
-              classNameContainer: "!w-1/2",
-              className: "!w-full",
-              children: isDeleting ? t("Deleting...") : t("Delete"),
-              loading: isDeleting,
-              disabled: isDeleting,
-              onClick: () => void handleDelete()
-            }
-          ]}
-        />
-      }
+      confirmButton={{
+        id: "delete",
+        variant: "negative",
+        classNameContainer: "!w-1/2",
+        className: "!w-full",
+        children: isDeleting ? t("Deleting...") : t("Delete"),
+        loading: isDeleting,
+        disabled: isDeleting,
+        onClick: () => void handleDelete()
+      }}
+      cancelButton={{ className: "!w-1/2", disabled: isDeleting }}
     />
   );
 };

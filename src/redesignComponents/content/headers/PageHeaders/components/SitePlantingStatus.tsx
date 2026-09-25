@@ -9,7 +9,7 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import {
   AgriculturalLandIcon,
-  AgroforestyIcon,
+  AgroforestryIcon,
   AssistedNaturalRegenIcon,
   DirectSeedingIcon,
   GrasslandIcon,
@@ -58,8 +58,8 @@ const SITE_RESTORATION_STRATEGY_MAP: Record<restorationStrategyType, SiteTypeCon
 
 const SITE_TARGET_LAND_USE_MAP: Record<targetLandUseType, SiteTypeConfig> = {
   agroforest: {
-    icon: <AgroforestyIcon className="h-8 w-8 text-theme-secondary-800" />,
-    label: "Agroforesty",
+    icon: <AgroforestryIcon className="h-8 w-8 text-theme-secondary-800" />,
+    label: "Agroforestry",
     tooltip:
       "An agroforest is productive, managed land containing a mix of woody perennial species (trees, shrubs, bamboos) and agricultural crops in a way that improves the agricultural productivity and ecological function of a site. This category includes agroforestry for shade grown crops (cacao, coffee), as well as planting trees at a low density to allow for continued full-sun agriculture, also known as intercropping or row cropping. Please note that silvopasture is its own separate land use system."
   },
@@ -122,6 +122,8 @@ const SITE_TARGET_LAND_USE_MAP: Record<targetLandUseType, SiteTypeConfig> = {
 const isKnownRestorationStrategy = (slug: string): slug is restorationStrategyType =>
   slug in SITE_RESTORATION_STRATEGY_MAP;
 
+const isKnownTargetLandUse = (slug: string): slug is targetLandUseType => slug in SITE_TARGET_LAND_USE_MAP;
+
 const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
   const t = useT();
   const restorationStrategyKeys: string[] =
@@ -140,9 +142,7 @@ const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
 
   const targetLandUseKeys: string[] =
     site.landUseTypes != null ? (Array.isArray(site.landUseTypes) ? site.landUseTypes : [site.landUseTypes]) : [];
-  const targetLandUseConfigs = targetLandUseKeys
-    .map(key => SITE_TARGET_LAND_USE_MAP[key as targetLandUseType])
-    .filter((c): c is SiteTypeConfig => c != null);
+  const targetLandUseConfigs = targetLandUseKeys.filter(isKnownTargetLandUse).map(key => SITE_TARGET_LAND_USE_MAP[key]);
 
   const MAX_VISIBLE_LAND_USE = 2;
   const visibleLandUseConfigs = targetLandUseConfigs.slice(0, MAX_VISIBLE_LAND_USE);
@@ -162,7 +162,7 @@ const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
           "&": { msOverflowStyle: "none", scrollbarWidth: "none" }
         }}
       >
-        <div className="flex w-fit flex-col justify-center gap-2">
+        <Flex width="fit-content" flexDirection="column" justifyContent="center" gap={2}>
           <Text color="primary.900" textStyle="300" textWrap="nowrap">
             {t("Restoration Strategy:")}
           </Text>
@@ -176,7 +176,9 @@ const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
                     <Tooltip
                       content={
                         <>
-                          <span className="text-sm font-semibold">{t(restorationStrategyConfig.label)}: </span>
+                          <Text as="span" textStyle="200-bold">
+                            {t(restorationStrategyConfig.label)}:{" "}
+                          </Text>
                           {t(restorationStrategyConfig.tooltip)}
                         </>
                       }
@@ -192,18 +194,18 @@ const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
               </Text>
             )}
           </Flex>
-        </div>
-        <div className="flex h-full w-fit items-center">
-          <div className="h-13 w-px bg-theme-neutral-300" />
-        </div>
-        <div className="flex w-fit flex-col justify-center gap-2">
+        </Flex>
+        <Flex height="100%" width="fit-content" alignItems="center">
+          <Box height="3.25rem" width="1px" backgroundColor="neutral.300" />
+        </Flex>
+        <Flex width="fit-content" flexDirection="column" justifyContent="center" gap={2}>
           <Text color="primary.900" textStyle="300" textWrap="nowrap">
             {t("Target Land Use:")}
           </Text>
           <Flex className="w-auto" alignItems="center" gap={3}>
             {visibleLandUseConfigs.length > 0 ? (
-              visibleLandUseConfigs.map((config, idx) => (
-                <Flex key={targetLandUseKeys[idx]} className="flex-col" minWidth={"8.5rem"} alignItems="center" gap={1}>
+              visibleLandUseConfigs.map(config => (
+                <Flex key={config.label} className="flex-col" minWidth="8.5rem" alignItems="center" gap={1}>
                   {config.icon}
                   <Text textStyle="400-bold" color="secondary.800" className="text-center leading-5">
                     {t(config.label)}{" "}
@@ -211,7 +213,9 @@ const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
                       <Tooltip
                         content={
                           <>
-                            <span className="text-sm font-semibold">{t(config.label)}: </span>
+                            <Text as="span" textStyle="200-bold">
+                              {t(config.label)}:{" "}
+                            </Text>
                             {t(config.tooltip)}
                           </>
                         }
@@ -233,7 +237,7 @@ const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
               </Button>
             )}
           </Flex>
-        </div>
+        </Flex>
       </Flex>
     </Box>
   );

@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
-import { EditIcon, FolderIcon, FolderOpenIcon } from "@/redesignComponents/foundations/Icons";
+import { EditIcon } from "@/redesignComponents/foundations/Icons";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
 import Accordion from "./Accordion";
@@ -104,22 +104,6 @@ export const variantSecondary: Story = {
   }
 };
 
-export const variantTertiary: Story = {
-  args: {
-    header: <AccordionHeader label="Label" title="Header Title" />,
-    children: "This is the accordion content. You can put any content here.",
-    variant: "tertiary"
-  }
-};
-
-export const StatusLabel: Story = {
-  args: {
-    header: <AccordionHeader label="Label" title="Header Title" status="error" statusLabel="Status Label" />,
-    children: "This is the accordion content. You can put any content here.",
-    variant: "secondary"
-  }
-};
-
 export const ListSectionHeaderTopLevel: Story = {
   render: () => {
     const [open, setOpen] = useState(true);
@@ -136,9 +120,7 @@ export const ListSectionHeaderTopLevel: Story = {
             titleHref="#"
             onTitleClick={() => console.log("Title link clicked")}
             caption="caption"
-            icon={
-              open ? <FolderOpenIcon boxSize={5} color="primary.600" /> : <FolderIcon boxSize={5} color="neutral.400" />
-            }
+            open={open}
             statusLabels={<TextBadge>Label</TextBadge>}
           />
         }
@@ -163,6 +145,7 @@ export const ListSectionHeaderSubLevel: Story = {
             level="sub-level"
             label="Label"
             title="Header Title"
+            open={open}
             dueDate="dd/mm/yyyy"
             statusLabels={
               <Flex alignItems="center" gap={2}>

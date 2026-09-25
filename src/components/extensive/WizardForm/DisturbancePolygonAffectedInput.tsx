@@ -3,9 +3,7 @@ import { useCallback, useMemo } from "react";
 import { ControllerRenderProps } from "react-hook-form";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
-import { useLightDisturbanceReport } from "@/connections/Entity";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
-import { useFormEntities } from "@/context/wizardForm.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import useDisturbanceReportDescriptions from "@/hooks/translation/useDisturbanceReportDescriptions";
 import { OptionValue } from "@/types/common";
@@ -27,13 +25,14 @@ export const DisturbancePolygonAffectedInput = ({
   value: polygonAffectedValue,
   field
 }: DisturbancePolygonAffectedInputProps) => {
-  const entityUuid = useFormEntities()[0]?.entityUUID;
-  const [, { data: disturbanceReport }] = useLightDisturbanceReport({ id: entityUuid! });
   const t = useT();
-  const { data: polygonsData } = useAllSitePolygons({
+  const { data: polygonsData, isLoading: isLoadingPolygons } = useAllSitePolygons({
     entityName: "sites",
     entityUuid: siteUuid,
-    enabled: !!siteUuid,
+    enabled: siteUuid != null && siteUuid !== "",
+    filter: {
+      "polygonStatus[]": ["approved"]
+    },
     sortField: "name",
     sortDirection: "ASC"
   });
@@ -42,24 +41,17 @@ export const DisturbancePolygonAffectedInput = ({
   const polygonChoices = useMemo(() => {
     if (polygonsData == null || siteUuid == null) return [];
 
-    return polygonsData
-      .filter(
-        (polygon: SitePolygonLightDto) =>
-          polygon.status === "approved" &&
-          (polygon.disturbanceableId === disturbanceReport?.reportId || polygon.disturbanceableId === null)
-      )
-      .map((polygon: SitePolygonLightDto) => ({
-        title: polygon.name || `Polygon ${polygon.uuid}`,
-        value: polygon.uuid,
-        meta: { practice: polygon.practice ?? "" }
-      }));
-  }, [polygonsData, siteUuid, disturbanceReport]);
+    return polygonsData.map((polygon: SitePolygonLightDto) => ({
+      title: polygon.name || `Polygon ${polygon.uuid}`,
+      value: polygon.uuid,
+      meta: { practice: polygon.practice ?? "" }
+    }));
+  }, [polygonsData, siteUuid]);
 
-  if (fieldUuid == null) {
-    return null;
-  }
+  const hasSite = siteUuid != null && siteUuid !== "";
+  const hasNoApprovedPolygons = hasSite && !isLoadingPolygons && polygonChoices.length === 0;
 
-  const fieldIndex = fieldUuid.match(/\[(\d+)\]/)?.[1];
+  const fieldIndex = fieldUuid?.match(/\[(\d+)\]/)?.[1];
   const currentPolygons = polygonAffectedValue.find(f => f.name === "polygon-affected")?.value;
   const polygonsArray = typeof currentPolygons === "string" ? JSON.parse(currentPolygons) : currentPolygons;
   const value = fieldIndex != null ? polygonsArray[parseInt(fieldIndex)] : null;
@@ -70,7 +62,7 @@ export const DisturbancePolygonAffectedInput = ({
         const polygonsData = selectedValues
           .map(selectedValue => {
             const selectedPolygon = polygonChoices.find(polygon => polygon.value === selectedValue);
-            if (selectedPolygon) {
+            if (selectedPolygon != null) {
               return {
                 polyUuid: selectedPolygon.value,
                 polyName: selectedPolygon.title,
@@ -112,13 +104,19 @@ export const DisturbancePolygonAffectedInput = ({
     return [];
   }, [value]);
 
+  if (fieldUuid == null || hasNoApprovedPolygons) {
+    return null;
+  }
+
   return (
     <Dropdown
       label={label}
       options={polygonChoices}
       value={dropdownValue}
       onChange={_onChange}
-      placeholder={siteUuid ? t("Search and select polygons...") : t("Please select a site first")}
+      placeholder={
+        siteUuid != null && siteUuid !== "" ? t("Search and select polygons...") : t("Please select a site first")
+      }
       description={DISTURBANCE_POLYGONS_FIELD_DESCRIPTION}
       className="w-full"
       multiSelect={true}
