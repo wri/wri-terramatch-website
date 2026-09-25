@@ -41,7 +41,7 @@ const NurseryUpdate = ({ status }: { status: NurseryIndexRow["updateRequestStatu
   }[status];
 
   return (
-    <Box className="text-theme-neutral-800 flex items-center gap-1">
+    <Box className="flex items-center gap-1 text-theme-neutral-800">
       <EditIcon boxSize={2.5} />
       {!complete ? (
         <Text as="span" textStyle="200">
@@ -122,7 +122,7 @@ const NurseryIndexTable = ({ nurseries }: { nurseries: NurseryIndexRow[] }) => {
               label={format(nursery.createdAt)}
               icon={<CalendarIcon boxSize="0.625rem" />}
               size="small"
-              className="bg-theme-neutral-200 rounded"
+              className="rounded bg-theme-neutral-200"
             />
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("actions")}>

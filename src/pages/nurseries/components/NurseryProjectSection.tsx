@@ -102,7 +102,7 @@ const NurseryProjectSection = ({
       variant="tertiary"
       open={open}
       onOpenChange={setOpen}
-      className="bg-theme-neutral-100 overflow-hidden rounded"
+      className="overflow-hidden rounded bg-theme-neutral-100"
       classNameHeader="!mb-0"
       header={
         <ListSectionHeader
