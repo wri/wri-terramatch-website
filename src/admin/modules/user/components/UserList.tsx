@@ -69,7 +69,16 @@ const UserDataGrid = () => {
   const roleData = useGetUserRole();
 
   return (
-    <Datagrid rowClick={"show"}>
+    <Datagrid
+      rowClick={"show"}
+      sx={{
+        "& .MuiTableSortLabel-icon": {
+          width: "16px !important",
+          height: "16px !important",
+          fontSize: "16px !important"
+        }
+      }}
+    >
       <TextField source="fullName" label="Name" sortBy="firstName" />
       <TextField source="organisationName" label="Organization" />
       <TextField source="emailAddress" label="Email" />

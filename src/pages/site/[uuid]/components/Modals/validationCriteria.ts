@@ -92,7 +92,7 @@ export const withResolvedValidationStatusFromCriteria = (
     return { ...polygon, validationStatus: resolved };
   });
 
-  return changed ? next : polygons;
+  return changed ? (next as SitePolygonLightDto[]) : polygons;
 };
 
 export const isValidationTagChecked = (validationTag: ValidationTagState): boolean => validationTag !== "not-started";
