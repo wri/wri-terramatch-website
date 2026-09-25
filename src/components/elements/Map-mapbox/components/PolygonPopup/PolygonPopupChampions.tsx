@@ -11,6 +11,7 @@ import {
   openPolygonSubmitConfirmationFromMapPopup,
   runPolygonValidationFromMapPopup
 } from "@/context/mapArea.utils";
+import type { SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { isRestorationStrategy, isTargetLandUseType } from "@/pages/site/[uuid]/components/polygonTable.constants";
 import { showPolygonErrorToast } from "@/pages/site/[uuid]/utils/polygonOperationToasts";
 import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
@@ -26,7 +27,6 @@ import {
   resolveViewDetailsSiteUuid
 } from "../../sitePolygonNavigation";
 import {
-  type SitePolygonPopupFields,
   formatAreaHectaresForPopup,
   formatTreesPlantedForPopup,
   getSitePolygonGeometryUuid,
@@ -40,7 +40,7 @@ import PopupHeaderPolygon from "../PopupPolygon/PopupHeaderPolygon";
 type PolygonPopupChampionsProps = {
   popup: PopupComponentProps["popup"];
   setShouldRefetchPolygonData?: PopupComponentProps["setShouldRefetchPolygonData"];
-  sitePolygon?: SitePolygonPopupFields;
+  sitePolygon?: SitePolygonMapEntryDto;
   isLoading?: boolean;
   tooltipType?: TooltipType;
   overviewPolygonPopup?: boolean;
