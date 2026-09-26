@@ -2,7 +2,7 @@ import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { type FC, useEffect, useMemo } from "react";
 
-import { useLayoutShell } from "@/redesignComponents/Loayout/LayoutShell.provider";
+import { useLayoutShell } from "@/redesignComponents/Layout/LayoutShell.provider";
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 import ToolbarInfoTooltipContent from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
 

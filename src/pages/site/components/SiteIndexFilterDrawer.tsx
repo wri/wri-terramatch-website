@@ -1,12 +1,8 @@
-import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useEffect, useMemo, useState } from "react";
 
-import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
-import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
-import Drawer from "@/redesignComponents/containers/Drawer/Drawer";
-import FilterPanel from "@/redesignComponents/containers/FilterPanel/FilterPanel";
 import FilterCard from "@/redesignComponents/containers/FilterPanel/FilterPanelElements/FilterCards";
+import IndexFilterDrawer from "@/redesignComponents/containers/FilterPanel/IndexFilterDrawer";
 import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
 import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 
@@ -100,92 +96,51 @@ const SiteIndexFilterDrawer: FC<SiteIndexFilterDrawerProps> = ({
   };
 
   return (
-    <Drawer
-      trapFocus={false}
+    <IndexFilterDrawer
       open={open}
       onOpenChange={onOpenChange}
-      size="filterPanel"
-      placement="end"
-      maxW="22.75rem"
-      paddingTop={0}
-      paddingLeft={0}
-      maxH="100vh"
+      tags={activeFilterTags}
+      onRemoveTag={removeFilterTag}
+      onClear={() => {
+        setDraftFilters([]);
+        setDraftUpdateFilter(null);
+      }}
+      onApply={() => onApplyFilters(draftFilters, draftUpdateFilter)}
+      drawerSize="filterPanel"
+      drawerPlacement="end"
+      drawerMaxW="22.75rem"
+      drawerPaddingTop={0}
+      drawerPaddingLeft={0}
+      drawerMaxH="100vh"
+      panelClassName="h-screen max-h-screen shadow-[0_10px_7.5px_rgba(0,0,0,0.1),0_4px_3px_rgba(0,0,0,0.1)]"
     >
-      {({ onClose }) => (
-        <FilterPanel
-          title={t("Filters")}
-          variant="fixed"
-          onClose={onClose}
-          className="h-screen max-h-screen shadow-[0_10px_7.5px_rgba(0,0,0,0.1),0_4px_3px_rgba(0,0,0,0.1)]"
-          content={
-            <Flex className="h-full flex-col gap-3 overflow-auto p-4">
-              <Flex className="mb-2 flex-wrap gap-2" display={activeFilterTags.length > 0 ? "flex" : "none"}>
-                {activeFilterTags.map(filter => (
-                  <FeedbackTag
-                    key={filter.id}
-                    type="info-white"
-                    label={filter.label}
-                    closable
-                    onClose={() => removeFilterTag(filter.id)}
-                  />
-                ))}
-              </Flex>
-
-              <FilterCard label={t("Status")}>
-                {SITE_INDEX_STATUS_OPTIONS.map(option => (
-                  <Checkbox
-                    key={option.value}
-                    name={`site-status-${option.value}`}
-                    value={option.value}
-                    checked={draftFilters.includes(option.value)}
-                    onCheckedChange={(change: CheckboxChange) => handleStatusChange(option.value, change)}
-                  >
-                    {t(option.label)}
-                  </Checkbox>
-                ))}
-              </FilterCard>
-              <FilterCard label={t("Updates")}>
-                <SelectInput
-                  placeholder={t("Please select")}
-                  value={draftUpdateFilter == null ? [] : [draftUpdateFilter]}
-                  items={SITE_INDEX_UPDATE_OPTIONS.map(option => ({
-                    label: t(option.label),
-                    value: option.value
-                  }))}
-                  onChange={(values: string[]) =>
-                    setDraftUpdateFilter((values[0] as SiteIndexFilterUpdate | undefined) ?? null)
-                  }
-                />
-              </FilterCard>
-            </Flex>
-          }
-          footer={
-            <ButtonGroup
-              buttons={[
-                {
-                  id: "clear-all",
-                  children: t("Clear all"),
-                  variant: "secondary",
-                  onClick: () => {
-                    setDraftFilters([]);
-                    setDraftUpdateFilter(null);
-                  }
-                },
-                {
-                  id: "apply",
-                  children: t("Apply"),
-                  variant: "primary",
-                  onClick: () => {
-                    onApplyFilters(draftFilters, draftUpdateFilter);
-                    onClose();
-                  }
-                }
-              ]}
-            />
+      <FilterCard label={t("Status")}>
+        {SITE_INDEX_STATUS_OPTIONS.map(option => (
+          <Checkbox
+            key={option.value}
+            name={`site-status-${option.value}`}
+            value={option.value}
+            checked={draftFilters.includes(option.value)}
+            onCheckedChange={(change: CheckboxChange) => handleStatusChange(option.value, change)}
+          >
+            {t(option.label)}
+          </Checkbox>
+        ))}
+      </FilterCard>
+      <FilterCard label={t("Updates")}>
+        <SelectInput
+          placeholder={t("Please select")}
+          value={draftUpdateFilter == null ? [] : [draftUpdateFilter]}
+          items={SITE_INDEX_UPDATE_OPTIONS.map(option => ({
+            label: t(option.label),
+            value: option.value
+          }))}
+          onChange={(values: string[]) =>
+            setDraftUpdateFilter((values[0] as SiteIndexFilterUpdate | undefined) ?? null)
           }
         />
-      )}
-    </Drawer>
+      </FilterCard>
+    </IndexFilterDrawer>
   );
 };
 
