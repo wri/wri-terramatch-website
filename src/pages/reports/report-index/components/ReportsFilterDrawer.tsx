@@ -6,11 +6,8 @@ import { FC, useEffect, useMemo, useState } from "react";
 
 import { getReportStatusOptions } from "@/constants/options/status";
 import { useDate } from "@/hooks/useDate";
-import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
-import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
-import Drawer from "@/redesignComponents/containers/Drawer/Drawer";
-import FilterPanel from "@/redesignComponents/containers/FilterPanel/FilterPanel";
 import FilterCard from "@/redesignComponents/containers/FilterPanel/FilterPanelElements/FilterCards";
+import IndexFilterDrawer from "@/redesignComponents/containers/FilterPanel/IndexFilterDrawer";
 import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
 import DateRangeInput from "@/redesignComponents/Forms/Inputs/DateInputs/DateRangeInputs/DateRangeInput";
 import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
@@ -184,120 +181,76 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
   };
 
   return (
-    <Drawer trapFocus={false} open={open} onOpenChange={onOpenChange} maxW="22rem">
-      {({ onClose }) => (
-        <FilterPanel
-          title={t("Filters")}
-          variant="fixed"
-          onClose={onClose}
-          className="h-full"
-          content={
-            <Flex className="h-full flex-col gap-3 overflow-auto p-4">
-              <Flex className="mb-2 flex-wrap gap-2" display={activeFilterTags.length > 0 ? "flex" : "none"}>
-                {activeFilterTags.map(filter => (
-                  <FeedbackTag
-                    key={filter.id}
-                    type="info-white"
-                    label={filter.label}
-                    closable
-                    onClose={() => removeFilterTag(filter.id)}
-                  />
-                ))}
-              </Flex>
-
-              <FilterCard label={t("Report Type")}>
-                {reportTypeOptions.map(option => (
-                  <Checkbox
-                    key={option.value}
-                    name={`report-type-${option.value}`}
-                    value={option.value}
-                    checked={draftFilters.reportTypes.includes(option.value)}
-                    onCheckedChange={(change: CheckboxChange) => handleReportTypeChange(option.value, change)}
-                  >
-                    {t(option.label)}
-                  </Checkbox>
-                ))}
-              </FilterCard>
-              <FilterCard label={t("Status")}>
-                {statusOptions.map(option => (
-                  <Checkbox
-                    key={String(option.value)}
-                    name={`report-status-${option.value}`}
-                    value={String(option.value)}
-                    checked={draftFilters.statuses.includes(String(option.value))}
-                    onCheckedChange={(change: CheckboxChange) => handleStatusChange(String(option.value), change)}
-                  >
-                    {option.title}
-                  </Checkbox>
-                ))}
-              </FilterCard>
-              <FilterCard label={t("Reporting Period")}>
-                {periodControl === "date-range" ? (
-                  <DateRangeInput
-                    size="small"
-                    noMarginBottom
-                    value={dueDateValue}
-                    onValueChange={handleDueDateChange}
-                  />
-                ) : periodControl === "month-year" ? (
-                  <Flex gap={2}>
-                    <Box flex={1} minW={0}>
-                      <SelectInput
-                        placeholder={t("Month")}
-                        size="small"
-                        value={toSelectValue(draftFilters.dueMonth)}
-                        items={monthItems}
-                        onChange={handleMonthChange}
-                      />
-                    </Box>
-                    <Box flex={1} minW={0}>
-                      <SelectInput
-                        placeholder={t("Year")}
-                        size="small"
-                        value={toSelectValue(draftFilters.dueYear)}
-                        items={yearItems}
-                        onChange={handleYearChange}
-                      />
-                    </Box>
-                  </Flex>
-                ) : (
-                  <SelectInput
-                    placeholder={t("Select Year")}
-                    size="small"
-                    value={toSelectValue(draftFilters.dueYear)}
-                    items={yearItems}
-                    onChange={handleYearChange}
-                  />
-                )}
-              </FilterCard>
-            </Flex>
-          }
-          footer={
-            <ButtonGroup
-              buttons={[
-                {
-                  id: "clear-all",
-                  children: t("Clear all"),
-                  variant: "secondary",
-                  onClick: () => {
-                    setDraftFilters(EMPTY_REPORT_FILTERS);
-                  }
-                },
-                {
-                  id: "apply",
-                  children: t("Apply"),
-                  variant: "primary",
-                  onClick: () => {
-                    onApplyFilters(draftFilters);
-                    onClose();
-                  }
-                }
-              ]}
-            />
-          }
-        />
-      )}
-    </Drawer>
+    <IndexFilterDrawer
+      open={open}
+      onOpenChange={onOpenChange}
+      tags={activeFilterTags}
+      onRemoveTag={removeFilterTag}
+      onClear={() => setDraftFilters(EMPTY_REPORT_FILTERS)}
+      onApply={() => onApplyFilters(draftFilters)}
+      drawerMaxW="22rem"
+    >
+      <FilterCard label={t("Report Type")}>
+        {reportTypeOptions.map(option => (
+          <Checkbox
+            key={option.value}
+            name={`report-type-${option.value}`}
+            value={option.value}
+            checked={draftFilters.reportTypes.includes(option.value)}
+            onCheckedChange={(change: CheckboxChange) => handleReportTypeChange(option.value, change)}
+          >
+            {t(option.label)}
+          </Checkbox>
+        ))}
+      </FilterCard>
+      <FilterCard label={t("Status")}>
+        {statusOptions.map(option => (
+          <Checkbox
+            key={String(option.value)}
+            name={`report-status-${option.value}`}
+            value={String(option.value)}
+            checked={draftFilters.statuses.includes(String(option.value))}
+            onCheckedChange={(change: CheckboxChange) => handleStatusChange(String(option.value), change)}
+          >
+            {option.title}
+          </Checkbox>
+        ))}
+      </FilterCard>
+      <FilterCard label={t("Reporting Period")}>
+        {periodControl === "date-range" ? (
+          <DateRangeInput size="small" noMarginBottom value={dueDateValue} onValueChange={handleDueDateChange} />
+        ) : periodControl === "month-year" ? (
+          <Flex gap={2}>
+            <Box flex={1} minW={0}>
+              <SelectInput
+                placeholder={t("Month")}
+                size="small"
+                value={toSelectValue(draftFilters.dueMonth)}
+                items={monthItems}
+                onChange={handleMonthChange}
+              />
+            </Box>
+            <Box flex={1} minW={0}>
+              <SelectInput
+                placeholder={t("Year")}
+                size="small"
+                value={toSelectValue(draftFilters.dueYear)}
+                items={yearItems}
+                onChange={handleYearChange}
+              />
+            </Box>
+          </Flex>
+        ) : (
+          <SelectInput
+            placeholder={t("Select Year")}
+            size="small"
+            value={toSelectValue(draftFilters.dueYear)}
+            items={yearItems}
+            onChange={handleYearChange}
+          />
+        )}
+      </FilterCard>
+    </IndexFilterDrawer>
   );
 };
 
