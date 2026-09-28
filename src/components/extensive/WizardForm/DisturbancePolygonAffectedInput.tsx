@@ -49,8 +49,6 @@ export const DisturbancePolygonAffectedInput = ({
   }, [polygonsData, siteUuid]);
 
   const hasSite = siteUuid != null && siteUuid !== "";
-  // Wait until the polygons request finishes before deciding whether to show the dropdown.
-  // Showing it while loading causes a brief flash for sites with zero approved polygons.
   const isWaitingForPolygons = hasSite && isLoadingPolygons;
   const hasNoApprovedPolygons = hasSite && !isLoadingPolygons && polygonChoices.length === 0;
 
