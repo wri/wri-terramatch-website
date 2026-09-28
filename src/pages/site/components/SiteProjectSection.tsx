@@ -45,7 +45,7 @@ import DeleteSite from "./Modals/DeleteSite";
 import type { SiteIndexProject, SiteIndexSite, SiteIndexStatus, SiteIndexUpdate } from "./siteIndex.types";
 import { filterSiteIndexSites, isSiteApproved } from "./siteIndex.utils";
 import { useSiteIndexSelectionActions, useSiteTableSelection } from "./SiteIndexSelection.provider";
-import { isSiteDeletable } from "./siteIndexSubmit";
+import { isSiteDeletable, isSiteEditable } from "./siteIndexSubmit";
 
 const keyIndicatorTooltip = (title?: string, content?: string): ReactNode => {
   if (title == null || title === "" || content == null || content === "") return undefined;
@@ -147,8 +147,8 @@ const SiteProjectMetrics: FC<{
   const primaryMetricTitle =
     keyIndicatorsTooltipContentItem?.treesRestored.title ||
     (isHbf ? "Saplings Growing" : isTerraFund ? "Trees Planted" : "Trees Growing");
-  const areaTitle = keyIndicatorsTooltipContentItem?.hectaresRestored.title || t("Area restored (Ha)");
-  const workdaysTitle = keyIndicatorsTooltipContentItem?.jobsCreated.title || t("Workdays");
+  const areaTitle = keyIndicatorsTooltipContentItem?.hectaresRestored.title ?? t("Area restored (Ha)");
+  const workdaysTitle = keyIndicatorsTooltipContentItem?.jobsCreated.title ?? t("Workdays");
   const progressBarCard = {
     progressSuffix: "",
     variant: "progressBar" as const,
@@ -184,6 +184,10 @@ const SiteProjectMetrics: FC<{
             goal: project.metrics.treesRegenerated.goal,
             icon: <RegenerationIcon />,
             color: "secondary.600",
+            tooltipContent: keyIndicatorTooltip(
+              keyIndicatorsTooltipContentItem?.treesRegenerated.title ?? t("Trees Regenerated"),
+              keyIndicatorsTooltipContentItem?.treesRegenerated.content
+            ),
             filtered: isFiltered ? filteredMetric(project.metrics.treesRegenerated.progress) : undefined,
             selection: selectedSites.length > 0 ? selectedMetric(project.metrics.treesRegenerated.progress) : undefined
           }
@@ -319,12 +323,16 @@ const SiteProjectTable: FC<{
           <TableCell {...context?.getCellProps("actions")} onClick={stopRowClick}>
             <Box className="flex justify-end pr-2">
               <ActionCell
-                button={{
-                  children: t("Edit"),
-                  leftIcon: <EditIcon boxSize={2.5} />,
-                  "aria-label": t("Edit {siteName}", { siteName: site.name }),
-                  onClick: () => void router.push(getEntityEditPageLink("sites", site.id))
-                }}
+                button={
+                  isSiteEditable(site)
+                    ? {
+                        children: t("Edit"),
+                        leftIcon: <EditIcon boxSize={2.5} />,
+                        "aria-label": t("Edit {siteName}", { siteName: site.name }),
+                        onClick: () => void router.push(getEntityEditPageLink("sites", site.id))
+                      }
+                    : undefined
+                }
                 buttonSecondary={
                   isSiteDeletable(site)
                     ? {

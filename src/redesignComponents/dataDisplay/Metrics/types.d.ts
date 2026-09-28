@@ -88,8 +88,6 @@ type ProgressBarMetricCardContentKeys =
   | "type"
   | "tooltipContent"
   | "classNameTitle"
-  | "filtered"
-  | "selection"
   | "metricLabel"
   | "widthProgressBar";
 

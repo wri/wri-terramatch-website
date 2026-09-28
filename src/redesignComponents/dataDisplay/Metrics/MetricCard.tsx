@@ -111,41 +111,6 @@ const MetricTooltipTrigger: FC<MetricTooltipTriggerProps> = ({ tooltipContent, m
   );
 };
 
-type MetricCardExtraLayerProps = {
-  label: string;
-  value: number | null;
-  progressSuffix?: string;
-  labelTextStyle: "200" | "500";
-  valueTextStyle: "300-bold" | "600-bold";
-  showDivider?: boolean;
-};
-
-const MetricCardExtraLayer: FC<MetricCardExtraLayerProps> = ({
-  label,
-  value,
-  progressSuffix,
-  labelTextStyle,
-  valueTextStyle,
-  showDivider = true
-}) => (
-  <>
-    {showDivider ? <SimpleDivider variant="vertical" className="!h-3" /> : null}
-    <Flex gap={1} className="items-center whitespace-nowrap">
-      <Text color="neutral.700" textStyle={labelTextStyle}>
-        {label}
-      </Text>
-      <Text color="neutral.900" textStyle={valueTextStyle}>
-        {value == null ? "-" : formatNumberLocaleString(value)}
-      </Text>
-      {value != null && progressSuffix != null && progressSuffix !== "" ? (
-        <Text color="neutral.900" textStyle={valueTextStyle}>
-          {progressSuffix}
-        </Text>
-      ) : null}
-    </Flex>
-  </>
-);
-
 const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
   title,
   progress,
@@ -234,8 +199,6 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
   iconWithColor,
   tooltipContent,
   classNameTitle,
-  filtered,
-  selection,
   metricLabel,
   widthProgressBar = "100%",
   type
@@ -283,31 +246,6 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
             </Flex>
           </Flex>
         </Flex>
-
-        {filtered !== undefined || selection !== undefined ? (
-          <Flex gap={2} alignItems="flex-start">
-            {filtered !== undefined ? (
-              <MetricCardExtraLayer
-                label={t("Filtered:")}
-                value={typeof filtered === "number" ? filtered : null}
-                progressSuffix={progressSuffix}
-                labelTextStyle="200"
-                valueTextStyle="300-bold"
-                showDivider={false}
-              />
-            ) : null}
-            {selection !== undefined ? (
-              <MetricCardExtraLayer
-                label={t("Selected:")}
-                value={typeof selection === "number" ? selection : null}
-                progressSuffix={progressSuffix}
-                labelTextStyle="200"
-                valueTextStyle="300-bold"
-                showDivider={filtered !== undefined}
-              />
-            ) : null}
-          </Flex>
-        ) : null}
       </Flex>
     </Flex>
   );
@@ -435,8 +373,6 @@ const MetricCard: FC<MetricCardProps> = props => {
           metricLabel={metricLabel}
           type={type}
           widthProgressBar={widthProgressBar}
-          filtered={filtered}
-          selection={selection}
         />
       );
       break;
