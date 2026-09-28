@@ -3,7 +3,7 @@ import { useT } from "@transifex/react";
 import { type FC, useEffect, useMemo } from "react";
 
 import { useIsAdmin } from "@/hooks/useIsAdmin";
-import { useLayoutShell } from "@/redesignComponents/Loayout/LayoutShell.provider";
+import { useLayoutShell } from "@/redesignComponents/Layout/LayoutShell.provider";
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 import ToolbarInfoTooltipContent from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
 
@@ -75,12 +75,16 @@ const SiteIndexBulkActionToolbar: FC<SiteIndexBulkActionToolbarProps> = ({
             loading: isDownloading,
             disabled: isDownloading || isUpdating
           },
-          {
-            id: "edit",
-            children: t("Edit"),
-            onClick: onEdit,
-            disabled: !canEdit || isUpdating
-          }
+          ...(canEdit
+            ? [
+                {
+                  id: "edit",
+                  children: t("Edit"),
+                  onClick: onEdit,
+                  disabled: isUpdating
+                }
+              ]
+            : [])
         ]}
         primaryAction={{
           children: t("Submit"),

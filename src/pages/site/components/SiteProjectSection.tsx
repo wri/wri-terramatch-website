@@ -43,7 +43,7 @@ import DeleteSite from "./Modals/DeleteSite";
 import type { SiteIndexProject, SiteIndexSite, SiteIndexStatus, SiteIndexUpdate } from "./siteIndex.types";
 import { filterSiteIndexSites, isSiteApproved } from "./siteIndex.utils";
 import { useSiteIndexSelectionActions, useSiteTableSelection } from "./SiteIndexSelection.provider";
-import { isSiteDeletable } from "./siteIndexSubmit";
+import { isSiteDeletable, isSiteEditable } from "./siteIndexSubmit";
 
 const keyIndicatorTooltip = (title?: string, content?: string): ReactNode => {
   if (title == null || title === "" || content == null || content === "") return undefined;
@@ -181,6 +181,10 @@ const SiteProjectMetrics: FC<{
           icon={<RegenerationIcon />}
           color="secondary.600"
           className={metricCardClassName}
+          tooltipContent={keyIndicatorTooltip(
+            keyIndicatorsTooltipContentItem?.treesRegenerated.title ?? t("Trees Regenerated"),
+            t("This is the total number of trees regenerated, from all approved site reports for this project")
+          )}
           filtered={isFiltered ? filteredMetric(project.metrics.treesRegenerated.progress) : undefined}
           selection={selectedSites.length > 0 ? selectedMetric(project.metrics.treesRegenerated.progress) : undefined}
         />
@@ -314,12 +318,16 @@ const SiteProjectTable: FC<{
           <TableCell {...context?.getCellProps("actions")} onClick={stopRowClick}>
             <Box className="flex justify-end pr-2">
               <ActionCell
-                button={{
-                  children: t("Edit"),
-                  leftIcon: <EditIcon boxSize={2.5} />,
-                  "aria-label": t("Edit {siteName}", { siteName: site.name }),
-                  onClick: () => void router.push(getEntityEditPageLink("sites", site.id))
-                }}
+                button={
+                  isSiteEditable(site)
+                    ? {
+                        children: t("Edit"),
+                        leftIcon: <EditIcon boxSize={2.5} />,
+                        "aria-label": t("Edit {siteName}", { siteName: site.name }),
+                        onClick: () => void router.push(getEntityEditPageLink("sites", site.id))
+                      }
+                    : undefined
+                }
                 buttonSecondary={
                   isSiteDeletable(site)
                     ? {
