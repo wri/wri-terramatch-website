@@ -1,10 +1,10 @@
 import { startCase } from "lodash";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import {
   indexDisturbanceReportConnection,
-  indexSRPReportConnection,
-  loadFinancialReportIndex
+  indexFinancialReportConnection,
+  indexSRPReportConnection
 } from "@/connections/Entity";
 import { useOrganisation } from "@/connections/Organisation";
 import {
@@ -36,39 +36,12 @@ const INDEX_PROPS = {
   sortDirection: "DESC" as const
 };
 
-const FINANCIAL_PAGE_SIZE = 100;
-
 type FollowedOrganisation = {
   uuid: string;
   name: string | null;
 };
 
 const NO_ORGANISATIONS: FollowedOrganisation[] = [];
-
-const loadFinancialReportsForOrganisation = async (organisationUuid: string): Promise<FinancialReportLightDto[]> => {
-  const reports: FinancialReportLightDto[] = [];
-  let pageNumber = 1;
-
-  while (pageNumber <= FINANCIAL_PAGE_SIZE) {
-    const page = await loadFinancialReportIndex({
-      pageNumber,
-      pageSize: FINANCIAL_PAGE_SIZE,
-      sortField: "updatedAt",
-      sortDirection: "DESC",
-      filter: { organisationUuid }
-    });
-
-    if (page.loadFailure != null) return reports;
-
-    const rows = page.data ?? [];
-    reports.push(...rows);
-    const total = page.indexTotal ?? reports.length;
-    if (rows.length === 0 || reports.length >= total) return reports;
-    pageNumber += 1;
-  }
-
-  return reports;
-};
 
 const getEntryValue = (entries: DisturbanceReportEntryDto[] | null, name: string): unknown => {
   const value = entries?.find(entry => entry.name === name)?.value;
@@ -227,57 +200,15 @@ export const useAdditionalReportsData = (
     enabled
   });
 
-  const organisationIds = useMemo(() => {
-    if (!enabled || !srpLoaded || !disturbanceLoaded) return [];
-    if (organisationUuid != null) return [organisationUuid];
-
-    const ids = new Set<string>();
-    srpData.forEach(report => {
-      if (report.organisationUuid != null) ids.add(report.organisationUuid);
-    });
-    disturbanceData.forEach(report => {
-      if (report.organisationUuid != null) ids.add(report.organisationUuid);
-    });
-    return Array.from(ids).sort();
-  }, [disturbanceData, disturbanceLoaded, enabled, organisationUuid, srpData, srpLoaded]);
-
-  const [financialReports, setFinancialReports] = useState<FinancialReportLightDto[]>([]);
-  const [financialLoaded, setFinancialLoaded] = useState(false);
-  const organisationIdsKey = organisationIds.join("|");
-
-  useEffect(() => {
-    const ids = organisationIdsKey === "" ? [] : organisationIdsKey.split("|");
-
-    if (!enabled || ids.length === 0) {
-      setFinancialReports([]);
-      setFinancialLoaded(enabled && srpLoaded && disturbanceLoaded);
-      return;
-    }
-
-    let active = true;
-    setFinancialLoaded(false);
-
-    const load = async () => {
-      const batches = await Promise.all(ids.map(loadFinancialReportsForOrganisation));
-      if (!active) return;
-      setFinancialReports(batches.flat());
-      setFinancialLoaded(true);
-    };
-
-    load().catch(() => {
-      if (!active) return;
-      setFinancialReports([]);
-      setFinancialLoaded(true);
-    });
-
-    return () => {
-      active = false;
-    };
-  }, [disturbanceLoaded, enabled, organisationIdsKey, srpLoaded]);
+  const [financialLoaded, financialReports, financialFailure] = useAllPages(indexFinancialReportConnection, {
+    ...INDEX_PROPS,
+    filter: indexFilter,
+    enabled
+  });
 
   const organisationReady = !loadOrganisationData || organisationLoaded;
   const loading = enabled && !(organisationReady && srpLoaded && disturbanceLoaded && financialLoaded);
-  const error = enabled && (srpFailure != null || disturbanceFailure != null);
+  const error = enabled && (srpFailure != null || disturbanceFailure != null || financialFailure != null);
 
   const sections = useMemo((): AdditionalReportsEntitySection[] => {
     if (!enabled || loading || error) return [];
