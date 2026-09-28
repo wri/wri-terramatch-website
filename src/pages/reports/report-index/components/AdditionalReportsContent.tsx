@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { useMemo, useState } from "react";
+import { FC, useMemo, useState } from "react";
 
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
@@ -34,17 +34,12 @@ const getGroupLabel = (type: AdditionalReportType, t: ReturnType<typeof useT>) =
   return t("Disturbance Reports");
 };
 
-const AdditionalReportGroupSection = ({
-  group,
-  indexHref,
-  restoreReportId,
-  onRowRestored
-}: {
+const AdditionalReportGroupSection: FC<{
   group: AdditionalReportGroup;
   indexHref?: string;
   restoreReportId?: string;
   onRowRestored?: () => void;
-}) => {
+}> = ({ group, indexHref, restoreReportId, onRowRestored }) => {
   const t = useT();
   const [open, setOpen] = useState(true);
 
@@ -79,19 +74,13 @@ const AdditionalReportGroupSection = ({
   );
 };
 
-const AdditionalReportsEntitySection = ({
-  section,
-  indexHref,
-  restoreGroupId,
-  restoreReportId,
-  onRowRestored
-}: {
+const AdditionalReportsEntitySection: FC<{
   section: AdditionalReportsEntitySectionData;
   indexHref?: string;
   restoreGroupId?: string;
   restoreReportId?: string;
   onRowRestored?: () => void;
-}) => {
+}> = ({ section, indexHref, restoreGroupId, restoreReportId, onRowRestored }) => {
   const t = useT();
   const [open, setOpen] = useState(true);
   const reports = useMemo(() => collectAdditionalReports(section), [section]);
@@ -102,7 +91,7 @@ const AdditionalReportsEntitySection = ({
       variant="tertiary"
       open={open}
       onOpenChange={setOpen}
-      className="overflow-hidden rounded bg-theme-neutral-100"
+      className="bg-theme-neutral-100 overflow-hidden rounded"
       classNameHeader="!mb-0"
       header={
         <ListSectionHeader
@@ -125,7 +114,7 @@ const AdditionalReportsEntitySection = ({
         />
       }
     >
-      <div className="space-y-1 bg-theme-neutral-200 pt-0.5">
+      <div className="bg-theme-neutral-200 space-y-1 pt-0.5">
         {section.groups.map(group => (
           <AdditionalReportGroupSection
             key={group.id}
@@ -150,7 +139,7 @@ const AdditionalReportsEntitySection = ({
   );
 };
 
-const AdditionalReportsContent = ({
+const AdditionalReportsContent: FC<AdditionalReportsContentProps> = ({
   sections,
   loading,
   error,
@@ -159,7 +148,7 @@ const AdditionalReportsContent = ({
   restoreGroupId,
   restoreReportId,
   onRowRestored
-}: AdditionalReportsContentProps) => {
+}) => {
   const t = useT();
 
   return (

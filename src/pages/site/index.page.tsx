@@ -3,7 +3,7 @@ import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { InfiniteScrollSentinel } from "@/hooks/useInfiniteScrollSentinel";
@@ -29,7 +29,7 @@ import SiteIndexSelectionProvider, { useSiteIndexSelectionActions } from "./comp
 import SiteProjectSection from "./components/SiteProjectSection";
 import { SEARCH_DEBOUNCE_MS, useSiteIndexData } from "./components/useSiteIndexData";
 
-const SiteIndexPageContent = () => {
+const SiteIndexPageContent: FC = () => {
   const t = useT();
   const router = useRouter();
   const { clearSelection } = useSiteIndexSelectionActions();
@@ -243,7 +243,7 @@ const SiteIndexPageContent = () => {
         showClearFilters={selectedFilters.length > 0}
       />
 
-      <PageContent heightFull={false} className="flex-1 !gap-0 bg-theme-neutral-200 px-2 pb-9 pt-1">
+      <PageContent heightFull={false} className="bg-theme-neutral-200 flex-1 !gap-0 px-2 pb-9 pt-1">
         {loading ? (
           <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
             <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
@@ -315,7 +315,7 @@ const SiteIndexPageContent = () => {
   );
 };
 
-const SiteIndexPage = () => (
+const SiteIndexPage: FC = () => (
   <SiteIndexSelectionProvider>
     <SiteIndexPageContent />
   </SiteIndexSelectionProvider>

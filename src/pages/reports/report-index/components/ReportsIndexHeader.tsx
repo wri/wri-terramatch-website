@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { useCreateDisturbanceReport } from "@/connections/Entity";
 import { getReportStatusOptions } from "@/constants/options/status";
@@ -46,7 +46,7 @@ type ReportsIndexHeaderProps = {
   indexHref: string;
 };
 
-const ReportsIndexHeader = ({
+const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
   activeTab,
   source,
   sourceUuid,
@@ -59,7 +59,7 @@ const ReportsIndexHeader = ({
   onViewChange,
   onQueryChange,
   indexHref
-}: ReportsIndexHeaderProps) => {
+}) => {
   const t = useT();
   const router = useRouter();
   const { format } = useDate();
@@ -217,7 +217,7 @@ const ReportsIndexHeader = ({
         }
       />
       <Toolbar
-        className="sticky top-10 z-10 items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-2 pt-5"
+        className="border-theme-neutral-200 bg-theme-neutral-100 sticky top-10 z-10 items-end border-b !px-2 pt-5"
         classNameContentLeft="min-w-0"
         classNameContentRight="mt-[-1.25rem]"
         contentLeft={

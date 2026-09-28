@@ -1,6 +1,6 @@
 import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { useCallback, useMemo } from "react";
+import { FC, useCallback, useMemo } from "react";
 
 import { useDate } from "@/hooks/useDate";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -25,17 +25,12 @@ import {
 import { useReportTableSelection } from "../ReportsSelection.provider";
 import ReportsIndexEditButton from "./ReportsIndexEditButton";
 
-const ReportsIndexTable = ({
-  reports,
-  indexHref,
-  restoreRowId,
-  onRowRestored
-}: {
+const ReportsIndexTable: FC<{
   reports: ReportsIndexReport[];
   indexHref?: string;
   restoreRowId?: string;
   onRowRestored?: () => void;
-}) => {
+}> = ({ reports, indexHref, restoreRowId, onRowRestored }) => {
   const t = useT();
   const { format } = useDate();
   const { selectedRows, isReportSelected, handleRowSelected, handleAllItemsSelected } =
@@ -131,7 +126,7 @@ const ReportsIndexTable = ({
                 label={format(report.updatedAt)}
                 icon={<CalendarIcon boxSize="0.625rem" />}
                 size="small"
-                className="rounded bg-theme-neutral-200"
+                className="bg-theme-neutral-200 rounded"
               />
             )}
           </ChakraTableCell>

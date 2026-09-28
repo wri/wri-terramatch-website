@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { FC, useCallback, useState } from "react";
 
 import { useNurseriesSelectionActions, useNurseriesSelectionState } from "../NurseriesSelection.provider";
 import { useNurseriesBulkActions } from "../useNurseriesBulkActions";
@@ -9,7 +9,7 @@ type NurseriesIndexBulkBarProps = {
   onNurseriesChanged: () => void;
 };
 
-const NurseriesIndexBulkBar = ({ onNurseriesChanged }: NurseriesIndexBulkBarProps) => {
+const NurseriesIndexBulkBar: FC<NurseriesIndexBulkBarProps> = ({ onNurseriesChanged }) => {
   const { selectedNurseries } = useNurseriesSelectionState();
   const { clearSelection } = useNurseriesSelectionActions();
   const [openDeleteModal, setOpenDeleteModal] = useState(false);

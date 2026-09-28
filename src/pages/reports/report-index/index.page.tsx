@@ -1,9 +1,9 @@
-import { Box } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { isString } from "lodash";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useRef } from "react";
+import { FC, useRef } from "react";
 
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useLightNursery, useLightProject, useLightSite } from "@/connections/Entity";
@@ -12,11 +12,10 @@ import { ReportsProvider } from "@/context/reports.provider";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 
 import ReportsIndexContent from "./components/ReportsIndexContent";
-import { ReportsIndexSourceEntity } from "./reportIndex.types";
-import { isReportsIndexSource, ReportsIndexSource } from "./reportIndex.utils";
+import { isReportsIndexSource } from "./reportIndex.utils";
 import ReportsSelectionProvider from "./ReportsSelection.provider";
 
-const ReportsIndexPage = () => {
+const ReportsIndexPage: FC = () => {
   const router = useRouter();
   const t = useT();
   const sourceParam = isString(router.query.source) ? router.query.source : undefined;
@@ -50,7 +49,11 @@ const ReportsIndexPage = () => {
       (!sourceLoaded || (projectUuid != null && !projectLoaded)));
 
   if (router.isReady && (source == null || sourceUuid == null)) {
-    return <Box>{t("The reports link is invalid.")}</Box>;
+    return (
+      <Text textStyle="400" color="neutral.900">
+        {t("The reports link is invalid.")}
+      </Text>
+    );
   }
 
   return (
@@ -61,15 +64,13 @@ const ReportsIndexPage = () => {
           <title>{t("Reports")}</title>
         </Head>
         <LoadingContainer loading={loading}>
-          {displayedProject == null ? (
-            <Box>{t("The reports information could not be found.")}</Box>
+          {displayedProject == null || source == null || sourceEntity == null ? (
+            <Text textStyle="400" color="neutral.900">
+              {t("The reports information could not be found.")}
+            </Text>
           ) : (
-            <ReportsSelectionProvider key={`${source}:${sourceEntity?.uuid}`}>
-              <ReportsIndexContent
-                project={displayedProject}
-                source={source as ReportsIndexSource}
-                sourceEntity={sourceEntity as ReportsIndexSourceEntity}
-              />
+            <ReportsSelectionProvider key={`${source}:${sourceEntity.uuid}`}>
+              <ReportsIndexContent project={displayedProject} source={source} sourceEntity={sourceEntity} />
             </ReportsSelectionProvider>
           )}
         </LoadingContainer>

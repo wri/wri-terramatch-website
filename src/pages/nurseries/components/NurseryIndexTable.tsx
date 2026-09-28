@@ -1,6 +1,6 @@
 import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { useCallback, useMemo } from "react";
+import { FC, useCallback, useMemo } from "react";
 
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
@@ -21,7 +21,7 @@ import { useNurseryTableSelection } from "../NurseriesSelection.provider";
 import type { NurseryIndexRow } from "../nurseryIndex.types";
 import NurseryIndexEditButton from "./NurseryIndexEditButton";
 
-const NurseryUpdate = ({ status }: { status: NurseryIndexRow["updateRequestStatus"] }) => {
+const NurseryUpdate: FC<{ status: NurseryIndexRow["updateRequestStatus"] }> = ({ status }) => {
   const t = useT();
 
   if (status == null || isAbsentChangeRequestStatus(status)) {
@@ -41,7 +41,7 @@ const NurseryUpdate = ({ status }: { status: NurseryIndexRow["updateRequestStatu
   }[status];
 
   return (
-    <Box className="flex items-center gap-1 text-theme-neutral-800">
+    <Box className="text-theme-neutral-800 flex items-center gap-1">
       <EditIcon boxSize={2.5} />
       {!complete ? (
         <Text as="span" textStyle="200">
@@ -55,7 +55,7 @@ const NurseryUpdate = ({ status }: { status: NurseryIndexRow["updateRequestStatu
   );
 };
 
-const NurseryIndexTable = ({ nurseries }: { nurseries: NurseryIndexRow[] }) => {
+const NurseryIndexTable: FC<{ nurseries: NurseryIndexRow[] }> = ({ nurseries }) => {
   const t = useT();
   const { format } = useDate();
   const { selectedRows, isNurserySelected, handleRowSelected, handleAllItemsSelected } =
@@ -122,7 +122,7 @@ const NurseryIndexTable = ({ nurseries }: { nurseries: NurseryIndexRow[] }) => {
               label={format(nursery.createdAt)}
               icon={<CalendarIcon boxSize="0.625rem" />}
               size="small"
-              className="rounded bg-theme-neutral-200"
+              className="bg-theme-neutral-200 rounded"
             />
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("actions")}>

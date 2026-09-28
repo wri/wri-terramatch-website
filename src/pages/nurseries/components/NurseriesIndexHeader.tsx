@@ -1,7 +1,7 @@
 import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useMemo, useState } from "react";
+import { FC, useMemo, useState } from "react";
 
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -27,7 +27,7 @@ type NurseriesIndexHeaderProps = {
   onQueryChange: (query: string) => void;
 };
 
-const NurseriesIndexHeader = ({
+const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
   nurseryCount,
   viewValue,
   viewItems,
@@ -37,7 +37,7 @@ const NurseriesIndexHeader = ({
   onApplyFilters,
   onViewChange,
   onQueryChange
-}: NurseriesIndexHeaderProps) => {
+}) => {
   const t = useT();
   const router = useRouter();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
@@ -89,7 +89,7 @@ const NurseriesIndexHeader = ({
         }}
       />
       <PageHeader
-        className="!border-t border-theme-neutral-300 !bg-theme-neutral-100 !px-6 !py-0"
+        className="border-theme-neutral-300 !bg-theme-neutral-100 !border-t !px-6 !py-0"
         title={t("Nurseries")}
         actions={
           <Flex gap={4} alignItems="center">

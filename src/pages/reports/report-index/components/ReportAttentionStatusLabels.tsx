@@ -1,5 +1,5 @@
 import { Flex } from "@chakra-ui/react";
-import { useMemo } from "react";
+import { FC, useMemo } from "react";
 
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { CheckApprovedIcon } from "@/redesignComponents/foundations/Icons";
@@ -11,7 +11,7 @@ type ReportAttentionStatusLabelsProps = {
   reports: Array<{ status: ReportsIndexStatus }>;
 };
 
-const ReportAttentionStatusLabels = ({ reports }: ReportAttentionStatusLabelsProps) => {
+const ReportAttentionStatusLabels: FC<ReportAttentionStatusLabelsProps> = ({ reports }) => {
   const counts = useMemo(() => getReportStatusCounts(reports), [reports]);
   const hasAttention = counts.due + counts.draft + counts.informationRequired > 0;
 

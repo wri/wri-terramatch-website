@@ -1,5 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { FC } from "react";
 
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { getThemedColor } from "@/lib/theme";
@@ -8,7 +9,7 @@ import { EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import type { NurseryIndexRow } from "../nurseryIndex.types";
 
-const NurseryIndexEditButton = ({ nursery }: { nursery: NurseryIndexRow }) => {
+const NurseryIndexEditButton: FC<{ nursery: NurseryIndexRow }> = ({ nursery }) => {
   const t = useT();
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "nurseries",

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { FC, useCallback, useState } from "react";
 
 import SiteIndexBulkActionToolbar from "./SiteIndexBulkActionToolbar";
 import SiteIndexModals from "./SiteIndexModals";
@@ -9,7 +9,7 @@ type SiteIndexBulkBarProps = {
   onSitesChanged: () => void;
 };
 
-const SiteIndexBulkBar = ({ onSitesChanged }: SiteIndexBulkBarProps) => {
+const SiteIndexBulkBar: FC<SiteIndexBulkBarProps> = ({ onSitesChanged }) => {
   const { selectedSites } = useSiteIndexSelectionState();
   const { clearSelection } = useSiteIndexSelectionActions();
   const [openDeleteModal, setOpenDeleteModal] = useState(false);

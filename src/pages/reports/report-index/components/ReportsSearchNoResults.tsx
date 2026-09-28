@@ -1,7 +1,8 @@
 import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { FC } from "react";
 
-const ReportsSearchNoResults = () => {
+const ReportsSearchNoResults: FC = () => {
   const t = useT();
 
   return (

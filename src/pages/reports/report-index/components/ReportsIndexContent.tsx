@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { useProjectIndex } from "@/connections/Entity";
@@ -40,7 +40,7 @@ type ReportsIndexContentProps = {
   sourceEntity: ReportsIndexSourceEntity;
 };
 
-const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexContentProps) => {
+const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project, source, sourceEntity }) => {
   const t = useT();
   const router = useRouter();
   const { filters } = useReportsContext();

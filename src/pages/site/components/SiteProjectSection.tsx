@@ -98,7 +98,7 @@ const SiteUpdate: FC<{ update: SiteIndexUpdate | null }> = ({ update }) => {
   }[update];
 
   return (
-    <Box className="flex items-center gap-1 text-theme-neutral-800">
+    <Box className="text-theme-neutral-800 flex items-center gap-1">
       <EditIcon boxSize={2.5} />
       {update != "complete" && (
         <Text as="span" textStyle="200">
@@ -145,7 +145,7 @@ const SiteProjectMetrics: FC<{
     [keyIndicatorsTooltipContent, project.frameworkKey]
   );
   const primaryMetricTitle =
-    keyIndicatorsTooltipContentItem?.treesRestored.title ||
+    keyIndicatorsTooltipContentItem?.treesRestored.title ??
     (isHbf ? "Saplings Growing" : isTerraFund ? "Trees Planted" : "Trees Growing");
   const areaTitle = keyIndicatorsTooltipContentItem?.hectaresRestored.title ?? t("Area restored (Ha)");
   const workdaysTitle = keyIndicatorsTooltipContentItem?.jobsCreated.title ?? t("Workdays");
@@ -460,7 +460,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
         open={open}
         onOpenChange={setOpen}
         isScrollable={false}
-        className="w-full overflow-hidden rounded bg-theme-neutral-100"
+        className="bg-theme-neutral-100 w-full overflow-hidden rounded"
         classNameHeader="!mb-0"
         header={
           <ListSectionHeader

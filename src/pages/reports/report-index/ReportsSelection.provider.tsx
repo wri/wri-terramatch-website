@@ -1,5 +1,6 @@
 import {
   createContext,
+  FC,
   PropsWithChildren,
   useCallback,
   useContext,
@@ -79,7 +80,7 @@ type ReportsSelectionStoreValue = {
 
 const ReportsSelectionStoreContext = createContext<ReportsSelectionStoreValue | undefined>(undefined);
 
-const ReportsSelectionProvider = ({ children }: PropsWithChildren) => {
+const ReportsSelectionProvider: FC<PropsWithChildren> = ({ children }) => {
   const storeRef = useRef<ReportsSelectionStore>();
   if (storeRef.current == null) {
     storeRef.current = new ReportsSelectionStore();

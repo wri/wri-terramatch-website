@@ -251,7 +251,8 @@ export const groupSitesByProject = (
 
     sectionsById.set(sectionId, {
       project,
-      projectName: project?.name?.trim() || site.projectName?.trim() || "-",
+      projectName:
+        [project?.name, site.projectName].map(name => name?.trim()).find(name => name != null && name !== "") ?? "-",
       sites: [mappedSite]
     });
   });

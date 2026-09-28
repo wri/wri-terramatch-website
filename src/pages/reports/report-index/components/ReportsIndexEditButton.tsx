@@ -1,5 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { FC } from "react";
 
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { getThemedColor } from "@/lib/theme";
@@ -9,7 +10,7 @@ import { EditIcon } from "@/redesignComponents/foundations/Icons";
 import { ReportIndexItem } from "../reportIndex.types";
 import { rememberReportsIndexPosition } from "../reportIndex.utils";
 
-const ReportsIndexEditButton = ({ report, indexHref }: { report: ReportIndexItem; indexHref?: string }) => {
+const ReportsIndexEditButton: FC<{ report: ReportIndexItem; indexHref?: string }> = ({ report, indexHref }) => {
   const t = useT();
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: `${report.type}s`,

@@ -2,7 +2,7 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { InfiniteScrollSentinel } from "@/hooks/useInfiniteScrollSentinel";
@@ -19,7 +19,7 @@ import { useNurseriesIndexData } from "./useNurseriesIndexData";
 const ALL_PROJECTS_VIEW_VALUE = "all-projects";
 const SEARCH_DEBOUNCE_MS = 300;
 
-const NurseriesIndexContent = () => {
+const NurseriesIndexContent: FC = () => {
   const t = useT();
   const router = useRouter();
   const [reloadNonce, setReloadNonce] = useState(0);
@@ -165,7 +165,7 @@ const NurseriesIndexContent = () => {
   );
 };
 
-const NurseriesIndexPage = () => {
+const NurseriesIndexPage: FC = () => {
   const t = useT();
 
   return (

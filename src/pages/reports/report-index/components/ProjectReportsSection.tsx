@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
@@ -24,7 +24,7 @@ type ProjectReportsSectionProps = {
   onRowRestored?: () => void;
 };
 
-const ProjectReportsSection = ({
+const ProjectReportsSection: FC<ProjectReportsSectionProps> = ({
   section,
   unfilteredPeriods,
   defaultOpen = false,
@@ -36,7 +36,7 @@ const ProjectReportsSection = ({
   restorePeriodId,
   restoreReportId,
   onRowRestored
-}: ProjectReportsSectionProps) => {
+}) => {
   const t = useT();
   const [open, setOpen] = useState(restoreSectionId != null ? section.id === restoreSectionId : defaultOpen);
 
@@ -56,7 +56,7 @@ const ProjectReportsSection = ({
       variant="tertiary"
       open={open}
       onOpenChange={setOpen}
-      className="overflow-hidden rounded bg-theme-neutral-100"
+      className="bg-theme-neutral-100 overflow-hidden rounded"
       classNameHeader="!mb-0"
       header={
         <ListSectionHeader
@@ -79,7 +79,7 @@ const ProjectReportsSection = ({
         />
       }
     >
-      <div className="space-y-0.5 bg-theme-neutral-200 pt-0.5">
+      <div className="bg-theme-neutral-200 space-y-0.5 pt-0.5">
         {open
           ? section.periods.map((period, index) => (
               <ReportingPeriodSection

@@ -1,11 +1,11 @@
-import { NurseryFullDto, ProjectFullDto, SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { NurseryLightDto, ProjectLightDto, SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import type { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 
 export type ReportsIndexReportType = "project-report" | "site-report" | "nursery-report";
 
 export type ReportsIndexStatus = TagSubmissionState;
 
-export type ReportsIndexSourceEntity = ProjectFullDto | SiteFullDto | NurseryFullDto;
+export type ReportsIndexSourceEntity = ProjectLightDto | SiteLightDto | NurseryLightDto;
 
 export type ReportsIndexReport = {
   id: string;

@@ -1,4 +1,3 @@
-import isArray from "lodash/isArray";
 import { useMemo } from "react";
 
 import { useLightNurseryReportList, useLightProjectReportList, useLightSiteReportList } from "@/connections/Entity";
@@ -33,12 +32,7 @@ type ReportsIndexRawReport = ProjectReportLightDto | SiteReportLightDto | Nurser
 const UNSCHEDULED_PERIOD = "unscheduled";
 
 const toReport = (report: ReportsIndexRawReport, type: ReportsIndexReportType): ReportsIndexReport => {
-  const name =
-    type === "project-report"
-      ? (report as ProjectReportLightDto).title
-      : type === "site-report"
-      ? (report as SiteReportLightDto).siteName
-      : (report as NurseryReportLightDto).nurseryName;
+  const name = "nurseryName" in report ? report.nurseryName : "siteName" in report ? report.siteName : report.title;
 
   return {
     id: report.uuid,
@@ -68,14 +62,7 @@ const useTasksReports = <LightDto>(
   prop: keyof TaskRelationships,
   useDtoList: (props: IdsProp) => Connected<ListConnection<LightDto>>
 ) => {
-  const ids = useMemo(
-    () =>
-      tasks
-        .map(task => (isArray(task[prop]) ? task[prop] : (task[prop] as string | undefined)) as (string | undefined)[])
-        .flat()
-        .filter(isNotNull),
-    [prop, tasks]
-  );
+  const ids = useMemo(() => tasks.flatMap(task => task[prop] ?? []).filter(isNotNull), [prop, tasks]);
   const [, { data: reports = [] }] = useDtoList({ ids });
   return reports;
 };
@@ -151,10 +138,7 @@ export const useReportsIndexData = (
       }
 
       if (period.projectReportUuid == null) {
-        period.projectReportUuid =
-          type === "project-report"
-            ? report.uuid
-            : (report as SiteReportLightDto | NurseryReportLightDto).projectReportUuid;
+        period.projectReportUuid = "projectReportUuid" in report ? report.projectReportUuid : report.uuid;
       }
 
       period.reports.push(toReport(report, type));
