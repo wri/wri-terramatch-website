@@ -5,7 +5,7 @@ export const POPUP_METRIC_UNAVAILABLE = "\u2014";
 
 export type NormalizedPolygonValidationStatus = ValidationTagState;
 
-export type SitePolygonPopupFields = SitePolygonMapEntryDto &
+export type SitePolygonPopupFields = Omit<SitePolygonMapEntryDto, "practice" | "targetSys"> &
   Partial<Pick<SitePolygonLightDto, "practice" | "targetSys" | "primaryUuid" | "siteId">>;
 
 export const findMapIndexEntryByMapFeatureUuid = (
