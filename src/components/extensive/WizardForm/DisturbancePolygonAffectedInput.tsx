@@ -49,6 +49,9 @@ export const DisturbancePolygonAffectedInput = ({
   }, [polygonsData, siteUuid]);
 
   const hasSite = siteUuid != null && siteUuid !== "";
+  // Wait until the polygons request finishes before deciding whether to show the dropdown.
+  // Showing it while loading causes a brief flash for sites with zero approved polygons.
+  const isWaitingForPolygons = hasSite && isLoadingPolygons;
   const hasNoApprovedPolygons = hasSite && !isLoadingPolygons && polygonChoices.length === 0;
 
   const fieldIndex = fieldUuid?.match(/\[(\d+)\]/)?.[1];
@@ -104,7 +107,7 @@ export const DisturbancePolygonAffectedInput = ({
     return [];
   }, [value]);
 
-  if (fieldUuid == null || hasNoApprovedPolygons) {
+  if (fieldUuid == null || isWaitingForPolygons || hasNoApprovedPolygons) {
     return null;
   }
 
