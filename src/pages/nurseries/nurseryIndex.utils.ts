@@ -192,7 +192,12 @@ export const filterNurseryProjectSections = (
         })
       };
     })
-    .filter(section => section.nurseries.length > 0);
+    .filter(section => {
+      if (section.nurseriesLoaded === false) return true;
+      const filteringNurseries = normalizedQuery !== "" || statuses.length > 0 || updates.length > 0;
+      if (!filteringNurseries) return true;
+      return section.nurseries.length > 0;
+    });
 };
 
 export type NurseryApprovalLockReason = "approved" | "pending-approval";

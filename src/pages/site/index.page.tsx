@@ -3,9 +3,10 @@ import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
+import { InfiniteScrollSentinel } from "@/hooks/useInfiniteScrollSentinel";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
@@ -16,7 +17,7 @@ import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 
-import { ALL_PROJECTS_VIEW, getSiteCreateUrl } from "./components/siteIndex.utils";
+import { ALL_PROJECTS_VIEW, filterSiteIndexSites, getSiteCreateUrl } from "./components/siteIndex.utils";
 import SiteIndexBulkBar from "./components/SiteIndexBulkBar";
 import SiteIndexFilterDrawer, {
   type SiteIndexFilterStatus,
@@ -64,8 +65,6 @@ const SiteIndexPageContent = () => {
     useSiteIndexData({
       reloadNonce,
       search: debouncedSearch,
-      statusFilters,
-      updateFilter,
       projectUuid: selectedProject === ALL_PROJECTS_VIEW ? undefined : selectedProject,
       enabled: hasHydratedQuery
     });
@@ -78,31 +77,20 @@ const SiteIndexPageContent = () => {
       project => selectedProject === ALL_PROJECTS_VIEW || project.id === selectedProject
     );
 
-    if (!hasActiveFilters) {
-      return scopedProjects;
-    }
+    if (!hasActiveFilters) return scopedProjects;
 
-    return scopedProjects.filter(project => project.sites.length > 0);
-  }, [hasActiveFilters, projects, selectedProject]);
+    return scopedProjects.filter(
+      project =>
+        !project.sitesLoaded ||
+        filterSiteIndexSites(project.sites, {
+          search: debouncedSearch,
+          statusFilters,
+          updateFilter
+        }).length > 0
+    );
+  }, [debouncedSearch, hasActiveFilters, projects, selectedProject, statusFilters, updateFilter]);
 
   const visibleSiteCount = totalSiteCount;
-  const sentinelRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const node = sentinelRef.current;
-    if (node == null || !hasMore || loading || loadingMore) return;
-
-    const observer = new IntersectionObserver(
-      entries => {
-        if (!entries.some(entry => entry.isIntersecting)) return;
-        void loadMore();
-      },
-      { rootMargin: "200px" }
-    );
-
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [hasMore, loadMore, loading, loadingMore, visibleProjects.length]);
 
   const selectedFilters = useMemo<SelectedFilter[]>(() => {
     const labels: SelectedFilter[] = [];
@@ -267,18 +255,14 @@ const SiteIndexPageContent = () => {
                   onSitesChanged={handleSitesChanged}
                 />
               ))}
-              {hasMore ? (
-                <Flex ref={sentinelRef} minHeight="4rem" alignItems="center" justifyContent="center" gap={3}>
-                  {loadingMore ? (
-                    <>
-                      <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
-                      <Text textStyle="400" color="neutral.800">
-                        {t("Loading...")}
-                      </Text>
-                    </>
-                  ) : null}
-                </Flex>
-              ) : null}
+              <InfiniteScrollSentinel
+                hasMore={hasMore}
+                loading={loading}
+                loadingMore={loadingMore}
+                label={t("Loading...")}
+                resetKey={visibleProjects.length}
+                onLoadMore={loadMore}
+              />
             </div>
 
             {visibleProjects.length === 0 ? (

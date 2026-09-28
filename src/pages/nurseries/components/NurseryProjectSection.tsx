@@ -28,6 +28,7 @@ type NurseryProjectSectionProps = {
   isFiltered?: boolean;
   defaultOpen?: boolean;
   openResetKey?: string;
+  onProjectOpened?: (projectId: string) => void;
 };
 
 const NurseryProjectSection = ({
@@ -37,7 +38,8 @@ const NurseryProjectSection = ({
   updates = [],
   isFiltered = false,
   defaultOpen = false,
-  openResetKey
+  openResetKey,
+  onProjectOpened
 }: NurseryProjectSectionProps) => {
   const t = useT();
   const [open, setOpen] = useState(defaultOpen);
@@ -65,6 +67,11 @@ const NurseryProjectSection = ({
   useEffect(() => {
     setOpen(defaultOpen);
   }, [defaultOpen, openResetKey]);
+
+  useEffect(() => {
+    if (!open || section.nurseriesLoaded !== false || section.projectUuid == null) return;
+    onProjectOpened?.(section.projectUuid);
+  }, [onProjectOpened, open, section.nurseriesLoaded, section.projectUuid]);
 
   useEffect(() => {
     if (!open || fullProject != null) return;
@@ -144,7 +151,15 @@ const NurseryProjectSection = ({
             filtered={isFiltered ? filteredSeedlings : undefined}
           />
         ) : null}
-        {open ? <NurseryIndexTable nurseries={visibleNurseries} /> : null}
+        {open && section.nurseriesLoaded === false ? (
+          <Flex minHeight="3rem" alignItems="center" gap={3}>
+            <LoadingIcon boxSize={5} className="animate-spin" color="primary.700" />
+            <Text textStyle="400" color="neutral.800">
+              {t("Loading...")}
+            </Text>
+          </Flex>
+        ) : null}
+        {open && section.nurseriesLoaded !== false ? <NurseryIndexTable nurseries={visibleNurseries} /> : null}
       </Flex>
     </Accordion>
   );

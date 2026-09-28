@@ -19,6 +19,7 @@ export type NurseryIndexProjectSection = {
   frameworkKey: string | null;
   seedlingsGrown: NurseryIndexMetric;
   nurseries: NurseryIndexRow[];
+  nurseriesLoaded?: boolean;
 };
 
 export type NurseryIndexData = {
@@ -28,6 +29,7 @@ export type NurseryIndexData = {
   loadingMore: boolean;
   hasMore: boolean;
   loadMore: () => void;
+  onProjectOpened: (projectId: string) => void;
   nurseryTotal: number;
   error: boolean;
 };

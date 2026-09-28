@@ -1,9 +1,11 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import Head from "next/head";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/router";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
+import { InfiniteScrollSentinel } from "@/hooks/useInfiniteScrollSentinel";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 
@@ -19,32 +21,38 @@ const SEARCH_DEBOUNCE_MS = 300;
 
 const NurseriesIndexContent = () => {
   const t = useT();
+  const router = useRouter();
   const [reloadNonce, setReloadNonce] = useState(0);
   const { clearSelection } = useNurseriesSelectionActions();
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [viewValue, setViewValue] = useState(ALL_PROJECTS_VIEW_VALUE);
+  const [hasHydratedQuery, setHasHydratedQuery] = useState(false);
   const [statuses, setStatuses] = useState<string[]>([]);
   const [updates, setUpdates] = useState<string[]>([]);
   const handleNurseriesChanged = useCallback(() => setReloadNonce(current => current + 1), []);
   const selectedProjectUuid = viewValue === ALL_PROJECTS_VIEW_VALUE ? undefined : viewValue;
-  const statusFilter = statuses.length === 1 ? statuses[0] : undefined;
-  const updateRequestStatusFilter = updates.length === 1 ? updates[0] : undefined;
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => setDebouncedQuery(query), SEARCH_DEBOUNCE_MS);
     return () => window.clearTimeout(timeoutId);
   }, [query]);
 
-  const { projects, sections, loading, loadingMore, hasMore, loadMore, nurseryTotal, error } = useNurseriesIndexData(
-    reloadNonce,
-    {
+  useEffect(() => {
+    if (!router.isReady) return;
+    const projectFromQuery = router.query.project;
+    if (typeof projectFromQuery === "string" && projectFromQuery !== "") {
+      setViewValue(projectFromQuery);
+    }
+    setHasHydratedQuery(true);
+  }, [router.isReady, router.query.project]);
+
+  const { projects, sections, loading, loadingMore, hasMore, loadMore, onProjectOpened, nurseryTotal, error } =
+    useNurseriesIndexData(reloadNonce, {
       search: debouncedQuery,
       projectUuid: selectedProjectUuid,
-      status: statusFilter,
-      updateRequestStatus: updateRequestStatusFilter
-    }
-  );
+      enabled: hasHydratedQuery
+    });
 
   const viewItems = useMemo(
     () => [
@@ -74,27 +82,14 @@ const NurseriesIndexContent = () => {
     (value: string) => {
       clearSelection();
       setViewValue(value);
+      if (value === ALL_PROJECTS_VIEW_VALUE) {
+        void router.replace("/nurseries", undefined, { shallow: true });
+        return;
+      }
+      void router.replace(`/nurseries?project=${value}`, undefined, { shallow: true });
     },
-    [clearSelection]
+    [clearSelection, router]
   );
-  const sentinelRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const node = sentinelRef.current;
-    if (node == null || !hasMore || loading || loadingMore) return;
-
-    const observer = new IntersectionObserver(
-      entries => {
-        if (!entries.some(entry => entry.isIntersecting)) return;
-        void loadMore();
-      },
-      { rootMargin: "0px 0px 400px 0px" }
-    );
-
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [filteredSections.length, hasMore, loadMore, loading, loadingMore]);
-
   const handleApplyFilters = useCallback(
     (nextStatuses: string[], nextUpdates: string[]) => {
       clearSelection();
@@ -151,20 +146,17 @@ const NurseriesIndexContent = () => {
                 isFiltered={query.trim() !== "" || statuses.length > 0 || updates.length > 0}
                 defaultOpen={index === 0}
                 openResetKey={accordionOpenResetKey}
+                onProjectOpened={onProjectOpened}
               />
             ))}
-            {hasMore ? (
-              <Flex ref={sentinelRef} minHeight="4rem" alignItems="center" justifyContent="center" gap={3}>
-                {loadingMore ? (
-                  <>
-                    <LoadingIcon boxSize={5} className="animate-spin" color="primary.700" />
-                    <Text textStyle="400" color="neutral.800">
-                      {t("Loading...")}
-                    </Text>
-                  </>
-                ) : null}
-              </Flex>
-            ) : null}
+            <InfiniteScrollSentinel
+              hasMore={hasMore}
+              loading={loading}
+              loadingMore={loadingMore}
+              label={t("Loading...")}
+              resetKey={filteredSections.length}
+              onLoadMore={loadMore}
+            />
           </Flex>
         )}
         <NurseriesIndexBulkBar onNurseriesChanged={handleNurseriesChanged} />

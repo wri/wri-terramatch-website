@@ -2,7 +2,7 @@ import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { FC, ReactElement, useCallback, useMemo, useState } from "react";
+import { FC, ReactElement, useCallback, useEffect, useMemo, useState } from "react";
 
 import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
@@ -16,8 +16,6 @@ import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchema
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";
 import ProjectOverviewTab from "@/pages/project/[uuid]/tabs/Overview";
-import ProjectNurseriesTab from "@/pages/project/[uuid]/tabs/ProjectNurseries";
-import ProjectSitesTab from "@/pages/project/[uuid]/tabs/ProjectSites";
 import { getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ProjectBanner from "@/redesignComponents/content/Banner/ProjectBanner/ProjectBanner";
@@ -57,6 +55,14 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
   const isSuffix = SUFFIX_VIEW_KEYS.includes(currentTab);
   const activeSuffixView = isSuffix ? currentTab : null;
   const activeTab = isSuffix ? "overview" : currentTab;
+
+  useEffect(() => {
+    if (currentTab === "sites") {
+      void router.replace(`/site?project=${project.uuid}`);
+    } else if (currentTab === "nurseries") {
+      void router.replace(`/nurseries?project=${project.uuid}`);
+    }
+  }, [currentTab, project.uuid, router]);
 
   const navigateToTab = useCallback(
     (tab: string) => {
@@ -111,17 +117,6 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
   );
 
   const hideNurseries = shouldHideNurseries(framework);
-
-  const suffixViewContent = useMemo(() => {
-    if (!activeSuffixView) return null;
-
-    const viewMap: Record<string, ReactElement> = {
-      sites: <ProjectSitesTab project={project} />,
-      nurseries: <ProjectNurseriesTab project={project} />
-    };
-
-    return viewMap[activeSuffixView] || null;
-  }, [activeSuffixView, project]);
 
   const suffixButtons: SuffixButtonConfig[] = useMemo(
     () => [
@@ -179,6 +174,10 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
                   onClick={() => {
                     if (button.key === "reports") {
                       void router.push(getReportsIndexUrl("project", project.uuid));
+                    } else if (button.key === "sites") {
+                      void router.push(`/site?project=${project.uuid}`);
+                    } else if (button.key === "nurseries") {
+                      void router.push(`/nurseries?project=${project.uuid}`);
                     } else {
                       navigateToTab(button.key);
                     }
@@ -200,7 +199,9 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
           }
         }}
       />
-      <div className="flex flex-1">{suffixViewContent ?? tabItems.find(item => item.key === activeTab)?.body}</div>
+      <div className="flex flex-1">
+        {activeSuffixView == null ? tabItems.find(item => item.key === activeTab)?.body : null}
+      </div>
       <PageFooter />
     </>
   );
