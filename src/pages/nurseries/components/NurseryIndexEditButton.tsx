@@ -7,6 +7,7 @@ import ActionCell from "@/redesignComponents/dataDisplay/Table/components/Action
 import { EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import type { NurseryIndexRow } from "../nurseryIndex.types";
+import { isNurseryEditable } from "../nurseryIndexSubmit";
 
 const NurseryIndexEditButton = ({ nursery }: { nursery: NurseryIndexRow }) => {
   const t = useT();
@@ -17,6 +18,8 @@ const NurseryIndexEditButton = ({ nursery }: { nursery: NurseryIndexRow }) => {
     updateRequestStatus: nursery.updateRequestStatus,
     useInformationRequiredModal: true
   });
+
+  if (!isNurseryEditable(nursery)) return null;
 
   return (
     <>
