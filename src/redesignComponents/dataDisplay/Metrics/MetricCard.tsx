@@ -207,7 +207,7 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
   const progressValue = goal > 0 ? (progress / goal) * 100 : 0;
 
   return (
-    <Flex direction="column" gap={1} className="w-full">
+    <Flex direction="column" gap={2} className="w-full">
       <Flex gap={2} alignItems="center">
         {iconWithColor}
         <Text textStyle="300" color="neutral.800" className={twMerge("whitespace-nowrap", classNameTitle)}>
@@ -221,29 +221,27 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
         <ProgressBar progress={progressValue} color={color} width={widthProgressBar} className="min-w-[5rem]" />
         <Flex gap={1} alignItems="center">
           <Flex gap={1} className="items-center">
-            <Flex gap={1} className="items-center">
-              <Text textStyle="400-bold" color="neutral.900">
-                {progressLabel ?? formatNumberLocaleString(progress)}
-              </Text>
-              {shouldRenderSuffix(progressLabel, progressSuffix) ? (
-                <Text textStyle="400-bold" color="neutral.800">
-                  {progressSuffix}
-                </Text>
-              ) : null}
-            </Flex>
-            <Text textStyle="300" color="neutral.800">
-              {t("of")}
+            <Text textStyle="400-bold" color="neutral.900">
+              {progressLabel ?? formatNumberLocaleString(progress)}
             </Text>
-            <Flex gap={1} className="items-center">
-              <Text textStyle="300" color="neutral.800">
-                {formatNumberLocaleString(goal)}
+            {shouldRenderSuffix(progressLabel, progressSuffix) ? (
+              <Text textStyle="400-bold" color="neutral.800">
+                {progressSuffix}
               </Text>
-              {goalSuffix != null && goalSuffix !== "" ? (
-                <Text textStyle="300" color="neutral.800">
-                  {goalSuffix}
-                </Text>
-              ) : null}
-            </Flex>
+            ) : null}
+          </Flex>
+          <Text textStyle="300" color="neutral.800">
+            {t("of")}
+          </Text>
+          <Flex gap={1} className="items-center">
+            <Text textStyle="300" color="neutral.800">
+              {formatNumberLocaleString(goal)}
+            </Text>
+            {goalSuffix != null && goalSuffix !== "" ? (
+              <Text textStyle="300" color="neutral.800">
+                {goalSuffix}
+              </Text>
+            ) : null}
           </Flex>
         </Flex>
       </Flex>
@@ -345,8 +343,8 @@ const MetricCard: FC<MetricCardProps> = props => {
     className,
     classNameTitle,
     frameworkKey,
-    filtered,
     selection,
+    filtered,
     metricLabel,
     widthProgressBar
   } = props;
