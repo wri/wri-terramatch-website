@@ -75,12 +75,16 @@ const SiteIndexBulkActionToolbar: FC<SiteIndexBulkActionToolbarProps> = ({
             loading: isDownloading,
             disabled: isDownloading || isUpdating
           },
-          {
-            id: "edit",
-            children: t("Edit"),
-            onClick: onEdit,
-            disabled: !canEdit || isUpdating
-          }
+          ...(canEdit
+            ? [
+                {
+                  id: "edit",
+                  children: t("Edit"),
+                  onClick: onEdit,
+                  disabled: isUpdating
+                }
+              ]
+            : [])
         ]}
         primaryAction={{
           children: t("Submit"),

@@ -34,6 +34,7 @@ const SiteIndexPageContent = () => {
   const router = useRouter();
   const { clearSelection } = useSiteIndexSelectionActions();
   const [reloadNonce, setReloadNonce] = useState(0);
+  const [childrenReloadNonce, setChildrenReloadNonce] = useState(0);
   const [selectedProject, setSelectedProject] = useState(ALL_PROJECTS_VIEW);
   const [hasHydratedQuery, setHasHydratedQuery] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -64,6 +65,7 @@ const SiteIndexPageContent = () => {
   const { loading, loadingMore, hasMore, loadMore, viewProjects, projects, totalSiteCount, onProjectOpened } =
     useSiteIndexData({
       reloadNonce,
+      childrenReloadNonce,
       search: debouncedSearch,
       projectUuid: selectedProject === ALL_PROJECTS_VIEW ? undefined : selectedProject,
       enabled: hasHydratedQuery
@@ -201,7 +203,7 @@ const SiteIndexPageContent = () => {
                 width="100%"
                 label={t("View:")}
                 items={[
-                  { label: t("All"), value: ALL_PROJECTS_VIEW },
+                  { label: t("All Projects"), value: ALL_PROJECTS_VIEW },
                   ...viewProjects.map(project => ({ label: project.name, value: project.id }))
                 ]}
                 value={selectedProject}
@@ -304,6 +306,9 @@ const SiteIndexPageContent = () => {
         onApplyFilters={(nextStatusFilters, nextUpdateFilter) => {
           setStatusFilters(nextStatusFilters);
           setUpdateFilter(nextUpdateFilter);
+          if (nextStatusFilters.length > 0 || nextUpdateFilter != null) {
+            setChildrenReloadNonce(current => current + 1);
+          }
         }}
       />
     </>

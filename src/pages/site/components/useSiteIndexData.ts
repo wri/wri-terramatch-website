@@ -12,6 +12,7 @@ export const SEARCH_DEBOUNCE_MS = 300;
 
 type UseSiteIndexDataParams = {
   reloadNonce?: number;
+  childrenReloadNonce?: number;
   search?: string;
   projectUuid?: string;
   enabled?: boolean;
@@ -22,11 +23,12 @@ const asFullProject = (project: ProjectFullDto | null | undefined): ProjectFullD
 
 export const useSiteIndexData = ({
   reloadNonce = 0,
+  childrenReloadNonce = 0,
   search = "",
   projectUuid,
   enabled = true
 }: UseSiteIndexDataParams = {}) => {
-  const index = useSiteProjectIndex({ reloadNonce, search, projectUuid, enabled });
+  const index = useSiteProjectIndex({ reloadNonce, childrenReloadNonce, search, projectUuid, enabled });
   const loadProjectChildren = index.onProjectOpened;
   const [fullProjectsById, setFullProjectsById] = useState<Map<string, ProjectFullDto>>(new Map());
   const fullProjectsRef = useRef(fullProjectsById);

@@ -10,6 +10,7 @@ type ProjectEntityName = "sites" | "nurseries";
 
 type ProjectEntityIndexParams = {
   reloadNonce?: number;
+  childrenReloadNonce?: number;
   search?: string;
   projectUuid?: string;
   enabled?: boolean;
@@ -73,7 +74,7 @@ const useProjectEntityIndex = <T extends SiteLightDto | NurseryLightDto>(
   entity: ProjectEntityName,
   params: ProjectEntityIndexParams = {}
 ): ProjectEntityIndexData<T> => {
-  const { reloadNonce = 0, search = "", projectUuid, enabled = true } = params;
+  const { reloadNonce = 0, childrenReloadNonce = 0, search = "", projectUuid, enabled = true } = params;
   const trimmedSearch = search.trim();
   const includeProjectRef = useRef(params.includeProject);
   includeProjectRef.current = params.includeProject;
@@ -89,10 +90,20 @@ const useProjectEntityIndex = <T extends SiteLightDto | NurseryLightDto>(
   const pageRef = useRef(1);
   const requestIdRef = useRef(0);
   const loadedProjectIdsRef = useRef(new Set<string>());
+  const childrenRequestRef = useRef(0);
   const projectsRef = useRef(projects);
   projectsRef.current = projects;
   const projectUuidRef = useRef(projectUuid);
   projectUuidRef.current = projectUuid;
+
+  useEffect(() => {
+    if (childrenReloadNonce === 0) return;
+    childrenRequestRef.current += 1;
+    loadedProjectIdsRef.current = new Set();
+    setChildrenByProjectId(new Map());
+    setLoadingProjectIds(new Set());
+    ApiSlice.pruneIndex(entity, "");
+  }, [childrenReloadNonce, entity]);
 
   const acceptProjects = useCallback((incoming: ProjectLightDto[]) => {
     const includeProject = includeProjectRef.current;
@@ -260,10 +271,12 @@ const useProjectEntityIndex = <T extends SiteLightDto | NurseryLightDto>(
     async (projectId: string) => {
       if (projectId === "" || loadedProjectIdsRef.current.has(projectId)) return;
       loadedProjectIdsRef.current.add(projectId);
+      const requestId = childrenRequestRef.current;
       setLoadingProjectIds(current => new Set(current).add(projectId));
 
       try {
         const { rows, total } = await loadChildren(entity, projectId);
+        if (requestId !== childrenRequestRef.current) return;
         setChildrenByProjectId(current => new Map(current).set(projectId, rows as T[]));
         if (projectUuidRef.current === projectId) setChildTotal(total);
       } catch (loadError) {
