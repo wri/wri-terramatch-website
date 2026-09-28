@@ -112,7 +112,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         rightIcon: <ChevronRightIcon boxSize={4} />,
         className: "!text-theme-neutral-100",
         children: t("Add Sites"),
-        onClick: () => goToTab("sites")
+        onClick: () => void router.push(`/site?project=${project.uuid}`)
       }
     ];
 
@@ -124,12 +124,12 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         rightIcon: <ChevronRightIcon boxSize={4} />,
         className: "!text-theme-neutral-100",
         children: t("Add Nurseries"),
-        onClick: () => goToTab("nurseries")
+        onClick: () => void router.push(`/nurseries?project=${project.uuid}`)
       });
     }
 
     return buttons;
-  }, [goToTab, hideNurseries, t]);
+  }, [hideNurseries, project.uuid, router, t]);
 
   const [projectMapIndexLoaded, { data: projectMapIndex }] = useSitePolygonMapIndex({
     entityName: "projects",
@@ -181,7 +181,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
             size: "small",
             children: t("View Sites"),
             rightIcon: <ChevronRightIcon />,
-            onClick: onViewSites ?? (() => goToTab("sites"))
+            onClick: onViewSites ?? (() => void router.push(`/site?project=${project.uuid}`))
           }}
           downloadButtonProps={{
             variant: "secondary",

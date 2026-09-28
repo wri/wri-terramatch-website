@@ -47,8 +47,7 @@ const items = [
     isActive: true,
     createdAt: null,
     deletedAt: null,
-    customAttributes: {},
-    disturbanceReportUuid: null
+    customAttributes: {}
   },
   {
     uuid: "2",
