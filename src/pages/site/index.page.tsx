@@ -90,7 +90,20 @@ const SiteIndexPageContent = () => {
     );
   }, [debouncedSearch, hasActiveFilters, projects, selectedProject, statusFilters, updateFilter]);
 
-  const visibleSiteCount = totalSiteCount;
+  const visibleSiteCount = useMemo(() => {
+    if (!hasAppliedFilters || visibleProjects.some(project => !project.sitesLoaded)) return totalSiteCount;
+
+    return visibleProjects.reduce(
+      (total, project) =>
+        total +
+        filterSiteIndexSites(project.sites, {
+          search: debouncedSearch,
+          statusFilters,
+          updateFilter
+        }).length,
+      0
+    );
+  }, [debouncedSearch, hasAppliedFilters, statusFilters, totalSiteCount, updateFilter, visibleProjects]);
 
   const selectedFilters = useMemo<SelectedFilter[]>(() => {
     const labels: SelectedFilter[] = [];
