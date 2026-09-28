@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { useProjectEntityIndex } from "@/hooks/useProjectEntityIndex";
+import { useNurseryProjectIndex } from "@/hooks/useProjectEntityIndex";
 
 import type { NurseryIndexData } from "./nurseryIndex.types";
 import { createNurseryProjectSection, projectSupportsNurseries } from "./nurseryIndex.utils";
@@ -12,7 +12,7 @@ export type NurseriesIndexQuery = {
 };
 
 export const useNurseriesIndexData = (reloadNonce = 0, query: NurseriesIndexQuery = {}): NurseryIndexData => {
-  const index = useProjectEntityIndex("nurseries", {
+  const index = useNurseryProjectIndex({
     reloadNonce,
     search: query.search,
     projectUuid: query.projectUuid,

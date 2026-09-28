@@ -6,9 +6,9 @@ import { loadAllIndexPages } from "@/hooks/loadAllIndexPages";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
-export type ProjectEntityName = "sites" | "nurseries";
+type ProjectEntityName = "sites" | "nurseries";
 
-export type ProjectEntityIndexParams = {
+type ProjectEntityIndexParams = {
   reloadNonce?: number;
   search?: string;
   projectUuid?: string;
@@ -16,11 +16,11 @@ export type ProjectEntityIndexParams = {
   includeProject?: (project: ProjectLightDto) => boolean;
 };
 
-export type ProjectEntityIndexData<TChild> = {
+type ProjectEntityIndexData<T> = {
   projects: ProjectLightDto[];
   viewProjects: ProjectLightDto[];
   visibleProjects: ProjectLightDto[];
-  childrenByProjectId: Map<string, TChild[]>;
+  childrenByProjectId: Map<string, T[]>;
   loadingProjectIds: Set<string>;
   loading: boolean;
   loadingMore: boolean;
@@ -67,23 +67,12 @@ const loadChildren = async (entity: ProjectEntityName, projectUuid: string) => {
 /**
  * Shared project index for sites and nurseries. Pages append in name order.
  * Child rows load for one project uuid when that project is opened.
+ * `T` is bound once below, the same way `createEntityIndexConnection<SiteLightDto>("sites")` is.
  */
-// Overload signatures so a "sites" call returns site rows and a "nurseries" call returns nursery rows.
-// eslint-disable-next-line no-redeclare
-export function useProjectEntityIndex(
-  entity: "sites",
-  params?: ProjectEntityIndexParams
-): ProjectEntityIndexData<SiteLightDto>;
-// eslint-disable-next-line no-redeclare
-export function useProjectEntityIndex(
-  entity: "nurseries",
-  params?: ProjectEntityIndexParams
-): ProjectEntityIndexData<NurseryLightDto>;
-// eslint-disable-next-line no-redeclare
-export function useProjectEntityIndex(
+const useProjectEntityIndex = <T extends SiteLightDto | NurseryLightDto>(
   entity: ProjectEntityName,
   params: ProjectEntityIndexParams = {}
-): ProjectEntityIndexData<SiteLightDto | NurseryLightDto> {
+): ProjectEntityIndexData<T> => {
   const { reloadNonce = 0, search = "", projectUuid, enabled = true } = params;
   const trimmedSearch = search.trim();
   const includeProjectRef = useRef(params.includeProject);
@@ -94,9 +83,7 @@ export function useProjectEntityIndex(
   const [projects, setProjects] = useState<ProjectLightDto[]>([]);
   const [catalog, setCatalog] = useState<ProjectLightDto[]>([]);
   const [hasMore, setHasMore] = useState(false);
-  const [childrenByProjectId, setChildrenByProjectId] = useState<Map<string, (SiteLightDto | NurseryLightDto)[]>>(
-    new Map()
-  );
+  const [childrenByProjectId, setChildrenByProjectId] = useState<Map<string, T[]>>(new Map());
   const [loadingProjectIds, setLoadingProjectIds] = useState<Set<string>>(new Set());
   const [childTotal, setChildTotal] = useState(0);
   const pageRef = useRef(1);
@@ -277,7 +264,7 @@ export function useProjectEntityIndex(
 
       try {
         const { rows, total } = await loadChildren(entity, projectId);
-        setChildrenByProjectId(current => new Map(current).set(projectId, rows));
+        setChildrenByProjectId(current => new Map(current).set(projectId, rows as T[]));
         if (projectUuidRef.current === projectId) setChildTotal(total);
       } catch (loadError) {
         Log.error("Failed to load project children", loadError);
@@ -356,4 +343,10 @@ export function useProjectEntityIndex(
     childTotal,
     error
   };
-}
+};
+
+export const useSiteProjectIndex = (params: ProjectEntityIndexParams = {}) =>
+  useProjectEntityIndex<SiteLightDto>("sites", params);
+
+export const useNurseryProjectIndex = (params: ProjectEntityIndexParams = {}) =>
+  useProjectEntityIndex<NurseryLightDto>("nurseries", params);

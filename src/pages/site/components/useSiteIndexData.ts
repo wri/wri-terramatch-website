@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { loadFullProject } from "@/connections/Entity";
 import { toFramework } from "@/context/framework.provider";
 import type { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { useProjectEntityIndex } from "@/hooks/useProjectEntityIndex";
+import { useSiteProjectIndex } from "@/hooks/useProjectEntityIndex";
 
 import type { SiteIndexProject } from "./siteIndex.types";
 import { mapSiteToIndexSite, toSiteIndexProject } from "./siteIndex.utils";
@@ -26,7 +26,7 @@ export const useSiteIndexData = ({
   projectUuid,
   enabled = true
 }: UseSiteIndexDataParams = {}) => {
-  const index = useProjectEntityIndex("sites", { reloadNonce, search, projectUuid, enabled });
+  const index = useSiteProjectIndex({ reloadNonce, search, projectUuid, enabled });
   const loadProjectChildren = index.onProjectOpened;
   const [fullProjectsById, setFullProjectsById] = useState<Map<string, ProjectFullDto>>(new Map());
   const fullProjectsRef = useRef(fullProjectsById);
