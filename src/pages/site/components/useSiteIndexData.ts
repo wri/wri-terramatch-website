@@ -121,6 +121,13 @@ const loadFilteredSites = async ({
   }
 };
 
+const SITE_STATUS_QUERY_VALUES: Record<SiteIndexFilterStatus, string[]> = {
+  draft: ["draft"],
+  "pending-approval": ["awaiting-approval"],
+  "information-required": ["information-required"],
+  approved: ["approved"]
+};
+
 const loadSitesForFilters = async ({
   search = "",
   statusFilters = [],
@@ -133,7 +140,10 @@ const loadSitesForFilters = async ({
   projectUuid?: string;
 }) => {
   const updateRequestStatus = toSiteIndexUpdateRequestStatus(updateFilter);
-  const statuses = statusFilters.length > 0 ? statusFilters : [undefined];
+  const statuses =
+    statusFilters.length > 0
+      ? [...new Set(statusFilters.flatMap(status => SITE_STATUS_QUERY_VALUES[status]))]
+      : [undefined];
   const pages = await Promise.all(
     statuses.map(status =>
       loadFilteredSites({

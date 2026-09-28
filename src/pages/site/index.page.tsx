@@ -200,7 +200,7 @@ const SiteIndexPageContent = () => {
                 width="100%"
                 label={t("View:")}
                 items={[
-                  { label: t("All"), value: ALL_PROJECTS_VIEW },
+                  { label: t("All Projects"), value: ALL_PROJECTS_VIEW },
                   ...viewProjects.map(project => ({ label: project.name, value: project.id }))
                 ]}
                 value={selectedProject}
