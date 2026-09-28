@@ -21,6 +21,7 @@ import { singularEntityName, v3EntityName } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { useGetReportingFrameworkFormKey } from "@/hooks/useGetFormKey";
 import { useReportEntityDueAt } from "@/hooks/useReportEntityDueAt";
+import ApiSlice, { type ResourceType } from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import { resolveFormIntroDeadline } from "@/utils/formIntroDeadline";
 import Log from "@/utils/log";
@@ -81,7 +82,14 @@ const EntityIntroPage = () => {
   );
   const { createEntity, isCreating } = useCreateEntity(
     v3EntityName(entityName) as FormEntity,
-    useCallback(({ uuid }) => router.replace(`/entity/${entityName}/edit/${uuid}`), [entityName, router]),
+    useCallback(
+      ({ uuid }) => {
+        // The create response stores one record and does not add it to the cached index.
+        ApiSlice.pruneIndex(v3EntityName(entityName) as ResourceType);
+        router.replace(`/entity/${entityName}/edit/${uuid}`);
+      },
+      [entityName, router]
+    ),
     `Failed to create ${kebabCase(singularEntityName(entityName)).replace("-", " ")}`
   );
 
