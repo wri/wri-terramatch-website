@@ -121,18 +121,18 @@ const Accordion: FC<AccordionProps> = ({
           borderTopColor: isOpen ? "primary.500" : "primary.300"
         }
       : variant === "quaternary"
-        ? {
-            ...container,
-            background: "neutral.100",
-            ...(isOpen
-              ? {
-                  borderBottomWidth: "0.063rem",
-                  borderBottomStyle: "solid" as const,
-                  borderBottomColor: "neutral.300"
-                }
-              : {})
-          }
-        : container;
+      ? {
+          ...container,
+          background: "neutral.100",
+          ...(isOpen
+            ? {
+                borderBottomWidth: "0.063rem",
+                borderBottomStyle: "solid" as const,
+                borderBottomColor: "neutral.300"
+              }
+            : {})
+        }
+      : container;
 
   const setIsOpen = useCallback(
     (nextOpen: boolean) => {
