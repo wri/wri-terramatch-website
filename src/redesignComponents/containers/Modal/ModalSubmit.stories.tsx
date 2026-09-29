@@ -12,9 +12,9 @@ const meta = {
   tags: ["autodocs"],
   args: {
     open: false,
-    items: [{ id: "north", label: "North plot" }],
-    singular: { title: "Submit plot?", description: "Are you sure you want to submit" },
-    plural: { title: "Submit plots?", description: "Are you sure you want to submit these plots?" }
+    items: [{ id: "site1", label: "Site Name 1" }],
+    singular: { title: "Submit site?", description: "Are you sure you want to submit" },
+    plural: { title: "Submit sites?", description: "Are you sure you want to submit these sites?" }
   },
   render: args => {
     const t = useT();
@@ -36,16 +36,8 @@ export const Singular: Story = {};
 export const Plural: Story = {
   args: {
     items: [
-      { id: "north", label: "North plot" },
-      { id: "south", label: "South plot" }
+      { id: "site1", label: "Site Name 1?" },
+      { id: "site2", label: "Site Name 2?" }
     ]
   }
-};
-
-export const Loading: Story = {
-  args: { isLoading: true }
-};
-
-export const EmptySelection: Story = {
-  args: { items: [] }
 };
