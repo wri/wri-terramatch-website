@@ -9,7 +9,6 @@ import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Input
 import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import type { PolygonEntityScope } from "@/components/elements/Map-mapbox/Map.d";
-import { parsePolygonDataV3 } from "@/components/elements/Map-mapbox/utils";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import { useBoundingBox } from "@/connections/BoundingBox";
@@ -142,7 +141,10 @@ const EntityGalleryCard = ({
   });
 
   const mapBbox = useBoundingBox(modelName === "sites" ? { siteUuid: entityUUID } : { projectUuid: entityUUID });
-  const polygonDataMap = parsePolygonDataV3(mapIndexLoaded ? mapIndex?.polygons : undefined);
+  const mapPolygons = useMemo(
+    () => (mapIndexLoaded ? mapIndex?.polygons ?? [] : []),
+    [mapIndexLoaded, mapIndex?.polygons]
+  );
   const polygonEntityScope = useMemo<PolygonEntityScope | undefined>(
     () =>
       (modelName === "projects" || modelName === "sites") && entityUUID
@@ -238,7 +240,7 @@ const EntityGalleryCard = ({
       {modelName !== "disturbanceReports" && (
         <PageCard title={t("{modelTitle} Area", { modelTitle })}>
           <MapContainer
-            polygonsData={polygonDataMap}
+            mapIndexPolygons={mapPolygons}
             polygonEntityScope={polygonEntityScope}
             bbox={mapBbox}
             className="rounded-lg"

@@ -1,13 +1,14 @@
 import { useT } from "@transifex/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useMemo } from "react";
+import { ReactElement, useCallback, useMemo } from "react";
 
-import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
-import HeroBanner from "@/components/extensive/Banner/Hero/HeroBanner";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useOrganisation, useOrganisationMediaByCollection } from "@/connections/Organisation";
+import { useOrganisation } from "@/connections/Organisation";
+import Banner from "@/redesignComponents/content/Banner/Banner";
+import { OrganizationIcon } from "@/redesignComponents/foundations/Icons";
+import ResponsiveTypography from "@/styles/ResponsiveTypography";
 
 import FinancialTabContent from "./components/financial/FinancialTabContent";
 import OrganizationHeader from "./components/OrganizationHeader";
@@ -15,11 +16,17 @@ import OverviewTabContent from "./components/overview/OverviewTabContent";
 import ProjectsTabContent from "./components/projects/ProjectsTabContent";
 import TeamTabContent from "./components/team/TeamTabContent";
 
-const OrganizationPage = () => {
-  const { query } = useRouter();
-  const organizationId = query.id as string;
+type TabItem = {
+  key: string;
+  title: string;
+  body: ReactElement;
+};
 
+const OrganizationPage = () => {
+  const router = useRouter();
+  const organizationId = router.query.id as string;
   const t = useT();
+
   const [loaded, { data: organisation, isLoading: organizationLoading }] = useOrganisation({
     id: organizationId,
     sideloads: [
@@ -32,57 +39,75 @@ const OrganizationPage = () => {
       "treeSpeciesHistorical"
     ]
   });
-  const [, { media: coverMedia }] = useOrganisationMediaByCollection({
-    organisationUuid: organisation?.uuid ?? "",
-    collectionName: "cover"
-  });
 
-  const coverUrl = useMemo(() => coverMedia[0]?.url ?? null, [coverMedia]);
+  const currentTab = (router.query.tab as string) ?? "overview";
   const pageTitle = organisation?.name?.trim() ?? t("My Organization");
+
+  const navigateToTab = useCallback(
+    (tab: string) => {
+      router.push(`/organization/${organizationId}?tab=${tab}`, undefined, { shallow: true });
+    },
+    [organizationId, router]
+  );
+
+  const tabItems = useMemo<TabItem[]>(
+    () => [
+      {
+        key: "overview",
+        title: t("Overview"),
+        body: <OverviewTabContent organization={organisation ?? undefined} />
+      },
+      {
+        key: "financial_information",
+        title: t("Financial Information"),
+        body: <FinancialTabContent organization={organisation ?? undefined} />
+      },
+      {
+        key: "projects",
+        title: t("Projects"),
+        body: <ProjectsTabContent />
+      },
+      {
+        key: "team",
+        title: t("Team Members"),
+        body: <TeamTabContent />
+      }
+    ],
+    [organisation, t]
+  );
+
+  const activeTab = tabItems.some(tab => tab.key === currentTab) ? currentTab : "overview";
 
   return (
     <LoadingContainer loading={!loaded || organizationLoading}>
+      <ResponsiveTypography />
       <Head>
         <title>{pageTitle}</title>
       </Head>
-      <HeroBanner bgImage={coverUrl ?? "/images/bg-hero-banner-2.webp"} className="h-[200px]" />
-      <OrganizationHeader organization={organisation ?? undefined} />
-      <SecondaryTabs
-        containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
-        tabItems={[
-          {
-            key: "overview",
-            title: t("Overview"),
-            body: <OverviewTabContent organization={organisation ?? undefined} />
-          },
-          {
-            key: "financial_information",
-            title: t("Financial Information"),
-            body: <FinancialTabContent organization={organisation ?? undefined} />
-          },
-          // Todo: to add these sections back when asked!
-          // {
-          //   key: "mel_capacity",
-          //   title: t("MEL Capacity"),
-          //   body: <MelCapacityTabContent organization={organizationData?.data} />
-          // },
-          // {
-          //   key: "social_impact",
-          //   title: t("Social Impact and Integration"),
-          //   body: <SocialImpactTabContent organization={organizationData?.data} />
-          // },
-          {
-            key: "projects",
-            title: t("Projects"),
-            body: <ProjectsTabContent />
-          },
-          {
-            key: "team",
-            title: t("Meet the Team"),
-            body: <TeamTabContent />
-          }
-        ]}
-      />
+
+      <div className="contents [&>div:last-child]:!top-[2.5625rem] mobile:[&>div:last-child]:!top-[4.0625rem]">
+        <Banner
+          breadcrumbs={[
+            {
+              label: t("Organization"),
+              link: `/organization/${organizationId}`,
+              icon: <OrganizationIcon className="!text-theme-primary-900" />
+            }
+          ]}
+          suffix={<span />}
+          toolbar={{
+            tabBar: {
+              tabs: tabItems.map(tab => ({ value: tab.key, label: tab.title })),
+              defaultValue: activeTab,
+              onTabClick: navigateToTab
+            }
+          }}
+        >
+          <OrganizationHeader organization={organisation ?? undefined} />
+        </Banner>
+      </div>
+
+      <div className="flex flex-1">{tabItems.find(tab => tab.key === activeTab)?.body}</div>
       <PageFooter />
     </LoadingContainer>
   );

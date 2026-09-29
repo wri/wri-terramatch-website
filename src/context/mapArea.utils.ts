@@ -10,6 +10,7 @@ let openPolygonApproveConfirmationExternal: ((sitePolygonUuid: string) => void) 
 let openPolygonRequestInformationConfirmationExternal: ((sitePolygonUuid: string) => void) | null = null;
 let sitePolygonAdminReviewMode = false;
 let runPolygonValidationFromMapPopupExternal: ((geometryPolygonUuids: string[]) => Promise<void>) | null = null;
+let openPolygonEditDrawerByPolygonIdFromMapPopupExternal: ((polygonId: string) => Promise<boolean>) | null = null;
 
 export const registerMapAreaPopupActions = (actions: {
   openPolygonSubmitConfirmation: (sitePolygonUuid: PolygonSubmitConfirmationRequest) => void;
@@ -51,6 +52,19 @@ export const unregisterRunPolygonValidationFromMapPopup = (): void => {
 
 export const runPolygonValidationFromMapPopup = (geometryPolygonUuids: string[]): Promise<void> | undefined =>
   runPolygonValidationFromMapPopupExternal?.(geometryPolygonUuids);
+
+export const registerOpenPolygonEditDrawerByPolygonIdFromMapPopup = (
+  handler: (polygonId: string) => Promise<boolean>
+): void => {
+  openPolygonEditDrawerByPolygonIdFromMapPopupExternal = handler;
+};
+
+export const unregisterOpenPolygonEditDrawerByPolygonIdFromMapPopup = (): void => {
+  openPolygonEditDrawerByPolygonIdFromMapPopupExternal = null;
+};
+
+export const openPolygonEditDrawerByPolygonIdFromMapPopup = (polygonId: string): Promise<boolean> | undefined =>
+  openPolygonEditDrawerByPolygonIdFromMapPopupExternal?.(polygonId);
 
 export const registerOpenPolygonPopupHandler = (handler: (polygonUuid: string) => void | Promise<void>): void => {
   openPolygonPopupExternal = handler;

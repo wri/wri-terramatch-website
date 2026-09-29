@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
 import type { PolygonEntityScope } from "@/components/elements/Map-mapbox/Map.d";
-import { parsePolygonDataV3 } from "@/components/elements/Map-mapbox/utils";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
@@ -24,7 +23,6 @@ const MonitoredDataMap = ({
   record?: any;
 }) => {
   const mapFunctions = useBaseMap();
-  const [polygonsData, setPolygonsData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
   const entityBbox = useBoundingBox(entityName === "sites" ? { siteUuid: entityUuid } : { projectUuid: entityUuid });
@@ -37,7 +35,7 @@ const MonitoredDataMap = ({
       "polygonStatus[]": ["approved"]
     }
   });
-  const sitePolygons = mapIndex?.polygons;
+  const mapPolygons = useMemo(() => mapIndex?.polygons ?? [], [mapIndex?.polygons]);
 
   const polygonEntityScope = useMemo<PolygonEntityScope | undefined>(
     () =>
@@ -51,16 +49,6 @@ const MonitoredDataMap = ({
     entity: entityName as SupportedEntity,
     uuid: entityUuid
   });
-
-  useEffect(() => {
-    if (!sitePolygons) {
-      setPolygonsData(null);
-      return;
-    }
-
-    const parsedData = parsePolygonDataV3(sitePolygons);
-    setPolygonsData(parsedData);
-  }, [entityName, entityUuid, sitePolygons]);
 
   useEffect(() => {
     setLoading(!mapIndexLoaded);
@@ -85,7 +73,7 @@ const MonitoredDataMap = ({
           showLegend={!selected.includes("6")}
           legendPosition="bottom-right"
           showViewGallery={false}
-          polygonsData={polygonsData}
+          mapIndexPolygons={mapPolygons}
           bbox={entityBbox}
           setLoader={setLoading}
           mediaFiles={mediaFiles}

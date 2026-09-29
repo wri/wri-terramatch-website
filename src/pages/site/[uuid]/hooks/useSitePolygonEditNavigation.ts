@@ -7,9 +7,11 @@ import {
   scrollToSitePolygonTabHeader
 } from "@/components/elements/Map-mapbox/sitePolygonNavigation";
 import { resolvePolygonTableRowId } from "@/components/elements/Map-mapbox/sitePolygonPopupUtils";
-import { loadSitePolygonByUuid } from "@/connections/SitePolygons";
 import { openPolygonPopupFromMapArea } from "@/context/mapArea.utils";
-import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
+import {
+  openPolygonEditDrawerForPolygonId,
+  openPolygonEditDrawerForSitePolygon
+} from "@/context/polygonEditDrawer.utils";
 import { consumePendingPolygonFocusUuid, setPolygonTableHoveredUuid } from "@/context/polygonTableInteraction.store";
 import type {
   SitePolygonLightDto,
@@ -54,23 +56,12 @@ export const useSitePolygonEditNavigation = ({
   const [focusPolygonUuid, setFocusPolygonUuid] = useState<string | null>(null);
 
   const openPolygonEditDrawerByPolygonId = useCallback(
-    (polygonId: string) => {
-      const sitePolygon = findTableSitePolygon(polygonId);
-      if (sitePolygon != null) {
-        openPolygonEditDrawerForSitePolygon(sitePolygon, sitePolygon.name ?? undefined);
-        return;
-      }
-
-      void loadSitePolygonByUuid({ entityUuid: siteUuid, polygonId })
-        .then(loadedPolygon => {
-          if (loadedPolygon != null) {
-            openPolygonEditDrawerForSitePolygon(loadedPolygon, loadedPolygon.name ?? undefined);
-          }
-        })
-        .catch(error => {
-          Log.error("Failed to load polygon for edit drawer:", error);
-        });
-    },
+    (polygonId: string) =>
+      openPolygonEditDrawerForPolygonId({
+        polygonId,
+        siteUuid,
+        findCachedSitePolygon: findTableSitePolygon
+      }),
     [findTableSitePolygon, siteUuid]
   );
 
@@ -84,7 +75,7 @@ export const useSitePolygonEditNavigation = ({
         return;
       }
 
-      openPolygonEditDrawerByPolygonId(polygonUuid);
+      void openPolygonEditDrawerByPolygonId(polygonUuid);
     },
     [hasOverlapFilter, onCloseOverlapFixModal, openPolygonEditDrawerByPolygonId, setPolygonFilters]
   );
@@ -122,7 +113,7 @@ export const useSitePolygonEditNavigation = ({
     }
 
     pendingOverlapFixPolygonIdRef.current = null;
-    openPolygonEditDrawerByPolygonId(pendingPolygonId);
+    void openPolygonEditDrawerByPolygonId(pendingPolygonId);
   }, [hasOverlapFilter, isTablePolygonsLoading, openPolygonEditDrawerByPolygonId]);
 
   const editPolygonQueryParam = useMemo(() => {
@@ -177,19 +168,14 @@ export const useSitePolygonEditNavigation = ({
     }
 
     const polygonIdToOpen = uploadedPolygonUuidToOpen;
-    void loadSitePolygonByUuid({ entityUuid: siteUuid, polygonId: polygonIdToOpen })
-      .then(loadedPolygon => {
-        if (loadedPolygon != null) {
-          openPolygonEditDrawerForSitePolygon(loadedPolygon, loadedPolygon.name ?? undefined);
-        }
-      })
+    void openPolygonEditDrawerByPolygonId(polygonIdToOpen)
       .catch(error => {
         Log.error("Failed to auto-open uploaded polygon in edit drawer:", error);
       })
       .finally(() => {
         setUploadedPolygonUuidToOpen(current => (current === polygonIdToOpen ? null : current));
       });
-  }, [findTableSitePolygon, isTablePolygonsLoading, siteUuid, uploadedPolygonUuidToOpen]);
+  }, [findTableSitePolygon, isTablePolygonsLoading, openPolygonEditDrawerByPolygonId, uploadedPolygonUuidToOpen]);
 
   useEffect(() => {
     if (!mapIndexLoaded) {

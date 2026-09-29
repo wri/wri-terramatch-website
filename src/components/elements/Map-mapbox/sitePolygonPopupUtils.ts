@@ -20,17 +20,7 @@ export const findMapIndexEntryByMapFeatureUuid = (
   return mapIndexPolygons.find(p => p.polygonUuid === polygonUuid || p.uuid === polygonUuid);
 };
 
-export const findSitePolygonByMapFeatureUuid = (
-  sitePolygons: SitePolygonLightDto[] | undefined,
-  polygonUuid: string
-): SitePolygonLightDto | undefined => {
-  if (polygonUuid === "" || sitePolygons == null || sitePolygons.length === 0) {
-    return undefined;
-  }
-  return sitePolygons.find(p => p.polygonUuid === polygonUuid);
-};
-
-export const getSitePolygonGeometryUuid = (sitePolygon: SitePolygonPopupFields | undefined): string | null => {
+export const getSitePolygonGeometryUuid = (sitePolygon: SitePolygonMapEntryDto | undefined): string | null => {
   const geometryUuid = sitePolygon?.polygonUuid;
   return geometryUuid != null && geometryUuid !== "" ? geometryUuid : null;
 };
