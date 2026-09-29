@@ -16,7 +16,7 @@ import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 
-import { ALL_PROJECTS_VIEW, getSiteCreateUrl } from "./components/siteIndex.utils";
+import { ALL_PROJECTS_VIEW, filterSiteIndexSites, getSiteCreateUrl } from "./components/siteIndex.utils";
 import SiteIndexBulkBar from "./components/SiteIndexBulkBar";
 import SiteIndexFilterDrawer, {
   type SiteIndexFilterStatus,
@@ -64,8 +64,6 @@ const SiteIndexPageContent = () => {
     useSiteIndexData({
       reloadNonce,
       search: debouncedSearch,
-      statusFilters,
-      updateFilter,
       projectUuid: selectedProject === ALL_PROJECTS_VIEW ? undefined : selectedProject,
       enabled: hasHydratedQuery
     });
@@ -78,14 +76,33 @@ const SiteIndexPageContent = () => {
       project => selectedProject === ALL_PROJECTS_VIEW || project.id === selectedProject
     );
 
-    if (!hasActiveFilters) {
-      return scopedProjects;
-    }
+    if (!hasActiveFilters) return scopedProjects;
 
-    return scopedProjects.filter(project => project.sites.length > 0);
-  }, [hasActiveFilters, projects, selectedProject]);
+    return scopedProjects.filter(
+      project =>
+        !project.sitesLoaded ||
+        filterSiteIndexSites(project.sites, {
+          search: debouncedSearch,
+          statusFilters,
+          updateFilter
+        }).length > 0
+    );
+  }, [debouncedSearch, hasActiveFilters, projects, selectedProject, statusFilters, updateFilter]);
 
-  const visibleSiteCount = totalSiteCount;
+  const visibleSiteCount = useMemo(() => {
+    if (!hasAppliedFilters || visibleProjects.some(project => !project.sitesLoaded)) return totalSiteCount;
+
+    return visibleProjects.reduce(
+      (total, project) =>
+        total +
+        filterSiteIndexSites(project.sites, {
+          search: debouncedSearch,
+          statusFilters,
+          updateFilter
+        }).length,
+      0
+    );
+  }, [debouncedSearch, hasAppliedFilters, statusFilters, totalSiteCount, updateFilter, visibleProjects]);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
