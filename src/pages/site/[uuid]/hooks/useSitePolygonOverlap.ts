@@ -1,11 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
-import { loadSitePolygons } from "@/connections/SitePolygons";
 import { useAllSiteValidations } from "@/connections/Validation";
 import { SitePolygonLightDto, ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
-import Log from "@/utils/log";
 
 import {
   mergeValidationsByPolygonUuid,
@@ -13,9 +11,9 @@ import {
 } from "../components/Modals/validationCriteria";
 import { getCrossSiteOverlapPartnersForValidation } from "./crossSiteOverlap.utils";
 import { buildOverlapFailureValidationsMap } from "./overlapFix.utils";
+import { loadSitePolygonsByUuidBatch } from "./sitePolygonBatchLoad.utils";
 
 const EMPTY_OVERLAP_POLYGONS: SitePolygonLightDto[] = [];
-const OVERLAP_POLYGONS_BATCH_SIZE = 100;
 
 type UseSitePolygonOverlapParams = {
   siteUuid: string;
@@ -77,34 +75,15 @@ export const useSitePolygonOverlap = ({
 
     let cancelled = false;
 
-    const loadOverlapPolygons = async () => {
-      const polygons: SitePolygonLightDto[] = [];
-
-      for (let offset = 0; offset < overlapPolygonUuids.length; offset += OVERLAP_POLYGONS_BATCH_SIZE) {
-        const uuidBatch = overlapPolygonUuids.slice(offset, offset + OVERLAP_POLYGONS_BATCH_SIZE);
-        const response = await loadSitePolygons({
-          entityName: "sites",
-          entityUuid: siteUuid,
-          enabled: true,
-          filter: { "polygonUuid[]": uuidBatch },
-          pageNumber: 1,
-          pageSize: uuidBatch.length
-        });
-
-        if (response.loadFailure != null) {
-          Log.error("Failed to load overlap polygon geometry", { siteUuid, loadFailure: response.loadFailure });
-          continue;
-        }
-
-        polygons.push(...(response.data ?? []));
-      }
-
+    void loadSitePolygonsByUuidBatch({
+      siteUuid,
+      polygonUuids: overlapPolygonUuids,
+      errorContext: "Failed to load overlap polygon geometry"
+    }).then(polygons => {
       if (!cancelled) {
         setOverlapPolygonsLightData(polygons);
       }
-    };
-
-    void loadOverlapPolygons();
+    });
 
     return () => {
       cancelled = true;

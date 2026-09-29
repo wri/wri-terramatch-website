@@ -67,17 +67,29 @@ export const useAutocompleteMenuNavigation = (open: boolean) => {
   return { contentRef, handleInputKeyDown, shouldKeepMenuOpen };
 };
 
+const POINTER_EVENTS = ["pointerdown", "mousedown", "touchstart"] as const;
+
+const isNavigationKeyDown = (event: globalThis.KeyboardEvent) => !event.metaKey && !event.altKey && !event.ctrlKey;
+
 export const useKeyboardFocusRing = () => {
-  const pointerInteraction = useRef(false);
+  const keyboardModality = useRef(false);
   const [showFocusRing, setShowFocusRing] = useState(false);
 
   useEffect(() => {
-    const handleKeyDown = () => {
-      pointerInteraction.current = false;
+    const handlePointer = () => {
+      keyboardModality.current = false;
+      setShowFocusRing(false);
+    };
+    const handleKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (isNavigationKeyDown(event)) keyboardModality.current = true;
     };
 
+    POINTER_EVENTS.forEach(type => window.addEventListener(type, handlePointer, true));
     window.addEventListener("keydown", handleKeyDown, true);
-    return () => window.removeEventListener("keydown", handleKeyDown, true);
+    return () => {
+      POINTER_EVENTS.forEach(type => window.removeEventListener(type, handlePointer, true));
+      window.removeEventListener("keydown", handleKeyDown, true);
+    };
   }, []);
 
   return {
@@ -85,13 +97,8 @@ export const useKeyboardFocusRing = () => {
     rootFocusProps: {
       onBlurCapture: () => setShowFocusRing(false),
       onFocusCapture: (event: FocusEvent<HTMLElement>) => {
-        const target = event.target as HTMLElement;
-        const isFieldFocusTarget = target.hasAttribute("data-selector-focus-target");
-        setShowFocusRing(isFieldFocusTarget && !pointerInteraction.current && target.matches(":focus-visible"));
-      },
-      onPointerDownCapture: () => {
-        pointerInteraction.current = true;
-        setShowFocusRing(false);
+        const isFieldFocusTarget = (event.target as HTMLElement).hasAttribute("data-selector-focus-target");
+        setShowFocusRing(isFieldFocusTarget && keyboardModality.current);
       }
     }
   };

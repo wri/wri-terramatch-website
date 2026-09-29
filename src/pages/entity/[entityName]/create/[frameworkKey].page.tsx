@@ -22,6 +22,7 @@ import { useEntityForm } from "@/hooks/useFormGet";
 import { useGetReportingFrameworkFormKey } from "@/hooks/useGetFormKey";
 import { useReportEntityDueAt } from "@/hooks/useReportEntityDueAt";
 import { getReportsIndexHrefFromQuery, withReportsIndexReturn } from "@/pages/reports/report-index/reportIndex.utils";
+import ApiSlice from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import { resolveFormIntroDeadline } from "@/utils/formIntroDeadline";
 import Log from "@/utils/log";
@@ -84,7 +85,10 @@ const EntityIntroPage = () => {
   const { createEntity, isCreating } = useCreateEntity(
     v3EntityName(entityName) as FormEntity,
     useCallback(
-      ({ uuid }) => router.replace(withReportsIndexReturn(`/entity/${entityName}/edit/${uuid}`, from)),
+      ({ uuid }) => {
+        ApiSlice.pruneIndex(v3EntityName(entityName) as FormEntity);
+        router.replace(withReportsIndexReturn(`/entity/${entityName}/edit/${uuid}`, from));
+      },
       [entityName, from, router]
     ),
     `Failed to create ${kebabCase(singularEntityName(entityName)).replace("-", " ")}`

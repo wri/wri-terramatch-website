@@ -104,22 +104,6 @@ export const variantSecondary: Story = {
   }
 };
 
-export const variantTertiary: Story = {
-  args: {
-    header: <AccordionHeader label="Label" title="Header Title" />,
-    children: "This is the accordion content. You can put any content here.",
-    variant: "tertiary"
-  }
-};
-
-export const StatusLabel: Story = {
-  args: {
-    header: <AccordionHeader label="Label" title="Header Title" status="error" statusLabel="Status Label" />,
-    children: "This is the accordion content. You can put any content here.",
-    variant: "secondary"
-  }
-};
-
 export const ListSectionHeaderTopLevel: Story = {
   render: () => {
     const [open, setOpen] = useState(true);
