@@ -42,7 +42,6 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
   const hasPendingMembers = pendingMembers.length > 0;
   const hasApprovedMembers = approvedMembers.length > 0;
   const hasRejectedMembers = rejectedMembers.length > 0;
-  const isMixedSelection = hasPendingMembers && (hasApprovedMembers || hasRejectedMembers);
 
   useEffect(() => {
     setBulkActionToolbarVisible(visible);
@@ -57,7 +56,7 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
   const actions = useMemo<BulkToolbarAction[]>(() => {
     const nextActions: BulkToolbarAction[] = [];
 
-    if (isMixedSelection) {
+    if (hasPendingMembers && (hasApprovedMembers || hasRejectedMembers)) {
       nextActions.push({
         id: "reject",
         tone: "danger",
@@ -66,7 +65,7 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
       });
     }
 
-    if (hasRejectedMembers && (hasPendingMembers || hasApprovedMembers)) {
+    if (hasRejectedMembers && hasPendingMembers) {
       nextActions.push({
         id: "reinvite",
         children: t("Re-invite"),
@@ -75,7 +74,7 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
     }
 
     return nextActions;
-  }, [hasApprovedMembers, hasPendingMembers, hasRejectedMembers, isMixedSelection, t]);
+  }, [hasApprovedMembers, hasPendingMembers, hasRejectedMembers, t]);
 
   const destructiveAction = useMemo<BulkToolbarAction>(() => {
     if (hasApprovedMembers || hasRejectedMembers) {
