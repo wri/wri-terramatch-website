@@ -7,14 +7,11 @@ import ApiSlice, { type ApiFilteredIndexCache } from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 import type { SiteIndexProject } from "./siteIndex.types";
-import { mapSiteToIndexSite, toSiteIndexProject, toSiteIndexUpdateRequestStatus } from "./siteIndex.utils";
-import type { SiteIndexFilterStatus, SiteIndexFilterUpdate } from "./SiteIndexFilterDrawer";
+import { mapSiteToIndexSite, toSiteIndexProject } from "./siteIndex.utils";
 
 type UseSiteIndexDataParams = {
   reloadNonce?: number;
   search?: string;
-  statusFilters?: SiteIndexFilterStatus[];
-  updateFilter?: SiteIndexFilterUpdate | null;
   projectUuid?: string;
   enabled?: boolean;
 };
@@ -86,17 +83,7 @@ const getSiteProjectId = (site: SiteLightDto) => {
   return relatedId != null && relatedId !== "" ? relatedId : null;
 };
 
-const loadFilteredSites = async ({
-  search = "",
-  status,
-  updateRequestStatus,
-  projectUuid
-}: {
-  search?: string;
-  status?: string;
-  updateRequestStatus?: string;
-  projectUuid?: string;
-}) => {
+const loadFilteredSites = async ({ search = "", projectUuid }: { search?: string; projectUuid?: string }) => {
   try {
     return await loadLimitedIndexPages<SiteLightDto>(
       pageNumber =>
@@ -107,8 +94,6 @@ const loadFilteredSites = async ({
           sortDirection: "ASC",
           filter: {
             ...(search === "" ? {} : { search }),
-            ...(status == null || status === "" ? {} : { status }),
-            ...(updateRequestStatus == null || updateRequestStatus === "" ? {} : { updateRequestStatus }),
             ...(requireProjectUuid(projectUuid) ? { projectUuid } : {})
           }
         }),
@@ -119,45 +104,6 @@ const loadFilteredSites = async ({
     Log.error("Failed to filter sites", error);
     return [] as SiteLightDto[];
   }
-};
-
-const SITE_STATUS_QUERY_VALUES: Record<SiteIndexFilterStatus, string[]> = {
-  draft: ["draft"],
-  "pending-approval": ["awaiting-approval"],
-  "information-required": ["information-required"],
-  approved: ["approved"]
-};
-
-const loadSitesForFilters = async ({
-  search = "",
-  statusFilters = [],
-  updateFilter = null,
-  projectUuid
-}: {
-  search?: string;
-  statusFilters?: SiteIndexFilterStatus[];
-  updateFilter?: SiteIndexFilterUpdate | null;
-  projectUuid?: string;
-}) => {
-  const updateRequestStatus = toSiteIndexUpdateRequestStatus(updateFilter);
-  const statuses =
-    statusFilters.length > 0
-      ? [...new Set(statusFilters.flatMap(status => SITE_STATUS_QUERY_VALUES[status]))]
-      : [undefined];
-  const pages = await Promise.all(
-    statuses.map(status =>
-      loadFilteredSites({
-        search,
-        status,
-        updateRequestStatus,
-        projectUuid
-      })
-    )
-  );
-
-  const sitesById = new Map<string, SiteLightDto>();
-  pages.flat().forEach(site => sitesById.set(site.uuid, site));
-  return [...sitesById.values()];
 };
 
 const loadAllIndexPages = async <T>(
@@ -251,8 +197,6 @@ const loadProjectSites = async (projectUuid: string) => {
 export const useSiteIndexData = ({
   reloadNonce = 0,
   search = "",
-  statusFilters = [],
-  updateFilter = null,
   projectUuid,
   enabled = true
 }: UseSiteIndexDataParams = {}): UseSiteIndexDataResult => {
@@ -614,7 +558,6 @@ export const useSiteIndexData = ({
       }
 
       const visibleTarget = getViewportProjectCount();
-      const hasStatusOrUpdateFilter = statusFilters.length > 0 || updateFilter != null;
       const isScopedToProject = requireProjectUuid(projectUuid);
 
       const loadViewCatalog = async () => {
@@ -650,11 +593,9 @@ export const useSiteIndexData = ({
       };
 
       try {
-        if (normalisedSearch !== "" || hasStatusOrUpdateFilter) {
-          const matchingSites = await loadSitesForFilters({
+        if (normalisedSearch !== "") {
+          const matchingSites = await loadFilteredSites({
             search: normalisedSearch,
-            statusFilters,
-            updateFilter,
             projectUuid
           });
           if (cancelled || requestId !== requestIdRef.current) return;
@@ -697,13 +638,13 @@ export const useSiteIndexData = ({
         }
 
         if (!cancelled && requestId === requestIdRef.current) {
-          setHasMorePages(!isScopedToProject && !hasStatusOrUpdateFilter && hasMoreProjectPages());
+          setHasMorePages(!isScopedToProject && hasMoreProjectPages());
           setLoading(false);
         }
       } catch (error) {
         Log.error("Failed to load site index", error);
         if (!cancelled && requestId === requestIdRef.current) {
-          setHasMorePages(!isScopedToProject && !hasStatusOrUpdateFilter && hasMoreProjectPages());
+          setHasMorePages(!isScopedToProject && hasMoreProjectPages());
           setLoading(false);
         }
       }
@@ -714,25 +655,10 @@ export const useSiteIndexData = ({
     return () => {
       cancelled = true;
     };
-  }, [
-    enabled,
-    loadNextProjectBatch,
-    normalisedSearch,
-    projectUuid,
-    reloadNonce,
-    statusFilters,
-    updateFilter,
-    mergeSearchSites
-  ]);
+  }, [enabled, loadNextProjectBatch, normalisedSearch, projectUuid, reloadNonce, mergeSearchSites]);
 
   const loadMore = useCallback(async () => {
-    if (
-      projectUuidRef.current != null ||
-      statusFilters.length > 0 ||
-      updateFilter != null ||
-      !hasMorePages ||
-      probingRef.current
-    ) {
+    if (projectUuidRef.current != null || !hasMorePages || probingRef.current) {
       return;
     }
 
@@ -746,7 +672,7 @@ export const useSiteIndexData = ({
         setLoadingMore(false);
       }
     }
-  }, [hasMorePages, loadNextProjectBatch, statusFilters.length, updateFilter]);
+  }, [hasMorePages, loadNextProjectBatch]);
 
   const viewProjects = useMemo(() => {
     const byId = new Map<string, ProjectLightDto>();
@@ -785,7 +711,7 @@ export const useSiteIndexData = ({
   return {
     loading,
     loadingMore,
-    hasMore: projectUuid == null && hasMorePages && statusFilters.length === 0 && updateFilter == null,
+    hasMore: projectUuid == null && hasMorePages,
     loadMore,
     viewProjects,
     projects,
