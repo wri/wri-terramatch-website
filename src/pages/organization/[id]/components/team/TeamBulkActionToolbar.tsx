@@ -25,17 +25,24 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
   const isSubmittingRef = useRef(false);
   const selectedCount = selectedMembers.length;
   const visible = selectedCount > 0;
+
   const pendingMembers = useMemo(
     () => selectedMembers.filter(member => member.associationStatus === "requested"),
     [selectedMembers]
   );
-  const acceptedMembers = useMemo(
+  const approvedMembers = useMemo(
     () => selectedMembers.filter(member => member.associationStatus === "approved"),
     [selectedMembers]
   );
+  const rejectedMembers = useMemo(
+    () => selectedMembers.filter(member => member.associationStatus === "rejected"),
+    [selectedMembers]
+  );
+
   const hasPendingMembers = pendingMembers.length > 0;
-  const hasAcceptedMembers = acceptedMembers.length > 0;
-  const isMixedSelection = hasPendingMembers && hasAcceptedMembers;
+  const hasApprovedMembers = approvedMembers.length > 0;
+  const hasRejectedMembers = rejectedMembers.length > 0;
+  const isMixedSelection = hasPendingMembers && (hasApprovedMembers || hasRejectedMembers);
 
   useEffect(() => {
     setBulkActionToolbarVisible(visible);
@@ -47,49 +54,113 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
     };
   }, [setBulkActionToolbarVisible, setSidebarCollapseDisabled, visible]);
 
-  const actions = useMemo<BulkToolbarAction[]>(
-    () =>
-      isMixedSelection
-        ? [
-            {
-              id: "reject",
-              tone: "danger" as const,
-              children: t("Reject"),
-              onClick: () => setModalAction("reject")
-            }
-          ]
-        : [],
-    [isMixedSelection, t]
-  );
+  const actions = useMemo<BulkToolbarAction[]>(() => {
+    const nextActions: BulkToolbarAction[] = [];
 
-  const destructiveAction = useMemo<BulkToolbarAction>(
-    () => ({
-      id: hasAcceptedMembers ? "remove" : "reject",
-      tone: "danger",
-      children: hasAcceptedMembers ? t("Remove") : t("Reject"),
-      onClick: () => setModalAction(hasAcceptedMembers ? "remove" : "reject")
-    }),
-    [hasAcceptedMembers, t]
-  );
+    if (isMixedSelection) {
+      nextActions.push({
+        id: "reject",
+        tone: "danger",
+        children: t("Reject"),
+        onClick: () => setModalAction("reject")
+      });
+    }
 
-  const primaryAction = useMemo(() => {
-    if (!hasPendingMembers) return undefined;
+    if (hasRejectedMembers && (hasPendingMembers || hasApprovedMembers)) {
+      nextActions.push({
+        id: "reinvite",
+        children: t("Re-invite"),
+        onClick: () => setModalAction("reinvite")
+      });
+    }
+
+    return nextActions;
+  }, [hasApprovedMembers, hasPendingMembers, hasRejectedMembers, isMixedSelection, t]);
+
+  const destructiveAction = useMemo<BulkToolbarAction>(() => {
+    if (hasApprovedMembers || hasRejectedMembers) {
+      return {
+        id: "remove",
+        tone: "danger",
+        children: t("Remove"),
+        onClick: () => setModalAction("remove")
+      };
+    }
 
     return {
-      children: t("Approve"),
-      onClick: () => setModalAction("approve" as const)
+      id: "reject",
+      tone: "danger",
+      children: t("Reject"),
+      onClick: () => setModalAction("reject")
     };
-  }, [hasPendingMembers, t]);
+  }, [hasApprovedMembers, hasRejectedMembers, t]);
 
-  const modalMembers =
-    modalAction === "approve" || modalAction === "reject"
-      ? pendingMembers
-      : modalAction === "remove"
-      ? acceptedMembers
-      : [];
+  const primaryAction = useMemo(() => {
+    if (hasPendingMembers) {
+      return {
+        children: t("Approve"),
+        onClick: () => setModalAction("approve")
+      };
+    }
+
+    if (hasRejectedMembers) {
+      return {
+        children: t("Re-invite"),
+        onClick: () => setModalAction("reinvite")
+      };
+    }
+
+    return undefined;
+  }, [hasPendingMembers, hasRejectedMembers, t]);
+
+  const modalMembers = useMemo(() => {
+    if (modalAction === "approve" || modalAction === "reject") return pendingMembers;
+    if (modalAction === "reinvite") return rejectedMembers;
+    if (modalAction === "remove") return [...approvedMembers, ...rejectedMembers];
+    return [];
+  }, [approvedMembers, modalAction, pendingMembers, rejectedMembers]);
 
   const handleConfirm = async () => {
     if (isSubmittingRef.current || modalAction == null) return;
+
+    if (modalAction === "reinvite") {
+      setModalAction(null);
+      onCancel();
+      return;
+    }
+
+    if (modalAction === "remove") {
+      const approvedIds = approvedMembers.map(member => member.id);
+      if (approvedIds.length === 0) {
+        setModalAction(null);
+        onCancel();
+        return;
+      }
+
+      if (organisationUuid === "") {
+        setModalAction(null);
+        onCancel();
+        return;
+      }
+
+      isSubmittingRef.current = true;
+      try {
+        await bulkDeleteUserAssociations(organisationUuid, approvedIds, "organisations");
+        setModalAction(null);
+        onCancel();
+      } catch {
+        showToast({
+          label: t("Unable to remove the selected team members from the Organization."),
+          type: "error",
+          placement: "bottom",
+          duration: 5000
+        });
+      } finally {
+        isSubmittingRef.current = false;
+      }
+      return;
+    }
+
     if (organisationUuid === "") {
       setModalAction(null);
       onCancel();
@@ -104,15 +175,11 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
 
     isSubmittingRef.current = true;
     try {
-      if (modalAction === "remove") {
-        await bulkDeleteUserAssociations(organisationUuid, memberIds, "organisations");
-      } else {
-        await updateOrganisationUserStatuses(
-          organisationUuid,
-          memberIds,
-          modalAction === "approve" ? "approved" : "rejected"
-        );
-      }
+      await updateOrganisationUserStatuses(
+        organisationUuid,
+        memberIds,
+        modalAction === "approve" ? "approved" : "rejected"
+      );
       setModalAction(null);
       onCancel();
     } catch {
@@ -120,9 +187,7 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
         label:
           modalAction === "approve"
             ? t("Unable to approve the selected team members.")
-            : modalAction === "reject"
-            ? t("Unable to reject the selected team members.")
-            : t("Unable to remove the selected team members from the Organization."),
+            : t("Unable to reject the selected team members."),
         type: "error",
         placement: "bottom",
         duration: 5000

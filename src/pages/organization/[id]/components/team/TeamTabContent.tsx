@@ -34,7 +34,7 @@ import InviteTeamMemberModal from "../InviteTeamMemberModal";
 import TeamBulkActionToolbar from "./TeamBulkActionToolbar";
 import TeamMemberActionModal, { type TeamMemberAction } from "./TeamMemberActionModal";
 
-type AssociationStatus = "requested" | "approved";
+type AssociationStatus = "requested" | "approved" | "rejected";
 
 type TeamMemberRow = Omit<UserAssociationDto, "status"> & {
   id: string;
@@ -50,6 +50,15 @@ type RowActionState = {
 const ROLE_LABELS: Record<string, string> = {
   "project-developer": "Monitoring Partner",
   "project-manager": "Project Manager"
+};
+
+const STATUS_TAG_CONFIG: Record<
+  AssociationStatus,
+  { state: "attention" | "success" | "warning"; iconColor: string }
+> = {
+  requested: { state: "attention", iconColor: "warning.500" },
+  approved: { state: "success", iconColor: "success.500" },
+  rejected: { state: "warning", iconColor: "error.500" }
 };
 
 const TeamTabContent: FC = () => {
@@ -75,6 +84,10 @@ const TeamTabContent: FC = () => {
     organisationUuid,
     status: "requested"
   });
+  const [rejectedLoaded, { data: rejectedUsers }] = useOrganisationUserAssociations({
+    organisationUuid,
+    status: "rejected"
+  });
 
   const allMembers = useMemo<TeamMemberRow[]>(
     () => [
@@ -89,9 +102,15 @@ const TeamTabContent: FC = () => {
         id: user.uuid,
         status: t("Accepted"),
         associationStatus: "approved" as const
+      })),
+      ...(rejectedUsers ?? []).map(user => ({
+        ...user,
+        id: user.uuid,
+        status: t("Rejected"),
+        associationStatus: "rejected" as const
       }))
     ],
-    [approvedUsers, pendingUsers, t]
+    [approvedUsers, pendingUsers, rejectedUsers, t]
   );
 
   const roleOptions = useMemo(
@@ -129,7 +148,14 @@ const TeamTabContent: FC = () => {
   }, []);
 
   const handleConfirmRowAction = useCallback(async () => {
-    if (rowAction == null || organisationUuid === "" || isSubmittingRef.current) return;
+    if (rowAction == null || isSubmittingRef.current) return;
+
+    if (rowAction.action === "reinvite" || rowAction.member.associationStatus === "rejected") {
+      setRowAction(null);
+      return;
+    }
+
+    if (organisationUuid === "") return;
 
     isSubmittingRef.current = true;
     try {
@@ -181,42 +207,69 @@ const TeamTabContent: FC = () => {
         key: "status",
         label: t("Status"),
         sortable: true,
-        cell: (member: TeamMemberRow) => (
-          <ActionStatusTag
-            state={member.associationStatus === "requested" ? "attention" : "success"}
-            size="small"
-            label={member.status}
-            icon={
-              member.associationStatus === "requested" ? (
-                <InformationRequiredIcon boxSize={3} color="warning.500" />
-              ) : (
-                <CheckApprovedIcon boxSize={3} color="success.500" />
-              )
-            }
-          />
-        )
+        cell: (member: TeamMemberRow) => {
+          const statusConfig = STATUS_TAG_CONFIG[member.associationStatus];
+          const StatusIcon =
+            member.associationStatus === "requested"
+              ? InformationRequiredIcon
+              : member.associationStatus === "rejected"
+              ? RejectedIcon
+              : CheckApprovedIcon;
+
+          return (
+            <ActionStatusTag
+              state={statusConfig.state}
+              size="small"
+              label={member.status}
+              icon={<StatusIcon boxSize={3} color={statusConfig.iconColor} />}
+            />
+          );
+        }
       },
       {
         key: "actions",
         label: "",
         width: "214px",
-        cell: (member: TeamMemberRow) =>
-          member.associationStatus === "requested" ? (
-            <ActionCell
-              button={{
-                children: t("Approve"),
-                leftIcon: <CheckIcon boxSize={3} />,
-                onClick: () => openRowAction("approve", member)
-              }}
-              buttonSecondary={{
-                children: t("Reject"),
-                leftIcon: <RejectedIcon boxSize={3} color="error.500" />,
-                className: "!border-theme-error-300 !bg-theme-error-100 !text-theme-error-900",
-                size: "small",
-                onClick: () => openRowAction("reject", member)
-              }}
-            />
-          ) : (
+        cell: (member: TeamMemberRow) => {
+          if (member.associationStatus === "requested") {
+            return (
+              <ActionCell
+                button={{
+                  children: t("Approve"),
+                  leftIcon: <CheckIcon boxSize={3} />,
+                  onClick: () => openRowAction("approve", member)
+                }}
+                buttonSecondary={{
+                  children: t("Reject"),
+                  leftIcon: <RejectedIcon boxSize={3} color="error.500" />,
+                  className: "!border-theme-error-300 !bg-theme-error-100 !text-theme-error-900",
+                  size: "small",
+                  onClick: () => openRowAction("reject", member)
+                }}
+              />
+            );
+          }
+
+          if (member.associationStatus === "rejected") {
+            return (
+              <ActionCell
+                button={{
+                  children: t("Re-invite"),
+                  leftIcon: <UserAddIcon boxSize={3} />,
+                  onClick: () => openRowAction("reinvite", member)
+                }}
+                buttonSecondary={{
+                  children: t("Remove"),
+                  leftIcon: <DeleteIcon boxSize={3} color="error.500" />,
+                  className: "!border-theme-error-300 !bg-theme-error-100 !text-theme-error-900",
+                  size: "small",
+                  onClick: () => openRowAction("remove", member)
+                }}
+              />
+            );
+          }
+
+          return (
             <ActionCell
               buttonSecondary={{
                 children: t("Remove"),
@@ -226,7 +279,8 @@ const TeamTabContent: FC = () => {
                 onClick: () => openRowAction("remove", member)
               }}
             />
-          )
+          );
+        }
       }
     ],
     [isMobile, openRowAction, t]
@@ -307,7 +361,7 @@ const TeamTabContent: FC = () => {
         onAllItemsSelected={onAllItemsSelected}
         renderRow={renderRow}
         pageSize={10}
-        loading={!approvedLoaded || !pendingLoaded}
+        loading={!approvedLoaded || !pendingLoaded || !rejectedLoaded}
       />
 
       <TeamBulkActionToolbar
