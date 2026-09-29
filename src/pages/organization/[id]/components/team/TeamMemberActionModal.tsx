@@ -5,12 +5,12 @@ import { FC, useCallback } from "react";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 
-export type TeamMemberAction = "approve" | "reject" | "remove";
+export type TeamMemberAction = "approve" | "reject" | "remove" | "reinvite";
 
 export type TeamBulkMember = {
   id: string;
   fullName: string;
-  associationStatus: "requested" | "approved";
+  associationStatus: "requested" | "approved" | "rejected";
 };
 
 type TeamMemberActionModalProps = {
@@ -27,6 +27,7 @@ const TeamMemberActionModal: FC<TeamMemberActionModalProps> = ({ action, members
   const getTitle = useCallback(() => {
     if (action === "approve") return isMultiple ? t("Approve Access Requests?") : t("Approve Access Request?");
     if (action === "reject") return isMultiple ? t("Reject Access Requests?") : t("Reject Access Request?");
+    if (action === "reinvite") return isMultiple ? t("Re-invite Team Members?") : t("Re-invite Team Member?");
     return isMultiple ? t("Remove Team Members?") : t("Remove Team Member?");
   }, [action, isMultiple, t]);
 
@@ -37,19 +38,29 @@ const TeamMemberActionModal: FC<TeamMemberActionModalProps> = ({ action, members
     if (action === "reject") {
       return t("Are you sure you want to reject the requests from the following users to join the Organization?");
     }
+    if (action === "reinvite") {
+      return t("Are you sure you want to re-invite the following users to join the Organization?");
+    }
     return t("Are you sure you want to remove the following team members from the Organization?");
   }, [action, t]);
 
-  const actionLabel = action === "approve" ? t("Approve") : action === "reject" ? t("Reject") : t("Remove");
+  const actionLabel =
+    action === "approve"
+      ? t("Approve")
+      : action === "reject"
+      ? t("Reject")
+      : action === "reinvite"
+      ? t("Re-invite")
+      : t("Remove");
   const isNegativeAction = action === "reject" || action === "remove";
-  const listBackground = action === "approve" ? "primary.100" : "neutral.200";
+  const listBackground = action === "approve" || action === "reinvite" ? "primary.100" : "neutral.200";
   const firstMember = members[0];
 
   return (
     <Modal
       open={action != null}
       onClose={onClose}
-      size={isMultiple && action === "approve" ? "large" : isMultiple ? "medium" : "small"}
+      size={isMultiple && (action === "approve" || action === "reinvite") ? "large" : isMultiple ? "medium" : "small"}
       header={
         <Text textStyle="400-bold" color="neutral.800">
           {getTitle()}
@@ -80,13 +91,19 @@ const TeamMemberActionModal: FC<TeamMemberActionModalProps> = ({ action, members
                 ? t("Are you sure you want to remove")
                 : action === "reject"
                 ? t("Are you sure you want to reject")
+                : action === "reinvite"
+                ? t("Are you sure you want to re-invite")
                 : t("Are you sure you want to approve")}
             </Text>
             <Text textStyle="500-bold" color="neutral.900">
               {action === "remove" ? firstMember?.fullName : `${firstMember?.fullName}'s`}
             </Text>
             <Text textStyle="400" color="neutral.900">
-              {action === "remove" ? t("from the Organization?") : t("request to join the Organization?")}
+              {action === "remove"
+                ? t("from the Organization?")
+                : action === "reinvite"
+                ? t("to join the Organization?")
+                : t("request to join the Organization?")}
             </Text>
           </Flex>
         )
