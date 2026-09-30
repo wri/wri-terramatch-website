@@ -1,12 +1,16 @@
 import { useRouter } from "next/router";
-import { FC, useCallback } from "react";
+import { useCallback } from "react";
 
 import { getReportIndexItemPath } from "../reportIndex.utils";
 import { useReportsSelectionActions, useReportsSelectionState } from "../ReportsSelection.provider";
 import { useReportsBulkActions } from "../useReportsBulkActions";
 import ReportsBulkActionToolbar from "./ReportsBulkActionToolbar";
 
-const ReportsIndexBulkBar: FC = () => {
+type ReportsIndexBulkBarProps = {
+  onReportsChanged: () => void;
+};
+
+const ReportsIndexBulkBar = ({ onReportsChanged }: ReportsIndexBulkBarProps) => {
   const router = useRouter();
   const { selectedReports } = useReportsSelectionState();
   const { clearSelection } = useReportsSelectionActions();
@@ -21,7 +25,11 @@ const ReportsIndexBulkBar: FC = () => {
     handleDownload,
     handleNothingToReport,
     handleSubmit
-  } = useReportsBulkActions({ selectedReports, clearSelection });
+  } = useReportsBulkActions({
+    selectedReports,
+    clearSelection,
+    onReportsChanged
+  });
 
   const handleBulkEdit = useCallback(() => {
     if (!canEdit || selectedReports.length !== 1) return;

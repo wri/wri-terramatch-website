@@ -32,6 +32,7 @@ import {
 type UseReportsBulkActionsProps = {
   selectedReports: ReportIndexItem[];
   clearSelection: () => void;
+  onReportsChanged: () => void;
 };
 
 const updateReport = async (report: ReportIndexItem, attributes: EntityUpdateBody["data"]["attributes"]) => {
@@ -74,7 +75,11 @@ const refreshSelectedReports = async (reports: ReportIndexItem[]) => {
   await Promise.all(reports.map(reloadReport));
 };
 
-export const useReportsBulkActions = ({ selectedReports, clearSelection }: UseReportsBulkActionsProps) => {
+export const useReportsBulkActions = ({
+  selectedReports,
+  clearSelection,
+  onReportsChanged
+}: UseReportsBulkActionsProps) => {
   const t = useT();
   const downloadToastMessages = useDownloadToastMessages();
   const { trackBulkActionSubmitted } = useReportsIndexAnalytics();
@@ -144,6 +149,7 @@ export const useReportsBulkActions = ({ selectedReports, clearSelection }: UseRe
       });
       await refreshSelectedReports(nothingToReportReports);
       clearSelection();
+      onReportsChanged();
       showToast({
         label: t('Your report(s) have been successfully marked as "Nothing to Report" for this reporting period'),
         type: "success",
@@ -164,6 +170,7 @@ export const useReportsBulkActions = ({ selectedReports, clearSelection }: UseRe
     clearSelection,
     isUpdating,
     nothingToReportReports,
+    onReportsChanged,
     selectedReports.length,
     t,
     trackBulkActionSubmitted
@@ -184,6 +191,7 @@ export const useReportsBulkActions = ({ selectedReports, clearSelection }: UseRe
       });
       await refreshSelectedReports(submittableReports);
       clearSelection();
+      onReportsChanged();
       showToast({
         label: t("Your report(s) have been successfully submitted and will be reviewed by the team"),
         type: "success",
@@ -199,7 +207,16 @@ export const useReportsBulkActions = ({ selectedReports, clearSelection }: UseRe
     } finally {
       setIsUpdating(false);
     }
-  }, [canSubmit, clearSelection, isUpdating, selectedReports.length, submittableReports, t, trackBulkActionSubmitted]);
+  }, [
+    canSubmit,
+    clearSelection,
+    isUpdating,
+    onReportsChanged,
+    selectedReports.length,
+    submittableReports,
+    t,
+    trackBulkActionSubmitted
+  ]);
 
   return {
     isDownloading,
