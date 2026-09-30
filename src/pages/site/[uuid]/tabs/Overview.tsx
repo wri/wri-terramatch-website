@@ -14,6 +14,7 @@ import { PENDING_APPROVAL } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { activeUpdateRequestStatus } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
@@ -107,7 +108,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             title={t("Sites Set Up")}
             classNameRightSectionHeader="mobile:!w-fit"
             tag={
-              site.updateRequestStatus === PENDING_APPROVAL ? (
+              activeUpdateRequestStatus(site.status, site.updateRequestStatus) === PENDING_APPROVAL ? (
                 <TagSubmission state="pending-approval" />
               ) : (
                 <StatusTag status={site?.status} />

@@ -29,6 +29,7 @@ import {
   SiteReportLightDto,
   SrpReportLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
+import { activeUpdateRequestStatus } from "@/helpers/entity";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import { useDate } from "@/hooks/useDate";
 import { first } from "@/utils/array";
@@ -71,7 +72,9 @@ const ReportRow: FC<ReportRowProps> = ({ report, typeLabel, parentName, resource
       <TableCell sx={{ whiteSpace: "nowrap" }}>
         <CustomChipField label={ReadableStatus[report.status ?? ""]} />
       </TableCell>
-      <TableCell sx={{ whiteSpace: "nowrap" }}>{t(ReadableStatus[report.updateRequestStatus ?? ""])}</TableCell>
+      <TableCell sx={{ whiteSpace: "nowrap" }}>
+        {t(ReadableStatus[activeUpdateRequestStatus(report.status, report.updateRequestStatus) ?? ""])}
+      </TableCell>
       <TableCell sx={{ whiteSpace: "nowrap" }}>
         {report.submittedAt == null ? null : format(new Date(report.submittedAt))}
       </TableCell>

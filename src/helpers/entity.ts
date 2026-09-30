@@ -47,15 +47,18 @@ export const isEntityReport = (entityName: EntityName) => {
 
 /**
  * Get entity status with respect to update request status.
- * @param entity Entity full resource
- * @returns combinedStatus
+ * A change request only overrides the entity status once the entity is approved or information-required.
  */
-export const getEntityCombinedStatus = (entity: any): string => {
-  return entity.update_request_status != null &&
-    entity.update_request_status !== "" &&
-    entity.update_request_status !== "no-update"
-    ? entity.update_request_status
-    : entity.status;
+export const getEntityCombinedStatus = (entity: {
+  status?: string | null;
+  update_request_status?: string | null;
+  updateRequestStatus?: string | null;
+}): string => {
+  const updateRequestStatus = activeUpdateRequestStatus(
+    entity.status,
+    entity.update_request_status ?? entity.updateRequestStatus
+  );
+  return updateRequestStatus ?? entity.status ?? "";
 };
 
 export const getCurrentPathEntity = () => {
@@ -66,12 +69,20 @@ export const getCurrentPathEntity = () => {
   return "";
 };
 
-export const isEntityAwaitingApproval = (status?: string | null, updateRequestStatus?: string | null): boolean => {
-  return status === "pending-approval" || updateRequestStatus === "pending-approval";
-};
-
 export const canEntityHaveChangeRequest = (status?: string | null): boolean =>
   status === "approved" || status === "information-required";
+
+export const activeUpdateRequestStatus = (
+  status?: string | null,
+  updateRequestStatus?: string | null
+): string | null => {
+  if (!canEntityHaveChangeRequest(status)) return null;
+  if (updateRequestStatus == null || updateRequestStatus === "" || updateRequestStatus === "no-update") return null;
+  return updateRequestStatus;
+};
+
+export const isEntityAwaitingApproval = (status?: string | null, updateRequestStatus?: string | null): boolean =>
+  status === "pending-approval" || activeUpdateRequestStatus(status, updateRequestStatus) === "pending-approval";
 
 const ENTITY_DRAFT_STATUSES = new Set(["draft", "draft", "due"]);
 

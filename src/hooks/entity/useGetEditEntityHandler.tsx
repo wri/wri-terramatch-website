@@ -9,7 +9,12 @@ import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormEntity } from "@/connections/Form";
 import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
-import { getEntityEditPageLink, getEntityEditPathSegment, v3EntityName } from "@/helpers/entity";
+import {
+  activeUpdateRequestStatus,
+  getEntityEditPageLink,
+  getEntityEditPathSegment,
+  v3EntityName
+} from "@/helpers/entity";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
 import { WarningIcon } from "@/redesignComponents/foundations/Icons/Function/WarningIcon";
@@ -52,11 +57,13 @@ export const useGetEditEntityHandler = ({
   const { getReadableEntityName } = useGetReadableEntityName();
   const editEntityName = getEntityEditPathSegment(entityName as EntityName | SingularEntityName);
   const formEntityName = v3EntityName(entityName as EntityName | SingularEntityName) as FormEntity;
+  const relevantUpdateRequestStatus = activeUpdateRequestStatus(entityStatus, updateRequestStatus);
   const hasRelevantUpdateRequest =
-    updateRequestStatus === PENDING_APPROVAL || updateRequestStatus === INFORMATION_REQUIRED;
-  const effectiveStatus = (hasRelevantUpdateRequest ? updateRequestStatus : entityStatus) as StatusBarStatus;
-  const awaitingApproval = entityStatus === PENDING_APPROVAL || updateRequestStatus === PENDING_APPROVAL;
-  const needsMoreInformation = entityStatus === INFORMATION_REQUIRED || updateRequestStatus === INFORMATION_REQUIRED;
+    relevantUpdateRequestStatus === PENDING_APPROVAL || relevantUpdateRequestStatus === INFORMATION_REQUIRED;
+  const effectiveStatus = (hasRelevantUpdateRequest ? relevantUpdateRequestStatus : entityStatus) as StatusBarStatus;
+  const awaitingApproval = entityStatus === PENDING_APPROVAL || relevantUpdateRequestStatus === PENDING_APPROVAL;
+  const needsMoreInformation =
+    entityStatus === INFORMATION_REQUIRED || relevantUpdateRequestStatus === INFORMATION_REQUIRED;
   const shouldShowInformationRequiredModal = useInformationRequiredModal && needsMoreInformation && !awaitingApproval;
   const shouldShowStatusFeedbackModal = useStatusModal && needsMoreInformation && !awaitingApproval;
   const statusProps = getStatusProps(

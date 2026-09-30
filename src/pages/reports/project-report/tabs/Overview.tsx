@@ -11,7 +11,7 @@ import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
 import { PENDING_APPROVAL } from "@/constants/statuses";
 import { ProjectFullDto, ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { getEntitySetupButtonLabel } from "@/helpers/entity";
+import { activeUpdateRequestStatus, getEntitySetupButtonLabel } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
@@ -56,7 +56,7 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
   const editButtonLabel = getEntitySetupButtonLabel(t, projectReport.status, isReportSetupComplete);
 
   const statusTag = useMemo(() => {
-    if (projectReport.updateRequestStatus === PENDING_APPROVAL) {
+    if (activeUpdateRequestStatus(projectReport.status, projectReport.updateRequestStatus) === PENDING_APPROVAL) {
       return <TagSubmission size="small" state="pending-approval" />;
     }
 

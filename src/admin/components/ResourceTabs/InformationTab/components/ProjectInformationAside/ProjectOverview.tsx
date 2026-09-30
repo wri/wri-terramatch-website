@@ -41,7 +41,7 @@ const ProjectOverview: FC = () => {
 
           <Grid xs={4} item>
             <Labeled label="Change Request Status">
-              <ReadableStatusField prop="updateRequestStatus" />
+              <ReadableStatusField prop="updateRequestStatus" ignoreUnlessChangeRequestAllowed />
             </Labeled>
           </Grid>
 
