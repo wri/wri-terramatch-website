@@ -10,11 +10,13 @@ import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import type { NurseryIndexMetric, NurseryIndexProjectSection, NurseryIndexRow } from "./nurseryIndex.types";
 
+type NurseryWithProjectUuid = NurseryLightDto & { projectUuid?: string | null };
+
 const normalize = (value?: string | null) => value?.trim().toLocaleLowerCase() ?? "";
 
 export const projectSupportsNurseries = (frameworkKey?: string | null) => isTerrafund(toFramework(frameworkKey));
 
-const getProjectMatch = (nursery: NurseryLightDto, projects: ProjectLightDto[]) => {
+const getProjectMatch = (nursery: NurseryWithProjectUuid, projects: ProjectLightDto[]) => {
   if (nursery.projectUuid != null) {
     const projectByUuid = projects.find(project => project.uuid === nursery.projectUuid);
     if (projectByUuid != null) return projectByUuid;
@@ -67,7 +69,7 @@ export const toNurseryIndexRows = (
     .map(nursery => ({
       ...nursery,
       id: nursery.uuid,
-      projectUuid: project?.uuid ?? nursery.projectUuid ?? null,
+      projectUuid: project?.uuid ?? (nursery as NurseryWithProjectUuid).projectUuid ?? null,
       projectFrameworkKey: project?.frameworkKey ?? nursery.frameworkKey,
       status: toNurseryIndexStatus(nursery.status)
     }))
@@ -125,7 +127,7 @@ export const buildNurseryProjectSections = (
     const row: NurseryIndexRow = {
       ...nursery,
       id: nursery.uuid,
-      projectUuid: project?.uuid ?? nursery.projectUuid ?? null,
+      projectUuid: project?.uuid ?? (nursery as NurseryWithProjectUuid).projectUuid ?? null,
       projectFrameworkKey: project?.frameworkKey ?? nursery.frameworkKey,
       status: toNurseryIndexStatus(nursery.status)
     };
@@ -234,9 +236,10 @@ export const groupNurseryUuidsByFramework = (nurseries: NurseryIndexRow[]) => {
       return;
     }
 
-    const uuids = grouped.get(framework) ?? [];
+    const frameworkKey = framework as NurseryExportFrameworkKey;
+    const uuids = grouped.get(frameworkKey) ?? [];
     uuids.push(nursery.uuid);
-    grouped.set(framework, uuids);
+    grouped.set(frameworkKey, uuids);
   });
 
   return Array.from(grouped, ([frameworkKey, uuids]) => ({ frameworkKey, uuids }));
