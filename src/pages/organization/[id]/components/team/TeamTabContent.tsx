@@ -148,7 +148,7 @@ const TeamTabContent: FC = () => {
   const handleConfirmRowAction = useCallback(async () => {
     if (rowAction == null || isSubmittingRef.current) return;
 
-    if (rowAction.action === "reinvite" || rowAction.member.associationStatus === "rejected") {
+    if (rowAction.action === "reinvite") {
       setRowAction(null);
       return;
     }
@@ -157,8 +157,10 @@ const TeamTabContent: FC = () => {
 
     isSubmittingRef.current = true;
     try {
-      if (rowAction.action === "remove") {
+      if (rowAction.action === "remove" && rowAction.member.associationStatus === "rejected") {
         await bulkDeleteUserAssociations(organisationUuid, [rowAction.member.id], "organisations");
+      } else if (rowAction.action === "remove") {
+        await updateOrganisationUserStatuses(organisationUuid, [rowAction.member.id], "rejected");
       } else {
         await updateOrganisationUserStatuses(
           organisationUuid,
