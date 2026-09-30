@@ -284,7 +284,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
         onQueryChange={setQuery}
         indexHref={indexHref}
       />
-      <PageContent className="px-2 py-0">
+      <PageContent className="px-2 py-0 h-auto">
         {activeTab === "progress-reports" && (
           <>
             {progressLoading || isSwitchingProject || !restoreReady ? (
