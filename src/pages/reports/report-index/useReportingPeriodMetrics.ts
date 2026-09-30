@@ -1,22 +1,13 @@
 import { useT } from "@transifex/react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import {
   getReportKeyIndicatorFramework,
   ReportKeyIndicatorFramework
 } from "@/components/reports/KeyIndicators/reportKeyIndicatorPrimitives";
-import {
-  loadFullNurseryReport,
-  loadFullSiteReport,
-  useLightNurseryReportList,
-  useLightSiteReportList
-} from "@/connections/Entity";
-import {
-  NurseryReportFullDto,
-  NurseryReportLightDto,
-  SiteReportFullDto,
-  SiteReportLightDto
-} from "@/generated/v3/entityService/entityServiceSchemas";
+import { useLightNurseryReportList, useLightSiteReportList } from "@/connections/Entity";
+import { NurseryReportLightDto, SiteReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { isNotNull } from "@/utils/array";
 
 import { ReportsIndexReport } from "./reportIndex.types";
 import { useReportsSelectionState } from "./ReportsSelection.provider";
@@ -38,18 +29,12 @@ export type ReportingPeriodMetricCard = {
   color: string;
 };
 
-const isFullSiteReport = (report: SiteReportLightDto | undefined): report is SiteReportFullDto =>
-  report != null && report.lightResource === false && "totalTreesPlantedCount" in report;
-
-const isFullNurseryReport = (report: NurseryReportLightDto | undefined): report is NurseryReportFullDto =>
-  report != null && report.lightResource === false && "seedlingsYoungTrees" in report;
-
-const treesRegeneratingFromSite = (report: SiteReportFullDto) => {
+const treesRegeneratingFromSite = (report: SiteReportLightDto) => {
   const speciesTotal = report.totalTreesRegeneratingSpeciesCount ?? 0;
   return speciesTotal > 0 ? speciesTotal : report.numTreesRegenerating ?? 0;
 };
 
-const treesGrowingFromSite = (report: SiteReportFullDto) =>
+const treesGrowingFromSite = (report: SiteReportLightDto) =>
   (report.totalTreesPlantedCount ?? 0) + (report.totalSeedsPlantedCount ?? 0) + treesRegeneratingFromSite(report);
 
 const totalsFromLoadedReports = (
@@ -57,10 +42,8 @@ const totalsFromLoadedReports = (
   siteReports: Array<SiteReportLightDto | undefined> | undefined,
   nurseryReports: Array<NurseryReportLightDto | undefined> | undefined
 ): PeriodMetricTotals => {
-  const sitesById = new Map((siteReports ?? []).filter(isFullSiteReport).map(report => [report.uuid, report] as const));
-  const nurseriesById = new Map(
-    (nurseryReports ?? []).filter(isFullNurseryReport).map(report => [report.uuid, report] as const)
-  );
+  const sitesById = new Map((siteReports ?? []).filter(isNotNull).map(report => [report.uuid, report] as const));
+  const nurseriesById = new Map((nurseryReports ?? []).filter(isNotNull).map(report => [report.uuid, report] as const));
 
   return reports.reduce<PeriodMetricTotals>(
     (totals, report) => {
@@ -100,35 +83,6 @@ const getPeriodMetricName = (key: ReportingPeriodMetricCard["key"], framework: R
 const includesProjectReport = (reports: ReportsIndexReport[]) =>
   reports.some(report => report.type === "project-report");
 
-const useLoadedChildReports = (siteIds: string[], nurseryIds: string[], enabled: boolean) => {
-  const [loadFinished, setLoadFinished] = useState(!enabled);
-
-  useEffect(() => {
-    if (!enabled) {
-      setLoadFinished(true);
-      return;
-    }
-
-    let cancelled = false;
-    setLoadFinished(false);
-    void Promise.allSettled([
-      ...siteIds.map(id => loadFullSiteReport({ id })),
-      ...nurseryIds.map(id => loadFullNurseryReport({ id }))
-    ]).then(() => {
-      if (!cancelled) setLoadFinished(true);
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [enabled, nurseryIds, siteIds]);
-
-  const [, { data: siteReports }] = useLightSiteReportList({ ids: enabled ? siteIds : [] });
-  const [, { data: nurseryReports }] = useLightNurseryReportList({ ids: enabled ? nurseryIds : [] });
-
-  return { siteReports, nurseryReports, ready: !enabled || loadFinished };
-};
-
 type MetricLayerTotals = {
   treesGrowing: number | null;
   treesRegenerated: number | null;
@@ -152,7 +106,6 @@ const layerTotalsFromReports = (
 };
 
 type UseReportingPeriodMetricsArgs = {
-  open: boolean;
   reports: ReportsIndexReport[];
   allReports: ReportsIndexReport[];
   hasReportSubset: boolean;
@@ -160,7 +113,6 @@ type UseReportingPeriodMetricsArgs = {
 };
 
 export const useReportingPeriodMetrics = ({
-  open,
   reports,
   allReports,
   hasReportSubset,
@@ -180,7 +132,8 @@ export const useReportingPeriodMetrics = ({
   const siteIds = useMemo(() => idsOfType(allReports, "site-report"), [allReports]);
   const nurseryIds = useMemo(() => idsOfType(allReports, "nursery-report"), [allReports]);
 
-  const { siteReports, nurseryReports, ready } = useLoadedChildReports(siteIds, nurseryIds, open);
+  const [, { data: siteReports }] = useLightSiteReportList({ ids: siteIds });
+  const [, { data: nurseryReports }] = useLightNurseryReportList({ ids: nurseryIds });
 
   const periodTotals = useMemo(
     () => totalsFromLoadedReports(allReports, siteReports, nurseryReports),
@@ -207,7 +160,6 @@ export const useReportingPeriodMetrics = ({
   const jobsProgress = jobsTotal ?? 0;
 
   return {
-    loading: open && !ready,
     periodTotals,
     filteredTotals,
     selectionTotals,
