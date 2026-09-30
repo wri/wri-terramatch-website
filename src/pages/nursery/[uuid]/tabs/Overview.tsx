@@ -8,6 +8,7 @@ import PageContent from "@/components/extensive/PageElements/PageContent/PageCon
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { PENDING_APPROVAL } from "@/constants/statuses";
 import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { activeUpdateRequestStatus } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
@@ -73,7 +74,7 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
           className="!w-full !max-w-full sm:!w-[37%] sm:!max-w-[37%]"
           title={t("Nursery Set Up")}
           tag={
-            nursery.updateRequestStatus === PENDING_APPROVAL ? (
+            activeUpdateRequestStatus(nursery.status, nursery.updateRequestStatus) === PENDING_APPROVAL ? (
               <TagSubmission state="pending-approval" />
             ) : (
               <StatusTag status={nursery?.status} />

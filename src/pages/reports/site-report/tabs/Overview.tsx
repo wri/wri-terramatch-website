@@ -20,7 +20,7 @@ import { Framework } from "@/context/framework.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { SiteFullDto, SiteReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { getEntitySetupButtonLabel } from "@/helpers/entity";
+import { activeUpdateRequestStatus, getEntitySetupButtonLabel } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
@@ -95,7 +95,7 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
   const isAdmin = useIsAdmin();
 
   const statusTag = useMemo(() => {
-    if (siteReport.updateRequestStatus === PENDING_APPROVAL) {
+    if (activeUpdateRequestStatus(siteReport.status, siteReport.updateRequestStatus) === PENDING_APPROVAL) {
       return <TagSubmission size="small" state={isAdmin ? "pending-approval" : "pending-approval-neutral"} />;
     }
 

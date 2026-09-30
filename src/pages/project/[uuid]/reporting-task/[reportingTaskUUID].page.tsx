@@ -37,7 +37,7 @@ import {
   SiteReportLightDto,
   SrpReportLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
-import { v3EntityName } from "@/helpers/entity";
+import { activeUpdateRequestStatus, v3EntityName } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import BulkNothingToReportModal from "@/pages/project/[uuid]/reporting-task/components/BulkNothingToReportModal";
 import NothingToReportModal from "@/pages/project/[uuid]/reporting-task/components/NothingToReportModal";
@@ -110,10 +110,11 @@ const mapTaskReport =
   (report: TaskReportDto): TaskReport => {
     let completionStatus = "draft";
     const { status: reportStatus, updateRequestStatus } = report;
-    // If there is no submitted update request in play, then the report status is the source of
-    // truth, otherwise update the UI in accordance with the active update request's status.
-    const hasSubmittedUpdateRequest = ["pending-approval", "information-required"].includes(updateRequestStatus!);
-    const status = hasSubmittedUpdateRequest ? updateRequestStatus : reportStatus;
+    // A change request only replaces the report status once the report is approved or information-required.
+    const submittedUpdateRequestStatus = activeUpdateRequestStatus(reportStatus, updateRequestStatus);
+    const hasSubmittedUpdateRequest =
+      submittedUpdateRequestStatus === "pending-approval" || submittedUpdateRequestStatus === "information-required";
+    const status = hasSubmittedUpdateRequest ? submittedUpdateRequestStatus : reportStatus;
 
     if (status === "information-required") {
       completionStatus = "information-required";

@@ -15,6 +15,7 @@ import { useUserAssociations } from "@/connections/UserAssociation";
 import { PENDING_APPROVAL } from "@/constants/statuses";
 import { shouldHideNurseries, useFrameworkContext } from "@/context/framework.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { activeUpdateRequestStatus } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { SITE_POLYGON_MAP_INITIAL_HEIGHT } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import type { ButtonGroupButtonProps } from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
@@ -214,7 +215,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
           className="!w-full !max-w-full sm:!w-[35%] sm:!max-w-[35%] lg:!w-[30%] lg:!max-w-[30%]"
           title={t("Project Set Up")}
           tag={
-            project.updateRequestStatus === PENDING_APPROVAL ? (
+            activeUpdateRequestStatus(project.status, project.updateRequestStatus) === PENDING_APPROVAL ? (
               <TagSubmission state="pending-approval" />
             ) : (
               <StatusTag status={project?.status} />

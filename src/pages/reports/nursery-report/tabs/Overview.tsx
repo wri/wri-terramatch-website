@@ -15,7 +15,7 @@ import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLeve
 import { PENDING_APPROVAL } from "@/constants/statuses";
 import { isTerrafund, toFramework } from "@/context/framework.provider";
 import { NurseryReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { getEntitySetupButtonLabel } from "@/helpers/entity";
+import { activeUpdateRequestStatus, getEntitySetupButtonLabel } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
@@ -107,7 +107,7 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
   });
 
   const statusTag = useMemo(() => {
-    if (report.updateRequestStatus === PENDING_APPROVAL) {
+    if (activeUpdateRequestStatus(report.status, report.updateRequestStatus) === PENDING_APPROVAL) {
       return <TagSubmission size="small" state="pending-approval" />;
     }
 
