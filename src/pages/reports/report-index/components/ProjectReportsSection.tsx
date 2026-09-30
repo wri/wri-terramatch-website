@@ -64,13 +64,7 @@ const ProjectReportsSection: FC<ProjectReportsSectionProps> = ({
           title={section.name ?? t("Project")}
           titleHref={`/project/${section.id}`}
           caption={section.organisationName ?? ""}
-          icon={
-            open ? (
-              <FolderOpenIcon minWidth={5} width={5} height={"auto"} color="primary.600" />
-            ) : (
-              <FolderIcon minWidth={5} width={5} height={"auto"} color="neutral.400" />
-            )
-          }
+          open={open}
           statusLabels={
             attentionCount > 0 ? (
               <TextBadge>{t("{count} Require Attention", { count: attentionCount })}</TextBadge>

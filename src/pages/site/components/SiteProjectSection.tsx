@@ -466,15 +466,9 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
           <ListSectionHeader
             level="top-level"
             title={project.name}
+            open={open}
             titleHref={`/project/${project.id}`}
             caption={project.organisationName}
-            icon={
-              open ? (
-                <FolderOpenIcon minWidth={5} width={5} height="auto" color="primary.600" />
-              ) : (
-                <FolderIcon minWidth={5} width={5} height="auto" color="primary.600" />
-              )
-            }
             statusLabels={
               project.attentionCount > 0 ? (
                 <TextBadge>{t("{count} Require Attention", { count: project.attentionCount })}</TextBadge>
