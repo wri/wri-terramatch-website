@@ -290,7 +290,7 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project, source, so
         onQueryChange={setQuery}
         indexHref={indexHref}
       />
-      <PageContent className="px-2 py-0 h-auto">
+      <PageContent className="h-auto flex-1 px-2 py-0">
         {activeTab === "progress-reports" && (
           <>
             {progressLoading || isSwitchingProject || !restoreReady ? (

@@ -10,6 +10,7 @@ import type { BulkToolbarAction } from "@/redesignComponents/navigation/Toolbar/
 type ReportsBulkActionToolbarProps = {
   visible: boolean;
   itemCount: number;
+  canEdit: boolean;
   editDisabled?: boolean;
   downloadDisabled?: boolean;
   isDownloading?: boolean;
@@ -27,6 +28,7 @@ type ReportsBulkActionToolbarProps = {
 const ReportsBulkActionToolbar: FC<ReportsBulkActionToolbarProps> = ({
   visible,
   itemCount,
+  canEdit,
   editDisabled = false,
   downloadDisabled = false,
   isDownloading = false,
@@ -60,16 +62,20 @@ const ReportsBulkActionToolbar: FC<ReportsBulkActionToolbarProps> = ({
         disabled: nothingToReportDisabled || isUpdating,
         onClick: onNothingToReport
       },
-      {
-        id: "edit",
-        children: t("Edit"),
-        disabled: editDisabled || isUpdating,
-        onClick: onEdit
-      }
+      ...(canEdit
+        ? [
+            {
+              id: "edit",
+              children: t("Edit"),
+              disabled: editDisabled || isUpdating,
+              onClick: onEdit
+            }
+          ]
+        : [])
     ];
 
     return nextActions;
-  }, [editDisabled, isUpdating, nothingToReportDisabled, onEdit, onNothingToReport, t]);
+  }, [canEdit, editDisabled, isUpdating, nothingToReportDisabled, onEdit, onNothingToReport, t]);
 
   useEffect(() => {
     setSidebarCollapseDisabled(visible);

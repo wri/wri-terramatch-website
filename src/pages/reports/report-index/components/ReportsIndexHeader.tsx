@@ -217,7 +217,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
         }
       />
       <Toolbar
-        className="sticky top-10 z-10 items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-2 pt-5"
+        className="sticky top-11 z-10 items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-2 pt-5"
         classNameContentLeft="min-w-0"
         classNameContentRight="mt-[-1.25rem]"
         contentLeft={

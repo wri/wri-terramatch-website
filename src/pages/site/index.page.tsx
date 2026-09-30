@@ -152,7 +152,7 @@ const SiteIndexPageContent: FC = () => {
         onQueryChange={setSearchQuery}
       />
 
-      <PageContent className="px-2 py-0">
+      <PageContent className="h-auto flex-1 px-2 py-0">
         {loading ? (
           <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
             <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
@@ -202,20 +202,6 @@ const SiteIndexPageContent: FC = () => {
                 onLoadMore={loadMore}
               />
             </div>
-
-            {/* {visibleProjects.length === 0 ? (
-              <NoResults
-                className="px-4"
-                title={hasActiveFilters ? t("No results found") : t("No sites found")}
-                description={
-                  hasActiveSearch
-                    ? t("We couldn’t find any sites matching your search. Try a different keyword.")
-                    : hasAppliedFilters
-                    ? t("We couldn’t find any sites matching your filters. Try adjusting or clearing your filters.")
-                    : t("No sites have been added yet.")
-                }
-              />
-            ) : null} */}
           </>
         )}
         <SiteIndexBulkBar onSitesChanged={handleSitesChanged} />
