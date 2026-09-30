@@ -202,20 +202,6 @@ const SiteIndexPageContent: FC = () => {
                 onLoadMore={loadMore}
               />
             </div>
-
-            {/* {visibleProjects.length === 0 ? (
-              <NoResults
-                className="px-4"
-                title={hasActiveFilters ? t("No results found") : t("No sites found")}
-                description={
-                  hasActiveSearch
-                    ? t("We couldn’t find any sites matching your search. Try a different keyword.")
-                    : hasAppliedFilters
-                    ? t("We couldn’t find any sites matching your filters. Try adjusting or clearing your filters.")
-                    : t("No sites have been added yet.")
-                }
-              />
-            ) : null} */}
           </>
         )}
         <SiteIndexBulkBar onSitesChanged={handleSitesChanged} />
