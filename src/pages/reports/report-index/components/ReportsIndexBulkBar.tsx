@@ -42,6 +42,7 @@ const ReportsIndexBulkBar = ({ onReportsChanged }: ReportsIndexBulkBarProps) => 
       <ReportsBulkActionToolbar
         visible={selectedReports.length > 0}
         itemCount={selectedReports.length}
+        canEdit={canEdit}
         editDisabled={!canEdit}
         isDownloading={isDownloading}
         nothingToReportDisabled={!canMarkNothingToReport}
