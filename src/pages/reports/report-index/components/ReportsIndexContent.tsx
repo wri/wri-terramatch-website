@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { useProjectIndex } from "@/connections/Entity";
 import { useReportsContext } from "@/context/reports.provider";
-import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import type { HighLevelSelectorItem } from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector.types";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 
@@ -35,7 +35,7 @@ import ReportsIndexHeader from "./ReportsIndexHeader";
 import ReportsSearchNoResults from "./ReportsSearchNoResults";
 
 type ReportsIndexContentProps = {
-  project: ProjectLightDto;
+  project: ProjectFullDto;
   source: ReportsIndexSource;
   sourceEntity: ReportsIndexSourceEntity;
 };
@@ -43,6 +43,7 @@ type ReportsIndexContentProps = {
 type ProgressIndexState = {
   sections: ReportsIndexProjectSection[];
   loading: boolean;
+  metricsReady: boolean;
   error: boolean;
 };
 
@@ -53,19 +54,27 @@ const ProgressReportsFetcher = ({
   source,
   sourceUuid,
   allProjects,
+  reloadNonce,
   onProgress
 }: {
-  project: ProjectLightDto;
+  project: ProjectFullDto;
   source: ReportsIndexSource;
   sourceUuid: string;
   allProjects: boolean;
+  reloadNonce: number;
   onProgress: (progress: ProgressIndexState) => void;
 }) => {
-  const { sections, loading, error } = useReportsIndexData(project, source, sourceUuid, allProjects);
+  const { sections, loading, metricsReady, error } = useReportsIndexData(
+    project,
+    source,
+    sourceUuid,
+    allProjects,
+    reloadNonce
+  );
 
   useEffect(() => {
-    onProgress({ sections, loading, error });
-  }, [error, loading, onProgress, sections]);
+    onProgress({ sections, loading, metricsReady, error });
+  }, [error, loading, metricsReady, onProgress, sections]);
 
   return null;
 };
@@ -83,6 +92,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
     viewFromQuery === ALL_PROJECTS_VIEW_VALUE ? ALL_PROJECTS_VIEW_VALUE : project.uuid
   );
   const { clearSelection } = useReportsSelectionActions();
+  const [reloadNonce, setReloadNonce] = useState(0);
   const [, { data: projects }] = useProjectIndex({});
   const organisationViewItems = useMemo<HighLevelSelectorItem[]>(() => {
     const labelsByUuid = new Map<string, string>();
@@ -107,10 +117,18 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   const additionalOrganisationUuid =
     viewValue === ALL_PROJECTS_VIEW_VALUE ? null : isOrganisationView ? viewValue : project.organisationUuid ?? null;
   const loadProgressReports = router.isReady && activeTab === "progress-reports";
-  const [progress, setProgress] = useState<ProgressIndexState>({ sections: [], loading: true, error: false });
+  const [progress, setProgress] = useState<ProgressIndexState>({
+    sections: [],
+    loading: true,
+    metricsReady: false,
+    error: false
+  });
   const handleProgress = useCallback((next: ProgressIndexState) => {
     setProgress(current =>
-      current.sections === next.sections && current.loading === next.loading && current.error === next.error
+      current.sections === next.sections &&
+      current.loading === next.loading &&
+      current.metricsReady === next.metricsReady &&
+      current.error === next.error
         ? current
         : next
     );
@@ -318,6 +336,10 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
     [clearSelection, router]
   );
 
+  const handleReportsChanged = useCallback(() => {
+    setReloadNonce(current => current + 1);
+  }, []);
+
   return (
     <>
       {loadProgressReports && (
@@ -326,6 +348,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
           source={source}
           sourceUuid={sourceEntity.uuid}
           allProjects={isAllProjectsView}
+          reloadNonce={reloadNonce}
           onProgress={handleProgress}
         />
       )}
@@ -377,7 +400,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                     unfilteredPeriods={unfilteredPeriodsByProjectId.get(section.id)}
                     defaultOpen={index === 0 && !isAllProjectsView}
                     expandForPeriodFilter={hasActivePeriodFilter}
-                    metricsReady={!progressLoading}
+                    metricsReady={progress.metricsReady}
                     hasReportSubset={hasReportSubset}
                     indexHref={indexHref}
                     restoreSectionId={progressRestore?.sectionId}
@@ -404,7 +427,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
           />
         )}
 
-        <ReportsIndexBulkBar />
+        <ReportsIndexBulkBar onReportsChanged={handleReportsChanged} />
       </PageContent>
     </>
   );

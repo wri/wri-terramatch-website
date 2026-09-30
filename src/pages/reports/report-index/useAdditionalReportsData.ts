@@ -11,7 +11,7 @@ import {
   DisturbanceReportEntryDto,
   DisturbanceReportLightDto,
   FinancialReportLightDto,
-  ProjectLightDto,
+  ProjectFullDto,
   SrpReportLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useAllPages } from "@/hooks/useConnection";
@@ -176,7 +176,7 @@ const toProjectSection = (draft: ProjectSectionDraft): AdditionalReportsEntitySe
  * disturbance reports hang off each project inside that org.
  */
 export const useAdditionalReportsData = (
-  project: ProjectLightDto,
+  project: ProjectFullDto,
   enabled: boolean,
   organisationUuid: string | null,
   organisations: FollowedOrganisation[] = NO_ORGANISATIONS
