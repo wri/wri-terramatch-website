@@ -1,5 +1,6 @@
 import {
   createContext,
+  FC,
   PropsWithChildren,
   useCallback,
   useContext,
@@ -75,7 +76,7 @@ type SiteIndexSelectionStoreValue = {
 
 const SiteIndexSelectionStoreContext = createContext<SiteIndexSelectionStoreValue | undefined>(undefined);
 
-const SiteIndexSelectionProvider = ({ children }: PropsWithChildren) => {
+const SiteIndexSelectionProvider: FC<PropsWithChildren> = ({ children }) => {
   const storeRef = useRef<SiteIndexSelectionStore>();
   if (storeRef.current == null) {
     storeRef.current = new SiteIndexSelectionStore();

@@ -1,7 +1,7 @@
 import { Box, Flex, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { startCase } from "lodash";
-import { useCallback, useMemo } from "react";
+import { FC, useCallback, useMemo } from "react";
 
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
@@ -83,13 +83,13 @@ type AdditionalReportsTableProps = {
   onRowRestored?: () => void;
 };
 
-const AdditionalReportsTable = ({
+const AdditionalReportsTable: FC<AdditionalReportsTableProps> = ({
   reports,
   type,
   indexHref,
   restoreRowId,
   onRowRestored
-}: AdditionalReportsTableProps) => {
+}) => {
   const t = useT();
   const { format } = useDate();
   const { selectedRows, isReportSelected, handleRowSelected, handleAllItemsSelected } =

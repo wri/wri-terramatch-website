@@ -1,12 +1,13 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { useProjectIndex } from "@/connections/Entity";
 import { useReportsContext } from "@/context/reports.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import type { HighLevelSelectorItem } from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector.types";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 
@@ -32,7 +33,6 @@ import ProjectReportsSection from "./ProjectReportsSection";
 import { getDefaultProgressFiltersForSource } from "./reportFilter.constants";
 import ReportsIndexBulkBar from "./ReportsIndexBulkBar";
 import ReportsIndexHeader from "./ReportsIndexHeader";
-import ReportsSearchNoResults from "./ReportsSearchNoResults";
 
 type ReportsIndexContentProps = {
   project: ProjectFullDto;
@@ -40,7 +40,7 @@ type ReportsIndexContentProps = {
   sourceEntity: ReportsIndexSourceEntity;
 };
 
-const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexContentProps) => {
+const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project, source, sourceEntity }) => {
   const t = useT();
   const router = useRouter();
   const { filters } = useReportsContext();
@@ -301,18 +301,18 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                 </Text>
               </Flex>
             ) : progressError ? (
-              <Box background="neutral.100" h="full" p={4}>
-                <Text textStyle="400-bold">{t("Reports could not be loaded")}</Text>
-                <Text textStyle="400">{t("Please refresh the page and try again.")}</Text>
-              </Box>
+              <NoResults
+                title={t("Reports could not be loaded")}
+                description={t("Please refresh the page and try again.")}
+              />
             ) : filteredProgressSections.length === 0 ? (
               hasActiveSearch ? (
-                <ReportsSearchNoResults />
+                <NoResults
+                  title={t("No reports found")}
+                  description={t("We couldn’t find any reports matching your search. Try a different keyword.")}
+                />
               ) : (
-                <Box background="neutral.100" h="full" p={4}>
-                  <Text textStyle="400-bold">{t("No reports found")}</Text>
-                  <Text textStyle="400">{t("Try changing your search or filters.")}</Text>
-                </Box>
+                <NoResults title={t("No reports found")} description={t("Try changing your search or filters.")} />
               )
             ) : (
               <div className="space-y-4">

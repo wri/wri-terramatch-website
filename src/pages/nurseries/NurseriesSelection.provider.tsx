@@ -1,5 +1,6 @@
 import {
   createContext,
+  FC,
   PropsWithChildren,
   useCallback,
   useContext,
@@ -69,7 +70,7 @@ class NurseriesSelectionStore {
 
 const NurseriesSelectionContext = createContext<NurseriesSelectionStore | undefined>(undefined);
 
-const NurseriesSelectionProvider = ({ children }: PropsWithChildren) => {
+const NurseriesSelectionProvider: FC<PropsWithChildren> = ({ children }) => {
   const storeRef = useRef<NurseriesSelectionStore>();
   if (storeRef.current == null) storeRef.current = new NurseriesSelectionStore();
 

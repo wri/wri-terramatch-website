@@ -1,6 +1,6 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 
 import { loadFullProject } from "@/connections/Entity";
 import type { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -31,7 +31,7 @@ type NurseryProjectSectionProps = {
   onProjectOpened?: (projectId: string) => void;
 };
 
-const NurseryProjectSection = ({
+const NurseryProjectSection: FC<NurseryProjectSectionProps> = ({
   section,
   query = "",
   statuses = [],
@@ -40,7 +40,7 @@ const NurseryProjectSection = ({
   defaultOpen = false,
   openResetKey,
   onProjectOpened
-}: NurseryProjectSectionProps) => {
+}) => {
   const t = useT();
   const [open, setOpen] = useState(defaultOpen);
   const [fullProject, setFullProject] = useState<ProjectFullDto | null>(null);
@@ -75,7 +75,8 @@ const NurseryProjectSection = ({
 
   useEffect(() => {
     if (!open || fullProject != null) return;
-    if (section.projectUuid == null) {
+    const projectUuid = section.projectUuid;
+    if (projectUuid == null) {
       setGoalReady(true);
       return;
     }
@@ -85,7 +86,7 @@ const NurseryProjectSection = ({
 
     const loadGoal = async () => {
       try {
-        const result = await loadFullProject({ id: section.projectUuid as string });
+        const result = await loadFullProject({ id: projectUuid });
         const project = result.data ?? null;
         if (!cancelled && project != null && project.lightResource === false) {
           setFullProject(project);

@@ -76,7 +76,7 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ data, open, onClose }) =>
             name: imageName,
             title: imageName,
             photographer,
-            description: description || undefined,
+            description: description === "" ? undefined : description,
             isPublic,
             isCover,
             profileImageScale: data.profileImageScale,

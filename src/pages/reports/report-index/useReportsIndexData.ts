@@ -35,12 +35,7 @@ type ReportsIndexRawReport = ProjectReportLightDto | SiteReportLightDto | Nurser
 const UNSCHEDULED_PERIOD = "unscheduled";
 
 const toReport = (report: ReportsIndexRawReport, type: ReportsIndexReportType): ReportsIndexReport => {
-  const name =
-    type === "project-report"
-      ? (report as ProjectReportLightDto).title
-      : type === "site-report"
-      ? (report as SiteReportLightDto).siteName
-      : (report as NurseryReportLightDto).nurseryName;
+  const name = "nurseryName" in report ? report.nurseryName : "siteName" in report ? report.siteName : report.title;
 
   return {
     id: report.uuid,

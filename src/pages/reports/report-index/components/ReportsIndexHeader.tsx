@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { useCreateDisturbanceReport } from "@/connections/Entity";
 import { getReportStatusOptions } from "@/constants/options/status";
@@ -46,7 +46,7 @@ type ReportsIndexHeaderProps = {
   indexHref: string;
 };
 
-const ReportsIndexHeader = ({
+const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
   activeTab,
   source,
   sourceUuid,
@@ -59,7 +59,7 @@ const ReportsIndexHeader = ({
   onViewChange,
   onQueryChange,
   indexHref
-}: ReportsIndexHeaderProps) => {
+}) => {
   const t = useT();
   const router = useRouter();
   const { format } = useDate();

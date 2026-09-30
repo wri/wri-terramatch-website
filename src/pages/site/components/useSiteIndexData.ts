@@ -92,6 +92,7 @@ export const useSiteIndexData = ({
     viewProjects,
     projects,
     totalSiteCount: index.childTotal,
-    onProjectOpened
+    onProjectOpened,
+    error: index.error
   };
 };

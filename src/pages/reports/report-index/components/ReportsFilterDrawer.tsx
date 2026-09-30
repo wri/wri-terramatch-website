@@ -36,14 +36,14 @@ const setArrayValue = <T extends string>(values: T[], value: T, checked: boolean
 };
 
 const isoStringToDateValue = (value: string): DateValue | undefined => {
-  if (!value) return undefined;
+  if (value === "") return undefined;
   const [year, month, day] = value.split("-").map(Number);
-  if (!year || !month || !day) return undefined;
+  if (![year, month, day].every(part => Number.isFinite(part) && part > 0)) return undefined;
   return new CalendarDate(year, month, day);
 };
 
 const dateValueToIsoString = (value: DateValue | undefined): string => {
-  if (!value) return "";
+  if (value == null) return "";
   const mm = String(value.month).padStart(2, "0");
   const dd = String(value.day).padStart(2, "0");
   return `${value.year}-${mm}-${dd}`;
@@ -158,7 +158,7 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
 
   const removeFilterTag = (id: string) => {
     if (id.startsWith("type-")) {
-      const value = id.replace("type-", "") as ReportTypeOption;
+      const value = id.replace("type-", "");
       setDraftFilters(current =>
         withReportTypes(
           current,

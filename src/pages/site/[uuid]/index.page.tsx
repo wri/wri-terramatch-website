@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
+import { FC } from "react";
 
 import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
@@ -16,7 +17,7 @@ import { useSitePageLoad } from "./hooks/useSitePageLoad";
 import AuditLog from "./tabs/AuditLog";
 import SitePolygonsTab from "./tabs/SitePolygonsTab";
 
-const SiteDetailPage = () => {
+const SiteDetailPage: FC = () => {
   const t = useT();
   const router = useRouter();
   const siteUUID = router.query.uuid as string;

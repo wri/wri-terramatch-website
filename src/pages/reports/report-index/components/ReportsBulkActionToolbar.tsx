@@ -1,6 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { useEffect, useMemo } from "react";
+import { FC, useEffect, useMemo } from "react";
 
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useLayoutShell } from "@/redesignComponents/Layout/LayoutShell.provider";
@@ -24,7 +24,7 @@ type ReportsBulkActionToolbarProps = {
   onSubmit: () => void;
 };
 
-const ReportsBulkActionToolbar = ({
+const ReportsBulkActionToolbar: FC<ReportsBulkActionToolbarProps> = ({
   visible,
   itemCount,
   editDisabled = false,
@@ -39,7 +39,7 @@ const ReportsBulkActionToolbar = ({
   onNothingToReport,
   onEdit,
   onSubmit
-}: ReportsBulkActionToolbarProps) => {
+}) => {
   const t = useT();
   const isAdmin = useIsAdmin();
   const { setSidebarCollapseDisabled } = useLayoutShell();

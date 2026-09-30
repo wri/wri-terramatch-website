@@ -145,7 +145,7 @@ const SiteProjectMetrics: FC<{
     [keyIndicatorsTooltipContent, project.frameworkKey]
   );
   const primaryMetricTitle =
-    keyIndicatorsTooltipContentItem?.treesRestored.title ||
+    keyIndicatorsTooltipContentItem?.treesRestored.title ??
     (isHbf ? "Saplings Growing" : isTerraFund ? "Trees Planted" : "Trees Growing");
   const areaTitle = keyIndicatorsTooltipContentItem?.hectaresRestored.title ?? t("Area restored (Ha)");
   const workdaysTitle = keyIndicatorsTooltipContentItem?.jobsCreated.title ?? t("Workdays");

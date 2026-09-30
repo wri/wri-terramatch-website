@@ -1,6 +1,6 @@
 import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { useCallback, useMemo } from "react";
+import { FC, useCallback, useMemo } from "react";
 
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
@@ -21,7 +21,7 @@ import { useNurseryTableSelection } from "../NurseriesSelection.provider";
 import type { NurseryIndexRow } from "../nurseryIndex.types";
 import NurseryIndexEditButton from "./NurseryIndexEditButton";
 
-const NurseryUpdate = ({ status }: { status: NurseryIndexRow["updateRequestStatus"] }) => {
+const NurseryUpdate: FC<{ status: NurseryIndexRow["updateRequestStatus"] }> = ({ status }) => {
   const t = useT();
 
   if (status == null || isAbsentChangeRequestStatus(status)) {
@@ -55,7 +55,7 @@ const NurseryUpdate = ({ status }: { status: NurseryIndexRow["updateRequestStatu
   );
 };
 
-const NurseryIndexTable = ({ nurseries }: { nurseries: NurseryIndexRow[] }) => {
+const NurseryIndexTable: FC<{ nurseries: NurseryIndexRow[] }> = ({ nurseries }) => {
   const t = useT();
   const { format } = useDate();
   const { selectedRows, isNurserySelected, handleRowSelected, handleAllItemsSelected } =

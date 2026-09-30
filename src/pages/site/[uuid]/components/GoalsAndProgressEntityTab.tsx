@@ -1,19 +1,22 @@
 import { useT } from "@transifex/react";
-import React from "react";
+import React, { FC } from "react";
 
-import ProgressGoalsDoughnutChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressGoalsDoughnutChart";
+import ProgressGoalsDoughnutChart, {
+  ProgressGoalsData
+} from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressGoalsDoughnutChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import { GoalProgressCardItemProps } from "@/components/elements/Cards/GoalProgressCard/GoalProgressCardItem";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import { SUMMARY_ANR_ROLLUP_HIDE, SUMMARY_REPLANTING_ROLLUP_HIDE } from "@/constants/summaryRollupVisibility";
 import { Framework, isTerrafund, toFramework } from "@/context/framework.provider";
+import { ProjectFullDto, SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { TranslatedText } from "@/i18n/types";
 
 import useTooltipsGoalsAndProgress from "./useTooltipsGoalsAndProgress";
 
 interface GoalsAndProgressEntityTabProps {
-  entity: any;
+  entity: ProjectFullDto | SiteFullDto;
   project?: boolean;
 }
 interface ProgressDataCardItem {
@@ -23,7 +26,7 @@ interface ProgressDataCardItem {
     totalName?: TranslatedText;
     totalValue?: number;
   };
-  chartData: any;
+  chartData: ProgressGoalsData;
   graph?: boolean;
   hectares?: boolean;
   tooltipContent?: TranslatedText;
@@ -35,7 +38,7 @@ type ChartsData = {
   hbf: JSX.Element[];
 };
 
-const ProgressDataCard = (values: ProgressDataCardItem) => {
+const ProgressDataCard: FC<ProgressDataCardItem> = values => {
   return (
     <GoalProgressCard
       label={values.cardValues.label}
@@ -47,59 +50,53 @@ const ProgressDataCard = (values: ProgressDataCardItem) => {
       labelVariant="text-14"
       classNameCard="text-center flex flex-col items-center"
       classNameLabelValue="justify-center"
-      tootipContent={values.tooltipContent ? values.tooltipContent : undefined}
-      tooltipTitle={values.tooltipContent ? values.cardValues.label : undefined}
+      tootipContent={values.tooltipContent}
+      tooltipTitle={values.tooltipContent != null ? values.cardValues.label : undefined}
       chart={<ProgressGoalsDoughnutChart key={"items"} data={values.chartData} />}
     />
   );
 };
 
-const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgressEntityTabProps) => {
+const GoalsAndProgressEntityTab: FC<GoalsAndProgressEntityTabProps> = ({ entity, project = false }) => {
   const t = useT();
   const tooltips = useTooltipsGoalsAndProgress();
-  const framework = toFramework(entity?.frameworkKey);
+  const framework = toFramework(entity.frameworkKey);
   const hideAnrRollup = SUMMARY_ANR_ROLLUP_HIDE.includes(framework);
   const hideReplantingRollup = SUMMARY_REPLANTING_ROLLUP_HIDE.includes(framework);
-  const treesFromReportsAnr = hideAnrRollup ? 0 : entity?.regeneratedTreesCount ?? 0;
+  const treesFromReportsAnr = hideAnrRollup ? 0 : entity.regeneratedTreesCount ?? 0;
   const totalTreesRestoredCount =
-    (entity?.treesPlantedCount ?? 0) + (entity?.seedsPlantedCount ?? 0) + treesFromReportsAnr;
-  const keyAttribute = project ? "project" : "site";
-  const attribMapping: { [key: string]: any } = {
-    project: {
-      totalJobsCreated: entity.totalJobsCreated,
-      jobsCreatedGoal: entity.jobsCreatedGoal,
-      totalHectaresRestoredSum:
-        project && entity.frameworkKey == Framework.PPC
-          ? Math.round(entity.totalHectaresRestoredSum)
-          : entity.totalHectaresRestoredSum,
-      totalHectaresRestoredGoal: entity.totalHectaresRestoredGoal,
-      treesRestoredCount: totalTreesRestoredCount,
-      treesGrownGoal: entity.treesGrownGoal,
-      workdayCount: entity.frameworkKey == Framework.PPC ? entity.combinedWorkdayCount : entity.workdayCount
-    },
-    site: {
-      totalJobsCreated: null,
-      jobsCreatedGoal: null,
-      totalHectaresRestoredSum: entity.totalHectaresRestoredSum,
-      totalHectaresRestoredGoal: entity.hectaresToRestoreGoal,
-      treesRestoredCount: totalTreesRestoredCount,
-      treesGrownGoal: null,
-      workdayCount: entity.frameworkKey == Framework.PPC ? entity.combinedWorkdayCount : entity.workdayCount
-    }
+    (entity.treesPlantedCount ?? 0) + (entity.seedsPlantedCount ?? 0) + treesFromReportsAnr;
+  const projectEntity = "totalJobsCreated" in entity ? entity : undefined;
+  const metrics = {
+    totalJobsCreated: project ? projectEntity?.totalJobsCreated ?? 0 : 0,
+    jobsCreatedGoal: project ? projectEntity?.jobsCreatedGoal ?? 0 : 0,
+    totalHectaresRestoredSum:
+      project && framework === Framework.PPC
+        ? Math.round(entity.totalHectaresRestoredSum)
+        : entity.totalHectaresRestoredSum,
+    totalHectaresRestoredGoal:
+      (project
+        ? projectEntity?.totalHectaresRestoredGoal
+        : "hectaresToRestoreGoal" in entity
+        ? entity.hectaresToRestoreGoal
+        : undefined) ?? 0,
+    treesRestoredCount: totalTreesRestoredCount,
+    treesGrownGoal: project ? projectEntity?.treesGrownGoal ?? 0 : 0,
+    workdayCount: framework === Framework.PPC ? entity.combinedWorkdayCount : entity.workdayCount
   };
   const chartDataJobs = {
     chartData: [
-      { name: t("JOBS CREATED"), value: attribMapping[keyAttribute].totalJobsCreated },
+      { name: t("JOBS CREATED"), value: metrics.totalJobsCreated },
       {
         name: t("TOTAL JOBS CREATED GOAL"),
-        value: attribMapping[keyAttribute].jobsCreatedGoal
+        value: metrics.jobsCreatedGoal
       }
     ],
     cardValues: {
       label: t("Jobs Created"),
-      value: attribMapping[keyAttribute].totalJobsCreated,
+      value: metrics.totalJobsCreated,
       totalName: t("TOTAL JOBS CREATED GOAL"),
-      totalValue: attribMapping[keyAttribute].jobsCreatedGoal
+      totalValue: metrics.jobsCreatedGoal
     },
     graph: true,
     hectares: false
@@ -108,61 +105,60 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
     chartData: [
       {
         name: t("HECTARES RESTORED"),
-        value: attribMapping[keyAttribute].totalHectaresRestoredSum,
-        tooltipContent: "Number of hectares within approved polygons for this project"
+        value: metrics.totalHectaresRestoredSum
       },
       {
         name: t("TOTAL HECTARES RESTORED"),
-        value: parseFloat(attribMapping[keyAttribute].totalHectaresRestoredGoal)
+        value: metrics.totalHectaresRestoredGoal
       }
     ],
     cardValues: {
       label: t("HECTARES RESTORED"),
-      value: attribMapping[keyAttribute].totalHectaresRestoredSum,
+      value: metrics.totalHectaresRestoredSum,
       totalName: t("TOTAL HECTARES RESTORED"),
-      totalValue: parseFloat(attribMapping[keyAttribute].totalHectaresRestoredGoal)
+      totalValue: metrics.totalHectaresRestoredGoal
     }
   };
   const chartDataTreesRestored = {
     chartData: [
-      { name: t("TREES RESTORED"), value: attribMapping[keyAttribute].treesRestoredCount },
+      { name: t("TREES RESTORED"), value: metrics.treesRestoredCount },
       {
         name: t("TOTAL TREES RESTORED"),
-        value: parseFloat(attribMapping[keyAttribute].treesGrownGoal)
+        value: metrics.treesGrownGoal
       }
     ],
     cardValues: {
       label: t("TREES RESTORED"),
-      value: attribMapping[keyAttribute].treesRestoredCount,
+      value: metrics.treesRestoredCount,
       totalName: t("TOTAL TREES RESTORED"),
-      totalValue: parseFloat(attribMapping[keyAttribute].treesGrownGoal)
+      totalValue: metrics.treesGrownGoal
     }
   };
   const chartDataWorkdays = {
     chartData: [
       {
         name: t("WORKDAYS CREATED"),
-        value: attribMapping[keyAttribute].workdayCount
+        value: metrics.workdayCount
       }
     ],
     cardValues: {
       label: t("WORKDAYS CREATED"),
-      value: attribMapping[keyAttribute].workdayCount
+      value: metrics.workdayCount
     }
   };
   const chartDataSaplings = {
     chartData: [
-      { name: t("SAPLINGS RESTORED"), value: attribMapping[keyAttribute].treesRestoredCount },
+      { name: t("SAPLINGS RESTORED"), value: metrics.treesRestoredCount },
       {
         name: t("TOTAL SAPLINGS RESTORED"),
-        value: parseFloat(attribMapping[keyAttribute].treesGrownGoal)
+        value: metrics.treesGrownGoal
       }
     ],
     cardValues: {
       label: t("SAPLINGS RESTORED"),
-      value: attribMapping[keyAttribute].treesRestoredCount,
+      value: metrics.treesRestoredCount,
       totalName: t("TOTAL SAPLINGS RESTORED"),
-      totalValue: parseFloat(attribMapping[keyAttribute].treesGrownGoal)
+      totalValue: metrics.treesGrownGoal
     }
   };
 
@@ -241,11 +237,10 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
       />
     ]
   };
-  const frameworkKey = entity.frameworkKey as Framework;
-  const chartFramework = isTerrafund(frameworkKey) ? Framework.TF : frameworkKey;
+  const chartFramework = isTerrafund(framework) ? Framework.TF : framework;
   const totalCountReplanting = usePlantTotalCount({
     entity: project ? "projects" : "sites",
-    entityUuid: entity?.uuid,
+    entityUuid: entity.uuid,
     collection: "replanting"
   });
 
@@ -255,7 +250,7 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
       label: t("Trees Planted:"),
       variantLabel: "text-14",
       classNameLabel: " text-neutral-650 uppercase",
-      value: entity.treesPlantedCount,
+      value: entity.treesPlantedCount ?? 0,
       tooltipContent: project ? tooltips.TOOLTIP_TREES_PLANTED_PROJECT : tooltips.TOOLTIP_TREES_PLANTED_SITE,
       classNameLabelValue: "flex items-center gap-2"
     },
@@ -280,7 +275,7 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
               ? tooltips.TOOLTIP_TREES_REGENERATING_PROJECT
               : tooltips.TOOLTIP_TREES_REGENERATING_SITE
           }
-        ] as GoalProgressCardItemProps[])),
+        ] satisfies GoalProgressCardItemProps[])),
     ...(hideReplantingRollup
       ? []
       : ([
@@ -292,18 +287,17 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
             value: totalCountReplanting,
             tooltipContent: project ? tooltips.TOOLTIP_TREES_REPLANTING_PROJECT : tooltips.TOOLTIP_TREES_REPLANTING_SITE
           }
-        ] as GoalProgressCardItemProps[]))
+        ] satisfies GoalProgressCardItemProps[]))
   ];
 
   return (
     <div className="flex w-full flex-wrap items-start justify-between gap-4">
-      {chartsDataMapping[chartFramework as keyof ChartsData]?.map((chart, index) => (
-        <React.Fragment key={index}>{chart}</React.Fragment>
-      ))}
+      {(chartFramework === Framework.TF || chartFramework === Framework.PPC || chartFramework === Framework.HBF) &&
+        chartsDataMapping[chartFramework]}
       <GoalProgressCard
         label={t("Trees restored")}
         value={totalTreesRestoredCount}
-        limit={entity.treesGrownGoal}
+        limit={projectEntity?.treesGrownGoal ?? undefined}
         hasProgress={false}
         items={treesRestoredItems}
         className="pr-[41px] lg:pr-[150px] mobile:w-[400px] mobile:!pr-0"

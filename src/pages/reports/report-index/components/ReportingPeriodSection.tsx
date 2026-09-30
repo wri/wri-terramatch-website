@@ -1,9 +1,8 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { FC, ReactNode, useEffect, useMemo, useState } from "react";
 
 import useCollectionsTotal from "@/components/extensive/TrackingCollapseGrid/hooks";
-import { TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
 import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
 import {
@@ -56,7 +55,7 @@ type ReportingPeriodMetricsRowProps = {
 
 const usePeriodJobsTotal = (projectReportUuid: string | null, frameworkKey: string | null) => {
   const framework = getReportKeyIndicatorFramework(frameworkKey);
-  const trackingType = (framework === "terrafund" ? "jobs" : "workdays") as TrackingType;
+  const trackingType = framework === "terrafund" ? "jobs" : "workdays";
   const collections =
     framework === "hbf"
       ? (["direct"] as const)
@@ -80,14 +79,14 @@ const metricIcon = (key: string, color: string): ReactNode => {
   return <TreeIcon color={color} boxSize="0.875rem" />;
 };
 
-const ReportingPeriodMetricsRow = ({
+const ReportingPeriodMetricsRow: FC<ReportingPeriodMetricsRowProps> = ({
   open,
   reports,
   allReports,
   hasReportSubset,
   projectReportUuid,
   frameworkKey
-}: ReportingPeriodMetricsRowProps) => {
+}) => {
   const jobsTotal = usePeriodJobsTotal(open ? projectReportUuid : null, frameworkKey);
   const {
     loading: subsetMetricsLoading,
@@ -151,7 +150,7 @@ const ReportingPeriodMetricsRow = ({
   );
 };
 
-const ReportingPeriodSection = ({
+const ReportingPeriodSection: FC<ReportingPeriodSectionProps> = ({
   period,
   allPeriodReports,
   defaultOpen = false,
@@ -161,7 +160,7 @@ const ReportingPeriodSection = ({
   indexHref,
   restoreReportId,
   onRowRestored
-}: ReportingPeriodSectionProps) => {
+}) => {
   const t = useT();
   const { format } = useDate();
   const [open, setOpen] = useState(defaultOpen);

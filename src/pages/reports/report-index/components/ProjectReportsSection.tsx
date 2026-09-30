@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
@@ -24,7 +24,7 @@ type ProjectReportsSectionProps = {
   onRowRestored?: () => void;
 };
 
-const ProjectReportsSection = ({
+const ProjectReportsSection: FC<ProjectReportsSectionProps> = ({
   section,
   unfilteredPeriods,
   defaultOpen = false,
@@ -36,7 +36,7 @@ const ProjectReportsSection = ({
   restorePeriodId,
   restoreReportId,
   onRowRestored
-}: ProjectReportsSectionProps) => {
+}) => {
   const t = useT();
   const [open, setOpen] = useState(restoreSectionId != null ? section.id === restoreSectionId : defaultOpen);
 

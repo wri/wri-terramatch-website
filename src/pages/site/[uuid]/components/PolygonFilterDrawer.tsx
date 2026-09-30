@@ -44,14 +44,14 @@ const setArrayValue = <T extends string>(values: T[], value: T, checked: boolean
 };
 
 const isoStringToDateValue = (value: string): DateValue | undefined => {
-  if (!value) return undefined;
+  if (value === "") return undefined;
   const [year, month, day] = value.split("-").map(Number);
-  if (!year || !month || !day) return undefined;
+  if (![year, month, day].every(part => Number.isFinite(part) && part > 0)) return undefined;
   return new CalendarDate(year, month, day);
 };
 
 const dateValueToIsoString = (value: DateValue | undefined): string => {
-  if (!value) return "";
+  if (value == null) return "";
   const mm = String(value.month).padStart(2, "0");
   const dd = String(value.day).padStart(2, "0");
   return `${value.year}-${mm}-${dd}`;
@@ -103,10 +103,10 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
     for (const status of draftFilters.validationStatus) {
       tags.push({ id: `validationStatus:${status}`, label: validationStatusLabels[status] });
     }
-    if (draftFilters.plantStartFrom) {
+    if (draftFilters.plantStartFrom !== "") {
       tags.push({ id: "plantStartFrom", label: `From: ${draftFilters.plantStartFrom}` });
     }
-    if (draftFilters.plantStartTo) {
+    if (draftFilters.plantStartTo !== "") {
       tags.push({ id: "plantStartTo", label: `To: ${draftFilters.plantStartTo}` });
     }
     for (const practice of draftFilters.practice) {
@@ -225,8 +225,8 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
     const dates: DateValue[] = [];
     const from = isoStringToDateValue(draftFilters.plantStartFrom);
     const to = isoStringToDateValue(draftFilters.plantStartTo);
-    if (from) dates.push(from);
-    if (to) dates.push(to);
+    if (from != null) dates.push(from);
+    if (to != null) dates.push(to);
     return dates;
   }, [draftFilters.plantStartFrom, draftFilters.plantStartTo]);
 

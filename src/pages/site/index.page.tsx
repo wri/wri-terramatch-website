@@ -1,35 +1,24 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
-import Head from "next/head";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { InfiniteScrollSentinel } from "@/hooks/useInfiniteScrollSentinel";
-import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
-import HighLevelSelector from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector";
-import { LoadingIcon, PlusIcon, SiteIcon } from "@/redesignComponents/foundations/Icons";
-import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
-import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
-import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
+import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 
 import { ALL_PROJECTS_VIEW, filterSiteIndexSites, getSiteCreateUrl } from "./components/siteIndex.utils";
 import SiteIndexBulkBar from "./components/SiteIndexBulkBar";
-import SiteIndexFilterDrawer, {
-  type SiteIndexFilterStatus,
-  type SiteIndexFilterUpdate,
-  SITE_INDEX_STATUS_OPTIONS,
-  SITE_INDEX_UPDATE_OPTIONS
-} from "./components/SiteIndexFilterDrawer";
+import { type SiteIndexFilterStatus, type SiteIndexFilterUpdate } from "./components/SiteIndexFilterDrawer";
+import SiteIndexHeader from "./components/SiteIndexHeader";
 import SiteIndexSelectionProvider, { useSiteIndexSelectionActions } from "./components/SiteIndexSelection.provider";
 import SiteProjectSection from "./components/SiteProjectSection";
 import { SEARCH_DEBOUNCE_MS, useSiteIndexData } from "./components/useSiteIndexData";
 
-const SiteIndexPageContent = () => {
+const SiteIndexPageContent: FC = () => {
   const t = useT();
   const router = useRouter();
   const { clearSelection } = useSiteIndexSelectionActions();
@@ -41,7 +30,6 @@ const SiteIndexPageContent = () => {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilters, setStatusFilters] = useState<SiteIndexFilterStatus[]>([]);
   const [updateFilter, setUpdateFilter] = useState<SiteIndexFilterUpdate | null>(null);
-  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => setDebouncedSearch(searchQuery.trim()), SEARCH_DEBOUNCE_MS);
@@ -62,7 +50,7 @@ const SiteIndexPageContent = () => {
   const hasActiveFilters = hasActiveSearch || hasAppliedFilters;
   const shouldAutoOpenFolders = selectedProject !== ALL_PROJECTS_VIEW || hasActiveFilters;
   const filtering = searchQuery.trim() !== debouncedSearch;
-  const { loading, loadingMore, hasMore, loadMore, viewProjects, projects, totalSiteCount, onProjectOpened } =
+  const { loading, loadingMore, hasMore, loadMore, viewProjects, projects, totalSiteCount, onProjectOpened, error } =
     useSiteIndexData({
       reloadNonce,
       childrenReloadNonce,
@@ -107,30 +95,6 @@ const SiteIndexPageContent = () => {
     );
   }, [debouncedSearch, hasAppliedFilters, statusFilters, totalSiteCount, updateFilter, visibleProjects]);
 
-  const selectedFilters = useMemo<SelectedFilter[]>(() => {
-    const labels: SelectedFilter[] = [];
-
-    if (statusFilters.length > 0) {
-      labels.push({
-        category: t("Status"),
-        label: statusFilters.map(
-          status => SITE_INDEX_STATUS_OPTIONS.find(option => option.value === status)?.label ?? status
-        ),
-        onRemove: () => setStatusFilters([])
-      });
-    }
-
-    if (updateFilter != null) {
-      labels.push({
-        category: t("Update"),
-        label: [SITE_INDEX_UPDATE_OPTIONS.find(option => option.value === updateFilter)?.label ?? updateFilter],
-        onRemove: () => setUpdateFilter(null)
-      });
-    }
-
-    return labels;
-  }, [statusFilters, t, updateFilter]);
-
   const handleSitesChanged = useCallback(() => setReloadNonce(current => current + 1), []);
 
   const handleViewChange = useCallback(
@@ -161,89 +125,34 @@ const SiteIndexPageContent = () => {
     void router.push(getSiteCreateUrl(targetProject));
   }, [router, selectedProject, t, viewProjects]);
 
-  const clearFilters = useCallback(() => {
-    setStatusFilters([]);
-    setUpdateFilter(null);
-  }, []);
+  const handleApplyFilters = useCallback(
+    (nextStatusFilters: SiteIndexFilterStatus[], nextUpdateFilter: SiteIndexFilterUpdate | null) => {
+      setStatusFilters(nextStatusFilters);
+      setUpdateFilter(nextUpdateFilter);
+      if (nextStatusFilters.length > 0 || nextUpdateFilter != null) {
+        setChildrenReloadNonce(current => current + 1);
+      }
+    },
+    []
+  );
 
   return (
     <>
       <ResponsiveTypography />
-      <Head>
-        <title>{t("Sites")}</title>
-      </Head>
-      <ToolbarObject
-        className="sticky top-0 z-20 !px-6"
-        breadcrumbs={{
-          linkRouter: router,
-          links: [
-            {
-              icon: <SiteIcon />,
-              label: t("Sites"),
-              link: "#"
-            }
-          ]
-        }}
+      <SiteIndexHeader
+        siteCount={visibleSiteCount}
+        selectedProject={selectedProject}
+        viewProjects={viewProjects}
+        statusFilters={statusFilters}
+        updateFilter={updateFilter}
+        filtering={filtering}
+        onApplyFilters={handleApplyFilters}
+        onViewChange={handleViewChange}
+        onAddSite={handleAddSite}
+        onQueryChange={setSearchQuery}
       />
 
-      <PageHeader
-        title={t("Sites")}
-        className="!bg-theme-neutral-100 !px-6 !pb-0 !pt-1 mobile:flex-col mobile:items-start mobile:gap-4"
-        classNameActions="mobile:w-full"
-        actions={
-          <Flex gap="0.5rem" alignItems="center" className="mobile:w-full mobile:flex-col mobile:items-stretch">
-            <Box className="w-[25rem] mobile:w-full">
-              <HighLevelSelector
-                key={
-                  selectedProject === ALL_PROJECTS_VIEW
-                    ? ALL_PROJECTS_VIEW
-                    : `${selectedProject}:${viewProjects.find(project => project.id === selectedProject)?.name ?? ""}`
-                }
-                autocomplete
-                width="100%"
-                label={t("View:")}
-                items={[
-                  { label: t("All Projects"), value: ALL_PROJECTS_VIEW },
-                  ...viewProjects.map(project => ({ label: project.name, value: project.id }))
-                ]}
-                value={selectedProject}
-                emptyMessage={t("No results found")}
-                onChange={handleViewChange}
-              />
-            </Box>
-            <Button
-              size="small"
-              leftIcon={<PlusIcon boxSize="0.625rem" />}
-              className="mobile:w-full"
-              disabled={viewProjects.length === 0 || selectedProject == ALL_PROJECTS_VIEW}
-              onClick={handleAddSite}
-            >
-              {t("Add Site")}
-            </Button>
-          </Flex>
-        }
-      />
-
-      <ToolbarTable
-        className="!bg-theme-neutral-200 !px-5 !pb-6 !pt-5"
-        classNameContentLeft="w-full"
-        classNameContentSearch="w-[19rem]"
-        search={{
-          label: visibleSiteCount === 1 ? t("Site") : t("Sites"),
-          placeholder: t("Search sites"),
-          options: [],
-          displayResults: "none",
-          onQueryChange: setSearchQuery,
-          isLoading: filtering,
-          count: visibleSiteCount
-        }}
-        selectedFilters={selectedFilters}
-        onClickFilterButton={() => setIsFilterDrawerOpen(true)}
-        onClearFilters={clearFilters}
-        showClearFilters={selectedFilters.length > 0}
-      />
-
-      <PageContent heightFull={false} className="flex-1 !gap-0 bg-theme-neutral-200 px-2 pb-9 pt-1">
+      <PageContent className="px-2 py-0">
         {loading ? (
           <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
             <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
@@ -251,6 +160,20 @@ const SiteIndexPageContent = () => {
               {t("Loading sites...")}
             </Text>
           </Flex>
+        ) : error ? (
+          <NoResults title={t("Sites could not be loaded")} description={t("Please refresh the page and try again.")} />
+        ) : visibleProjects.length === 0 ? (
+          <NoResults
+            className="px-4"
+            title={hasActiveFilters ? t("No sites found") : t("No sites found")}
+            description={
+              hasActiveSearch
+                ? t("We couldn’t find any sites matching your search. Try a different keyword.")
+                : hasAppliedFilters
+                ? t("We couldn’t find any sites matching your filters. Try adjusting or clearing your filters.")
+                : t("No sites have been added yet.")
+            }
+          />
         ) : (
           <>
             <div className="space-y-4">
@@ -280,7 +203,7 @@ const SiteIndexPageContent = () => {
               />
             </div>
 
-            {visibleProjects.length === 0 ? (
+            {/* {visibleProjects.length === 0 ? (
               <NoResults
                 className="px-4"
                 title={hasActiveFilters ? t("No results found") : t("No sites found")}
@@ -292,30 +215,16 @@ const SiteIndexPageContent = () => {
                     : t("No sites have been added yet.")
                 }
               />
-            ) : null}
+            ) : null} */}
           </>
         )}
         <SiteIndexBulkBar onSitesChanged={handleSitesChanged} />
       </PageContent>
-
-      <SiteIndexFilterDrawer
-        open={isFilterDrawerOpen}
-        filters={statusFilters}
-        updateFilter={updateFilter}
-        onOpenChange={setIsFilterDrawerOpen}
-        onApplyFilters={(nextStatusFilters, nextUpdateFilter) => {
-          setStatusFilters(nextStatusFilters);
-          setUpdateFilter(nextUpdateFilter);
-          if (nextStatusFilters.length > 0 || nextUpdateFilter != null) {
-            setChildrenReloadNonce(current => current + 1);
-          }
-        }}
-      />
     </>
   );
 };
 
-const SiteIndexPage = () => (
+const SiteIndexPage: FC = () => (
   <SiteIndexSelectionProvider>
     <SiteIndexPageContent />
   </SiteIndexSelectionProvider>
