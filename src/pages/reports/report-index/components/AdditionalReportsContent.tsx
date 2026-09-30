@@ -1,9 +1,10 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useMemo, useState } from "react";
 
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
+import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import { FolderIcon, FolderOpenIcon, LoadingIcon } from "@/redesignComponents/foundations/Icons";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
@@ -15,7 +16,6 @@ import {
 import { collectAdditionalReports, getReportsRequiringAttention } from "../reportIndex.utils";
 import AdditionalReportsTable from "./AdditionalReportsTable";
 import ReportAttentionStatusLabels from "./ReportAttentionStatusLabels";
-import ReportsSearchNoResults from "./ReportsSearchNoResults";
 
 type AdditionalReportsContentProps = {
   sections: AdditionalReportsEntitySectionData[];
@@ -161,18 +161,15 @@ const AdditionalReportsContent: FC<AdditionalReportsContentProps> = ({
           </Text>
         </Flex>
       ) : error ? (
-        <Box background="neutral.100" h="full" p={4}>
-          <Text textStyle="400-bold">{t("Reports could not be loaded")}</Text>
-          <Text textStyle="400">{t("Please refresh the page and try again.")}</Text>
-        </Box>
+        <NoResults title={t("Reports could not be loaded")} description={t("Please refresh the page and try again.")} />
       ) : sections.length === 0 ? (
         hasActiveSearch ? (
-          <ReportsSearchNoResults />
+          <NoResults
+            title={t("No reports found")}
+            description={t("We couldn’t find any reports matching your search. Try a different keyword.")}
+          />
         ) : (
-          <Box background="neutral.100" h="full" p={4}>
-            <Text textStyle="400-bold">{t("No additional reports found")}</Text>
-            <Text textStyle="400">{t("Try changing your search or filters.")}</Text>
-          </Box>
+          <NoResults title={t("No reports found")} description={t("Try changing your search or filters.")} />
         )
       ) : (
         <div className="space-y-4">

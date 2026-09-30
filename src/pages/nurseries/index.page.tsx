@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -6,6 +6,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { InfiniteScrollSentinel } from "@/hooks/useInfiniteScrollSentinel";
+import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 
@@ -121,19 +122,19 @@ const NurseriesIndexContent: FC = () => {
             </Text>
           </Flex>
         ) : error ? (
-          <Box background="neutral.100" h="full" p={4}>
-            <Text textStyle="400-bold">{t("Nurseries could not be loaded")}</Text>
-            <Text textStyle="400">{t("Please refresh the page and try again.")}</Text>
-          </Box>
+          <NoResults
+            title={t("Nurseries could not be loaded")}
+            description={t("Please refresh the page and try again.")}
+          />
         ) : filteredSections.length === 0 ? (
-          <Box background="neutral.100" h="full" p={4}>
-            <Text textStyle="400-bold">{t("No nurseries found")}</Text>
-            <Text textStyle="400">
-              {query.trim() === "" && statuses.length === 0 && updates.length === 0
+          <NoResults
+            title={t("No nurseries found")}
+            description={
+              query.trim() === "" && statuses.length === 0 && updates.length === 0
                 ? t("There are no nurseries available for this project view.")
-                : t("Try changing your search or filters.")}
-            </Text>
-          </Box>
+                : t("Try changing your search or filters.")
+            }
+          />
         ) : (
           <Flex gap={4} flexDirection="column">
             {filteredSections.map((section, index) => (

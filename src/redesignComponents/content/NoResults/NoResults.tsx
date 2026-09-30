@@ -1,7 +1,5 @@
-import { Text } from "@chakra-ui/react";
-import classNames from "classnames";
+import { Flex, Text } from "@chakra-ui/react";
 import { type FC, type HTMLAttributes } from "react";
-import { twMerge } from "tailwind-merge";
 
 export interface NoResultsProps extends HTMLAttributes<HTMLDivElement> {
   title: string;
@@ -9,14 +7,14 @@ export interface NoResultsProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const NoResults: FC<NoResultsProps> = ({ title, description, className, ...props }) => (
-  <div {...props} className={twMerge(classNames("flex flex-col gap-2", className))}>
+  <Flex flexDir="column" gap={1.5} h="full" px={4} className={className} {...props}>
     <Text textStyle="600-bold" color="neutral.900">
       {title}
     </Text>
     <Text textStyle="400" color="neutral.800">
       {description}
     </Text>
-  </div>
+  </Flex>
 );
 
 export default NoResults;

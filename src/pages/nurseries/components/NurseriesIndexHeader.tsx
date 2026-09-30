@@ -89,7 +89,7 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
         }}
       />
       <PageHeader
-        className="border-theme-neutral-300 !bg-theme-neutral-100 !border-t !px-6 !py-0"
+        className=" !bg-theme-neutral-100 !pb-0 !pt-1 mobile:flex-col mobile:items-start mobile:gap-4"
         title={t("Nurseries")}
         actions={
           <Flex gap={4} alignItems="center">
