@@ -98,7 +98,7 @@ const SiteUpdate: FC<{ update: SiteIndexUpdate | null }> = ({ update }) => {
   }[update];
 
   return (
-    <Box className="text-theme-neutral-800 flex items-center gap-1">
+    <Box className="flex items-center gap-1 text-theme-neutral-800">
       <EditIcon boxSize={2.5} />
       {update != "complete" && (
         <Text as="span" textStyle="200">
@@ -460,7 +460,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
         open={open}
         onOpenChange={setOpen}
         isScrollable={false}
-        className="bg-theme-neutral-100 w-full overflow-hidden rounded"
+        className="w-full overflow-hidden rounded bg-theme-neutral-100"
         classNameHeader="!mb-0"
         header={
           <ListSectionHeader

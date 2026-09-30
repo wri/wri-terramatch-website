@@ -52,14 +52,12 @@ const ROLE_LABELS: Record<string, string> = {
   "project-manager": "Project Manager"
 };
 
-const STATUS_TAG_CONFIG: Record<
-  AssociationStatus,
-  { state: "attention" | "success" | "warning"; iconColor: string }
-> = {
-  requested: { state: "attention", iconColor: "warning.500" },
-  approved: { state: "success", iconColor: "success.500" },
-  rejected: { state: "warning", iconColor: "error.500" }
-};
+const STATUS_TAG_CONFIG: Record<AssociationStatus, { state: "attention" | "success" | "warning"; iconColor: string }> =
+  {
+    requested: { state: "attention", iconColor: "warning.500" },
+    approved: { state: "success", iconColor: "success.500" },
+    rejected: { state: "warning", iconColor: "error.500" }
+  };
 
 const TeamTabContent: FC = () => {
   const t = useT();

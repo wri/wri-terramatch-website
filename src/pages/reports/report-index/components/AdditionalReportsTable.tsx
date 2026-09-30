@@ -112,7 +112,7 @@ const AdditionalReportsTable: FC<AdditionalReportsTableProps> = ({
           label={format(date)}
           icon={<CalendarIcon boxSize="0.625rem" />}
           size="small"
-          className="bg-theme-neutral-200 rounded"
+          className="rounded bg-theme-neutral-200"
         />
       ),
     [format]

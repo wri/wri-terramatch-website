@@ -56,7 +56,7 @@ const ProjectReportsSection: FC<ProjectReportsSectionProps> = ({
       variant="tertiary"
       open={open}
       onOpenChange={setOpen}
-      className="bg-theme-neutral-100 overflow-hidden rounded"
+      className="overflow-hidden rounded bg-theme-neutral-100"
       classNameHeader="!mb-0"
       header={
         <ListSectionHeader
@@ -79,7 +79,7 @@ const ProjectReportsSection: FC<ProjectReportsSectionProps> = ({
         />
       }
     >
-      <div className="bg-theme-neutral-200 space-y-0.5 pt-0.5">
+      <div className="space-y-0.5 bg-theme-neutral-200 pt-0.5">
         {open
           ? section.periods.map((period, index) => (
               <ReportingPeriodSection

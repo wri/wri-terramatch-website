@@ -148,18 +148,8 @@ export const AllVariants: Story = {
         caption="Informational message on grey background."
         size="large"
       />
-      <InlineMessage
-        variant="success"
-        label="Success"
-        caption="The operation completed successfully."
-        size="large"
-      />
-      <InlineMessage
-        variant="warning"
-        label="Warning"
-        caption="Please review before proceeding."
-        size="large"
-      />
+      <InlineMessage variant="success" label="Success" caption="The operation completed successfully." size="large" />
+      <InlineMessage variant="warning" label="Warning" caption="Please review before proceeding." size="large" />
       <InlineMessage
         icon={<InformationRequiredIcon />}
         variant="error"
