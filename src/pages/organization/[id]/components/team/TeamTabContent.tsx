@@ -52,14 +52,12 @@ const ROLE_LABELS: Record<string, string> = {
   "project-manager": "Project Manager"
 };
 
-const STATUS_TAG_CONFIG: Record<
-  AssociationStatus,
-  { state: "attention" | "success" | "warning"; iconColor: string }
-> = {
-  requested: { state: "attention", iconColor: "warning.500" },
-  approved: { state: "success", iconColor: "success.500" },
-  rejected: { state: "warning", iconColor: "error.500" }
-};
+const STATUS_TAG_CONFIG: Record<AssociationStatus, { state: "attention" | "success" | "warning"; iconColor: string }> =
+  {
+    requested: { state: "attention", iconColor: "warning.500" },
+    approved: { state: "success", iconColor: "success.500" },
+    rejected: { state: "warning", iconColor: "error.500" }
+  };
 
 const TeamTabContent: FC = () => {
   const t = useT();
@@ -150,7 +148,7 @@ const TeamTabContent: FC = () => {
   const handleConfirmRowAction = useCallback(async () => {
     if (rowAction == null || isSubmittingRef.current) return;
 
-    if (rowAction.action === "reinvite" || rowAction.member.associationStatus === "rejected") {
+    if (rowAction.action === "reinvite") {
       setRowAction(null);
       return;
     }
@@ -159,8 +157,10 @@ const TeamTabContent: FC = () => {
 
     isSubmittingRef.current = true;
     try {
-      if (rowAction.action === "remove") {
+      if (rowAction.action === "remove" && rowAction.member.associationStatus === "rejected") {
         await bulkDeleteUserAssociations(organisationUuid, [rowAction.member.id], "organisations");
+      } else if (rowAction.action === "remove") {
+        await updateOrganisationUserStatuses(organisationUuid, [rowAction.member.id], "rejected");
       } else {
         await updateOrganisationUserStatuses(
           organisationUuid,
