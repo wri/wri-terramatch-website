@@ -152,26 +152,22 @@ const resourceMapSelector =
     store[resource] as StoreResourceMap<DTO>;
 
 const indexDataSelector =
-  <DTO, Variables extends QueryVariables, Props, RelationshipsSelected = never>(
+  <DTO, Variables extends QueryVariables, Props>(
     resource: ResourceType,
-    indexMetaSelector: IndexMetaSelector<Variables>,
-    relationshipSelector?: (relationships?: Relationships) => RelationshipsSelected
+    indexMetaSelector: IndexMetaSelector<Variables>
   ) =>
   (props: Props, variablesFactory: VariablesFactory<Variables, Props>) =>
     createSelector(
       [indexMetaSelector(resource, variablesFactory(props) as Variables), resourceMapSelector<DTO>(resource)],
-      (indexMeta, resources): IndexConnection<DTO & RelationshipsSelected> => {
+      (indexMeta, resources): IndexConnection<DTO> => {
         if (indexMeta == null) return {};
 
-        const data = [] as (DTO & RelationshipsSelected)[];
+        const data = [] as DTO[];
         for (const id of indexMeta.ids) {
           // If we're missing any of the data we're supposed to have, return nothing so the
           // index endpoint is queried again.
           if (resources[id] == null) return {};
-          data.push({
-            ...(resources[id].attributes as DTO),
-            ...relationshipSelector?.(resources[id].relationships)
-          } as DTO & RelationshipsSelected);
+          data.push(resources[id].attributes as DTO);
         }
 
         return { data, indexTotal: indexMeta.total };
@@ -446,25 +442,6 @@ export const v3Resource = <
       variablesFactory,
       selectors: [
         indexDataSelector<DTO, TVariables, Props>(resource, requireEndpoint(endpoint).indexMetaSelector.bind(endpoint))
-      ],
-      selectorCacheKeyFactory: queryParamCacheKeyFactory
-    }).loadFailure(),
-
-  indexWithRelationships: <DTO, RelationshipsSelected, Props extends Record<string, unknown> = {}>(
-    relationshipSelector: (relationships?: Relationships) => RelationshipsSelected,
-    variablesFactory: VariablesFactory<TVariables, Props> = () => ({} as TVariables)
-  ) =>
-    new ApiConnectionFactory<TVariables, IndexConnection<DTO & RelationshipsSelected>, Props, THeaders>(endpoint, {
-      resource,
-      fetcher: requireEndpoint(endpoint).fetch.bind(endpoint),
-      isLoaded: ({ data }) => data != null,
-      variablesFactory,
-      selectors: [
-        indexDataSelector<DTO, TVariables, Props, RelationshipsSelected>(
-          resource,
-          requireEndpoint(endpoint).indexMetaSelector.bind(endpoint),
-          relationshipSelector
-        )
       ],
       selectorCacheKeyFactory: queryParamCacheKeyFactory
     }).loadFailure(),
