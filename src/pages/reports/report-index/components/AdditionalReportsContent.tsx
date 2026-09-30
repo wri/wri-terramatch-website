@@ -13,7 +13,7 @@ import {
   AdditionalReportsEntitySection as AdditionalReportsEntitySectionData,
   AdditionalReportType
 } from "../reportIndex.types";
-import { collectAdditionalReports, getReportsRequiringAttention } from "../reportIndex.utils";
+import { getReportsRequiringAttention } from "../reportIndex.utils";
 import AdditionalReportsTable from "./AdditionalReportsTable";
 import ReportAttentionStatusLabels from "./ReportAttentionStatusLabels";
 
@@ -83,59 +83,64 @@ const AdditionalReportsEntitySection: FC<{
 }> = ({ section, indexHref, restoreGroupId, restoreReportId, onRowRestored }) => {
   const t = useT();
   const [open, setOpen] = useState(true);
-  const reports = useMemo(() => collectAdditionalReports(section), [section]);
+  const reports = useMemo(() => section.groups.flatMap(group => group.reports), [section.groups]);
   const attentionCount = useMemo(() => getReportsRequiringAttention(reports), [reports]);
+  const childSections = section.children ?? [];
 
   return (
-    <Accordion
-      variant="tertiary"
-      open={open}
-      onOpenChange={setOpen}
-      className="bg-theme-neutral-100 overflow-hidden rounded"
-      classNameHeader="!mb-0"
-      header={
-        <ListSectionHeader
-          level="top-level"
-          title={section.name ?? (section.type === "organisation" ? t("Organisation") : t("Project"))}
-          titleHref={section.type === "project" ? `/project/${section.id}` : `/organization/${section.id}`}
-          caption={section.type === "organisation" ? t("Organisation") : section.caption}
-          icon={
-            open ? (
-              <FolderOpenIcon minWidth={5} width={5} height={"auto"} color="primary.600" />
-            ) : (
-              <FolderIcon minWidth={5} width={5} height={"auto"} color="neutral.400" />
-            )
+    <>
+      {section.groups.length > 0 ? (
+        <Accordion
+          variant="tertiary"
+          open={open}
+          onOpenChange={setOpen}
+          className="bg-theme-neutral-100 overflow-hidden rounded"
+          classNameHeader="!mb-0"
+          header={
+            <ListSectionHeader
+              level="top-level"
+              title={section.name ?? (section.type === "organisation" ? t("Organisation") : t("Project"))}
+              titleHref={section.type === "project" ? `/project/${section.id}` : `/organization/${section.id}`}
+              caption={section.type === "organisation" ? t("Organisation") : section.caption}
+              icon={
+                open ? (
+                  <FolderOpenIcon minWidth={5} width={5} height={"auto"} color="primary.600" />
+                ) : (
+                  <FolderIcon minWidth={5} width={5} height={"auto"} color="neutral.400" />
+                )
+              }
+              statusLabels={
+                attentionCount > 0 ? (
+                  <TextBadge>{t("{count} Require Attention", { count: attentionCount })}</TextBadge>
+                ) : null
+              }
+            />
           }
-          statusLabels={
-            attentionCount > 0 ? (
-              <TextBadge>{t("{count} Require Attention", { count: attentionCount })}</TextBadge>
-            ) : null
-          }
+        >
+          <div className="bg-theme-neutral-200 space-y-1 pt-0.5">
+            {section.groups.map(group => (
+              <AdditionalReportGroupSection
+                key={group.id}
+                group={group}
+                indexHref={indexHref}
+                restoreReportId={group.id === restoreGroupId ? restoreReportId : undefined}
+                onRowRestored={onRowRestored}
+              />
+            ))}
+          </div>
+        </Accordion>
+      ) : null}
+      {childSections.map(child => (
+        <AdditionalReportsEntitySection
+          key={`${child.type}-${child.id}`}
+          section={child}
+          indexHref={indexHref}
+          restoreGroupId={restoreGroupId}
+          restoreReportId={restoreReportId}
+          onRowRestored={onRowRestored}
         />
-      }
-    >
-      <div className="bg-theme-neutral-200 space-y-1 pt-0.5">
-        {section.groups.map(group => (
-          <AdditionalReportGroupSection
-            key={group.id}
-            group={group}
-            indexHref={indexHref}
-            restoreReportId={group.id === restoreGroupId ? restoreReportId : undefined}
-            onRowRestored={onRowRestored}
-          />
-        ))}
-        {(section.children ?? []).map(child => (
-          <AdditionalReportsEntitySection
-            key={`${child.type}-${child.id}`}
-            section={child}
-            indexHref={indexHref}
-            restoreGroupId={restoreGroupId}
-            restoreReportId={restoreReportId}
-            onRowRestored={onRowRestored}
-          />
-        ))}
-      </div>
-    </Accordion>
+      ))}
+    </>
   );
 };
 
