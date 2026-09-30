@@ -130,7 +130,8 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
 
     if (modalAction === "remove") {
       const approvedIds = approvedMembers.map(member => member.id);
-      if (approvedIds.length === 0) {
+      const rejectedIds = rejectedMembers.map(member => member.id);
+      if (approvedIds.length === 0 && rejectedIds.length === 0) {
         setModalAction(null);
         onCancel();
         return;
@@ -144,7 +145,12 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
 
       isSubmittingRef.current = true;
       try {
-        await bulkDeleteUserAssociations(organisationUuid, approvedIds, "organisations");
+        if (approvedIds.length > 0) {
+          await updateOrganisationUserStatuses(organisationUuid, approvedIds, "rejected");
+        }
+        if (rejectedIds.length > 0) {
+          await bulkDeleteUserAssociations(organisationUuid, rejectedIds, "organisations");
+        }
         setModalAction(null);
         onCancel();
       } catch {
