@@ -102,13 +102,7 @@ const AdditionalReportsEntitySection: FC<{
               title={section.name ?? (section.type === "organisation" ? t("Organisation") : t("Project"))}
               titleHref={section.type === "project" ? `/project/${section.id}` : `/organization/${section.id}`}
               caption={section.type === "organisation" ? t("Organisation") : section.caption}
-              icon={
-                open ? (
-                  <FolderOpenIcon minWidth={5} width={5} height={"auto"} color="primary.600" />
-                ) : (
-                  <FolderIcon minWidth={5} width={5} height={"auto"} color="neutral.400" />
-                )
-              }
+              open={open}
               statusLabels={
                 attentionCount > 0 ? (
                   <TextBadge>{t("{count} Require Attention", { count: attentionCount })}</TextBadge>
