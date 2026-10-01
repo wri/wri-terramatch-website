@@ -31,6 +31,8 @@ type SiteIndexHeaderProps = {
   onViewChange: (value: string) => void;
   onAddSite: () => void;
   onQueryChange: (query: string) => void;
+  embeddedInProject?: boolean;
+  addSiteDisabled?: boolean;
 };
 
 const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
@@ -43,7 +45,9 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
   onApplyFilters,
   onViewChange,
   onAddSite,
-  onQueryChange
+  onQueryChange,
+  embeddedInProject = false,
+  addSiteDisabled = false
 }) => {
   const t = useT();
   const router = useRouter();
@@ -76,62 +80,72 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
     [onApplyFilters, statusFilters, t, updateFilter]
   );
 
+  const addSiteButton = {
+    children: t("Add Site"),
+    leftIcon: <PlusIcon boxSize="0.625rem" />,
+    disabled: addSiteDisabled,
+    className: embeddedInProject ? "shrink-0 whitespace-nowrap" : "mobile:w-full",
+    onClick: onAddSite
+  };
+
   return (
     <>
-      <ToolbarObject
-        className="sticky top-0 z-20 !px-6"
-        breadcrumbs={{
-          linkRouter: router,
-          links: [
-            {
-              icon: <SiteIcon />,
-              label: t("Sites"),
-              link: "#"
-            }
-          ]
-        }}
-      />
-      <PageHeader
-        title={t("Sites")}
-        className=" !bg-theme-neutral-100 !pb-0 !pt-1 mobile:flex-col mobile:items-start mobile:gap-4"
-        classNameActions="mobile:w-full"
-        actions={
-          <Flex gap="0.5rem" alignItems="center" className="mobile:w-full mobile:flex-col mobile:items-stretch">
-            <Box className="w-[25rem] mobile:w-full">
-              <HighLevelSelector
-                key={
-                  selectedProject === ALL_PROJECTS_VIEW
-                    ? ALL_PROJECTS_VIEW
-                    : `${selectedProject}:${viewProjects.find(project => project.id === selectedProject)?.name ?? ""}`
+      {embeddedInProject ? null : (
+        <>
+          <ToolbarObject
+            className="sticky top-0 z-20 !px-6"
+            breadcrumbs={{
+              linkRouter: router,
+              links: [
+                {
+                  icon: <SiteIcon />,
+                  label: t("Sites"),
+                  link: "/site"
                 }
-                autocomplete
-                width="100%"
-                label={t("View:")}
-                items={[
-                  { label: t("All Projects"), value: ALL_PROJECTS_VIEW },
-                  ...viewProjects.map(project => ({ label: project.name, value: project.id }))
-                ]}
-                value={selectedProject}
-                emptyMessage={t("No results found")}
-                onChange={onViewChange}
-              />
-            </Box>
-            <Button
-              size="small"
-              leftIcon={<PlusIcon boxSize="0.625rem" />}
-              className="mobile:w-full"
-              disabled={viewProjects.length === 0 || selectedProject == ALL_PROJECTS_VIEW}
-              onClick={onAddSite}
-            >
-              {t("Add Site")}
-            </Button>
-          </Flex>
-        }
-      />
+              ]
+            }}
+          />
+          <PageHeader
+            title={t("Sites")}
+            className=" !bg-theme-neutral-100 !pb-0 !pt-1 mobile:flex-col mobile:items-start mobile:gap-4"
+            classNameActions="mobile:w-full"
+            actions={
+              <Flex gap="0.5rem" alignItems="center" className="mobile:w-full mobile:flex-col mobile:items-stretch">
+                <Box className="w-[25rem] mobile:w-full">
+                  <HighLevelSelector
+                    key={
+                      selectedProject === ALL_PROJECTS_VIEW
+                        ? ALL_PROJECTS_VIEW
+                        : `${selectedProject}:${
+                            viewProjects.find(project => project.id === selectedProject)?.name ?? ""
+                          }`
+                    }
+                    autocomplete
+                    width="100%"
+                    label={t("View:")}
+                    items={[
+                      { label: t("All Projects"), value: ALL_PROJECTS_VIEW },
+                      ...viewProjects.map(project => ({ label: project.name, value: project.id }))
+                    ]}
+                    value={selectedProject}
+                    emptyMessage={t("No results found")}
+                    onChange={onViewChange}
+                  />
+                </Box>
+                <Button
+                  size="small"
+                  {...addSiteButton}
+                  disabled={viewProjects.length === 0 || selectedProject == ALL_PROJECTS_VIEW}
+                />
+              </Flex>
+            }
+          />
+        </>
+      )}
       <ToolbarTable
         className="!bg-theme-neutral-200 !px-6 !pb-6 !pt-5"
-        classNameContentLeft="w-full"
-        classNameContentSearch="w-[19rem]"
+        classNameContentLeft={embeddedInProject ? "min-w-0 flex-1 !shrink" : "w-full"}
+        classNameContentSearch="w-[19rem] max-w-full"
         search={{
           label: siteCount === 1 ? t("Site") : t("Sites"),
           placeholder: t("Search sites"),
@@ -145,6 +159,7 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
         onClickFilterButton={() => setIsFilterDrawerOpen(true)}
         onClearFilters={() => onApplyFilters([], null)}
         showClearFilters={selectedFilters.length > 0}
+        button={embeddedInProject ? addSiteButton : undefined}
       />
       <SiteIndexFilterDrawer
         open={isFilterDrawerOpen}

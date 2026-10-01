@@ -182,7 +182,7 @@ const ProjectOverviewTab = ({ project, onViewSites, onViewNurseries }: ProjectOv
             size: "small",
             children: t("View Sites"),
             rightIcon: <ChevronRightIcon />,
-            onClick: onViewSites ?? (() => void router.push(`/site?project=${project.uuid}`))
+            onClick: onViewSites ?? (() => void router.push(`/project/${project.uuid}?tab=sites`))
           }}
           downloadButtonProps={{
             variant: "secondary",
