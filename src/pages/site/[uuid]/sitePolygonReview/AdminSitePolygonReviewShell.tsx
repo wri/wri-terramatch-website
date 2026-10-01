@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { FC } from "react";
 
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
+import { getReportsIndexUrl } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import SiteBanner from "@/redesignComponents/content/Banner/SiteBanner/SiteBanner";
 import { SiteIcon } from "@/redesignComponents/foundations/Icons";

@@ -7,7 +7,7 @@ import {
   getReportsIndexHrefFromQuery,
   getReportsIndexUrl,
   getReportsIndexUrlForEntity
-} from "@/pages/reports/report-index/reportIndex.utils";
+} from "@/pages/reports/reportIndex.utils";
 import { ProgressState } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
 import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { EntityName, SingularEntityName } from "@/types/common";

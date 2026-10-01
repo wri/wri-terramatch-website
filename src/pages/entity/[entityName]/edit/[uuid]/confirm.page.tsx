@@ -23,7 +23,7 @@ import {
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink, v3EntityName } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
-import { getReportsIndexHrefFromQuery, getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
+import { getReportsIndexHrefFromQuery, getReportsIndexUrl } from "@/pages/reports/reportIndex.utils";
 import { EntityName } from "@/types/common";
 
 const getCallToAction = (

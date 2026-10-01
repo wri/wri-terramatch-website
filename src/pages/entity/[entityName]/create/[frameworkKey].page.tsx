@@ -21,7 +21,7 @@ import { singularEntityName, v3EntityName } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { useGetReportingFrameworkFormKey } from "@/hooks/useGetFormKey";
 import { useReportEntityDueAt } from "@/hooks/useReportEntityDueAt";
-import { getReportsIndexHrefFromQuery, withReportsIndexReturn } from "@/pages/reports/report-index/reportIndex.utils";
+import { getReportsIndexHrefFromQuery, withReportsIndexReturn } from "@/pages/reports/reportIndex.utils";
 import ApiSlice from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import { resolveFormIntroDeadline } from "@/utils/formIntroDeadline";

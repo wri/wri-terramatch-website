@@ -112,7 +112,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         rightIcon: <ChevronRightIcon boxSize={4} />,
         className: "!text-theme-neutral-100",
         children: t("Add Sites"),
-        onClick: () => void router.push(`/site?project=${project.uuid}`)
+        onClick: () => void router.push(`/sites?project=${project.uuid}`)
       }
     ];
 
@@ -181,7 +181,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
             size: "small",
             children: t("View Sites"),
             rightIcon: <ChevronRightIcon />,
-            onClick: onViewSites ?? (() => void router.push(`/site?project=${project.uuid}`))
+            onClick: onViewSites ?? (() => void router.push(`/sites?project=${project.uuid}`))
           }}
           downloadButtonProps={{
             variant: "secondary",
