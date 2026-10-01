@@ -109,6 +109,7 @@ export const useSitePolygonOverlap = ({
       };
     }
 
+    const sameSiteOverlapTooltip = t("Polygon overlap detected");
     const crossSiteOverlapTooltip = t("This polygon overlaps with a polygon on another site in this project.");
 
     const overlapPolygons: OverlapPolygonPoint[] = [];
@@ -124,7 +125,7 @@ export const useSitePolygonOverlap = ({
         polygonUuid: uuid,
         lat: polygon.lat,
         lng: polygon.long,
-        tooltip: hasCrossSitePartner ? crossSiteOverlapTooltip : undefined
+        tooltip: hasCrossSitePartner ? crossSiteOverlapTooltip : sameSiteOverlapTooltip
       });
     }
 

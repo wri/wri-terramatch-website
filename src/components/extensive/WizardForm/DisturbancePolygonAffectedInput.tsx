@@ -49,6 +49,7 @@ export const DisturbancePolygonAffectedInput = ({
   }, [polygonsData, siteUuid]);
 
   const hasSite = siteUuid != null && siteUuid !== "";
+  const isWaitingForPolygons = hasSite && isLoadingPolygons;
   const hasNoApprovedPolygons = hasSite && !isLoadingPolygons && polygonChoices.length === 0;
 
   const fieldIndex = fieldUuid?.match(/\[(\d+)\]/)?.[1];
@@ -104,7 +105,7 @@ export const DisturbancePolygonAffectedInput = ({
     return [];
   }, [value]);
 
-  if (fieldUuid == null || hasNoApprovedPolygons) {
+  if (fieldUuid == null || isWaitingForPolygons || hasNoApprovedPolygons) {
     return null;
   }
 

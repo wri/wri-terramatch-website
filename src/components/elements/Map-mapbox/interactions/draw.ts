@@ -4,6 +4,7 @@ import { Map as MapboxMap } from "mapbox-gl";
 
 import { loadPolygonGeoJson } from "@/connections/GeoJsonExport";
 import { updateProjectPolygonResource } from "@/connections/ProjectPolygons";
+import { getSitePolygonsGeoJson } from "@/generated/v3/researchService/researchServiceComponents";
 import Log from "@/utils/log";
 
 import { zoomToBbox } from "../adapters/camera";
@@ -105,13 +106,23 @@ export async function fetchPolygonGeometry(
     throw new Error("polygonUuid is required");
   }
 
+  const queryParams = {
+    uuid: polygonUuid,
+    geometryOnly,
+    includeExtendedData: false
+  };
+
   try {
+    getSitePolygonsGeoJson.clearPending({ queryParams });
+
     const result = await loadPolygonGeoJson({
-      uuid: polygonUuid,
-      geometryOnly,
-      includeExtendedData: false,
+      ...queryParams,
       enabled: true
     });
+
+    if (result.loadFailure != null) {
+      throw result.loadFailure;
+    }
 
     const geojson = extractGeoJsonFromResponse(result.data);
     if (geojson == null || geojson.features == null || geojson.features.length === 0) {
