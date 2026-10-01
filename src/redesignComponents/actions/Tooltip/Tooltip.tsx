@@ -1,22 +1,8 @@
 import { Tooltip as WriTooltip } from "@worldresources/wri-design-systems";
-import type { ReactNode, RefObject } from "react";
+import type { ComponentProps, FC } from "react";
 
-const WriTooltipComponent = WriTooltip as any;
+type TooltipProps = ComponentProps<typeof WriTooltip>;
 
-type TooltipProps = {
-  children: ReactNode;
-  content: ReactNode;
-  showArrow?: boolean;
-  disabled?: boolean;
-  position?: "top" | "right" | "bottom" | "left";
-  variant?: "pill" | "text";
-  portalRef?: RefObject<HTMLElement | null>;
-  openDelay?: number;
-  closeDelay?: number;
-};
-
-const Tooltip = (props: TooltipProps) => {
-  return <WriTooltipComponent {...props} />;
-};
+const Tooltip: FC<TooltipProps> = props => <WriTooltip {...props} />;
 
 export default Tooltip;

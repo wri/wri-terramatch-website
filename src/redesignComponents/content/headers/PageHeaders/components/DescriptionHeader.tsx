@@ -100,12 +100,12 @@ const DescriptionHeader: FC<DescriptionHeaderProps> = ({
           </Text>
         </Flex>
       ) : null}
-      <div className="flex w-fit gap-2">
+      <Flex width="fit-content" gap={2}>
         <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="w-auto" onClick={handleEdit}>
           {t("Edit")}
         </Button>
         {downloadButtonProps != null ? <Button {...downloadButtonProps} /> : null}
-      </div>
+      </Flex>
     </>
   );
 };

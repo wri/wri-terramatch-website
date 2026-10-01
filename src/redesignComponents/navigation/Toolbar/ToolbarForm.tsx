@@ -16,30 +16,31 @@ const ToolbarForm: FC<ToolbarFormProps> = ({
       className="px-6 py-3"
       contentLeft={
         cancelButtonProps != null ? (
-          <div>
+          <Box>
             <Button {...cancelButtonProps} variant="borderless" />
-          </div>
+          </Box>
         ) : undefined
       }
       contentRight={
-        <div className="flex flex-row-reverse items-center gap-4">
-          <Button {...primaryButtonProps} variant="primary" />
-          {secondaryButtonProps && (
+        <Flex className="flex-row-reverse items-center gap-4">
+          {primaryButtonProps != null && <Button {...primaryButtonProps} variant="primary" />}
+          {secondaryButtonProps != null && (
             <>
-              <div className="h-4 w-[0.0625rem] bg-theme-neutral-300" />
+              <Box className="h-4 w-[0.0625rem] bg-theme-neutral-300" />
               <Button {...secondaryButtonProps} variant="secondary" />
             </>
           )}
-          {tertiaryButtonProps && (
+          {tertiaryButtonProps != null && (
             <>
-              <div className="h-4 w-[0.0625rem] bg-theme-neutral-300" />
+              <Box className="h-4 w-[0.0625rem] bg-theme-neutral-300" />
               <Button {...tertiaryButtonProps} variant="borderless" />
             </>
           )}
-        </div>
+        </Flex>
       }
     />
   );
 };
 
 export default ToolbarForm;
+import { Box, Flex } from "@chakra-ui/react";

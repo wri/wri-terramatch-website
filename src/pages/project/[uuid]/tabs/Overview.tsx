@@ -197,7 +197,6 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
               entityModel={project}
               type="projects"
               className="h-full min-h-0 rounded"
-              disabledPolygonPanel={true}
               hideFullscreenControl={true}
             />
             {showSiteAreasMapPlaceholder && (

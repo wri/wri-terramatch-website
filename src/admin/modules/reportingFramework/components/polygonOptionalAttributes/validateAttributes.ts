@@ -1,4 +1,4 @@
-import { previewKeyFromLabel } from "./mappers";
+import { isSelectType, previewKeyFromLabel } from "./mappers";
 import { LocalAttribute } from "./types";
 
 export const validateAttributes = (attributes: LocalAttribute[]): string | null => {
@@ -9,7 +9,9 @@ export const validateAttributes = (attributes: LocalAttribute[]): string | null 
     return "Please fill in all attribute labels and option labels before saving.";
   }
 
-  const emptyOptions = attributes.find(attribute => attribute.options.length === 0);
+  const emptyOptions = attributes.find(
+    attribute => isSelectType(attribute.inputType) && attribute.options.length === 0
+  );
   if (emptyOptions != null) {
     return "Every attribute must have at least one option.";
   }

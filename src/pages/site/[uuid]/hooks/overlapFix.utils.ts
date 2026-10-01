@@ -1,5 +1,6 @@
 import type {
   SitePolygonLightDto,
+  SitePolygonMapEntryDto,
   ValidationCriteriaDto,
   ValidationDto
 } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -119,17 +120,17 @@ export const collectGeometryUuidsForValidationUiClear = ({
 
 export const resolveClippedGeometryUuids = (
   clippedVersions: ClippedVersionSummary[],
-  refreshedPolygons: SitePolygonLightDto[]
+  refreshedPolygons: ReadonlyArray<SitePolygonMapEntryDto>
 ): string[] => {
   const refreshedBySitePolygonUuid = new Map(
     refreshedPolygons
       .map(polygon => (polygon.uuid != null && polygon.uuid !== "" ? ([polygon.uuid, polygon] as const) : null))
-      .filter((entry): entry is readonly [string, SitePolygonLightDto] => entry != null)
+      .filter((entry): entry is readonly [string, SitePolygonMapEntryDto] => entry != null)
   );
   const refreshedByName = new Map(
     refreshedPolygons
       .map(polygon => (polygon.name != null && polygon.name !== "" ? ([polygon.name, polygon] as const) : null))
-      .filter((entry): entry is readonly [string, SitePolygonLightDto] => entry != null)
+      .filter((entry): entry is readonly [string, SitePolygonMapEntryDto] => entry != null)
   );
 
   const geometryUuids = new Set<string>();
@@ -205,56 +206,6 @@ export const getSelectedOverlapFixSummary = (
   };
 };
 
-export const resolveActivePolygonAfterOverlapFix = (
-  refreshedPolygons: SitePolygonLightDto[],
-  context: {
-    previousPolygonUuid: string;
-    primaryUuid?: string | null;
-    sitePolygonUuid?: string | null;
-  },
-  clippedVersions: ClippedVersionSummary[] = []
-): SitePolygonLightDto | undefined => {
-  const refreshedByGeometryUuid = new Map(
-    refreshedPolygons
-      .map(polygon =>
-        polygon.polygonUuid != null && polygon.polygonUuid !== "" ? ([polygon.polygonUuid, polygon] as const) : null
-      )
-      .filter((entry): entry is readonly [string, SitePolygonLightDto] => entry != null)
-  );
-  const refreshedBySitePolygonUuid = new Map(
-    refreshedPolygons
-      .map(polygon => (polygon.uuid != null && polygon.uuid !== "" ? ([polygon.uuid, polygon] as const) : null))
-      .filter((entry): entry is readonly [string, SitePolygonLightDto] => entry != null)
-  );
-
-  for (const version of clippedVersions) {
-    const clippedPolygon =
-      (toNonEmptyUuid(version.polygonUuid) ? refreshedByGeometryUuid.get(version.polygonUuid) : undefined) ??
-      (toNonEmptyUuid(version.uuid) ? refreshedBySitePolygonUuid.get(version.uuid) : undefined);
-    if (clippedPolygon != null && clippedPolygon.isActive) {
-      return clippedPolygon;
-    }
-  }
-
-  if (context.primaryUuid != null && context.primaryUuid !== "") {
-    const activeVersion = refreshedPolygons.find(
-      polygon => polygon.primaryUuid === context.primaryUuid && polygon.isActive
-    );
-    if (activeVersion != null) {
-      return activeVersion;
-    }
-  }
-
-  if (context.sitePolygonUuid != null && context.sitePolygonUuid !== "") {
-    const bySitePolygonUuid = refreshedPolygons.find(polygon => polygon.uuid === context.sitePolygonUuid);
-    if (bySitePolygonUuid != null) {
-      return bySitePolygonUuid;
-    }
-  }
-
-  return refreshedPolygons.find(polygon => polygon.polygonUuid === context.previousPolygonUuid);
-};
-
 export const extractClippedVersions = (response: unknown): ClippedVersionSummary[] => {
   if (!isRecord(response)) {
     return [];
@@ -284,7 +235,7 @@ export const buildOverlapFixResultPolygons = (
   fixedVersions: ClippedVersionSummary[],
   fixableCandidates: OverlapFixCandidate[],
   notFixableCandidates: OverlapFixCandidate[],
-  refreshedPolygons: SitePolygonLightDto[],
+  refreshedPolygons: ReadonlyArray<SitePolygonMapEntryDto>,
   refreshedOverlapValidations: ValidationDto[] = []
 ): { polygonsFixed: OverlapFixPolygon[]; polygonsNotFixed: OverlapFixPolygon[] } => {
   const refreshedByGeometryUuid = new Map(
@@ -292,17 +243,17 @@ export const buildOverlapFixResultPolygons = (
       .map(polygon =>
         polygon.polygonUuid != null && polygon.polygonUuid !== "" ? ([polygon.polygonUuid, polygon] as const) : null
       )
-      .filter((entry): entry is readonly [string, SitePolygonLightDto] => entry != null)
+      .filter((entry): entry is readonly [string, SitePolygonMapEntryDto] => entry != null)
   );
   const refreshedBySitePolygonUuid = new Map(
     refreshedPolygons
       .map(polygon => (polygon.uuid != null && polygon.uuid !== "" ? ([polygon.uuid, polygon] as const) : null))
-      .filter((entry): entry is readonly [string, SitePolygonLightDto] => entry != null)
+      .filter((entry): entry is readonly [string, SitePolygonMapEntryDto] => entry != null)
   );
   const refreshedByName = new Map(
     refreshedPolygons
       .map(polygon => (polygon.name != null && polygon.name !== "" ? ([polygon.name, polygon] as const) : null))
-      .filter((entry): entry is readonly [string, SitePolygonLightDto] => entry != null)
+      .filter((entry): entry is readonly [string, SitePolygonMapEntryDto] => entry != null)
   );
   const candidateByName = new Map(fixableCandidates.map(candidate => [candidate.name, candidate]));
   const refreshedOverlapValidationByUuid = new Map(

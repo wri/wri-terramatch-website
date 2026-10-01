@@ -1,4 +1,6 @@
-import { Flex, Image, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
+import NextImage from "next/image";
 import { FC, useCallback, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -45,8 +47,8 @@ interface CommentCardProps {
 const CommentCard: FC<CommentCardProps> = ({
   participantType = "other-user",
   state = "view",
-  authorName = "Name Surname",
-  createdAt = "dd/mm/yyyy",
+  authorName: authorNameProp,
+  createdAt: createdAtProp,
   message = "",
   avatarSrc,
   attachments = [],
@@ -65,8 +67,11 @@ const CommentCard: FC<CommentCardProps> = ({
   onSaveEditing,
   className
 }) => {
+  const t = useT();
+  const authorName = authorNameProp ?? t("Name Surname");
+  const createdAt = createdAtProp ?? t("dd/mm/yyyy");
   const [internalValue, setInternalValue] = useState(defaultValue);
-  const isValueControlled = value !== undefined;
+  const isValueControlled = value != null;
   const currentValue = isValueControlled ? value : internalValue;
 
   const isEmpty = participantType === "empty";
@@ -76,16 +81,16 @@ const CommentCard: FC<CommentCardProps> = ({
   const contextMenuItems = useMemo<MenuItemOption[]>(() => {
     if (participantType === "current-user") {
       return [
-        { label: "Edit", value: "edit", onClick: onEdit },
-        { label: "Delete", value: "delete", onClick: onDelete }
+        { label: t("Edit"), value: "edit", onClick: onEdit },
+        { label: t("Delete"), value: "delete", onClick: onDelete }
       ];
     }
 
     return [
-      { label: "Mark Read", value: "mark-read", onClick: onMarkRead },
-      { label: "Delete", value: "delete", onClick: onDelete }
+      { label: t("Mark Read"), value: "mark-read", onClick: onMarkRead },
+      { label: t("Delete"), value: "delete", onClick: onDelete }
     ];
-  }, [onDelete, onEdit, onMarkRead, participantType]);
+  }, [onDelete, onEdit, onMarkRead, participantType, t]);
 
   const handleChange = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -104,7 +109,7 @@ const CommentCard: FC<CommentCardProps> = ({
       <Flex className="items-center gap-3 bg-theme-neutral-100 px-6 py-5">
         <CommentIcon color="neutral.600" boxSize={5} />
         <Text textStyle="600-bold" color="neutral.900">
-          No comments yet.
+          {t("No comments yet.")}
         </Text>
       </Flex>
     );
@@ -137,12 +142,12 @@ const CommentCard: FC<CommentCardProps> = ({
                 className="!h-6 !w-6 !bg-transparent hover:!bg-theme-primary-500/20"
                 icon={<UnreadIcon color="neutral.900" boxSize={4} />}
                 onClick={onMarkRead}
-                aria-label="Mark as read"
+                aria-label={t("Mark as read")}
               />
             )}
             {showContextOptions && (
               <MenuCustom
-                label="Comment options"
+                label={t("Comment options")}
                 items={contextMenuItems}
                 customTrigger={
                   <IconButton
@@ -165,10 +170,13 @@ const CommentCard: FC<CommentCardProps> = ({
           {hasAttachments && (
             <Flex className="flex-wrap gap-3">
               {attachments.map(file => (
-                <Image
-                  key={file.name}
+                <NextImage
+                  key={file.url}
                   src={file.url}
                   alt={file.name}
+                  width={170}
+                  height={140}
+                  unoptimized
                   className="h-[8.75rem] w-[10.625rem] rounded border border-theme-neutral-300 object-cover"
                 />
               ))}

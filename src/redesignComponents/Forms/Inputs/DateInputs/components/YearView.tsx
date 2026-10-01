@@ -10,10 +10,10 @@ const YearView: FC = () => {
       <ViewNavigation />
       <DatePicker.Table>
         <DatePicker.TableBody>
-          {getYearsGrid({ columns: 3 }).map((years, i) => (
-            <DatePicker.TableRow key={i}>
-              {years.map((year, j) => (
-                <DatePicker.TableCell key={j} value={year.value}>
+          {getYearsGrid({ columns: 3 }).map(years => (
+            <DatePicker.TableRow key={years.map(({ value }) => value).join("-")}>
+              {years.map(year => (
+                <DatePicker.TableCell key={year.value} value={year.value}>
                   <DatePicker.TableCellTrigger>{year.label}</DatePicker.TableCellTrigger>
                 </DatePicker.TableCell>
               ))}

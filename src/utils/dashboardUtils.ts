@@ -54,6 +54,7 @@ const FRAMEWORK_NAME_MAP = {
   "terrafund-cohort-3": "TerraFund Cohort Three",
   "terrafund-3": "TerraFund Cohort Three",
   "fundo-flora-cohort-1": "Fundo Flora Cohort One",
+  "fundo-flora-cohort-2": "Fundo Flora Cohort Two",
   "barka-fund": "Barka Fund"
 };
 
@@ -240,6 +241,7 @@ export const cohortNames = {
   hbf: "HBF",
   "epa-ghana-pilot": "EPA-Ghana Pilot",
   "fundo-flora-cohort-1": "Fundo Flora Cohort One",
+  "fundo-flora-cohort-2": "Fundo Flora Cohort Two",
   "barka-fund": "Barka Fund"
 };
 export const formatNumberUS = (value: number) =>

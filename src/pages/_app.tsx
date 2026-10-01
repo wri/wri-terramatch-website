@@ -25,7 +25,7 @@ import NotificationProvider from "@/context/notification.provider";
 import RouteHistoryProvider from "@/context/routeHistory.provider";
 import ToastProvider from "@/context/toast.provider";
 import { system } from "@/lib/theme";
-import { LayoutShellProvider } from "@/redesignComponents/Loayout/LayoutShell.provider";
+import { LayoutShellProvider } from "@/redesignComponents/Layout/LayoutShell.provider";
 import { WrappedReduxProvider } from "@/store/store";
 import Bootstrap from "@/utils/Bootstrap";
 import setupYup from "@/yup.locale";

@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { FC, useCallback } from "react";
@@ -88,7 +88,7 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
           }}
         />
       ) : (
-        <div className="flex w-fit gap-2">
+        <Flex width="fit-content" gap={2}>
           <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="w-auto" onClick={handleEditClick}>
             {t("Edit")}
           </Button>
@@ -102,7 +102,7 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
           >
             {t("Download Nursery Files")}
           </Button>
-        </div>
+        </Flex>
       )}
     </Box>
   );

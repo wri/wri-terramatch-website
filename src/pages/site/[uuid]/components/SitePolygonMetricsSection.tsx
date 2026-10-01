@@ -1,11 +1,12 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import type { FC } from "react";
 
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { AreaHectaresIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
-import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
+
+import SitePolygonIssuesPanel from "./SitePolygonIssuesPanel";
 
 type SitePolygonMetricsSectionProps = {
   totalTreesPlanted: number;
@@ -15,7 +16,9 @@ type SitePolygonMetricsSectionProps = {
   selectedTreesPlanted: number;
   selectedRestorationAreaRounded: number;
   polygonsWithOverlapCount: number;
+  polygonsWithDisturbanceCount: number;
   onSelectOverlapPolygons: () => void;
+  onSelectDisturbancePolygons: () => void;
 };
 
 const SitePolygonMetricsSection: FC<SitePolygonMetricsSectionProps> = ({
@@ -26,7 +29,9 @@ const SitePolygonMetricsSection: FC<SitePolygonMetricsSectionProps> = ({
   selectedTreesPlanted,
   selectedRestorationAreaRounded,
   polygonsWithOverlapCount,
-  onSelectOverlapPolygons
+  polygonsWithDisturbanceCount,
+  onSelectOverlapPolygons,
+  onSelectDisturbancePolygons
 }) => {
   const t = useT();
 
@@ -59,26 +64,12 @@ const SitePolygonMetricsSection: FC<SitePolygonMetricsSectionProps> = ({
           className={classNames("mobile:w-full mobile:min-w-full", "min-w-[12.5rem]")}
         />
       </Flex>
-      {polygonsWithOverlapCount > 0 && (
-        <InlineMessage
-          actionLabel={t("Select Polygons")}
-          isButtonRight
-          size="small"
-          className="w-max"
-          label={
-            <Text color="error.900" textStyle="300">
-              <b>
-                {polygonsWithOverlapCount === 1
-                  ? t("1 overlap ")
-                  : t("{count} overlaps ", { count: polygonsWithOverlapCount })}
-              </b>
-              {t("detected")}
-            </Text>
-          }
-          onActionClick={onSelectOverlapPolygons}
-          variant="error"
-        />
-      )}
+      <SitePolygonIssuesPanel
+        overlapCount={polygonsWithOverlapCount}
+        disturbanceCount={polygonsWithDisturbanceCount}
+        onSelectOverlapPolygons={onSelectOverlapPolygons}
+        onSelectDisturbancePolygons={onSelectDisturbancePolygons}
+      />
     </Flex>
   );
 };

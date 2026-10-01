@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import { Map as MapboxMap } from "mapbox-gl";
-import React, { MutableRefObject, useEffect, useLayoutEffect, useRef } from "react";
+import React, { MutableRefObject, useEffect, useRef } from "react";
 
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
@@ -39,7 +39,6 @@ type UseMapMediaParams = {
   hideMediaPopupActions?: boolean;
   hideMediaOnMap?: boolean;
   isPolygonGeometryLoading?: boolean;
-  isEditFocusActive?: boolean;
   overlapPolygons?: OverlapPolygonPoint[];
 };
 
@@ -61,7 +60,6 @@ export function useMapMedia({
   hideMediaPopupActions = false,
   hideMediaOnMap = false,
   isPolygonGeometryLoading = false,
-  isEditFocusActive = false,
   overlapPolygons
 }: UseMapMediaParams) {
   const championsMap = useChampionsMap();
@@ -70,7 +68,6 @@ export function useMapMedia({
     alwaysShowPhotosOnMap,
     hideMediaOnMap,
     isPolygonGeometryLoading,
-    isEditFocusActive,
     overlapPolygons
   });
   const callbacksRef = useRef<MediaCallbacks | null>(null);
@@ -87,12 +84,7 @@ export function useMapMedia({
 
     if (championsMap) {
       const callbacks = callbacksRef.current;
-      if (callbacks == null) {
-        if (!photosVisible) {
-          removeMediaMarkers(mapInstance);
-        }
-        return;
-      }
+      if (callbacks == null) return;
       addMediaMarkers(mapInstance, mediaFiles, callbacks, photosVisible, hideMediaPopupActions);
       return;
     }
@@ -106,13 +98,6 @@ export function useMapMedia({
     if (callbacks == null) return;
     addMediaSymbolLayer(mapInstance, mediaFiles, callbacks);
   };
-
-  useLayoutEffect(() => {
-    const mapInstance = map.current;
-    if (mapInstance == null || !styleReady || photosVisible) return;
-    applyPhotosVisibility(mapInstance);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [photosVisible, styleReady]);
 
   useEffect(() => {
     const mapInstance = map.current;

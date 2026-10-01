@@ -70,10 +70,10 @@ export const DatePickerInput: FC<DatePickerInputProps> = ({
       return formatDateValue(dateVal, dateFormat);
     },
     parse(value): DateValue | undefined {
-      return parseDateInput(value, dateFormat) as DateValue | undefined;
+      return parseDateInput(value, dateFormat);
     },
     onValueChange({ value }) {
-      if (valueProp !== undefined) {
+      if (valueProp != null) {
         onValueChange?.(value);
       } else {
         setUncontrolledDate(value);
@@ -98,20 +98,20 @@ export const DatePickerInput: FC<DatePickerInputProps> = ({
         data-invalid={errorMessage != null ? "" : undefined}
         data-open={picker.open ? "" : undefined}
         data-filled={isFilled ? "" : undefined}
-        data-disabled={disabled ? "" : undefined}
+        data-disabled={disabled === true ? "" : undefined}
       >
         <Global styles={calendarBaseGlobalStyles} />
         <DatePicker.RootProvider value={picker}>
           <DatePicker.Control
-            onClick={() => !disabled && picker.setOpen(true)}
-            style={{ gap: "0.5rem", cursor: disabled ? "not-allowed" : "pointer" }}
+            onClick={() => disabled !== true && picker.setOpen(true)}
+            style={{ gap: "0.5rem", cursor: disabled === true ? "not-allowed" : "pointer" }}
           >
             <CalendarIcon style={{ color: getThemedColor("neutral", 600) }} />
             <DatePicker.Input
               index={0}
               placeholder={dateFormat}
               onKeyDown={event => {
-                if (disabled || picker.open) return;
+                if (disabled === true || picker.open) return;
                 if (event.key === "ArrowDown" || event.key === "ArrowUp") {
                   event.preventDefault();
                   picker.setOpen(true);

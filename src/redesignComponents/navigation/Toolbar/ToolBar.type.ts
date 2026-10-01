@@ -21,6 +21,8 @@ export type BulkToolbarActionTone = "default" | "danger";
 export type BulkToolbarAction = IButtonProps & {
   id: string;
   tone?: BulkToolbarActionTone;
+  infoTooltip?: ReactNode;
+  tooltip?: ReactNode;
 };
 
 export interface BulkActionToolbarProps {
@@ -96,6 +98,7 @@ export interface ToolbarTableProps {
   onClickFilterButton?: () => void;
   selectedFilters?: SelectedFilter[];
   classNameContentLeft?: string;
+  classNameContentSearch?: string;
 }
 
 export interface ViewToolbarProps {

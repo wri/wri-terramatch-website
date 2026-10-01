@@ -1,4 +1,4 @@
-import { Tabs, TabsList, TabsRoot } from "@chakra-ui/react";
+import { Box, Tabs, TabsList, TabsRoot } from "@chakra-ui/react";
 import { FC, useCallback } from "react";
 
 import { TabType } from "./formNavigation.constants";
@@ -44,8 +44,8 @@ const FormNavigation: FC<FormNavigationProps> = props => {
   );
 
   return (
-    <div className="w-fit overflow-y-auto overflow-x-clip pr-4 pb-4">
-      <div className="w-fit">
+    <Box className="w-fit overflow-y-auto overflow-x-clip pb-4 pr-4">
+      <Box className="w-fit">
         <TabsRoot
           value={selectedTab}
           orientation="horizontal"
@@ -62,7 +62,7 @@ const FormNavigation: FC<FormNavigationProps> = props => {
                   value={value}
                   label={label}
                   index={index}
-                  type={disabled ? "disabled" : type}
+                  type={disabled === true ? "disabled" : type}
                   disabled={disabled}
                   ariaLabel={ariaLabel}
                   isSelected={value === selectedTab}
@@ -71,8 +71,8 @@ const FormNavigation: FC<FormNavigationProps> = props => {
             })}
           </TabsListTyped>
         </TabsRoot>
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

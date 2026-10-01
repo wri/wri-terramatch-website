@@ -32,7 +32,7 @@ const Drawer: FC<DrawerProps> = ({
   maxH
 }) => {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
-  const isControlled = openProp !== undefined;
+  const isControlled = openProp != null;
   const open = isControlled ? openProp : uncontrolledOpen;
   const onOpenChangeRef = useRef(onOpenChange);
   onOpenChangeRef.current = onOpenChange;

@@ -4,8 +4,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { pruneEntityCache, useFullProject } from "@/connections/Entity";
 import { useMyUser } from "@/connections/User";
-import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
-import Modal from "@/redesignComponents/containers/Modal/Modal";
+import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
 import CommentInput from "@/redesignComponents/content/Message/CommentInput";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
 import { WarningIcon } from "@/redesignComponents/foundations/Icons";
@@ -76,10 +75,6 @@ const ApprovePolygonConfirmation: FC<ApprovePolygonConfirmationProps> = ({
 
   const isSinglePolygon = polygons.length === 1;
 
-  const handleClose = useCallback(() => {
-    onOpenChange(false);
-  }, [onOpenChange]);
-
   const handleApprove = useCallback(async () => {
     if (onApprove == null || selectedRows.length === 0) {
       onOpenChange(false);
@@ -96,17 +91,14 @@ const ApprovePolygonConfirmation: FC<ApprovePolygonConfirmationProps> = ({
   }, [comment, onApprove, onOpenChange, selectedRows]);
 
   return (
-    <Modal
+    <ModalConfirmation
       modal={false}
       open={open}
-      onClose={handleClose}
+      onOpenChange={onOpenChange}
       size="large"
       contentPadding={false}
-      header={
-        <b className="text-theme-neutral-800">
-          {polygons.length === 1 ? t("Approve polygon?") : t("Approve polygons?")}
-        </b>
-      }
+      title={polygons.length === 1 ? t("Approve polygon?") : t("Approve polygons?")}
+      contentLayout="custom"
       content={
         <Flex className="flex-col gap-4">
           <Box px={4} pt={4}>
@@ -193,24 +185,12 @@ const ApprovePolygonConfirmation: FC<ApprovePolygonConfirmationProps> = ({
           </Box>
         </Flex>
       }
-      footer={
-        <ButtonGroup
-          buttons={[
-            {
-              id: "cancel",
-              variant: "secondary",
-              children: t("Cancel"),
-              onClick: handleClose
-            },
-            {
-              id: "save",
-              children: t("Approve"),
-              disabled: isSaving || selectedRows.length === 0,
-              onClick: () => void handleApprove()
-            }
-          ]}
-        />
-      }
+      confirmButton={{
+        id: "save",
+        children: t("Approve"),
+        disabled: isSaving || selectedRows.length === 0,
+        onClick: () => void handleApprove()
+      }}
     />
   );
 };

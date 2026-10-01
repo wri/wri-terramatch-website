@@ -1,3 +1,4 @@
+import type { DateValue } from "@ark-ui/react";
 import { CalendarDate } from "@internationalized/date";
 
 export function getDateFormatString(lang: string) {
@@ -84,4 +85,18 @@ export function parseDateInput(raw: string, pattern: string): CalendarDate | und
   if (year < 1) return undefined;
 
   return new CalendarDate(year, month, day);
+}
+
+export function isoDateOnlyToDateValue(value: string | null | undefined): DateValue[] {
+  if (value == null || value === "") return [];
+  const [year, month, day] = value.split("T")[0].split("-").map(Number);
+  if (!year || !month || !day) return [];
+  return [new CalendarDate(year, month, day)];
+}
+
+export function dateValueToIsoDateOnly(value: DateValue | undefined): string | undefined {
+  if (value == null) return undefined;
+  const mm = String(value.month).padStart(2, "0");
+  const dd = String(value.day).padStart(2, "0");
+  return `${value.year}-${mm}-${dd}`;
 }

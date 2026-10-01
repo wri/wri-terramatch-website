@@ -7,6 +7,9 @@ import { LocalAttribute, LocalOption, UpdatePayload } from "./types";
 
 export { isFrameworkKey };
 
+export const isSelectType = (inputType: LocalAttribute["inputType"]): boolean =>
+  inputType === "single_select" || inputType === "multi_select";
+
 export const toLocalOption = (dto: PolygonAttributeDefinitionDto["options"][number]): LocalOption => ({
   localId: dto.uuid,
   uuid: dto.uuid,

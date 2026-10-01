@@ -10,7 +10,8 @@ import {
   bulkUpdateSitePolygonAttributes,
   bulkUpdateSitePolygonStatus,
   getStatusUpdateCommentCreatedAt,
-  loadAllSitePolygons,
+  loadSitePolygonByUuid,
+  loadSitePolygonMapIndex,
   pruneSitePolygonsCache
 } from "@/connections/SitePolygons";
 import { useMyUser } from "@/connections/User";
@@ -61,7 +62,6 @@ import {
   collectGeometryUuidsForValidationUiClear,
   collectRelatedPartnerUuidsFromFixability,
   extractClippedVersions,
-  resolveActivePolygonAfterOverlapFix,
   resolveClippedGeometryUuids
 } from "./overlapFix.utils";
 
@@ -173,29 +173,17 @@ export const useSitePolygonBulkActions = ({
   const [submittingPolygonCount, setSubmittingPolygonCount] = useState(0);
 
   const refreshPolygonData = useCallback(
-    async ({
-      refreshValidations = false,
-      loadAll = false
-    }: { refreshValidations?: boolean; loadAll?: boolean } = {}) => {
+    async ({ refreshValidations = false }: { refreshValidations?: boolean } = {}) => {
       pruneSitePolygonsCache();
 
-      const allPolygonsPromise = loadAll
-        ? loadAllSitePolygons({
-            entityName: "sites",
-            entityUuid: site.uuid,
-            enabled: site.uuid != null && site.uuid !== ""
-          })
-        : Promise.resolve<SitePolygonLightDto[]>([]);
-
-      const refreshPromises: Promise<unknown>[] = [refetchPolygons(), allPolygonsPromise];
+      const refreshPromises: Promise<unknown>[] = [refetchPolygons()];
       if (refreshValidations) {
         refreshPromises.push(fetchAllValidationPages(true), fetchOverlapValidations(true));
       }
 
-      const [, refreshedPolygons] = await Promise.all(refreshPromises);
-      return refreshedPolygons as SitePolygonLightDto[];
+      await Promise.all(refreshPromises);
     },
-    [fetchAllValidationPages, fetchOverlapValidations, refetchPolygons, site.uuid]
+    [fetchAllValidationPages, fetchOverlapValidations, refetchPolygons]
   );
 
   const openPolygonEditDrawerForRow = useCallback(
@@ -490,20 +478,23 @@ export const useSitePolygonBulkActions = ({
   const handleDrawerOverlapFixed = useCallback(
     async (params: PolygonOverlapFixParams) => {
       invalidatePolygonMapTiles();
+      await refreshPolygonData();
 
-      const refreshedPolygons = await refreshPolygonData({ loadAll: true });
+      const mapIndexResponse = await loadSitePolygonMapIndex({
+        entityName: "sites",
+        entityUuid: site.uuid,
+        enabled: site.uuid != null && site.uuid !== ""
+      });
+      const refreshedMapPolygons = mapIndexResponse.data?.polygons ?? [];
 
-      const updatedPolygon = resolveActivePolygonAfterOverlapFix(
-        refreshedPolygons,
-        {
-          previousPolygonUuid: params.previousPolygonUuid,
-          primaryUuid: params.primaryUuid,
-          sitePolygonUuid: params.sitePolygonUuid
-        },
-        params.clippedVersions ?? []
-      );
-      const clippedGeometryUuids = resolveClippedGeometryUuids(params.clippedVersions ?? [], refreshedPolygons);
-      const currentSiteGeometryUuids = refreshedPolygons
+      const activePolygonId = params.sitePolygonUuid ?? params.previousPolygonUuid;
+      const updatedPolygon =
+        activePolygonId != null && activePolygonId !== ""
+          ? await loadSitePolygonByUuid({ entityUuid: site.uuid, polygonId: activePolygonId })
+          : undefined;
+
+      const clippedGeometryUuids = resolveClippedGeometryUuids(params.clippedVersions ?? [], refreshedMapPolygons);
+      const currentSiteGeometryUuids = refreshedMapPolygons
         .map(polygon => polygon.polygonUuid ?? polygon.uuid)
         .filter((uuid): uuid is string => uuid != null && uuid !== "");
 
@@ -534,7 +525,8 @@ export const useSitePolygonBulkActions = ({
       invalidatePolygonMapTiles,
       onOverlapFixResultsOpen,
       polygonsData,
-      refreshPolygonData
+      refreshPolygonData,
+      site.uuid
     ]
   );
 
@@ -558,7 +550,15 @@ export const useSitePolygonBulkActions = ({
         const fixedVersions = extractClippedVersions(response);
 
         invalidatePolygonMapTiles();
-        const refreshedPolygons = await refreshPolygonData({ loadAll: true });
+        await refreshPolygonData();
+
+        const mapIndexResponse = await loadSitePolygonMapIndex({
+          entityName: "sites",
+          entityUuid: site.uuid,
+          enabled: site.uuid != null && site.uuid !== ""
+        });
+        const refreshedPolygons = mapIndexResponse.data?.polygons ?? [];
+
         const clippedGeometryUuids = resolveClippedGeometryUuids(fixedVersions, refreshedPolygons);
         const currentSiteGeometryUuids = refreshedPolygons
           .map(polygon => polygon.polygonUuid ?? polygon.uuid)
@@ -691,7 +691,7 @@ export const useSitePolygonBulkActions = ({
         invalidatePolygonMapTiles();
         setSubmittedPolygonNames(submittedNames);
         setShouldRefetchPolygonData(true);
-        await refreshPolygonData({ loadAll: true });
+        await refreshPolygonData();
         pendingPolygonSubmittedModalRef.current = true;
         ApiSlice.pruneCache("auditStatuses");
 

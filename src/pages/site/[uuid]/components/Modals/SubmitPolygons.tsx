@@ -2,8 +2,7 @@ import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback } from "react";
 
-import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
-import Modal from "@/redesignComponents/containers/Modal/Modal";
+import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
 import { WarningIcon } from "@/redesignComponents/foundations/Icons";
 
 export interface SubmitPolygonsProps {
@@ -17,10 +16,6 @@ const SubmitPolygons: FC<SubmitPolygonsProps> = ({ open, onOpenChange, eligibleC
   const t = useT();
   const skippedCount = totalCount - eligibleCount;
 
-  const handleClose = useCallback(() => {
-    onOpenChange(false);
-  }, [onOpenChange]);
-
   const handleSave = useCallback(async () => {
     if (onSubmit == null || eligibleCount === 0) {
       onOpenChange(false);
@@ -32,11 +27,12 @@ const SubmitPolygons: FC<SubmitPolygonsProps> = ({ open, onOpenChange, eligibleC
   }, [eligibleCount, onOpenChange, onSubmit]);
 
   return (
-    <Modal
+    <ModalConfirmation
       open={open}
-      onClose={handleClose}
+      onOpenChange={onOpenChange}
       size="medium"
-      header={<b className="text-theme-neutral-800">{t("Submit polygons?")}</b>}
+      title={t("Submit polygons?")}
+      contentLayout="custom"
       content={
         <Box px={4}>
           <Text textStyle="400" color="neutral.900" display={"flex"} gap={0.5} mb={3} alignItems={"center"}>
@@ -56,25 +52,13 @@ const SubmitPolygons: FC<SubmitPolygonsProps> = ({ open, onOpenChange, eligibleC
           )}
         </Box>
       }
-      footer={
-        <ButtonGroup
-          buttons={[
-            {
-              id: "cancel",
-              variant: "secondary",
-              children: t("Cancel"),
-              autoFocus: true,
-              onClick: handleClose
-            },
-            {
-              id: "submit",
-              children: t("Submit"),
-              disabled: eligibleCount === 0,
-              onClick: () => void handleSave()
-            }
-          ]}
-        />
-      }
+      confirmButton={{
+        id: "submit",
+        children: t("Submit"),
+        disabled: eligibleCount === 0,
+        onClick: () => void handleSave()
+      }}
+      cancelButton={{ autoFocus: true }}
     />
   );
 };

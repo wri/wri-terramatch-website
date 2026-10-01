@@ -1,3 +1,4 @@
+import { Box, Flex } from "@chakra-ui/react";
 import classNames from "classnames";
 import { FC } from "react";
 
@@ -13,11 +14,13 @@ const Toolbar: FC<ToolbarProps> = ({
   classNameContentCenter
 }) => {
   return (
-    <div className={classNames("flex items-center justify-between bg-white px-4", className)}>
-      <div className={classNames("flex-shrink-0", classNameContentLeft)}>{contentLeft}</div>
-      <div className={classNameContentCenter}>{contentCenter}</div>
-      <div className={classNames("flex-shrink-0", classNameContentRight)}>{contentRight}</div>
-    </div>
+    <Flex className={classNames("items-center justify-between bg-white px-4", className)}>
+      <Flex className={classNames("min-h-[1.75rem] flex-shrink-0 flex-col justify-center", classNameContentLeft)}>
+        {contentLeft}
+      </Flex>
+      <Box className={classNameContentCenter}>{contentCenter}</Box>
+      <Box className={classNames("flex-shrink-0", classNameContentRight)}>{contentRight}</Box>
+    </Flex>
   );
 };
 

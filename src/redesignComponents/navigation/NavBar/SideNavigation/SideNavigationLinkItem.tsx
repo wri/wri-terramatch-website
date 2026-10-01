@@ -1,4 +1,5 @@
 import { Button, Flex, Text } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
@@ -32,6 +33,7 @@ const SideNavigationLinkItem: FC<SideNavigationLinkItemProps> = ({
   notificationValue = 0
 }) => {
   const pathname = usePathname();
+  const t = useT();
   let currentPath = "";
 
   if (pathname != null) {
@@ -81,7 +83,7 @@ const SideNavigationLinkItem: FC<SideNavigationLinkItemProps> = ({
           </Badge>
           {isCollapsed ? null : (
             <>
-              <Text textStyle="400">{label}</Text>
+              <Text textStyle="400">{t(label)}</Text>
               <NumberBadge count={notificationValue} />
             </>
           )}
@@ -89,7 +91,7 @@ const SideNavigationLinkItem: FC<SideNavigationLinkItemProps> = ({
       </NextLink>
       {isCollapsed ? null : (
         <Flex alignItems="center" gap={2}>
-          {onAddClick ? (
+          {onAddClick != null ? (
             <Button onClick={handleAddClick} className={actionButtonClassName}>
               <PlusIcon boxSize={4} />
             </Button>

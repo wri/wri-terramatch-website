@@ -1047,7 +1047,22 @@ export type TaskIndexQueryParams = {
   ["page[number]"]?: number;
   status?: string;
   frameworkKey?: string;
+  /**
+   * Only one of projectUuid, siteUuid and nurseryUuid may be provided
+   */
   projectUuid?: string;
+  /**
+   * Only one of projectUuid, siteUuid and nurseryUuid may be provided
+   */
+  siteUuid?: string;
+  /**
+   * Only one of projectUuid, siteUuid and nurseryUuid may be provided
+   */
+  nurseryUuid?: string;
+  /**
+   * sideloads to include
+   */
+  sideloads?: ("projectReports" | "siteReports" | "nurseryReports" | "srpReports")[];
 };
 
 export type TaskIndexError = Fetcher.ErrorWrapper<{
@@ -1115,7 +1130,95 @@ export type TaskIndexResponse = {
      */
     id?: string;
     attributes?: Schemas.TaskLightDto;
+    relationships?: {
+      projectReport?: {
+        /**
+         * @example projectReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+      };
+      siteReports?: {
+        /**
+         * @example siteReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+      }[];
+      nurseryReports?: {
+        /**
+         * @example nurseryReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+      }[];
+      srpReports?: {
+        /**
+         * @example srpReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+      }[];
+    };
   }[];
+  included?: (
+    | {
+        /**
+         * @example projectReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.ProjectReportLightDto;
+      }
+    | {
+        /**
+         * @example siteReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SiteReportLightDto;
+      }
+    | {
+        /**
+         * @example nurseryReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.NurseryReportLightDto;
+      }
+    | {
+        /**
+         * @example srpReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SrpReportLightDto;
+      }
+  )[];
 };
 
 export type TaskIndexVariables = {
@@ -3053,7 +3156,7 @@ export type EntityIndexQueryParams = {
   /**
    * Filter reports by task ID (used to get site/nursery reports for a specific reporting period)
    */
-  taskId?: number;
+  taskIds?: number[];
   /**
    * Filter projects by polygon submission status
    */
@@ -5058,7 +5161,7 @@ export type EntityAssociationIndexQueryParams = {
   /**
    * Filter reports by task ID (used to get site/nursery reports for a specific reporting period)
    */
-  taskId?: number;
+  taskIds?: number[];
   /**
    * Filter projects by polygon submission status
    */

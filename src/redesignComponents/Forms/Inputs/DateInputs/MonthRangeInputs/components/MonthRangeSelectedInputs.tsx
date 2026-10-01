@@ -1,4 +1,5 @@
 import { useDatePickerContext } from "@ark-ui/react";
+import { Flex, Grid } from "@chakra-ui/react";
 import type { FC, RefObject } from "react";
 
 import CloseButton from "@/redesignComponents/actions/Buttons/CloseButton/CloseButton";
@@ -16,34 +17,34 @@ const MonthRangeSelectedInputs: FC<MonthRangeSelectedInputsProps> = ({ onClearMo
   const { value } = useDatePickerContext();
 
   const isStartCleared = preservedRef.current?.clearedIndex === 0 && value.length === 1;
-  const startText = isStartCleared ? "" : value[0] ? formatMonthYear(value[0], locale) : "";
+  const startText = isStartCleared ? "" : value[0] != null ? formatMonthYear(value[0], locale) : "";
   const endText = isStartCleared
-    ? value[0]
+    ? value[0] != null
       ? formatMonthYear(value[0], locale)
       : ""
-    : value[1]
+    : value[1] != null
     ? formatMonthYear(value[1], locale)
     : "";
 
   return (
-    <div className="mb-3 grid w-full grid-cols-2 items-center gap-2">
-      <div className="ql-align-center flex h-10 items-center gap-1 rounded border border-theme-neutral-700 pl-3 pr-1.5">
+    <Grid className="mb-3 w-full grid-cols-2 items-center gap-2">
+      <Flex className="ql-align-center h-10 items-center gap-1 rounded border border-theme-neutral-700 pl-3 pr-1.5">
         <input
           readOnly
           className="text-14-light w-full leading-[normal] !tracking-[-0.015625rem] outline-none"
           value={startText}
         />
         <CloseButton onClick={() => onClearMonth(0)} className="!bg-transparent" />
-      </div>
-      <div className="ql-align-center flex h-10 items-center gap-1 rounded border border-theme-neutral-700 pl-3 pr-1.5">
+      </Flex>
+      <Flex className="ql-align-center h-10 items-center gap-1 rounded border border-theme-neutral-700 pl-3 pr-1.5">
         <input
           readOnly
           className="text-14-light w-full leading-[normal] !tracking-[-0.015625rem] outline-none"
           value={endText}
         />
         <CloseButton onClick={() => onClearMonth(1)} className="!bg-transparent" />
-      </div>
-    </div>
+      </Flex>
+    </Grid>
   );
 };
 

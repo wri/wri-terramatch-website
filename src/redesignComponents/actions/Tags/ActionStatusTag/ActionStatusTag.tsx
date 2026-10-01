@@ -13,7 +13,7 @@ const ActionStatusTag: FC<ActionStatusTagProps> = ({
   icon,
   labelPrefix
 }) => {
-  const stateClassName = state ? ACTION_STATUS_TAG_MAP[state].className : undefined;
+  const stateClassName = state != null ? ACTION_STATUS_TAG_MAP[state].className : undefined;
 
   return (
     <Tag.Root

@@ -1,6 +1,7 @@
 import { Flex, Text } from "@chakra-ui/react";
-import { Meta, StoryObj } from "@storybook/react";
-import { useRef, useState } from "react";
+import { action } from "@storybook/addon-actions";
+import { Meta, StoryFn, StoryObj } from "@storybook/react";
+import { createRef, useRef, useState } from "react";
 
 import { getThemedColor } from "@/lib/theme";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -8,6 +9,8 @@ import { NotificationIcon, PlaceholderIcon, TreeCircleIcon } from "@/redesignCom
 
 import PointMarker from "../PointMarker/PointMarker";
 import MapPopUp from "./MapPopUp";
+
+const defaultAnchorRef = createRef<HTMLButtonElement>();
 
 const meta = {
   title: "Redesign Components/Geospatial/Map Pop Up",
@@ -17,7 +20,7 @@ const meta = {
   },
   tags: ["autodocs"],
   decorators: [
-    (Story: any) => (
+    (Story: StoryFn) => (
       <div
         style={{
           height: "64.375rem",
@@ -45,8 +48,8 @@ const footer = (
 export const Icon: Story = {
   args: {
     open: false,
-    onOpenChange: () => {},
-    anchorRef: null as any,
+    onOpenChange: action("Open state changed"),
+    anchorRef: defaultAnchorRef,
     header: (
       <div>
         <div
@@ -116,8 +119,8 @@ export const Icon: Story = {
 export const Circle: Story = {
   args: {
     open: false,
-    onOpenChange: () => {},
-    anchorRef: null as any,
+    onOpenChange: action("Open state changed"),
+    anchorRef: defaultAnchorRef,
     header: (
       <Text textStyle="400-bold" color="neutral-900">
         Title

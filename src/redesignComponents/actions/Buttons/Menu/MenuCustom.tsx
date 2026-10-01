@@ -1,4 +1,5 @@
 import { Menu, MenuContent, MenuItem, MenuPositioner, MenuTrigger, Portal } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import { FC, useState } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -11,16 +12,17 @@ const TypedMenuContent = MenuContent as FC<MenuContainerTyped>;
 const TypedMenuItem = MenuItem as FC<MenuItemTyped>;
 
 const MenuCustom: FC<MenuCustomProps> = ({ label, items, customTrigger }) => {
+  const t = useT();
   const [open, setOpen] = useState(false);
 
   return (
     <Menu.Root open={open} onOpenChange={(e: { open: boolean }) => setOpen(e.open)}>
       <TypedMenuTrigger asChild>
-        {customTrigger ? (
+        {customTrigger != null ? (
           customTrigger
         ) : (
           <Button variant="borderless" size="small">
-            {label}
+            {label == null ? null : t(label)}
           </Button>
         )}
       </TypedMenuTrigger>
@@ -36,7 +38,7 @@ const MenuCustom: FC<MenuCustomProps> = ({ label, items, customTrigger }) => {
                 color="neutral.900"
               >
                 {item.startIcon}
-                {item.label}
+                {t(item.label)}
                 {item.endIcon}
               </TypedMenuItem>
             ))}

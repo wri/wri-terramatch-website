@@ -1,6 +1,11 @@
 import React, { createContext, ReactNode, useContext } from "react";
 
-import { IpolygonFromMap } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/Polygons";
+/** Polygon the monitored map asked to focus. Previously lived on the removed PolygonReviewTab. */
+export interface IpolygonFromMap {
+  isOpen: boolean;
+  uuid: string;
+  source?: "menu" | "map" | "drawer";
+}
 
 type MonitoredDataType = {
   filters: {

@@ -1,14 +1,15 @@
 import { IconButton as WriIconButton } from "@worldresources/wri-design-systems";
-import { FC } from "react";
+import { FC, MouseEventHandler, ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
 
 interface IconButtonProps {
-  icon: React.ReactNode;
-  disabled?: boolean;
-  onClick?: () => void;
-  variant?: "primary" | "secondary" | "borderless";
-  size?: "default" | "small";
+  "aria-label"?: string;
   className?: string;
+  disabled?: boolean;
+  icon: ReactNode;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+  size?: "default" | "small";
+  variant?: "primary" | "secondary" | "borderless";
 }
 
 const IconButton: FC<IconButtonProps> = ({

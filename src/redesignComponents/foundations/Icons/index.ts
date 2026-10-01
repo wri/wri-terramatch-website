@@ -1,5 +1,5 @@
 export { AgriculturalLandIcon } from "./RestorationAndLand/AgriculturalLandIcon";
-export { AgroforestyIcon } from "./RestorationAndLand/AgroforestyIcon";
+export { AgroforestryIcon } from "./RestorationAndLand/AgroforestryIcon";
 export { ApplicationsIcon } from "./NavigationSections/ApplicationsIcon";
 export { AreaHectaresIcon } from "./DataVisualisation/AreaHectaresIcon";
 export { AreaHectaresCircleIcon } from "./DataVisualisation/AreaHectaresCircleIcon";
@@ -53,6 +53,7 @@ export { MoreVertIcon } from "./Function/MoreVertIcon";
 export { MangroveIcon } from "./RestorationAndLand/MangroveIcon";
 export { NaturalForestIcon } from "./RestorationAndLand/NaturalForestIcon";
 export { NewTabIcon } from "./Function/NewTabIcon";
+export { NoPhotosIcon } from "./Function/NoPhotosIcon";
 export { NothingReportedIcon } from "./Status/NothingReportedIcon";
 export { NotificationIcon } from "./NavigationSections/NotificationIcon";
 export { NurseryIcon } from "./NavigationSections/NurseryIcon";

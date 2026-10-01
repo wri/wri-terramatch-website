@@ -1,4 +1,4 @@
-import { Grid, GridItem } from "@chakra-ui/react";
+import { Box, Grid, GridItem } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 import { twMerge } from "tailwind-merge";
@@ -38,7 +38,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
   rows = MIN_ROWS,
   minItems = MIN_ITEMS
 }) => {
-  const imageCount = images?.length ?? 0;
+  const imageCount = images.length;
   const minimumCapacity = Math.max(minItems, columns * rows);
   const roundedCapacity = Math.ceil(Math.max(imageCount, 1) / columns) * columns;
   const itemsToShow = Math.max(minimumCapacity, roundedCapacity);
@@ -54,10 +54,10 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
       onScroll={onScroll}
       className={twMerge("rounded-md bg-theme-neutral-100 p-5", className)}
     >
-      {images?.map(image => (
+      {images.map(image => (
         <GridItem key={image.uuid}>
           <GalleryImage
-            onClickEdit={onSelectImage && (() => onSelectImage(image))}
+            onClickEdit={onSelectImage != null ? () => onSelectImage(image) : undefined}
             src={image.src}
             alt={image.alt}
             size={imageSize}
@@ -71,7 +71,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
         const showAddSlot = onClickAdd != null && isFirstPlaceholder;
 
         return (
-          <GridItem key={`placeholder-${index}`}>
+          <GridItem key={`placeholder-${imageCount + index}`}>
             {showAddSlot ? (
               <GalleryImage
                 className={twMerge("min-w-full bg-theme-neutral-200", classNameImage)}
@@ -81,7 +81,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
                 size={imageSize}
               />
             ) : (
-              <div
+              <Box
                 className="min-w-full rounded-md bg-theme-neutral-200"
                 style={{ width: resolveRemSizeValue(imageSize), height: resolveRemSizeValue(imageSize) }}
               />

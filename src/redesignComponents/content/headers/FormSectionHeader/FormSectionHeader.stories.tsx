@@ -1,3 +1,4 @@
+import { action } from "@storybook/addon-actions";
 import { Meta, StoryObj } from "@storybook/react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -55,7 +56,7 @@ export const Review: Story = {
     title: "Header Title",
     showBorder: false,
     actions: (
-      <Button variant="secondary" onClick={() => console.log("Edit clicked")}>
+      <Button variant="secondary" onClick={action("Edit clicked")}>
         Label
       </Button>
     )

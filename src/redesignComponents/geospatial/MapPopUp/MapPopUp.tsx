@@ -9,10 +9,14 @@ const MapPopUp: FC<ComponentProps<typeof WriMapPopup>> = props => {
       css={{
         "& [aria-modal='true']": {
           width: "fit-content",
-          maxWidth: "max-content"
+          maxWidth: "max-content",
+          zIndex: 1000,
+          pointerEvents: "auto"
         },
         "& > div:nth-of-type(2)": {
-          background: "transparent"
+          background: "transparent",
+          pointerEvents: "none",
+          backdropFilter: "none"
         }
       }}
     >

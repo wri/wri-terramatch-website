@@ -2,10 +2,17 @@ export const STATE_PROGRESS_TAG = {
   "not-started": {
     label: "Not Started",
     icon: (
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="text-theme-neutral-600"
+      >
         <path
           d="M8 0C12.4183 0 16 3.58172 16 8C16 12.4183 12.4183 16 8 16C3.58172 16 0 12.4183 0 8C5.15405e-07 3.58172 3.58172 5.15422e-07 8 0ZM8.00195 2.00391C4.68824 2.00391 2.00195 4.6902 2.00195 8.00391C2.00195 11.3176 4.68824 14.0039 8.00195 14.0039C11.3157 14.0039 14.002 11.3176 14.002 8.00391C14.002 4.6902 11.3157 2.00391 8.00195 2.00391Z"
-          fill="#8D8D8D"
+          fill="currentColor"
         />
       </svg>
     )

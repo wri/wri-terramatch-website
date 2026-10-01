@@ -34,6 +34,7 @@ export const Default: Story = {
     title: "Management Panel",
     groups: [
       {
+        id: "communications",
         links: [
           {
             icon: <NotificationIcon boxSize={4} />,
@@ -50,6 +51,7 @@ export const Default: Story = {
         ]
       },
       {
+        id: "management",
         links: [
           { icon: <DashboardIcon boxSize={4} />, label: "Dashboard", href: storybookDocsPath },
           { icon: <OrganizationIcon boxSize={4} />, label: "Organizations", href: storybookDocsPath },

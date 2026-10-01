@@ -359,13 +359,28 @@ export const loadSitePolygonByUuid = async ({
     return byGeometry;
   }
 
-  const allSitePolygons = await loadAllSitePolygons({
+  const mapIndex = await loadSitePolygonMapIndex({
     entityName: "sites",
     entityUuid,
     enabled: true
   });
+  const mapEntry = mapIndex.data?.polygons.find(polygon => polygon.uuid === polygonId);
+  if (mapEntry == null || mapEntry.polygonUuid == null || mapEntry.polygonUuid === "") {
+    return undefined;
+  }
 
-  return allSitePolygons.find(polygon => polygon.polygonUuid === polygonId || polygon.uuid === polygonId);
+  const byMapGeometryResponse = await loadSitePolygons({
+    entityName: "sites",
+    entityUuid,
+    enabled: true,
+    filter: { "polygonUuid[]": [mapEntry.polygonUuid] },
+    pageNumber: 1,
+    pageSize: 1
+  });
+
+  return (byMapGeometryResponse.data ?? []).find(
+    polygon => polygon.polygonUuid === mapEntry.polygonUuid || polygon.uuid === polygonId
+  );
 };
 
 export const useAllSitePolygons = (

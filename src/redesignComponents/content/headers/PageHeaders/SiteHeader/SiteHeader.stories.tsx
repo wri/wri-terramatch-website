@@ -34,7 +34,7 @@ const baseSite: SiteFullDto = {
   updateRequestStatus: null,
   plantingStatus: "in-progress",
   restorationStrategy: "Tree Planting",
-  landUseTypes: "Agroforesty",
+  landUseTypes: "Agroforestry",
   feedback: null
 } as unknown as SiteFullDto;
 

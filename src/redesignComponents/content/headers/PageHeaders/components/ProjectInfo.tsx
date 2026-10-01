@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { FC, useCallback } from "react";
@@ -105,7 +105,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
           readMoreOnClick={() => router.push(`/project/${project.uuid}?tab=details`)}
         />
       ) : (
-        <div className="w-fit">
+        <Flex width="fit-content" gap={2}>
           <Button
             onClick={handleEditClick}
             variant="secondary"
@@ -125,7 +125,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
           >
             {t("Download Project Files")}
           </Button>
-        </div>
+        </Flex>
       )}
     </Box>
   );

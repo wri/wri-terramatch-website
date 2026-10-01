@@ -270,7 +270,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
             >
               <BaseImage
                 src={activeImgSrc}
-                alt="Project Profile Image"
+                alt={t("Project Profile Image")}
                 className="!h-full !w-full"
                 draggable={false}
                 style={{
@@ -282,9 +282,8 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
                 }}
               />
               <Box
-                className="absolute inset-0"
+                className="absolute inset-0 bg-theme-neutral-100/60"
                 style={{
-                  backgroundColor: "rgba(255, 255, 255, 0.6)",
                   maskImage: "radial-gradient(circle at center, transparent 0 70%, black 61%)",
                   WebkitMaskImage: "radial-gradient(circle at center, transparent 0 70%, black 61%)"
                 }}

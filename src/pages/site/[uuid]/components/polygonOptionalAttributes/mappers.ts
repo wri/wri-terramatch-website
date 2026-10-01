@@ -48,6 +48,9 @@ export const areCustomAttributeRecordsEqual = (
   return true;
 };
 
+const isSingleValueType = (inputType: PolygonAttributeDefinitionDto["inputType"]): boolean =>
+  inputType === "single_select" || inputType === "date";
+
 export const buildCustomAttributesChangePayload = (
   definitions: PolygonAttributeDefinitionDto[],
   values: CustomAttributeFormValues
@@ -55,7 +58,7 @@ export const buildCustomAttributesChangePayload = (
   const payload: NonNullable<AttributeChangesDto["customAttributes"]> = {};
   for (const definition of definitions) {
     const value = values[definition.key] ?? [];
-    payload[definition.key] = definition.inputType === "single_select" ? value[0] ?? null : value;
+    payload[definition.key] = isSingleValueType(definition.inputType) ? value[0] ?? null : value;
   }
   return payload;
 };

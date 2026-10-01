@@ -28,7 +28,7 @@ const FilterCard: FC<FilterCardsProps> = ({ label, caption, children, className 
         <Text textStyle="500-bold" color="neutral.900">
           {label}
         </Text>
-        {caption && (
+        {caption != null && (
           <Text textStyle="300" color="neutral.700">
             {caption}
           </Text>

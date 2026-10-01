@@ -5,46 +5,48 @@ import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchema
 
 import ProjectHeader from "./ProjectHeader";
 
+declare global {
+  var __projectHeaderMockFetch__: boolean | undefined;
+}
+
+const jsonResponse = (data: object) =>
+  new Response(JSON.stringify(data), {
+    status: 200,
+    headers: { "Content-Type": "application/json" }
+  });
+
 // Mock fetch to avoid hitting real endpoints in Storybook
 // Note: This is a simple mock. For more complex scenarios, consider using MSW (Mock Service Worker)
-if (typeof (globalThis as any).fetch !== "function" || !(globalThis as any).__project_header_mock_fetch__) {
-  (globalThis as any).__project_header_mock_fetch__ = true;
-  const originalFetch = (globalThis as any).fetch;
-  (globalThis as any).fetch = async (input: RequestInfo | URL) => {
-    const url = typeof input === "string" ? input : (input as URL).toString();
+if (globalThis.__projectHeaderMockFetch__ !== true) {
+  globalThis.__projectHeaderMockFetch__ = true;
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = input instanceof URL ? input.toString() : typeof input === "string" ? input : input.url;
 
     // Mock partners endpoint
     if (url.includes("/v2/projects/") && url.includes("/partners")) {
-      return {
-        ok: true,
-        status: 200,
-        json: async () => ({
-          data: [
-            {
-              first_name: "John",
-              last_name: "Doe",
-              email: "john.doe@example.com"
-            },
-            {
-              first_name: "Jane",
-              last_name: "Smith",
-              email: "jane.smith@example.com"
-            }
-          ]
-        })
-      } as Response;
+      return jsonResponse({
+        data: [
+          {
+            first_name: "John",
+            last_name: "Doe",
+            email: "john.doe@example.com"
+          },
+          {
+            first_name: "Jane",
+            last_name: "Smith",
+            email: "jane.smith@example.com"
+          }
+        ]
+      });
     }
 
     // For other endpoints, use original fetch if available, otherwise return empty response
-    if (originalFetch && typeof originalFetch === "function") {
-      return originalFetch(input);
+    if (typeof originalFetch === "function") {
+      return originalFetch(input, init);
     }
 
-    return {
-      ok: true,
-      status: 200,
-      json: async () => ({})
-    } as Response;
+    return jsonResponse({});
   };
 }
 

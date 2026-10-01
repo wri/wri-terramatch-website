@@ -61,17 +61,17 @@ const FormSectionHeader: FC<FormSectionHeaderProps> = ({
       marginBottom={2}
       className={className}
     >
-      <div className="flex items-center gap-3">
+      <Flex alignItems="center" gap={3}>
         <Flex alignItems="center" gap={2} textStyle="700-bold" color={"neutral.900"}>
-          {label && (
-            <Text textStyle="400" color={"neutral.800"}>
+          {label != null && (
+            <Text textStyle="400" color="neutral.800">
               {label}:
             </Text>
           )}
           {t(title)}
         </Flex>
-        {badge && <TextBadge>{badge}</TextBadge>}
-      </div>
+        {badge != null && <TextBadge>{badge}</TextBadge>}
+      </Flex>
       {statusLabel != null && status != null ? (
         <StatusLabelTag label={statusLabel} status={status} />
       ) : (

@@ -31,6 +31,7 @@ export type AdminControlsProps = {
   setAlertTitle?: (value: string) => void;
   disabledPolygonPanel?: boolean;
   hideFullscreenControl?: boolean;
+  hideMediaOnMap?: boolean;
   selectedPolygonsInCheckbox: string[];
 };
 

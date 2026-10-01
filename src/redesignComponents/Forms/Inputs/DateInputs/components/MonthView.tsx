@@ -15,10 +15,10 @@ const MonthView: FC<MonthViewProps> = ({ className = "rect-cell-view", columns =
       <ViewNavigation />
       <DatePicker.Table>
         <DatePicker.TableBody>
-          {getMonthsGrid({ columns, format: "short" }).map((months, i) => (
-            <DatePicker.TableRow key={i}>
-              {months.map((month, j) => (
-                <DatePicker.TableCell key={j} value={month.value}>
+          {getMonthsGrid({ columns, format: "short" }).map(months => (
+            <DatePicker.TableRow key={months.map(({ value }) => value).join("-")}>
+              {months.map(month => (
+                <DatePicker.TableCell key={month.value} value={month.value}>
                   <DatePicker.TableCellTrigger>{month.label}</DatePicker.TableCellTrigger>
                 </DatePicker.TableCell>
               ))}

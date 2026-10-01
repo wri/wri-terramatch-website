@@ -40,7 +40,7 @@ const useUploadCsv = parallelRequestHook("treeBulkUploads", treeBulkImportCsvUpl
 
 type UploadWarning = {
   id: number;
-  row?: number;
+  location?: { row?: number; col?: number };
   message: string;
 };
 
@@ -139,7 +139,7 @@ const BulkTreeImportModal: FC<BulkTreeImportModalProps> = ({ taskUuid }) => {
                   return {
                     id: index,
                     message: getWarningMessage(t, warning),
-                    row: warning.row
+                    location: warning.location
                   };
                 })
               );
@@ -178,7 +178,19 @@ const BulkTreeImportModal: FC<BulkTreeImportModalProps> = ({ taskUuid }) => {
 
   const warningColumns = useMemo<TableColumn[]>(
     () => [
-      { key: "row", label: t("Row") },
+      {
+        key: "location",
+        label: t("Location"),
+        cell: ({ location }: UploadWarning) => {
+          if (location == null) return "";
+
+          const { row, col } = location;
+          const parts: string[] = [];
+          if (row != null) parts.push(`Row ${row}`);
+          if (col != null) parts.push(`Column ${col}`);
+          return parts.join(", ");
+        }
+      },
       { key: "message", label: t("Message") }
     ],
     [t]

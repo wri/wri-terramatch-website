@@ -37,7 +37,8 @@ export interface MetricCardProps {
   className?: string;
   classNameTitle?: string;
   frameworkKey?: string;
-  selection?: number;
+  selection?: number | null;
+  filtered?: number | null;
   metricLabel?: string;
   widthProgressBar?: string;
 }
@@ -53,7 +54,6 @@ type MetricCardFieldsForContentVariants =
   | "color"
   | "type"
   | "frameworkKey"
-  | "selection"
   | "metricLabel"
   | "widthProgressBar";
 
@@ -72,7 +72,6 @@ type NoGoalMetricCardContentKeys =
   | "type"
   | "tooltipContent"
   | "classNameTitle"
-  | "selection"
   | "metricLabel";
 
 export type NoGoalMetricCardContentProps = Pick<MetricCardCommonVariantProps, NoGoalMetricCardContentKeys>;

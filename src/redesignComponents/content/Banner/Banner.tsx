@@ -2,14 +2,14 @@ import { Box } from "@chakra-ui/react";
 import classNames from "classnames";
 import { FC } from "react";
 
-import ResponsiveBreadcrumbToolbar, {
-  BreadcrumbLink
-} from "@/redesignComponents/navigation/Toolbar/ResponsiveBreadcrumbToolbar";
+import { BreadcrumbProps } from "@/redesignComponents/navigation/Breadcrumbs/Breadcrumb";
+import NextLinkAdapter from "@/redesignComponents/navigation/Breadcrumbs/NextLinkAdapter";
 import { ViewToolbarProps } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
+import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import ViewToolbar from "@/redesignComponents/navigation/Toolbar/ViewToolbar";
 
 export interface BannerProps {
-  breadcrumbs: BreadcrumbLink[];
+  breadcrumbs: BreadcrumbProps["links"];
   suffix: React.ReactNode;
   toolbar: ViewToolbarProps;
   className?: string;
@@ -24,7 +24,12 @@ const Banner: FC<BannerProps> = ({ breadcrumbs, suffix, toolbar, className, chil
         borderColor="neutral.300"
         className={classNames("sticky top-[0] z-20 px-1", className)}
       >
-        <ResponsiveBreadcrumbToolbar breadcrumbs={breadcrumbs} suffix={suffix} />
+        <ToolbarObject
+          breadcrumbs={{ links: breadcrumbs, linkRouter: NextLinkAdapter }}
+          suffix={suffix}
+          className="gap-3 mobile:flex-col mobile:items-start"
+          classNameSuffix="mobile:w-full mobile:flex mobile:justify-end"
+        />
       </Box>
       {children}
       <Box
