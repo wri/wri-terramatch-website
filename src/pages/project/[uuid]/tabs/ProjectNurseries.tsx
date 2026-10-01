@@ -4,14 +4,12 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import type { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import NurseriesIndexBulkBar from "@/pages/nurseries/components/NurseriesIndexBulkBar";
-import NurseriesIndexHeader from "@/pages/nurseries/components/NurseriesIndexHeader";
-import NurseryProjectIndexBody from "@/pages/nurseries/components/NurseryProjectIndexBody";
-import NurseriesSelectionProvider, {
-  useNurseriesSelectionActions
-} from "@/pages/nurseries/NurseriesSelection.provider";
-import { filterNurseryProjectSections } from "@/pages/nurseries/nurseryIndex.utils";
-import { useNurseriesIndexData } from "@/pages/nurseries/useNurseriesIndexData";
+import NurseriesIndexBulkBar from "@/pages/nurserie/components/NurseriesIndexBulkBar";
+import NurseriesIndexHeader from "@/pages/nurserie/components/NurseriesIndexHeader";
+import NurseryProjectIndexBody from "@/pages/nurserie/components/NurseryProjectIndexBody";
+import NurseriesSelectionProvider, { useNurseriesSelectionActions } from "@/pages/nurserie/NurseriesSelection.provider";
+import { filterNurseryProjectSections } from "@/pages/nurserie/nurseryIndex.utils";
+import { useNurseriesIndexData } from "@/pages/nurserie/useNurseriesIndexData";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 

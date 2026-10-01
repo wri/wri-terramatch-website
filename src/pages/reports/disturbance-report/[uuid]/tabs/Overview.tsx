@@ -97,7 +97,7 @@ const DisturbanceReportOverviewTab = ({ report }: DisturbanceReportOverviewTabPr
           {getValue()}
           <Link
             className="h-4 w-4 cursor-pointer text-darkCustom-300 hover:text-primary"
-            href={`/nursery/${row.original?.nurseryUuid}`}
+            href={`/nurserie/${row.original?.nurseryUuid}`}
           >
             <Icon name={IconNames.LINK_PA} className="h-4 w-4" />
           </Link>

@@ -34,9 +34,9 @@ export const ReportModelNameToBaseModel = (reportModelName: ReportsModelNames, s
 };
 
 export const getEntityDetailPageLink = (entityName: EntityName, uuid: string, tab?: string) =>
-  `${entityName.includes("report") ? "/reports" : ""}/${singularEntityName(entityName)}/${uuid}${
-    tab ? `?tab=${tab}` : ""
-  }`;
+  `${entityName.includes("report") ? "/reports" : ""}/${
+    entityName === "nurseries" ? "nurserie" : singularEntityName(entityName)
+  }/${uuid}${tab != null ? `?tab=${tab}` : ""}`;
 
 export const getEntityEditPageLink = (entityName: EntityName | SingularEntityName | string, uuid: string) =>
   `/entity/${getEntityEditPathSegment(entityName)}/edit/${uuid}?mode=edit&formStepId=summary`;
@@ -60,7 +60,7 @@ export const getEntityCombinedStatus = (entity: any): string => {
 
 export const getCurrentPathEntity = () => {
   const currentRoute = window.location.href + window.location.hash;
-  if (currentRoute?.includes("nursery")) return "nursery";
+  if (currentRoute.includes("nursery") || currentRoute.includes("nurserie")) return "nursery";
   if (currentRoute?.includes("site")) return "site";
   if (currentRoute?.includes("project")) return "project";
   return "";

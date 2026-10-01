@@ -152,7 +152,7 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
                 variant="borderless"
                 size="small"
                 className="underline underline-offset-2"
-                onClick={() => router.push(`/nursery/${nurseryReport.nurseryUuid}`)}
+                onClick={() => router.push(`/nurserie/${nurseryReport.nurseryUuid}`)}
               >
                 {t("Nursery Profile")}
               </Button>
