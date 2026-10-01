@@ -25,6 +25,7 @@ type NurseriesIndexHeaderProps = {
   onApplyFilters: (statuses: string[], updates: string[]) => void;
   onViewChange: (value: string) => void;
   onQueryChange: (query: string) => void;
+  embeddedInProject?: boolean;
 };
 
 const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
@@ -36,7 +37,8 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
   addNurseryHref,
   onApplyFilters,
   onViewChange,
-  onQueryChange
+  onQueryChange,
+  embeddedInProject = false
 }) => {
   const t = useT();
   const router = useRouter();
@@ -73,54 +75,59 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
     [onApplyFilters, statusOptions, statuses, t, updateOptions, updates]
   );
 
+  const addNurseryButton = {
+    children: t("Add Nursery"),
+    leftIcon: <PlusIcon boxSize="0.625rem" />,
+    disabled: addNurseryHref == null,
+    className: embeddedInProject ? "shrink-0 whitespace-nowrap" : undefined,
+    onClick: () => {
+      if (addNurseryHref != null) void router.push(addNurseryHref);
+    }
+  };
+
   return (
     <>
-      <ToolbarObject
-        className="sticky top-0 z-20 !px-6"
-        breadcrumbs={{
-          linkRouter: router,
-          links: [
-            {
-              icon: <NurseryIcon />,
-              label: t("Nurseries"),
-              link: "/nurseries"
+      {embeddedInProject ? null : (
+        <>
+          <ToolbarObject
+            className="sticky top-0 z-20 !px-6"
+            breadcrumbs={{
+              linkRouter: router,
+              links: [
+                {
+                  icon: <NurseryIcon />,
+                  label: t("Nurseries"),
+                  link: "/nurseries"
+                }
+              ]
+            }}
+          />
+          <PageHeader
+            className=" !bg-theme-neutral-100 !pb-0 !pt-1 mobile:flex-col mobile:items-start mobile:gap-4"
+            title={t("Nurseries")}
+            actions={
+              <Flex gap={4} alignItems="center">
+                <HighLevelSelector
+                  key={`${viewValue}:${viewItems.find(item => item.value === viewValue)?.label ?? ""}`}
+                  autocomplete
+                  label={t("View:")}
+                  items={viewItems}
+                  value={viewValue}
+                  emptyMessage={t("No projects found")}
+                  width="25rem"
+                  className="mobile:!w-full"
+                  onChange={onViewChange}
+                />
+                <Button size="small" {...addNurseryButton} />
+              </Flex>
             }
-          ]
-        }}
-      />
-      <PageHeader
-        className=" !bg-theme-neutral-100 !pb-0 !pt-1 mobile:flex-col mobile:items-start mobile:gap-4"
-        title={t("Nurseries")}
-        actions={
-          <Flex gap={4} alignItems="center">
-            <HighLevelSelector
-              key={`${viewValue}:${viewItems.find(item => item.value === viewValue)?.label ?? ""}`}
-              autocomplete
-              label={t("View:")}
-              items={viewItems}
-              value={viewValue}
-              emptyMessage={t("No projects found")}
-              width="25rem"
-              className="mobile:!w-full"
-              onChange={onViewChange}
-            />
-            <Button
-              size="small"
-              leftIcon={<PlusIcon boxSize="0.625rem" />}
-              disabled={addNurseryHref == null}
-              onClick={() => {
-                if (addNurseryHref != null) void router.push(addNurseryHref);
-              }}
-            >
-              {t("Add Nursery")}
-            </Button>
-          </Flex>
-        }
-      />
+          />
+        </>
+      )}
       <ToolbarTable
         className="!bg-theme-neutral-200 !px-6 !pb-6 !pt-5"
-        classNameContentLeft="w-full"
-        classNameContentSearch="w-[19rem]"
+        classNameContentLeft={embeddedInProject ? "min-w-0 flex-1 !shrink" : "w-full"}
+        classNameContentSearch="w-[19rem] max-w-full"
         search={{
           placeholder: t("Search nurseries"),
           options: [],
@@ -133,6 +140,7 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
         showClearFilters={activeFilterLabels.length > 0}
         onClickFilterButton={() => setIsFilterDrawerOpen(true)}
         onClearFilters={() => onApplyFilters([], [])}
+        button={embeddedInProject ? addNurseryButton : undefined}
       />
       <NurseriesFilterDrawer
         open={isFilterDrawerOpen}

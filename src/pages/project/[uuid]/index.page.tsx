@@ -2,7 +2,7 @@ import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { FC, ReactElement, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, ReactElement, useCallback, useMemo, useState } from "react";
 
 import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
@@ -17,7 +17,6 @@ import { useValueChanged } from "@/hooks/useValueChanged";
 import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";
 import ProjectOverviewTab from "@/pages/project/[uuid]/tabs/Overview";
 import { getReportsIndexUrl } from "@/pages/reports/reportIndex.utils";
-import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ProjectBanner from "@/redesignComponents/content/Banner/ProjectBanner/ProjectBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
@@ -25,6 +24,8 @@ import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import InviteMonitoringPartnerModal from "./components/InviteMonitoringPartnerModal";
 import AuditLog from "./tabs/AuditLog";
 import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
+import ProjectNurseriesTab from "./tabs/ProjectNurseries";
+import ProjectSitesTab from "./tabs/ProjectSites";
 import TeamMembersTab from "./tabs/TeamMembers";
 
 type TabItem = {
@@ -43,26 +44,14 @@ export type SuffixButtonConfig = {
   labelKey: string;
 };
 
-const SUFFIX_VIEW_KEYS = ["sites", "nurseries"];
-
 const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
   const t = useT();
   const router = useRouter();
   const { framework } = useFrameworkContext();
   const [showInviteModal, setShowInviteModal] = useState(false);
 
-  const currentTab = (router.query.tab as string) ?? "overview";
-  const isSuffix = SUFFIX_VIEW_KEYS.includes(currentTab);
-  const activeSuffixView = isSuffix ? currentTab : null;
-  const activeTab = isSuffix ? "overview" : currentTab;
-
-  useEffect(() => {
-    if (currentTab === "sites") {
-      void router.replace(`/sites?project=${project.uuid}`);
-    } else if (currentTab === "nurseries") {
-      void router.replace(`/nurseries?project=${project.uuid}`);
-    }
-  }, [currentTab, project.uuid, router]);
+  const activeTab = (router.query.tab as string) ?? "overview";
+  const hideNurseries = shouldHideNurseries(framework);
 
   const navigateToTab = useCallback(
     (tab: string) => {
@@ -71,13 +60,17 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     [router, project.uuid]
   );
 
-  const tabItems = useMemo<TabItem[]>(
-    () => [
+  const tabItems = useMemo<TabItem[]>(() => {
+    const items: TabItem[] = [
       {
         key: "overview",
         title: t("Overview"),
         body: (
-          <ProjectOverviewTab project={project} onViewSites={() => void router.push(`/sites?project=${project.uuid}`)} />
+          <ProjectOverviewTab
+            project={project}
+            onViewSites={() => navigateToTab("sites")}
+            onViewNurseries={() => navigateToTab("nurseries")}
+          />
         )
       },
       { key: "details", title: t("Project Details"), body: <ProjectDetailTab project={project} /> },
@@ -97,15 +90,28 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         )
       },
       { key: "goals", title: t("Progress & Goals"), body: <GoalsAndProgressTab project={project} /> },
+      { key: "reports", title: t("Reports"), body: <></> },
+      { key: "sites", title: t("Sites"), body: <ProjectSitesTab project={project} /> },
       { key: "team-members", title: t("Team Members"), body: <TeamMembersTab project={project} /> },
       {
         key: "audit-log",
         title: t("Audit Log"),
         body: <AuditLog project={project} refresh={refetch} />
       }
-    ],
-    [project, t, refetch, router]
-  );
+    ];
+
+    if (!hideNurseries) {
+      const sitesIndex = items.findIndex(item => item.key === "sites");
+      const nurseriesTab: TabItem = {
+        key: "nurseries",
+        title: t("Nurseries"),
+        body: <ProjectNurseriesTab project={project} />
+      };
+      items.splice(sitesIndex + 1, 0, nurseriesTab);
+    }
+
+    return items;
+  }, [hideNurseries, navigateToTab, project, refetch, t]);
 
   const tabBarTabs = useMemo(
     () =>
@@ -116,20 +122,18 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     [tabItems]
   );
 
-  const hideNurseries = shouldHideNurseries(framework);
-
-  const suffixButtons: SuffixButtonConfig[] = useMemo(
-    () => [
-      { key: "reports", labelKey: "Reports" },
-      { key: "sites", labelKey: "Sites" },
-      ...(hideNurseries ? [] : [{ key: "nurseries", labelKey: "Nurseries" }])
-    ],
-    [hideNurseries]
-  );
-
-  const tabBarDefaultValue = activeSuffixView != null ? "__none__" : activeTab;
-
   const handleInvite = () => setShowInviteModal(true);
+
+  const handleTabClick = useCallback(
+    (tabValue: string) => {
+      if (tabValue === "reports") {
+        void router.push(getReportsIndexUrl("project", project.uuid));
+        return;
+      }
+      navigateToTab(tabValue);
+    },
+    [navigateToTab, project.uuid, router]
+  );
 
   return (
     <>
@@ -152,56 +156,18 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
             link: "/my-projects",
             icon: <ProjectIcon className="!text-theme-primary-900" />
           },
-          { label: project?.name ?? "", link: `/project/${project?.uuid}` },
-          ...(activeSuffixView
-            ? [
-                {
-                  label: t(activeSuffixView),
-                  link: `/project/${project?.uuid}?tab=${activeSuffixView}`
-                }
-              ]
-            : [])
+          { label: project?.name ?? "", link: `/project/${project?.uuid}` }
         ]}
-        suffix={
-          <div className="flex gap-1.5">
-            {suffixButtons.map((button, index) => (
-              <div key={button.key} className="flex gap-1.5">
-                {index > 0 && <span className="text-sm text-theme-neutral-300">|</span>}
-                <Button
-                  variant="borderless"
-                  size="small"
-                  className={`underline underline-offset-2 ${activeSuffixView === button.key ? "font-semibold" : ""}`}
-                  onClick={() => {
-                    if (button.key === "reports") {
-                      void router.push(getReportsIndexUrl("project", project.uuid));
-                    } else if (button.key === "sites") {
-                      void router.push(`/sites?project=${project.uuid}`);
-                    } else if (button.key === "nurseries") {
-                      void router.push(`/nurseries?project=${project.uuid}`);
-                    } else {
-                      navigateToTab(button.key);
-                    }
-                  }}
-                >
-                  {t(button.labelKey)}
-                </Button>
-              </div>
-            ))}
-          </div>
-        }
+        suffix={null}
         toolbar={{
           tabBar: {
             tabs: tabBarTabs,
-            defaultValue: tabBarDefaultValue,
-            onTabClick: (tabValue: string) => {
-              navigateToTab(tabValue);
-            }
+            defaultValue: activeTab,
+            onTabClick: handleTabClick
           }
         }}
       />
-      <div className="flex flex-1">
-        {activeSuffixView == null ? tabItems.find(item => item.key === activeTab)?.body : null}
-      </div>
+      <div className="flex w-full min-w-0 flex-1 flex-col">{tabItems.find(item => item.key === activeTab)?.body}</div>
       <PageFooter />
     </>
   );

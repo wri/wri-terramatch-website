@@ -31,9 +31,10 @@ import LatestImagesSectionTab from "./LatestImagesSection";
 interface ProjectOverviewTabProps {
   project: ProjectFullDto;
   onViewSites?: () => void;
+  onViewNurseries?: () => void;
 }
 
-const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) => {
+const ProjectOverviewTab = ({ project, onViewSites, onViewNurseries }: ProjectOverviewTabProps) => {
   const router = useRouter();
   const t = useT();
   const { framework } = useFrameworkContext();
@@ -112,7 +113,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         rightIcon: <ChevronRightIcon boxSize={4} />,
         className: "!text-theme-neutral-100",
         children: t("Add Sites"),
-        onClick: () => void router.push(`/sites?project=${project.uuid}`)
+        onClick: () => onViewSites?.()
       }
     ];
 
@@ -124,12 +125,12 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         rightIcon: <ChevronRightIcon boxSize={4} />,
         className: "!text-theme-neutral-100",
         children: t("Add Nurseries"),
-        onClick: () => void router.push(`/nurseries?project=${project.uuid}`)
+        onClick: () => onViewNurseries?.()
       });
     }
 
     return buttons;
-  }, [hideNurseries, project.uuid, router, t]);
+  }, [hideNurseries, onViewNurseries, onViewSites, t]);
 
   const [projectMapIndexLoaded, { data: projectMapIndex }] = useSitePolygonMapIndex({
     entityName: "projects",
