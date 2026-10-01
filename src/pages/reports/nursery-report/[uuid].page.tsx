@@ -17,7 +17,7 @@ import { useValueChanged } from "@/hooks/useValueChanged";
 import NurseryReportDetailsTab from "@/pages/reports/nursery-report/tabs/Details";
 import NurseryReportGoalsAndProgressTab from "@/pages/reports/nursery-report/tabs/GoalsAndProgress";
 import NurseryReportOverview from "@/pages/reports/nursery-report/tabs/Overview";
-import { getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
+import { getReportsIndexUrl } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
 import { ReportsIcon } from "@/redesignComponents/foundations/Icons";

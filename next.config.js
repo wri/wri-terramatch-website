@@ -20,31 +20,41 @@ const nextConfig = {
     return [
       {
         source: "/project/:uuid/reporting-task/:reportingTaskUUID",
-        destination: "/reports/report-index?source=project&uuid=:uuid",
+        destination: "/reports?source=project&uuid=:uuid",
         permanent: true
       },
       {
         source: "/project/:uuid",
         has: [{ type: "query", key: "tab", value: "reporting-tasks" }],
-        destination: "/reports/report-index?source=project&uuid=:uuid",
+        destination: "/reports?source=project&uuid=:uuid",
         permanent: true
       },
       {
         source: "/site/:uuid",
         has: [{ type: "query", key: "tab", value: "completed-tasks" }],
-        destination: "/reports/report-index?source=site&uuid=:uuid",
+        destination: "/reports?source=site&uuid=:uuid",
         permanent: true
       },
       {
         source: "/nursery/:uuid",
         has: [{ type: "query", key: "tab", value: "completed-tasks" }],
-        destination: "/reports/report-index?source=nursery&uuid=:uuid",
+        destination: "/reports?source=nursery&uuid=:uuid",
         permanent: true
       },
       {
         source: "/site/:uuid/polygon-review",
         has: [{ type: "query", key: "tab", value: "completed-tasks" }],
-        destination: "/reports/report-index?source=site&uuid=:uuid",
+        destination: "/reports?source=site&uuid=:uuid",
+        permanent: true
+      },
+      {
+        source: "/site",
+        destination: "/sites",
+        permanent: true
+      },
+      {
+        source: "/reports/report-index",
+        destination: "/reports",
         permanent: true
       }
     ];

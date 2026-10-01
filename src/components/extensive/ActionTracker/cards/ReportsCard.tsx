@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { ActionDto } from "@/generated/v3/userService/userServiceSchemas";
 import { getEntityCombinedStatus, getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
-import { getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
+import { getReportsIndexUrl } from "@/pages/reports/reportIndex.utils";
 import { sortByDate } from "@/utils/sort";
 
 import { IconNames } from "../../Icon/Icon";

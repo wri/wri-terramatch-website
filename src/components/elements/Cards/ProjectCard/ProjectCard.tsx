@@ -16,7 +16,7 @@ import FrameworkProvider, { Framework } from "@/context/framework.provider";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityCombinedStatus } from "@/helpers/entity";
 import { useFrameworkTitle } from "@/hooks/useFrameworkTitle";
-import { getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
+import { getReportsIndexUrl } from "@/pages/reports/reportIndex.utils";
 
 type ProjectCardProps = PropsWithChildren<
   DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {

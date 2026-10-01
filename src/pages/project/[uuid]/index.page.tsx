@@ -16,7 +16,7 @@ import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchema
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";
 import ProjectOverviewTab from "@/pages/project/[uuid]/tabs/Overview";
-import { getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
+import { getReportsIndexUrl } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ProjectBanner from "@/redesignComponents/content/Banner/ProjectBanner/ProjectBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
@@ -58,7 +58,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
 
   useEffect(() => {
     if (currentTab === "sites") {
-      void router.replace(`/site?project=${project.uuid}`);
+      void router.replace(`/sites?project=${project.uuid}`);
     } else if (currentTab === "nurseries") {
       void router.replace(`/nurseries?project=${project.uuid}`);
     }
@@ -77,7 +77,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         key: "overview",
         title: t("Overview"),
         body: (
-          <ProjectOverviewTab project={project} onViewSites={() => void router.push(`/site?project=${project.uuid}`)} />
+          <ProjectOverviewTab project={project} onViewSites={() => void router.push(`/sites?project=${project.uuid}`)} />
         )
       },
       { key: "details", title: t("Project Details"), body: <ProjectDetailTab project={project} /> },
@@ -175,7 +175,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
                     if (button.key === "reports") {
                       void router.push(getReportsIndexUrl("project", project.uuid));
                     } else if (button.key === "sites") {
-                      void router.push(`/site?project=${project.uuid}`);
+                      void router.push(`/sites?project=${project.uuid}`);
                     } else if (button.key === "nurseries") {
                       void router.push(`/nurseries?project=${project.uuid}`);
                     } else {

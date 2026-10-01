@@ -11,7 +11,7 @@ import { FormEntity } from "@/connections/Form";
 import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
 import { getEntityEditPageLink, getEntityEditPathSegment, v3EntityName } from "@/helpers/entity";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
-import { withReportsIndexReturn } from "@/pages/reports/report-index/reportIndex.utils";
+import { withReportsIndexReturn } from "@/pages/reports/reportIndex.utils";
 import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
 import { WarningIcon } from "@/redesignComponents/foundations/Icons/Function/WarningIcon";
 import { EntityName, SingularEntityName } from "@/types/common";

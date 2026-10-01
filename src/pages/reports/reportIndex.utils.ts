@@ -19,7 +19,10 @@ export type ReportsIndexTab = (typeof REPORTS_INDEX_TABS)[number];
 
 export const ALL_PROJECTS_VIEW_VALUE = "all";
 
-export const REPORTS_INDEX_PATH = "/reports/report-index";
+export const REPORTS_INDEX_PATH = "/reports";
+
+// Mirrors the `i18n.locales` list in next.config.js, so a locale-prefixed href still resolves.
+const LOCALE_PREFIX_PATTERN = /^\/(?:en|en-US|es|es-MX|fr-FR|pt-BR)(?=\/)/;
 
 export const REPORT_INDEX_TYPE_TO_ENTITY = {
   "project-report": "projectReports",
@@ -54,8 +57,8 @@ export const isReportsIndexTab = (value: string | undefined): value is ReportsIn
 
 export const isReportsIndexPath = (href: string | undefined): href is string => {
   if (href == null || href === "") return false;
-  const path = href.split("?")[0];
-  return path === REPORTS_INDEX_PATH || path.endsWith(REPORTS_INDEX_PATH);
+  const path = href.split("?")[0].replace(LOCALE_PREFIX_PATTERN, "");
+  return path === REPORTS_INDEX_PATH;
 };
 
 export type ReportsIndexUrlOptions = {
