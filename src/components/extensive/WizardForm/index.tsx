@@ -624,7 +624,7 @@ function WizardForm(props: WizardFormProps) {
       } else if (tab === "site-profile") {
         router.push(`/site/${entity?.siteUuid}`, undefined, { shallow: true });
       } else if (tab === "nursery-profile") {
-        router.push(`/nursery/${entity?.nurseryUuid}`, undefined, { shallow: true });
+        router.push(`/nurserie/${entity?.nurseryUuid}`, undefined, { shallow: true });
       } else if (tab === "organisation-profile") {
         router.push(`/organization/${entity?.organisationUuid}`, undefined, { shallow: true });
       } else if (tab === "my-projects") {

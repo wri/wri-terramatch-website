@@ -102,10 +102,10 @@ const SiteIndexPageContent: FC = () => {
       clearSelection();
       setSelectedProject(nextView);
       if (nextView === ALL_PROJECTS_VIEW) {
-        void router.replace("/sites", undefined, { shallow: true });
+        void router.replace("/site", undefined, { shallow: true });
         return;
       }
-      void router.replace(`/sites?project=${nextView}`, undefined, { shallow: true });
+      void router.replace(`/site?project=${nextView}`, undefined, { shallow: true });
     },
     [clearSelection, router]
   );

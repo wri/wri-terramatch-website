@@ -12,7 +12,7 @@ describe("getEntityDetailPageLink", () => {
   });
 
   test("getEntityDetailPageLink works for nursery", () => {
-    const expected = "/nursery/[uuid]";
+    const expected = "/nurserie/[uuid]";
     expect(getEntityDetailPageLink("nurseries", "[uuid]")).toBe(expected);
   });
 

@@ -85,10 +85,10 @@ const NurseriesIndexContent: FC = () => {
       clearSelection();
       setViewValue(value);
       if (value === ALL_PROJECTS_VIEW_VALUE) {
-        void router.replace("/nurseries", undefined, { shallow: true });
+        void router.replace("/nurserie", undefined, { shallow: true });
         return;
       }
-      void router.replace(`/nurseries?project=${value}`, undefined, { shallow: true });
+      void router.replace(`/nurserie?project=${value}`, undefined, { shallow: true });
     },
     [clearSelection, router]
   );

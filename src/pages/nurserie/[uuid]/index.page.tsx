@@ -8,7 +8,7 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullNursery } from "@/connections/Entity";
 import FrameworkProvider from "@/context/framework.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import NurseryOverviewTab from "@/pages/nursery/[uuid]/tabs/Overview";
+import NurseryOverviewTab from "@/pages/nurserie/[uuid]/tabs/Overview";
 import { getReportsIndexUrl } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import NurseryBanner from "@/redesignComponents/content/Banner/NurseryBanner/NurseryBanner";
@@ -80,7 +80,7 @@ const NurseryDetailPage = () => {
                   label: "Nurseries",
                   link: `/project/${nursery.projectUuid}?tab=nurseries`
                 },
-                { label: nursery.name ?? "", link: `/nursery/${nursery.uuid}` }
+                { label: nursery.name ?? "", link: `/nurserie/${nursery.uuid}` }
               ]}
               suffix={
                 <div className="flex gap-1.5">
@@ -113,7 +113,7 @@ const NurseryDetailPage = () => {
                   })),
                   defaultValue: activeTab,
                   onTabClick: (tabValue: string) => {
-                    router.push(`/nursery/${nurseryUUID}?tab=${tabValue}`, undefined, { shallow: true });
+                    router.push(`/nurserie/${nurseryUUID}?tab=${tabValue}`, undefined, { shallow: true });
                   }
                 }
               }}

@@ -97,7 +97,7 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
                 {
                   icon: <NurseryIcon />,
                   label: t("Nurseries"),
-                  link: "/nurseries"
+                  link: "/nurserie"
                 }
               ]
             }}
