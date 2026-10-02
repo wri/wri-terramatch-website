@@ -1,7 +1,6 @@
-import { Flex } from "@chakra-ui/react";
-import { Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { ReportsProvider, useReportsContext } from "@/context/reports.provider";
@@ -11,11 +10,6 @@ import ProjectReportsSection from "@/pages/reports/components/ProjectReportsSect
 import { getDefaultProgressFiltersForSource } from "@/pages/reports/components/reportFilter.constants";
 import ReportsIndexBulkBar from "@/pages/reports/components/ReportsIndexBulkBar";
 import ReportsIndexHeader from "@/pages/reports/components/ReportsIndexHeader";
-import {
-  clearReportsIndexRestore,
-  findAdditionalReportLocation,
-  findProgressReportLocation
-} from "@/pages/reports/reportIndex.utils";
 import { getReportPeriodOptions } from "@/pages/reports/reportPeriodFilter";
 import ReportsSelectionProvider from "@/pages/reports/ReportsSelection.provider";
 import { useAdditionalReportsData } from "@/pages/reports/useAdditionalReportsData";
@@ -23,6 +17,8 @@ import { useReportsIndexData } from "@/pages/reports/useReportsIndexData";
 import { useReportsIndexFilters } from "@/pages/reports/useReportsIndexFilters";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
+
+const noop = () => {};
 
 interface ReportsTabProps {
   project: ProjectFullDto;
@@ -41,11 +37,13 @@ const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
     sections: additionalSections,
     loading: additionalLoading,
     error: additionalError
-  } = useAdditionalReportsData(project, true, project.organisationUuid);
+  } = useAdditionalReportsData(project, true, project.organisationUuid, "project");
   const { filteredProgressSections, filteredAdditionalSections, progressReportCount, additionalReportCount } =
     useReportsIndexFilters({ progressSections, additionalSections, query });
 
-  const reportCount = additionalReportCount + progressReportCount;
+  const loading = progressLoading || additionalLoading;
+  const error = progressError || additionalError;
+  const hasResults = filteredProgressSections.length > 0 || filteredAdditionalSections.length > 0;
   const hasActiveSearch = query.trim().length > 0;
   const hasActivePeriodFilter =
     filters.dueDateFrom !== "" || filters.dueDateTo !== "" || filters.dueMonth !== "" || filters.dueYear !== "";
@@ -56,124 +54,78 @@ const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
   const hasReportSubset =
     hasActiveSearch || hasUserReportTypeFilter || filters.statuses.length > 0 || hasActivePeriodFilter;
 
-  const [restoreReportId, setRestoreReportId] = useState<string | null>(null);
-  const [restoreReady, setRestoreReady] = useState(false);
-
-  useEffect(() => {
-    // setRestoreReportId(readReportsIndexRestore(indexHref));
-    setRestoreReady(true);
-  }, []);
-
-  const progressRestore = useMemo(
-    () => (restoreReportId == null ? null : findProgressReportLocation(filteredProgressSections, restoreReportId)),
-    [filteredProgressSections, restoreReportId]
-  );
-  const additionalRestore = useMemo(
-    () => (restoreReportId == null ? null : findAdditionalReportLocation(filteredAdditionalSections, restoreReportId)),
-    [filteredAdditionalSections, restoreReportId]
-  );
-
   const periodOptions = useMemo(
     () => getReportPeriodOptions(progressSections, additionalSections),
     [additionalSections, progressSections]
   );
-
   const unfilteredPeriodsByProjectId = useMemo(
     () => new Map(progressSections.map(section => [section.id, section.periods])),
     [progressSections]
   );
 
-  const handleRowRestored = useCallback(() => {
-    clearReportsIndexRestore();
-    setRestoreReportId(null);
-  }, []);
-
-  useEffect(() => {
-    if (!restoreReady || restoreReportId == null) return;
-    const tabLoading = additionalLoading;
-    if (tabLoading) return;
-    if (progressRestore == null && additionalRestore == null) {
-      clearReportsIndexRestore();
-      setRestoreReportId(null);
-    }
-  }, [additionalLoading, additionalRestore, progressLoading, progressRestore, restoreReady, restoreReportId]);
-
   return (
     <div className="flex h-full w-full flex-col">
       <ReportsIndexHeader
-        activeTab={"progress-reports"}
-        source={"project"}
+        activeTab="progress-reports"
+        source="project"
         sourceUuid={project.uuid}
         projectUuid={project.uuid}
-        reportCount={reportCount}
-        viewValue={"project"}
+        reportCount={progressReportCount + additionalReportCount}
+        viewValue="project"
         viewItems={[]}
         periodOptions={periodOptions}
-        onTabChange={() => {}}
-        onViewChange={() => {}}
+        onTabChange={noop}
+        onViewChange={noop}
         onQueryChange={setQuery}
-        indexHref={""}
+        indexHref=""
         entityProfile
       />
       <PageContent className="h-auto flex-1 px-2 py-0">
-        {filteredProgressSections.length > 0 && (
-          <>
-            {progressLoading ? (
-              <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
-                <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
-                <Text textStyle="400" color="neutral.800">
-                  {t("Loading reports...")}
-                </Text>
-              </Flex>
-            ) : progressError ? (
-              <NoResults
-                title={t("Reports could not be loaded")}
-                description={t("Please refresh the page and try again.")}
+        {loading ? (
+          <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
+            <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
+            <Text textStyle="400" color="neutral.800">
+              {t("Loading reports...")}
+            </Text>
+          </Flex>
+        ) : error ? (
+          <NoResults
+            title={t("Reports could not be loaded")}
+            description={t("Please refresh the page and try again.")}
+          />
+        ) : !hasResults ? (
+          <NoResults
+            title={t("No reports found")}
+            description={
+              hasActiveSearch
+                ? t("We couldn’t find any reports matching your search. Try a different keyword.")
+                : t("Try changing your search or filters.")
+            }
+          />
+        ) : (
+          <div className="space-y-4">
+            {filteredProgressSections.map((section, index) => (
+              <ProjectReportsSection
+                key={section.id}
+                section={section}
+                sectionName={t("Progress Reports")}
+                unfilteredPeriods={unfilteredPeriodsByProjectId.get(section.id)}
+                defaultOpen={index === 0}
+                hasReportSubset={hasReportSubset}
+                indexHref=""
               />
-            ) : filteredProgressSections.length === 0 ? (
-              hasActiveSearch ? (
-                <NoResults
-                  title={t("No reports found")}
-                  description={t("We couldn’t find any reports matching your search. Try a different keyword.")}
-                />
-              ) : (
-                <NoResults title={t("No reports found")} description={t("Try changing your search or filters.")} />
-              )
-            ) : (
-              <div className="space-y-4">
-                {filteredProgressSections.map((section, index) => (
-                  <ProjectReportsSection
-                    key={section.id}
-                    section={section}
-                    sectionName={"Progress Reports"}
-                    unfilteredPeriods={unfilteredPeriodsByProjectId.get(section.id)}
-                    defaultOpen={index === 0}
-                    expandForPeriodFilter={false}
-                    metricsReady={true}
-                    hasReportSubset={hasReportSubset}
-                    indexHref={""}
-                    restoreSectionId={progressRestore?.sectionId}
-                    restorePeriodId={progressRestore?.periodId}
-                    restoreReportId={restoreReportId ?? undefined}
-                    onRowRestored={handleRowRestored}
-                  />
-                ))}
-              </div>
+            ))}
+            {filteredAdditionalSections.length > 0 && (
+              <AdditionalReportsContent
+                sections={filteredAdditionalSections}
+                sectionName={t("Additional Reports")}
+                loading={false}
+                error={false}
+                indexHref=""
+              />
             )}
-          </>
+          </div>
         )}
-
-        <AdditionalReportsContent
-          sections={filteredAdditionalSections}
-          sectionName={"Additional Reports"}
-          loading={additionalLoading}
-          error={additionalError}
-          hasActiveSearch={hasActiveSearch}
-          indexHref={""}
-          restoreGroupId={undefined}
-          restoreReportId={undefined}
-          onRowRestored={() => {}}
-        />
 
         <ReportsIndexBulkBar />
       </PageContent>

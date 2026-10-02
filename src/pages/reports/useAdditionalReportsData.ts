@@ -167,14 +167,20 @@ const toProjectSection = (draft: ProjectSectionDraft): AdditionalReportsEntitySe
 /**
  * Additional Reports are organisation-first: financial reports hang off the org, SRP and
  * disturbance reports hang off each project inside that org.
+ *
+ * With the "project" scope (a project profile), only that project's SRP and disturbance reports are
+ * loaded; financial reports belong to the organisation and are skipped.
  */
 export const useAdditionalReportsData = (
   project: ProjectLightDto,
   enabled: boolean,
-  organisationUuid: string | null
+  organisationUuid: string | null,
+  scope: "organisation" | "project" = "organisation"
 ): AdditionalReportsDataState => {
-  const loadOrganisationData = enabled && organisationUuid != null;
-  const indexFilter = organisationUuid == null ? {} : { organisationUuid };
+  const loadFinancialReports = enabled && scope === "organisation";
+  const loadOrganisationData = loadFinancialReports && organisationUuid != null;
+  const indexFilter =
+    scope === "project" ? { projectUuid: project.uuid } : organisationUuid == null ? {} : { organisationUuid };
 
   const [organisationLoaded, { data: organisation }] = useOrganisation(
     loadOrganisationData ? { id: organisationUuid } : {}
@@ -183,7 +189,7 @@ export const useAdditionalReportsData = (
   const [financialLoaded, financialData, financialFailure] = useAllPages(indexFinancialReportConnection, {
     ...INDEX_PROPS,
     filter: indexFilter,
-    enabled
+    enabled: loadFinancialReports
   });
 
   const [srpLoaded, srpData, srpFailure] = useAllPages(indexSRPReportConnection, {
@@ -199,7 +205,8 @@ export const useAdditionalReportsData = (
   });
 
   const organisationReady = !loadOrganisationData || organisationLoaded;
-  const loading = enabled && !(organisationReady && financialLoaded && srpLoaded && disturbanceLoaded);
+  const financialReady = !loadFinancialReports || financialLoaded;
+  const loading = enabled && !(organisationReady && financialReady && srpLoaded && disturbanceLoaded);
   // Financial reports are optional on this tab: a failed unfiltered "All" fetch must not hide SRP
   // and disturbance reports that already loaded.
   const error = enabled && (srpFailure != null || disturbanceFailure != null);
@@ -248,7 +255,7 @@ export const useAdditionalReportsData = (
       return draft;
     };
 
-    (financialFailure != null ? [] : financialData).forEach(report => {
+    (!loadFinancialReports || financialFailure != null ? [] : financialData).forEach(report => {
       const isScopedOrganisation = organisationUuid != null && report.organisationUuid === organisationUuid;
       organisationDraft(report.organisationUuid, report.organisationName).financialReports.push(
         toFinancialReport(
@@ -296,6 +303,7 @@ export const useAdditionalReportsData = (
     error,
     financialData,
     financialFailure,
+    loadFinancialReports,
     loading,
     organisation?.currency,
     organisation?.finStartMonth,
