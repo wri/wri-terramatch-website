@@ -12,10 +12,10 @@ import { useTask } from "@/connections/Task";
 import FrameworkProvider, { shouldHideNurseries, useFrameworkContext } from "@/context/framework.provider";
 import { ProjectReportFullDto, TaskFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import { getReportsIndexUrl } from "@/pages/reports/reportIndex.utils";
+import { useReportBreadcrumbs } from "@/pages/reports/components/useReportBreadcrumbs";
+import { getReportsIndexUrl, withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
-import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
@@ -45,7 +45,10 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
   const hideNurseries = shouldHideNurseries(framework);
   const reportTitle = projectReport.reportTitle ?? t("Project Report");
   const currentTab = (router.query.tab as string) ?? "overview";
-  const reportsIndexHref = getReportsIndexUrl("project", projectReport.projectUuid!);
+  const breadcrumbs = useReportBreadcrumbs(
+    { label: reportTitle, link: `/reports/project-report/${projectReport.uuid}` },
+    getReportsIndexUrl("project", projectReport.projectUuid!)
+  );
 
   const isRedirectingToReportsIndex = currentTab === "site-reports" || currentTab === "nursery-reports";
 
@@ -132,14 +135,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
         title={reportTitle}
         dueAt={task?.dueAt ?? projectReport.dueAt}
         entityName="project-report"
-        breadcrumbs={[
-          {
-            label: t("Reports"),
-            link: reportsIndexHref,
-            icon: <ReportsIcon className="!text-theme-primary-900" />
-          },
-          { label: reportTitle, link: `/reports/project-report/${projectReport.uuid}` }
-        ]}
+        breadcrumbs={breadcrumbs}
         suffix={
           <div className="flex gap-1.5">
             <div className="flex gap-1.5">
@@ -191,9 +187,11 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
             tabs: tabBarTabs,
             defaultValue: currentTab,
             onTabClick: (tabValue: string) => {
-              router.push(`/reports/project-report/${projectReport.uuid}?tab=${tabValue}`, undefined, {
-                shallow: true
-              });
+              router.push(
+                withReportOrigin(`/reports/project-report/${projectReport.uuid}?tab=${tabValue}`, router.query),
+                undefined,
+                { shallow: true }
+              );
             }
           }
         }}

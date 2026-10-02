@@ -12,10 +12,9 @@ import { ToastType, useToastContext } from "@/context/toast.provider";
 import { FinancialReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import { getReportsIndexHrefFromQuery } from "@/pages/reports/reportIndex.utils";
+import { useReportBreadcrumbs } from "@/pages/reports/components/useReportBreadcrumbs";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
-import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
 import ApiSlice from "@/store/apiSlice";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
@@ -102,7 +101,13 @@ const FinancialReportContent: FC<FinancialReportContentProps> = ({ financialRepo
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
   const organisationHref =
     financialReport.organisationUuid != null ? `/organization/${financialReport.organisationUuid}` : "/my-projects";
-  const reportsIndexHref = getReportsIndexHrefFromQuery(router.query.from) ?? organisationHref;
+  const breadcrumbs = useReportBreadcrumbs(
+    {
+      label: t("Financial Report - {period}", { period: getShortPeriodLabel(taskTitle ?? "", true) }),
+      link: `/reports/financial-report/${financialReportUUID}`
+    },
+    organisationHref
+  );
 
   return (
     <>
@@ -115,17 +120,7 @@ const FinancialReportContent: FC<FinancialReportContentProps> = ({ financialRepo
         title={headerReportTitle}
         dueAt={taskDueAt ?? financialReport.dueAt}
         entityName="financial-report"
-        breadcrumbs={[
-          {
-            label: t("Reports"),
-            link: reportsIndexHref,
-            icon: <ReportsIcon className="!text-theme-primary-900" />
-          },
-          {
-            label: t("Financial Report - {period}", { period: getShortPeriodLabel(taskTitle ?? "", true) }),
-            link: `/reports/financial-report/${financialReportUUID}`
-          }
-        ]}
+        breadcrumbs={breadcrumbs}
         suffix={
           <div className="flex items-center gap-1.5">
             <Button

@@ -115,6 +115,46 @@ export const withReportsIndexReturn = (href: string, indexHref?: string) => {
   return `${href}${separator}from=${encodeURIComponent(indexHref)}`;
 };
 
+export type ReportProfileOrigin = {
+  source: ReportsIndexSource;
+  uuid: string;
+};
+
+const REPORT_ORIGIN_QUERY_KEYS = ["from", "profile", "profileUuid"] as const;
+
+export const getReportProfileOriginFromQuery = (
+  profile: unknown,
+  profileUuid: unknown
+): ReportProfileOrigin | undefined => {
+  if (typeof profile !== "string" || !isReportsIndexSource(profile)) return undefined;
+  if (typeof profileUuid !== "string" || profileUuid === "") return undefined;
+  return { source: profile, uuid: profileUuid };
+};
+
+export const getReportViewHref = (
+  report: Pick<ReportIndexItem, "type" | "id">,
+  indexHref?: string,
+  profileOrigin?: ReportProfileOrigin
+) => {
+  const href = `/reports/${report.type}/${report.id}`;
+  if (profileOrigin == null) return withReportsIndexReturn(href, indexHref);
+  const params = new URLSearchParams({ profile: profileOrigin.source, profileUuid: profileOrigin.uuid });
+  return `${href}?${params.toString()}`;
+};
+
+/** Carries the origin params (`from`, `profile`, `profileUuid`) of the current report page over to `href`. */
+export const withReportOrigin = (href: string, query: Record<string, unknown>) => {
+  const params = new URLSearchParams();
+  for (const key of REPORT_ORIGIN_QUERY_KEYS) {
+    const value = query[key];
+    if (typeof value === "string" && value !== "") params.set(key, value);
+  }
+  const search = params.toString();
+  if (search === "") return href;
+  const separator = href.includes("?") ? "&" : "?";
+  return `${href}${separator}${search}`;
+};
+
 export const getReportIndexItemPath = (report: ReportIndexItem) => {
   if (["approved", "pending-approval"].includes(report.status)) {
     return `/reports/${report.type}/${report.id}`;

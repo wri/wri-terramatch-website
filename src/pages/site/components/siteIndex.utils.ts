@@ -14,6 +14,11 @@ import type {
 
 export const ALL_PROJECTS_VIEW = "all";
 
+export const SITE_INDEX_SOURCE = "sites";
+
+export const getSiteDetailUrl = (siteUuid: string, fromSiteIndex: boolean): string =>
+  fromSiteIndex ? `/site/${siteUuid}?from=${SITE_INDEX_SOURCE}` : `/site/${siteUuid}`;
+
 export const isSiteApproved = (site: Pick<SiteIndexSite, "status">): boolean => site.status === "approved";
 
 export const SITE_INDEX_ATTENTION_STATUSES: ReadonlySet<SiteIndexStatus> = new Set([
