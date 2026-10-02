@@ -30,8 +30,6 @@ import {
   CalendarIcon,
   DeleteIcon,
   EditIcon,
-  FolderIcon,
-  FolderOpenIcon,
   JobsIcon,
   LoadingIcon,
   RegenerationIcon,
@@ -71,6 +69,7 @@ interface SiteProjectSectionProps {
   openResetKey?: string;
   onProjectOpened: (projectId: string) => void;
   onSitesChanged: () => void;
+  embeddedInProject?: boolean;
 }
 
 const stopRowClick = (event: MouseEvent) => {
@@ -399,13 +398,14 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
   defaultOpen = false,
   openResetKey,
   onProjectOpened,
-  onSitesChanged
+  onSitesChanged,
+  embeddedInProject = false
 }) => {
   const t = useT();
   const [open, setOpen] = useState(defaultOpen);
   const [siteToDelete, setSiteToDelete] = useState<SiteIndexSite | null>(null);
   const { setSiteSelected } = useSiteIndexSelectionActions();
-  const showSitesLoading = open && (project.sitesLoading || !project.sitesLoaded);
+  const showSitesLoading = (embeddedInProject || open) && (project.sitesLoading || !project.sitesLoaded);
   const visibleSites = useMemo(
     () =>
       filterSiteIndexSites(sites, {
@@ -417,9 +417,14 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
   );
 
   useEffect(() => {
+    if (embeddedInProject) {
+      if (project.sitesLoaded || project.sitesLoading) return;
+      onProjectOpened(project.id);
+      return;
+    }
     if (!open || project.sitesLoaded || project.sitesLoading) return;
     onProjectOpened(project.id);
-  }, [onProjectOpened, open, project.id, project.sitesLoaded, project.sitesLoading]);
+  }, [embeddedInProject, onProjectOpened, open, project.id, project.sitesLoaded, project.sitesLoading]);
 
   useEffect(() => {
     setOpen(defaultOpen);
@@ -453,6 +458,51 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
     }
   }, [onSitesChanged, setSiteSelected, siteToDelete, t]);
 
+  const sectionBody = (
+    <Box className="bg-theme-neutral-100 p-4" minW={0}>
+      {showSitesLoading ? (
+        <Flex minHeight="10rem" alignItems="center" justifyContent="center" gap={3}>
+          <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
+          <Text textStyle="400" color="neutral.800">
+            {t("Loading sites...")}
+          </Text>
+        </Flex>
+      ) : (
+        <>
+          <SiteProjectMetrics
+            project={project}
+            sites={visibleSites}
+            totalSiteCount={totalSiteCount}
+            isFiltered={isFiltered}
+          />
+          <SiteProjectTable sites={visibleSites} onDeleteSite={setSiteToDelete} />
+        </>
+      )}
+    </Box>
+  );
+
+  const deleteSiteModal = (
+    <DeleteSite
+      open={siteToDelete != null}
+      onOpenChange={openState => {
+        if (!openState) {
+          setSiteToDelete(null);
+        }
+      }}
+      sites={siteToDelete == null ? [] : [siteToDelete]}
+      onDelete={handleConfirmRowDelete}
+    />
+  );
+
+  if (embeddedInProject) {
+    return (
+      <Flex direction="column" gap="0.5rem">
+        <Box className="overflow-hidden rounded bg-theme-neutral-100">{sectionBody}</Box>
+        {deleteSiteModal}
+      </Flex>
+    );
+  }
+
   return (
     <Flex direction="column" gap="0.5rem">
       <Accordion
@@ -477,37 +527,9 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
           />
         }
       >
-        <Box className="bg-theme-neutral-100 p-4" minW={0}>
-          {showSitesLoading ? (
-            <Flex minHeight="10rem" alignItems="center" justifyContent="center" gap={3}>
-              <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
-              <Text textStyle="400" color="neutral.800">
-                {t("Loading sites...")}
-              </Text>
-            </Flex>
-          ) : (
-            <>
-              <SiteProjectMetrics
-                project={project}
-                sites={visibleSites}
-                totalSiteCount={totalSiteCount}
-                isFiltered={isFiltered}
-              />
-              <SiteProjectTable sites={visibleSites} onDeleteSite={setSiteToDelete} />
-            </>
-          )}
-        </Box>
+        {sectionBody}
       </Accordion>
-      <DeleteSite
-        open={siteToDelete != null}
-        onOpenChange={open => {
-          if (!open) {
-            setSiteToDelete(null);
-          }
-        }}
-        sites={siteToDelete == null ? [] : [siteToDelete]}
-        onDelete={handleConfirmRowDelete}
-      />
+      {deleteSiteModal}
     </Flex>
   );
 };
