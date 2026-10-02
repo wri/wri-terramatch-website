@@ -275,16 +275,20 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
         showClearFilters={activeFilterLabels.length > 0}
         onClickFilterButton={() => setIsFilterDrawerOpen(true)}
         onClearFilters={clearFilters}
-        button={{
-          size: "small",
-          leftIcon: <PlusIcon boxSize="0.625rem" />,
-          disabled: disturbanceReportCreating,
-          onClick: () => {
-            trackDisturbanceReportClicked();
-            createDisturbanceReport({ parentUuid: projectUuid });
-          },
-          children: t("Add Disturbance Report")
-        }}
+        button={
+          !entityProfile
+            ? undefined
+            : {
+                size: "small",
+                leftIcon: <PlusIcon boxSize="0.625rem" />,
+                disabled: disturbanceReportCreating,
+                onClick: () => {
+                  trackDisturbanceReportClicked();
+                  createDisturbanceReport({ parentUuid: projectUuid });
+                },
+                children: t("Add Disturbance Report")
+              }
+        }
       />
       <ReportsFilterDrawer
         open={isFilterDrawerOpen}
