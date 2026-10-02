@@ -209,7 +209,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
       )}
 
       {/* Disturbance reports belong to the project, so they aren't offered from a site / nursery profile. */}
-      {(!entityProfile || source === "project") && (
+      {!entityProfile && (
         <PageHeader
           className="!bg-theme-neutral-100 !px-6"
           title={!entityProfile ? t("Reports") : null}
@@ -261,7 +261,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
       )}
       <ToolbarTable
         className={classNames("!px-6 !pb-6 !pt-5", entityProfile ? "!bg-theme-neutral-100" : "!bg-theme-neutral-200 ")}
-        classNameContentLeft="w-full"
+        classNameContentLeft="flex-1"
         search={{
           placeholder: activeTab === "progress-reports" ? t("Search projects, sites, nurseries") : t("Search"),
           options: [],
@@ -275,6 +275,20 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
         showClearFilters={activeFilterLabels.length > 0}
         onClickFilterButton={() => setIsFilterDrawerOpen(true)}
         onClearFilters={clearFilters}
+        button={
+          !entityProfile
+            ? undefined
+            : {
+                size: "small",
+                leftIcon: <PlusIcon boxSize="0.625rem" />,
+                disabled: disturbanceReportCreating,
+                onClick: () => {
+                  trackDisturbanceReportClicked();
+                  createDisturbanceReport({ parentUuid: projectUuid });
+                },
+                children: t("Add Disturbance Report")
+              }
+        }
       />
       <ReportsFilterDrawer
         open={isFilterDrawerOpen}
