@@ -6,14 +6,13 @@ import { FC, ReactElement, useCallback, useEffect, useMemo } from "react";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import { getFormHeaderLabel, getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useFullFinancialReport, useLightProject } from "@/connections/Entity";
+import { useFullFinancialReport } from "@/connections/Entity";
 import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { FinancialReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportBreadcrumbs } from "@/hooks/useReportBreadcrumbs";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import { getReportProfileOriginFromQuery } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
 import ApiSlice from "@/store/apiSlice";
@@ -102,19 +101,12 @@ const FinancialReportContent: FC<FinancialReportContentProps> = ({ financialRepo
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
   const organisationHref =
     financialReport.organisationUuid != null ? `/organization/${financialReport.organisationUuid}` : "/my-projects";
-
-  const profileOrigin = getReportProfileOriginFromQuery(router.query.profile, router.query.profileUuid);
-  const [, { data: profileProject }] = useLightProject({
-    id: profileOrigin?.source === "project" ? profileOrigin.uuid : undefined,
-    enabled: profileOrigin?.source === "project"
-  });
   const breadcrumbs = useReportBreadcrumbs(
     {
       label: t("Financial Report - {period}", { period: getShortPeriodLabel(taskTitle ?? "", true) }),
       link: `/reports/financial-report/${financialReportUUID}`
     },
-    organisationHref,
-    { project: profileProject?.name }
+    organisationHref
   );
 
   return (
