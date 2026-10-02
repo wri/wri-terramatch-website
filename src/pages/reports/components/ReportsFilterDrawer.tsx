@@ -20,6 +20,7 @@ import {
   formatMonthLabel,
   formatReportPeriodLabel,
   getReportPeriodControl,
+  hasReportTypeFilter,
   PROGRESS_REPORT_TYPE_OPTIONS,
   REPORT_TYPE_LABELS,
   ReportFilterState,
@@ -59,6 +60,7 @@ interface ReportsFilterDrawerProps {
   periodOptions: ReportPeriodOptions;
   onApplyFilters: (filters: ReportFilterState) => void;
   onOpenChange?: (open: boolean) => void;
+  source?: "project" | "site" | "nursery";
   entityProfile?: boolean;
 }
 
@@ -69,6 +71,7 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
   periodOptions,
   onApplyFilters,
   onOpenChange,
+  source = "project",
   entityProfile = false
 }) => {
   const t = useT();
@@ -91,9 +94,11 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
   const activeFilterTags = useMemo(() => {
     const tags: { id: string; label: string }[] = [];
 
-    draftFilters.reportTypes.forEach(type => {
-      tags.push({ id: `type-${type}`, label: t(REPORT_TYPE_LABELS[type]) });
-    });
+    if (hasReportTypeFilter(source, entityProfile)) {
+      draftFilters.reportTypes.forEach(type => {
+        tags.push({ id: `type-${type}`, label: t(REPORT_TYPE_LABELS[type]) });
+      });
+    }
     draftFilters.statuses.forEach(status => {
       const option = statusOptions.find(item => item.value === status);
       tags.push({ id: `status-${status}`, label: option?.title ?? status });
@@ -105,7 +110,7 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
     }
 
     return tags;
-  }, [draftFilters, format, statusOptions, t]);
+  }, [draftFilters, entityProfile, format, source, statusOptions, t]);
 
   const dueDateValue = useMemo<DateValue[]>(() => {
     const from = isoStringToDateValue(draftFilters.dueDateFrom);
@@ -196,19 +201,21 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
       onApply={() => onApplyFilters(draftFilters)}
       drawerMaxW="22rem"
     >
-      <FilterCard label={t("Report Type")}>
-        {reportTypeOptions.map(option => (
-          <Checkbox
-            key={option.value}
-            name={`report-type-${option.value}`}
-            value={option.value}
-            checked={draftFilters.reportTypes.includes(option.value)}
-            onCheckedChange={(change: CheckboxChange) => handleReportTypeChange(option.value, change)}
-          >
-            {t(option.label)}
-          </Checkbox>
-        ))}
-      </FilterCard>
+      {hasReportTypeFilter(source, entityProfile) && (
+        <FilterCard label={t("Report Type")}>
+          {reportTypeOptions.map(option => (
+            <Checkbox
+              key={option.value}
+              name={`report-type-${option.value}`}
+              value={option.value}
+              checked={draftFilters.reportTypes.includes(option.value)}
+              onCheckedChange={(change: CheckboxChange) => handleReportTypeChange(option.value, change)}
+            >
+              {t(option.label)}
+            </Checkbox>
+          ))}
+        </FilterCard>
+      )}
       <FilterCard label={t("Status")}>
         {statusOptions.map(option => (
           <Checkbox
