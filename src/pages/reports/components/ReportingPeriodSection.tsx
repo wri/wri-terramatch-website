@@ -28,7 +28,11 @@ import {
   getReportingPeriodDueDateType,
   getReportsRequiringAttention
 } from "../reportIndex.utils";
-import { useReportingPeriodMetricCards, useReportingPeriodMetrics } from "../useReportingPeriodMetrics";
+import {
+  ReportingPeriodMetricCard,
+  useReportingPeriodMetricCards,
+  useReportingPeriodMetrics
+} from "../useReportingPeriodMetrics";
 import ReportAttentionStatusLabels from "./ReportAttentionStatusLabels";
 import ReportsIndexTable from "./ReportsIndexTable";
 
@@ -42,6 +46,7 @@ type ReportingPeriodSectionProps = {
   indexHref?: string;
   restoreReportId?: string;
   onRowRestored?: () => void;
+  metricKeys?: ReportingPeriodMetricCard["key"][];
 };
 
 type ReportingPeriodMetricsRowProps = {
@@ -51,6 +56,7 @@ type ReportingPeriodMetricsRowProps = {
   hasReportSubset: boolean;
   projectReportUuid: string | null;
   frameworkKey: string | null;
+  metricKeys?: ReportingPeriodMetricCard["key"][];
 };
 
 const usePeriodJobsTotal = (projectReportUuid: string | null, frameworkKey: string | null) => {
@@ -85,23 +91,29 @@ const ReportingPeriodMetricsRow: FC<ReportingPeriodMetricsRowProps> = ({
   allReports,
   hasReportSubset,
   projectReportUuid,
-  frameworkKey
+  frameworkKey,
+  metricKeys
 }) => {
-  const jobsTotal = usePeriodJobsTotal(open ? projectReportUuid : null, frameworkKey);
+  const showJobs = metricKeys == null || metricKeys.includes("jobs");
+  const jobsTotal = usePeriodJobsTotal(open && showJobs ? projectReportUuid : null, frameworkKey);
   const { periodTotals, filteredTotals, selectionTotals, jobsProgress } = useReportingPeriodMetrics({
     reports,
     allReports,
     hasReportSubset,
     jobsTotal
   });
-  const cards = useReportingPeriodMetricCards(
+  const frameworkCards = useReportingPeriodMetricCards(
     frameworkKey,
     periodTotals,
     jobsProgress,
     filteredTotals,
     selectionTotals
   );
-  const jobsLoading = projectReportUuid != null && jobsTotal == null;
+  const cards = useMemo(
+    () => (metricKeys == null ? frameworkCards : frameworkCards.filter(card => metricKeys.includes(card.key))),
+    [frameworkCards, metricKeys]
+  );
+  const jobsLoading = showJobs && projectReportUuid != null && jobsTotal == null;
   const framework = getReportKeyIndicatorFramework(frameworkKey);
   const metricScope = selectionTotals != null ? "selection" : "period";
 
@@ -152,7 +164,8 @@ const ReportingPeriodSection: FC<ReportingPeriodSectionProps> = ({
   hasReportSubset = false,
   indexHref,
   restoreReportId,
-  onRowRestored
+  onRowRestored,
+  metricKeys
 }) => {
   const t = useT();
   const { format } = useDate();
@@ -232,6 +245,7 @@ const ReportingPeriodSection: FC<ReportingPeriodSectionProps> = ({
                   hasReportSubset={hasReportSubset}
                   projectReportUuid={projectReportUuid}
                   frameworkKey={frameworkKey}
+                  metricKeys={metricKeys}
                 />
               </FrameworkProvider>
             )}

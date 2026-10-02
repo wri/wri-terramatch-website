@@ -9,7 +9,7 @@ import { useFullNursery } from "@/connections/Entity";
 import FrameworkProvider from "@/context/framework.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import NurseryOverviewTab from "@/pages/nurserie/[uuid]/tabs/Overview";
-import { getReportsIndexUrl } from "@/pages/reports/reportIndex.utils";
+import EntityProfileReportsTab from "@/pages/reports/components/EntityProfileReportsTab";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import NurseryBanner from "@/redesignComponents/content/Banner/NurseryBanner/NurseryBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
@@ -58,6 +58,13 @@ const NurseryDetailPage = () => {
       )
     },
     { key: "progress-and-goals", title: t("Progress & Goals"), body: <GoalsAndProgressTab nursery={nursery!} /> },
+    {
+      key: "reports",
+      title: t("Reports"),
+      body: (
+        <EntityProfileReportsTab source="nursery" entityUuid={nurseryUUID} projectUuid={nursery?.projectUuid ?? null} />
+      )
+    },
     { key: "audit-log", title: t("Audit Log"), body: <AuditLog nursery={nursery} /> }
   ];
 
@@ -98,7 +105,7 @@ const NurseryDetailPage = () => {
                       variant="borderless"
                       size="small"
                       className="underline underline-offset-2"
-                      onClick={() => router.push(getReportsIndexUrl("nursery", nursery.uuid))}
+                      onClick={() => router.push(`/nurserie/${nursery.uuid}?tab=reports`, undefined, { shallow: true })}
                     >
                       {t("Nursery Reports")}
                     </Button>
