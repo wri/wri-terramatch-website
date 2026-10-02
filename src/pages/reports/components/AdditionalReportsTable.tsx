@@ -19,7 +19,8 @@ import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
 import { CalendarIcon, DueIcon } from "@/redesignComponents/foundations/Icons";
 
 import { AdditionalReport, AdditionalReportType } from "../reportIndex.types";
-import { getReportStatusSortValue, rememberReportsIndexPosition, withReportsIndexReturn } from "../reportIndex.utils";
+import { getReportStatusSortValue, getReportViewHref, rememberReportsIndexPosition } from "../reportIndex.utils";
+import { useReportProfileOrigin } from "../ReportProfileOrigin.provider";
 import { useReportTableSelection } from "../ReportsSelection.provider";
 import ReportsIndexEditButton from "./ReportsIndexEditButton";
 
@@ -92,6 +93,7 @@ const AdditionalReportsTable: FC<AdditionalReportsTableProps> = ({
 }) => {
   const t = useT();
   const { format } = useDate();
+  const profileOrigin = useReportProfileOrigin();
   const { selectedRows, isReportSelected, handleRowSelected, handleAllItemsSelected } =
     useReportTableSelection(reports);
   const columns = useMemo(() => getColumns(type, t), [t, type]);
@@ -142,7 +144,7 @@ const AdditionalReportsTable: FC<AdditionalReportsTableProps> = ({
           <ChakraTableCell {...context?.getCellProps("name")}>
             <TitleCell
               label={reportName}
-              link={withReportsIndexReturn(`/reports/${report.type}/${report.id}`, indexHref)}
+              link={getReportViewHref(report, indexHref, profileOrigin)}
               linkTarget="_self"
               showChevron={false}
               onClick={() => rememberReportsIndexPosition(indexHref, report.id)}
@@ -207,7 +209,17 @@ const AdditionalReportsTable: FC<AdditionalReportsTableProps> = ({
         </TableRow>
       );
     },
-    [currencyLabels, format, handleRowSelected, indexHref, isReportSelected, monthLabels, renderDateTag, t]
+    [
+      currencyLabels,
+      format,
+      handleRowSelected,
+      indexHref,
+      isReportSelected,
+      monthLabels,
+      profileOrigin,
+      renderDateTag,
+      t
+    ]
   );
 
   return (

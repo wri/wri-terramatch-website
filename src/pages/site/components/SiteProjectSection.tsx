@@ -41,7 +41,7 @@ import ApiSlice from "@/store/apiSlice";
 
 import DeleteSite from "./Modals/DeleteSite";
 import type { SiteIndexProject, SiteIndexSite, SiteIndexStatus, SiteIndexUpdate } from "./siteIndex.types";
-import { filterSiteIndexSites, isSiteApproved } from "./siteIndex.utils";
+import { filterSiteIndexSites, getSiteDetailUrl, isSiteApproved } from "./siteIndex.utils";
 import { useSiteIndexSelectionActions, useSiteTableSelection } from "./SiteIndexSelection.provider";
 import { isSiteDeletable, isSiteEditable } from "./siteIndexSubmit";
 
@@ -234,7 +234,8 @@ const SiteProjectMetrics: FC<{
 const SiteProjectTable: FC<{
   sites: SiteIndexSite[];
   onDeleteSite: (site: SiteIndexSite) => void;
-}> = ({ sites, onDeleteSite }) => {
+  embeddedInProject: boolean;
+}> = ({ sites, onDeleteSite, embeddedInProject }) => {
   const t = useT();
   const router = useRouter();
   const { format } = useDate();
@@ -260,7 +261,7 @@ const SiteProjectTable: FC<{
         <TableRow
           className={`${context?.className ?? ""} group cursor-pointer`}
           aria-selected={isSelected}
-          onClick={() => void router.push(`/site/${site.id}`)}
+          onClick={() => void router.push(getSiteDetailUrl(site.id, !embeddedInProject))}
         >
           <TableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)} onClick={stopRowClick}>
             <Checkbox
@@ -271,7 +272,7 @@ const SiteProjectTable: FC<{
             />
           </TableCell>
           <TableCell {...context?.getCellProps("name")}>
-            <Link href={`/site/${site.id}`} className="block max-w-full truncate">
+            <Link href={getSiteDetailUrl(site.id, !embeddedInProject)} className="block max-w-full truncate">
               <Text
                 as="span"
                 textStyle="400-bold"
@@ -362,7 +363,7 @@ const SiteProjectTable: FC<{
         </TableRow>
       );
     },
-    [format, handleRowSelected, isSiteSelected, onDeleteSite, router, t]
+    [embeddedInProject, format, handleRowSelected, isSiteSelected, onDeleteSite, router, t]
   );
 
   return (
@@ -475,7 +476,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
             totalSiteCount={totalSiteCount}
             isFiltered={isFiltered}
           />
-          <SiteProjectTable sites={visibleSites} onDeleteSite={setSiteToDelete} />
+          <SiteProjectTable sites={visibleSites} onDeleteSite={setSiteToDelete} embeddedInProject={embeddedInProject} />
         </>
       )}
     </Box>
