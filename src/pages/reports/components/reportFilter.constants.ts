@@ -109,6 +109,13 @@ export const REPORTS_TYPE_OPTIONS_ENTITY_PROFILE: { value: ReportTypeOption; lab
   { value: "disturbance-report", label: "Disturbance Reports" }
 ];
 
+/**
+ * On a site or nursery profile the reports are already scoped to that entity's report type, so the
+ * report type filter is not offered.
+ */
+export const hasReportTypeFilter = (source: "project" | "site" | "nursery", entityProfile: boolean) =>
+  !entityProfile || source === "project";
+
 export const REPORT_TYPE_LABELS: Record<ReportTypeOption, string> = {
   "project-report": "Project Reports",
   "site-report": "Site Reports",

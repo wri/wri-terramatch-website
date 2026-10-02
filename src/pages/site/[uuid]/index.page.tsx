@@ -4,7 +4,6 @@ import { FC } from "react";
 
 import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
-import { getReportsIndexUrl } from "@/pages/reports/reportIndex.utils";
 import SiteDetailTab from "@/pages/site/[uuid]/tabs/Details";
 import GoalsAndProgressTab from "@/pages/site/[uuid]/tabs/GoalsAndProgress";
 import SiteOverviewTab from "@/pages/site/[uuid]/tabs/Overview";
@@ -15,6 +14,7 @@ import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
 import SitePageProviders from "./components/SitePageProviders";
 import { useSitePageLoad } from "./hooks/useSitePageLoad";
 import AuditLog from "./tabs/AuditLog";
+import ReportsTab from "./tabs/Reports";
 import SitePolygonsTab from "./tabs/SitePolygonsTab";
 
 const SiteDetailPage: FC = () => {
@@ -46,6 +46,7 @@ const SiteDetailPage: FC = () => {
       )
     },
     { key: "goals", title: t("Progress & Goals"), body: <GoalsAndProgressTab site={site!} /> },
+    { key: "reports", title: t("Reports"), body: <ReportsTab site={site!} /> },
     {
       key: "audit-log",
       title: t("Audit Log"),
@@ -84,7 +85,7 @@ const SiteDetailPage: FC = () => {
                     variant="borderless"
                     size="small"
                     className="underline underline-offset-2"
-                    onClick={() => router.push(getReportsIndexUrl("site", site.uuid))}
+                    onClick={() => router.push(`/site/${site.uuid}?tab=reports`, undefined, { shallow: true })}
                   >
                     {t("Site Reports")}
                   </Button>

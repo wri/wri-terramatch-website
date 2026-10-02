@@ -1,0 +1,127 @@
+import { Flex, Text } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
+import { FC, useMemo, useState } from "react";
+
+import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
+import { useLightProject } from "@/connections/Entity";
+import { ReportsProvider, useReportsContext } from "@/context/reports.provider";
+import { ProjectLightDto, SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import ReportingPeriodSection from "@/pages/reports/components/ReportingPeriodSection";
+import ReportsIndexBulkBar from "@/pages/reports/components/ReportsIndexBulkBar";
+import ReportsIndexHeader from "@/pages/reports/components/ReportsIndexHeader";
+import { getReportPeriodOptions } from "@/pages/reports/reportPeriodFilter";
+import ReportsSelectionProvider from "@/pages/reports/ReportsSelection.provider";
+import { useReportsIndexData } from "@/pages/reports/useReportsIndexData";
+import { useReportsIndexFilters } from "@/pages/reports/useReportsIndexFilters";
+import NoResults from "@/redesignComponents/content/NoResults/NoResults";
+import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
+
+const noop = () => {};
+
+interface ReportsTabProps {
+  site: SiteFullDto;
+}
+
+interface ReportsTabContentProps extends ReportsTabProps {
+  project: ProjectLightDto;
+}
+
+const ReportsTabContent: FC<ReportsTabContentProps> = ({ site, project }) => {
+  const t = useT();
+  const { filters } = useReportsContext();
+  const [query, setQuery] = useState("");
+  const { sections, loading, error } = useReportsIndexData(project, "site", site.uuid, false);
+  const { filteredProgressSections, progressReportCount } = useReportsIndexFilters({
+    progressSections: sections,
+    additionalSections: [],
+    query
+  });
+
+  const hasActiveSearch = query.trim().length > 0;
+  const hasActivePeriodFilter =
+    filters.dueDateFrom !== "" || filters.dueDateTo !== "" || filters.dueMonth !== "" || filters.dueYear !== "";
+  const hasReportSubset = hasActiveSearch || filters.statuses.length > 0 || hasActivePeriodFilter;
+
+  const periods = useMemo(
+    () => filteredProgressSections.flatMap(section => section.periods),
+    [filteredProgressSections]
+  );
+  const periodOptions = useMemo(() => getReportPeriodOptions(sections, []), [sections]);
+  const unfilteredReportsByPeriodId = useMemo(
+    () => new Map(sections.flatMap(section => section.periods).map(period => [period.id, period.reports])),
+    [sections]
+  );
+
+  return (
+    <div className="flex h-full w-full flex-col">
+      <ReportsIndexHeader
+        activeTab="progress-reports"
+        source="site"
+        sourceUuid={site.uuid}
+        projectUuid={project.uuid}
+        reportCount={progressReportCount}
+        viewValue="site"
+        viewItems={[]}
+        periodOptions={periodOptions}
+        onTabChange={noop}
+        onViewChange={noop}
+        onQueryChange={setQuery}
+        indexHref=""
+        entityProfile
+      />
+      <PageContent className="h-auto flex-1 px-2 py-0">
+        {loading ? (
+          <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
+            <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
+            <Text textStyle="400" color="neutral.800">
+              {t("Loading reports...")}
+            </Text>
+          </Flex>
+        ) : error ? (
+          <NoResults
+            title={t("Reports could not be loaded")}
+            description={t("Please refresh the page and try again.")}
+          />
+        ) : periods.length === 0 ? (
+          <NoResults
+            title={t("No reports found")}
+            description={
+              hasActiveSearch
+                ? t("We couldn’t find any reports matching your search. Try a different keyword.")
+                : t("Try changing your search or filters.")
+            }
+          />
+        ) : (
+          <div className="space-y-0.5 bg-theme-neutral-200 pt-0.5">
+            {periods.map((period, index) => (
+              <ReportingPeriodSection
+                key={period.id}
+                period={period}
+                allPeriodReports={unfilteredReportsByPeriodId.get(period.id)}
+                defaultOpen={index === 0}
+                hasReportSubset={hasReportSubset}
+                indexHref=""
+              />
+            ))}
+          </div>
+        )}
+
+        <ReportsIndexBulkBar />
+      </PageContent>
+    </div>
+  );
+};
+
+const ReportsTab: FC<ReportsTabProps> = ({ site }) => {
+  const [, { data: project }] = useLightProject({ id: site.projectUuid ?? undefined });
+
+  return project == null ? null : (
+    <ReportsProvider>
+      <ReportsSelectionProvider key={`site:${site.uuid}`}>
+        <ReportsTabContent site={site} project={project} />
+      </ReportsSelectionProvider>
+    </ReportsProvider>
+  );
+};
+
+export default ReportsTab;

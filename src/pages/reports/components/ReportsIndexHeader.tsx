@@ -27,6 +27,7 @@ import {
   formatReportPeriodLabel,
   getInitialProgressFilters,
   getReportPeriodControl,
+  hasReportTypeFilter,
   REPORT_TYPE_LABELS,
   ReportFilterState
 } from "./reportFilter.constants";
@@ -113,7 +114,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
   const activeFilterLabels = useMemo<SelectedFilter[]>(() => {
     const labels: SelectedFilter[] = [];
 
-    if (selectedFilters.reportTypes.length > 0) {
+    if (hasReportTypeFilter(source, entityProfile) && selectedFilters.reportTypes.length > 0) {
       labels.push({
         label: selectedFilters.reportTypes.map(type => t(REPORT_TYPE_LABELS[type])),
         category: t("Report Type"),
@@ -149,7 +150,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
     }
 
     return labels;
-  }, [activeTab, format, selectedFilters, statusOptions, t, updateActiveFilters]);
+  }, [activeTab, entityProfile, format, selectedFilters, source, statusOptions, t, updateActiveFilters]);
 
   const applyFilters = useCallback(
     (filters: ReportFilterState) => {
@@ -171,6 +172,8 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
 
   const clearFilters = useCallback(() => {
     updateActiveFilters(EMPTY_REPORT_FILTERS);
+    // On an entity profile tab the filters are local; never navigate away to the reports index.
+    if (entityProfile) return;
     if (source === "project") {
       if (router.query.reportType == null) return;
       const query = { ...router.query };
@@ -185,7 +188,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
         view: viewValue === ALL_PROJECTS_VIEW_VALUE ? ALL_PROJECTS_VIEW_VALUE : undefined
       })
     );
-  }, [activeTab, projectUuid, router, source, updateActiveFilters, viewValue]);
+  }, [activeTab, entityProfile, projectUuid, router, source, updateActiveFilters, viewValue]);
 
   return (
     <>
@@ -205,23 +208,26 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
         />
       )}
 
-      <PageHeader
-        className="!bg-theme-neutral-100 !px-6"
-        title={!entityProfile ? t("Reports") : null}
-        actions={
-          <Button
-            size="small"
-            leftIcon={<PlusIcon boxSize="0.625rem" />}
-            disabled={disturbanceReportCreating}
-            onClick={() => {
-              trackDisturbanceReportClicked();
-              createDisturbanceReport({ parentUuid: projectUuid });
-            }}
-          >
-            {t("Add Disturbance Report")}
-          </Button>
-        }
-      />
+      {/* Disturbance reports belong to the project, so they aren't offered from a site / nursery profile. */}
+      {(!entityProfile || source === "project") && (
+        <PageHeader
+          className="!bg-theme-neutral-100 !px-6"
+          title={!entityProfile ? t("Reports") : null}
+          actions={
+            <Button
+              size="small"
+              leftIcon={<PlusIcon boxSize="0.625rem" />}
+              disabled={disturbanceReportCreating}
+              onClick={() => {
+                trackDisturbanceReportClicked();
+                createDisturbanceReport({ parentUuid: projectUuid });
+              }}
+            >
+              {t("Add Disturbance Report")}
+            </Button>
+          }
+        />
+      )}
       {!entityProfile && (
         <Toolbar
           className="sticky top-11 z-10 items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-2 pt-5"
@@ -277,6 +283,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
         periodOptions={periodOptions}
         onApplyFilters={applyFilters}
         onOpenChange={setIsFilterDrawerOpen}
+        source={source}
         entityProfile={entityProfile}
       />
     </>

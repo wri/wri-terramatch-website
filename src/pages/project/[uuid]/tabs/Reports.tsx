@@ -16,6 +16,7 @@ import {
   findAdditionalReportLocation,
   findProgressReportLocation
 } from "@/pages/reports/reportIndex.utils";
+import { getReportPeriodOptions } from "@/pages/reports/reportPeriodFilter";
 import ReportsSelectionProvider from "@/pages/reports/ReportsSelection.provider";
 import { useAdditionalReportsData } from "@/pages/reports/useAdditionalReportsData";
 import { useReportsIndexData } from "@/pages/reports/useReportsIndexData";
@@ -72,6 +73,11 @@ const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
     [filteredAdditionalSections, restoreReportId]
   );
 
+  const periodOptions = useMemo(
+    () => getReportPeriodOptions(progressSections, additionalSections),
+    [additionalSections, progressSections]
+  );
+
   const unfilteredPeriodsByProjectId = useMemo(
     () => new Map(progressSections.map(section => [section.id, section.periods])),
     [progressSections]
@@ -102,11 +108,7 @@ const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
         reportCount={reportCount}
         viewValue={"project"}
         viewItems={[]}
-        periodOptions={{
-          progressMonths: [],
-          progressYears: [],
-          additionalYears: []
-        }}
+        periodOptions={periodOptions}
         onTabChange={() => {}}
         onViewChange={() => {}}
         onQueryChange={setQuery}
