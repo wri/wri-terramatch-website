@@ -16,7 +16,6 @@ import FrameworkProvider, { Framework } from "@/context/framework.provider";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityCombinedStatus } from "@/helpers/entity";
 import { useFrameworkTitle } from "@/hooks/useFrameworkTitle";
-import { getReportsIndexUrl } from "@/pages/reports/reportIndex.utils";
 
 type ProjectCardProps = PropsWithChildren<
   DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
@@ -72,7 +71,7 @@ const ProjectCard: FC<ProjectCardProps> = ({ project, title, children, className
               </>
             ) : (
               <>
-                <Button as={Link} variant="secondary" href={getReportsIndexUrl("project", project.uuid)}>
+                <Button as={Link} variant="secondary" href={`/project/${project.uuid}?tab=reports`}>
                   {t("View reporting tasks")}
                 </Button>
                 <Button as={Link} href={`/project/${project.uuid}`}>
