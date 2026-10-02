@@ -4,6 +4,7 @@ import { FC } from "react";
 
 import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
+import EntityProfileReportsTab from "@/pages/reports/components/EntityProfileReportsTab";
 import SiteDetailTab from "@/pages/site/[uuid]/tabs/Details";
 import GoalsAndProgressTab from "@/pages/site/[uuid]/tabs/GoalsAndProgress";
 import SiteOverviewTab from "@/pages/site/[uuid]/tabs/Overview";
@@ -14,7 +15,6 @@ import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
 import SitePageProviders from "./components/SitePageProviders";
 import { useSitePageLoad } from "./hooks/useSitePageLoad";
 import AuditLog from "./tabs/AuditLog";
-import ReportsTab from "./tabs/Reports";
 import SitePolygonsTab from "./tabs/SitePolygonsTab";
 
 const SiteDetailPage: FC = () => {
@@ -46,7 +46,11 @@ const SiteDetailPage: FC = () => {
       )
     },
     { key: "goals", title: t("Progress & Goals"), body: <GoalsAndProgressTab site={site!} /> },
-    { key: "reports", title: t("Reports"), body: <ReportsTab site={site!} /> },
+    {
+      key: "reports",
+      title: t("Reports"),
+      body: <EntityProfileReportsTab source="site" entityUuid={siteUUID} projectUuid={site?.projectUuid ?? null} />
+    },
     {
       key: "audit-log",
       title: t("Audit Log"),

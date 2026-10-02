@@ -5,32 +5,39 @@ import { FC, useMemo, useState } from "react";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { useLightProject } from "@/connections/Entity";
 import { ReportsProvider, useReportsContext } from "@/context/reports.provider";
-import { ProjectLightDto, SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import ReportingPeriodSection from "@/pages/reports/components/ReportingPeriodSection";
-import ReportsIndexBulkBar from "@/pages/reports/components/ReportsIndexBulkBar";
-import ReportsIndexHeader from "@/pages/reports/components/ReportsIndexHeader";
+import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getReportPeriodOptions } from "@/pages/reports/reportPeriodFilter";
 import ReportsSelectionProvider from "@/pages/reports/ReportsSelection.provider";
+import { ReportingPeriodMetricCard } from "@/pages/reports/useReportingPeriodMetrics";
 import { useReportsIndexData } from "@/pages/reports/useReportsIndexData";
 import { useReportsIndexFilters } from "@/pages/reports/useReportsIndexFilters";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 
-const noop = () => {};
+import ReportingPeriodSection from "./ReportingPeriodSection";
+import ReportsIndexBulkBar from "./ReportsIndexBulkBar";
+import ReportsIndexHeader from "./ReportsIndexHeader";
 
-interface ReportsTabProps {
-  site: SiteFullDto;
+const PROFILE_METRIC_KEYS: Record<"site" | "nursery", ReportingPeriodMetricCard["key"][]> = {
+  site: ["trees-growing", "trees-regenerated", "jobs"],
+  nursery: ["seedlings-grown"]
+};
+
+interface EntityProfileReportsTabProps {
+  source: "site" | "nursery";
+  entityUuid: string;
+  projectUuid: string | null;
 }
 
-interface ReportsTabContentProps extends ReportsTabProps {
+interface EntityProfileReportsContentProps extends Omit<EntityProfileReportsTabProps, "projectUuid"> {
   project: ProjectLightDto;
 }
 
-const ReportsTabContent: FC<ReportsTabContentProps> = ({ site, project }) => {
+const EntityProfileReportsContent: FC<EntityProfileReportsContentProps> = ({ source, entityUuid, project }) => {
   const t = useT();
   const { filters } = useReportsContext();
   const [query, setQuery] = useState("");
-  const { sections, loading, error } = useReportsIndexData(project, "site", site.uuid, false);
+  const { sections, loading, error } = useReportsIndexData(project, source, entityUuid, false);
   const { filteredProgressSections, progressReportCount } = useReportsIndexFilters({
     progressSections: sections,
     additionalSections: [],
@@ -42,6 +49,8 @@ const ReportsTabContent: FC<ReportsTabContentProps> = ({ site, project }) => {
     filters.dueDateFrom !== "" || filters.dueDateTo !== "" || filters.dueMonth !== "" || filters.dueYear !== "";
   const hasReportSubset = hasActiveSearch || filters.statuses.length > 0 || hasActivePeriodFilter;
 
+  // A site / nursery's reports all belong to one project, so the project level accordion is skipped
+  // and the reporting periods are listed directly.
   const periods = useMemo(
     () => filteredProgressSections.flatMap(section => section.periods),
     [filteredProgressSections]
@@ -56,15 +65,15 @@ const ReportsTabContent: FC<ReportsTabContentProps> = ({ site, project }) => {
     <div className="flex h-full w-full flex-col">
       <ReportsIndexHeader
         activeTab="progress-reports"
-        source="site"
-        sourceUuid={site.uuid}
+        source={source}
+        sourceUuid={entityUuid}
         projectUuid={project.uuid}
         reportCount={progressReportCount}
-        viewValue="site"
+        viewValue={source}
         viewItems={[]}
         periodOptions={periodOptions}
-        onTabChange={noop}
-        onViewChange={noop}
+        onTabChange={() => {}}
+        onViewChange={() => {}}
         onQueryChange={setQuery}
         indexHref=""
         entityProfile
@@ -101,6 +110,7 @@ const ReportsTabContent: FC<ReportsTabContentProps> = ({ site, project }) => {
                 defaultOpen={index === 0}
                 hasReportSubset={hasReportSubset}
                 indexHref=""
+                metricKeys={PROFILE_METRIC_KEYS[source]}
               />
             ))}
           </div>
@@ -112,16 +122,20 @@ const ReportsTabContent: FC<ReportsTabContentProps> = ({ site, project }) => {
   );
 };
 
-const ReportsTab: FC<ReportsTabProps> = ({ site }) => {
-  const [, { data: project }] = useLightProject({ id: site.projectUuid ?? undefined });
+/**
+ * The Reports tab on a site or nursery profile: the progress reports of that one entity, grouped by
+ * reporting period.
+ */
+const EntityProfileReportsTab: FC<EntityProfileReportsTabProps> = ({ source, entityUuid, projectUuid }) => {
+  const [, { data: project }] = useLightProject({ id: projectUuid ?? undefined });
 
   return project == null ? null : (
     <ReportsProvider>
-      <ReportsSelectionProvider key={`site:${site.uuid}`}>
-        <ReportsTabContent site={site} project={project} />
+      <ReportsSelectionProvider key={`${source}:${entityUuid}`}>
+        <EntityProfileReportsContent source={source} entityUuid={entityUuid} project={project} />
       </ReportsSelectionProvider>
     </ReportsProvider>
   );
 };
 
-export default ReportsTab;
+export default EntityProfileReportsTab;
