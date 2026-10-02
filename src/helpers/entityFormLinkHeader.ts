@@ -224,10 +224,12 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
         link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}?tab=reporting-tasks`
       },
       {
-        label: getShortPeriodLabel(taskTitle, true),
-        link: `/project/${entity?.projectUuid ?? ""}/reporting-task/${entity?.taskUuid ?? ""}`
+        label:
+          t("Socioeconomic Restoration Partners Report") +
+          " - " +
+          getShortPeriodLabel(taskTitle, true)?.replace(/\D/g, ""),
+        link: entityPageLink
       },
-      { label: entityTitle, link: entityPageLink },
       { label: t("Edit"), link: editLink }
     ])
   };

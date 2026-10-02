@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo } from "react";
 
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
-import { getFormHeaderLabel, getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
+import { getFormHeaderLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullSRPReport } from "@/connections/Entity";
 import FrameworkProvider, { toFramework } from "@/context/framework.provider";
@@ -91,6 +91,7 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
 
   const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "overview";
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
+  const srpReportTitle = t("Socioeconomic Restoration Partners Report") + " - " + headerReportTitle?.replace(/\D/g, "");
 
   return (
     <>
@@ -100,7 +101,7 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
       </Head>
       <ReportBanner
         report={srpReport}
-        title={headerReportTitle}
+        title={srpReportTitle}
         dueAt={taskDueAt ?? srpReport.dueAt}
         entityName="srp-report"
         breadcrumbs={[
@@ -118,12 +119,8 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
             link: `/project/${srpReport.projectUuid}?tab=reporting-tasks`
           },
           {
-            label: getShortPeriodLabel(taskTitle ?? "", true),
+            label: srpReportTitle,
             link: `/project/${srpReport.projectUuid ?? ""}/reporting-task/${srpReport.taskUuid ?? ""}`
-          },
-          {
-            label: t("SRP Report"),
-            link: `/reports/srp-report/${srpReportUUID}`
           }
         ]}
         suffix={
@@ -138,7 +135,7 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
                 {t("Project Profile")}
               </Button>
             )}
-            <span className="text-theme-neutral-300 text-sm">|</span>
+            <span className="text-sm text-theme-neutral-300">|</span>
             <Button
               variant="borderless"
               size="small"

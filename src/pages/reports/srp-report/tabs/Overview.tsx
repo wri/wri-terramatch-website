@@ -1,6 +1,6 @@
 import { Box, Flex, Link, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useMemo } from "react";
+import { FC, useMemo, useState } from "react";
 
 import StatusTag from "@/components/elements/StatusTag/StatusTag";
 import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
@@ -9,32 +9,37 @@ import PageContent from "@/components/extensive/PageElements/PageContent/PageCon
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { PENDING_APPROVAL } from "@/constants/statuses";
 import { SrpReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { getEntitySetupButtonLabel } from "@/helpers/entity";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import NothingToReportEmptyState from "@/pages/reports/nursery-report/components/NothingToReportEmptyState";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
-import { ChevronRightIcon, EditIcon, NewTabIcon, PartnersIcon } from "@/redesignComponents/foundations/Icons";
+import { ChevronRightIcon, PartnersIcon } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
-import { ProgressSteps } from "@/redesignComponents/status/ProgressIndicator/ProgressSteps";
-import { StepProps } from "@/redesignComponents/status/ProgressIndicator/types";
 
 type SrpReportOverviewTabProps = {
   report: SrpReportFullDto;
   onViewDetails: () => void;
 };
 
-const getRestorationPartnersStepStatus = (report: SrpReportFullDto): StepProps["status"] => {
-  if (report.status === "information-required" || report.updateRequestStatus === "information-required") {
-    return "error";
-  }
-  if (report.status === "approved" || report.status === "pending-approval" || report.completion === 100) {
-    return "completed";
-  }
-  return "available";
-};
-
 const SrpReportOverviewTab: FC<SrpReportOverviewTabProps> = ({ report, onViewDetails }) => {
   const t = useT();
+  const [isReportSetupComplete, setIsReportSetupComplete] = useState(false);
+  const editButtonLabel = getEntitySetupButtonLabel(t, report.status, isReportSetupComplete);
+
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
+    entityName: "srp-reports",
+    entityUUID: report.uuid,
+    entityStatus: report.status,
+    updateRequestStatus: report.updateRequestStatus,
+    entityTitle: report.projectName ?? "",
+    reportTitle: report.reportTitle ?? "",
+    feedback: report.feedback,
+    useStatusModal: true,
+    useInformationRequiredModal: true
+  });
 
   const statusTag = useMemo(() => {
     if (report.updateRequestStatus === PENDING_APPROVAL) {
@@ -54,6 +59,7 @@ const SrpReportOverviewTab: FC<SrpReportOverviewTabProps> = ({ report, onViewDet
 
   return (
     <PageContent>
+      {EditModals}
       <Flex gap={7} direction="column" width="100%">
         <Flex gap={7} direction={{ base: "column", lg: "row" }} alignItems={{ lg: "flex-start" }}>
           <PageItem
@@ -77,7 +83,7 @@ const SrpReportOverviewTab: FC<SrpReportOverviewTabProps> = ({ report, onViewDet
                 color="primary.700"
                 metricLabel="total_unique_restoration_partners"
                 tooltipContent={t(
-                  "This is the total number of unique restoration partners reported during this reporting period."
+                  "This is the total number of unique restoration partners reported for this reporting year."
                 )}
                 className="flex-none"
               />
@@ -89,33 +95,20 @@ const SrpReportOverviewTab: FC<SrpReportOverviewTabProps> = ({ report, onViewDet
             buttonProps={{
               variant: "primary",
               size: "small",
-              children: t("Continue"),
+              children: editButtonLabel,
               rightIcon: <ChevronRightIcon />,
-              onClick: onViewDetails
+              onClick: () => handleEdit()
             }}
             tag={statusTag}
           >
             <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
-              <ProgressSteps
-                steps={[
-                  {
-                    index: 1,
-                    status: getRestorationPartnersStepStatus(report),
-                    label: t("Restoration Partners"),
-                    actions: (
-                      <Button
-                        type="button"
-                        variant="borderless"
-                        size="small"
-                        leftIcon={<EditIcon boxSize={3} />}
-                        onClick={onViewDetails}
-                      >
-                        {t("Edit")}
-                      </Button>
-                    ),
-                    onClick: onViewDetails
-                  }
-                ]}
+              <EntitySetUpSection
+                onStatusChange={setIsReportSetupComplete}
+                onEditStep={handleEdit}
+                entity={report}
+                type="srpReports"
+                entityTitle={report.projectName ?? ""}
+                reportTitle={report.reportTitle ?? ""}
               />
             </Box>
           </PageItem>
@@ -162,14 +155,11 @@ const SrpReportOverviewTab: FC<SrpReportOverviewTabProps> = ({ report, onViewDet
                   href="#checklists"
                   variant="borderless"
                   size="small"
-                  rightIcon={<NewTabIcon boxSize="0.625rem" />}
+                  rightIcon={<ChevronRightIcon boxSize="0.625rem" />}
                   className="justify-start truncate !whitespace-nowrap mobile:max-w-full mobile:[text-wrap:auto]"
                 >
-                  {t("Checklists for your TerraFund Reports")}
+                  {t("How to Report on PPC Socioeconomic Restoration Partners")}
                 </Button>
-                <Text id="checklists" color="neutral.900" textStyle="300">
-                  {t("We will add more guidance coming from the guidance being developed by the program team!")}
-                </Text>
               </Flex>
             </Flex>
           </Flex>
