@@ -20,6 +20,7 @@ import Log from "@/utils/log";
 
 import AuditLog from "./tabs/AuditLog";
 import SrpReportDetailsTab from "./tabs/Details";
+import SrpReportOverviewTab from "./tabs/Overview";
 
 type TabItem = {
   key: string;
@@ -36,7 +37,7 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
   const t = useT();
   const router = useRouter();
   const srpReportUUID = srpReport.uuid;
-  const currentTab = (router.query.tab as string) ?? "details";
+  const currentTab = (router.query.tab as string) ?? "overview";
 
   const window = useReportingWindow(toFramework(srpReport.frameworkKey), srpReport?.dueAt!);
   const taskTitle = t("Reporting Task {window}", { window });
@@ -53,6 +54,11 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
   const tabItems = useMemo<TabItem[]>(
     () => [
       {
+        key: "overview",
+        title: t("Overview"),
+        renderBody: () => <SrpReportOverviewTab report={srpReport} onViewDetails={() => navigateToTab("details")} />
+      },
+      {
         key: "details",
         title: t("Report Details"),
         renderBody: () => <SrpReportDetailsTab report={srpReport} />
@@ -63,12 +69,12 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
         renderBody: () => <AuditLog srpReport={srpReport} />
       }
     ],
-    [srpReport, t]
+    [navigateToTab, srpReport, t]
   );
 
   const visibleTabItems = useMemo(() => {
     if (srpReport.nothingToReport) {
-      return tabItems.filter(item => item.key === "details");
+      return tabItems.filter(item => item.key === "overview");
     }
 
     return tabItems;
@@ -83,7 +89,7 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
     [visibleTabItems]
   );
 
-  const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "details";
+  const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "overview";
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
 
   return (
@@ -132,7 +138,7 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
                 {t("Project Profile")}
               </Button>
             )}
-            <span className="text-sm text-theme-neutral-300">|</span>
+            <span className="text-theme-neutral-300 text-sm">|</span>
             <Button
               variant="borderless"
               size="small"

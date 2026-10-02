@@ -63,6 +63,7 @@ export { NurseryManagingIcon } from "./RestorationAndLand/NurseryManagingIcon";
 export { OpenNaturalEcosystemIcon } from "./RestorationAndLand/OpenNaturalEcosystemIcon";
 export { OpportunitiesIcon } from "./NavigationSections/OpportunitiesIcon";
 export { OrganizationIcon } from "./NavigationSections/OrganizationIcon";
+export { PartnersIcon } from "./DataVisualisation/PartnersIcon";
 export { PendingIcon } from "./Status/PendingIcon";
 export { PeatlandIcon } from "./RestorationAndLand/PeatlandIcon";
 export { PhotosIcon } from "./Function/PhotosIcon";
