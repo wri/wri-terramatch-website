@@ -5,7 +5,7 @@ import { FC, useMemo, useState } from "react";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
-import { FolderIcon, FolderOpenIcon, LoadingIcon } from "@/redesignComponents/foundations/Icons";
+import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
 import {
@@ -19,6 +19,7 @@ import ReportAttentionStatusLabels from "./ReportAttentionStatusLabels";
 
 type AdditionalReportsContentProps = {
   sections: AdditionalReportsEntitySectionData[];
+  sectionName?: string;
   loading: boolean;
   error: boolean;
   hasActiveSearch?: boolean;
@@ -76,11 +77,12 @@ const AdditionalReportGroupSection: FC<{
 
 const AdditionalReportsEntitySection: FC<{
   section: AdditionalReportsEntitySectionData;
+  sectionName?: string;
   indexHref?: string;
   restoreGroupId?: string;
   restoreReportId?: string;
   onRowRestored?: () => void;
-}> = ({ section, indexHref, restoreGroupId, restoreReportId, onRowRestored }) => {
+}> = ({ section, sectionName, indexHref, restoreGroupId, restoreReportId, onRowRestored }) => {
   const t = useT();
   const [open, setOpen] = useState(true);
   const reports = useMemo(() => section.groups.flatMap(group => group.reports), [section.groups]);
@@ -99,7 +101,9 @@ const AdditionalReportsEntitySection: FC<{
           header={
             <ListSectionHeader
               level="top-level"
-              title={section.name ?? (section.type === "organisation" ? t("Organisation") : t("Project"))}
+              title={
+                sectionName ?? section.name ?? (section.type === "organisation" ? t("Organisation") : t("Project"))
+              }
               titleHref={section.type === "project" ? `/project/${section.id}` : `/organization/${section.id}`}
               caption={section.type === "organisation" ? t("Organisation") : section.caption}
               open={open}
@@ -128,6 +132,7 @@ const AdditionalReportsEntitySection: FC<{
         <AdditionalReportsEntitySection
           key={`${child.type}-${child.id}`}
           section={child}
+          sectionName={sectionName}
           indexHref={indexHref}
           restoreGroupId={restoreGroupId}
           restoreReportId={restoreReportId}
@@ -140,6 +145,7 @@ const AdditionalReportsEntitySection: FC<{
 
 const AdditionalReportsContent: FC<AdditionalReportsContentProps> = ({
   sections,
+  sectionName,
   loading,
   error,
   hasActiveSearch = false,
@@ -176,6 +182,7 @@ const AdditionalReportsContent: FC<AdditionalReportsContentProps> = ({
             <AdditionalReportsEntitySection
               key={`${section.type}-${section.id}`}
               section={section}
+              sectionName={sectionName}
               indexHref={indexHref}
               restoreGroupId={restoreGroupId}
               restoreReportId={restoreReportId}

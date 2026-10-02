@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { useRouter } from "next/router";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
@@ -44,6 +45,7 @@ type ReportsIndexHeaderProps = {
   onViewChange: (value: string) => void;
   onQueryChange: (query: string) => void;
   indexHref: string;
+  entityProfile?: boolean;
 };
 
 const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
@@ -58,7 +60,8 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
   onTabChange,
   onViewChange,
   onQueryChange,
-  indexHref
+  indexHref,
+  entityProfile = false
 }) => {
   const t = useT();
   const router = useRouter();
@@ -186,22 +189,25 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
 
   return (
     <>
-      <ToolbarObject
-        className="sticky top-0 z-20 !px-6"
-        breadcrumbs={{
-          linkRouter: router,
-          links: [
-            {
-              icon: <ReportsIcon />,
-              label: t("Reports"),
-              link: "#"
-            }
-          ]
-        }}
-      />
+      {!entityProfile && (
+        <ToolbarObject
+          className="sticky top-0 z-20 !px-6"
+          breadcrumbs={{
+            linkRouter: router,
+            links: [
+              {
+                icon: <ReportsIcon />,
+                label: t("Reports"),
+                link: "#"
+              }
+            ]
+          }}
+        />
+      )}
+
       <PageHeader
         className="!bg-theme-neutral-100 !px-6"
-        title={t("Reports")}
+        title={!entityProfile ? t("Reports") : null}
         actions={
           <Button
             size="small"
@@ -216,37 +222,39 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
           </Button>
         }
       />
-      <Toolbar
-        className="sticky top-11 z-10 items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-2 pt-5"
-        classNameContentLeft="min-w-0"
-        classNameContentRight="mt-[-1.25rem]"
-        contentLeft={
-          <TabBar
-            key={activeTab}
-            variant="transparent"
-            defaultValue={activeTab}
-            tabs={[
-              { value: "progress-reports", label: t("Progress Reports") },
-              { value: "additional-reports", label: t("Additional Reports") }
-            ]}
-            onTabClick={onTabChange}
-          />
-        }
-        contentRight={
-          <HighLevelSelector
-            autocomplete
-            label={t("View:")}
-            items={viewItems}
-            value={viewValue}
-            emptyMessage={t("No results found")}
-            width="25rem"
-            className="mobile:!w-full"
-            onChange={onViewChange}
-          />
-        }
-      />
+      {!entityProfile && (
+        <Toolbar
+          className="sticky top-11 z-10 items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-2 pt-5"
+          classNameContentLeft="min-w-0"
+          classNameContentRight="mt-[-1.25rem]"
+          contentLeft={
+            <TabBar
+              key={activeTab}
+              variant="transparent"
+              defaultValue={activeTab}
+              tabs={[
+                { value: "progress-reports", label: t("Progress Reports") },
+                { value: "additional-reports", label: t("Additional Reports") }
+              ]}
+              onTabClick={onTabChange}
+            />
+          }
+          contentRight={
+            <HighLevelSelector
+              autocomplete
+              label={t("View:")}
+              items={viewItems}
+              value={viewValue}
+              emptyMessage={t("No results found")}
+              width="25rem"
+              className="mobile:!w-full"
+              onChange={onViewChange}
+            />
+          }
+        />
+      )}
       <ToolbarTable
-        className="!bg-theme-neutral-200 !px-6 !pb-6 !pt-5"
+        className={classNames("!px-6 !pb-6 !pt-5", entityProfile ? "!bg-theme-neutral-100" : "!bg-theme-neutral-200 ")}
         classNameContentLeft="w-full"
         search={{
           placeholder: activeTab === "progress-reports" ? t("Search projects, sites, nurseries") : t("Search"),
@@ -269,6 +277,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
         periodOptions={periodOptions}
         onApplyFilters={applyFilters}
         onOpenChange={setIsFilterDrawerOpen}
+        entityProfile={entityProfile}
       />
     </>
   );
