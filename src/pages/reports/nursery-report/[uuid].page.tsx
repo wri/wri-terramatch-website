@@ -12,9 +12,9 @@ import { useFullNursery, useFullNurseryReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
 import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { NurseryFullDto, NurseryReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useReportBreadcrumbs } from "@/hooks/useReportBreadcrumbs";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import { useReportBreadcrumbs } from "@/pages/reports/components/useReportBreadcrumbs";
 import NurseryReportDetailsTab from "@/pages/reports/nursery-report/tabs/Details";
 import NurseryReportGoalsAndProgressTab from "@/pages/reports/nursery-report/tabs/GoalsAndProgress";
 import NurseryReportOverview from "@/pages/reports/nursery-report/tabs/Overview";
@@ -132,7 +132,8 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
       }),
       link: `/reports/nursery-report/${nurseryReportUUID}`
     },
-    getReportsIndexUrl("nursery", nurseryReport.nurseryUuid!)
+    getReportsIndexUrl("nursery", nurseryReport.nurseryUuid!),
+    { project: nurseryReport.projectName, nursery: nurseryReport.nurseryName }
   );
 
   return (

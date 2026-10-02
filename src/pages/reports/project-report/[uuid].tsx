@@ -11,8 +11,8 @@ import { useFullProject, useFullProjectReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
 import FrameworkProvider, { shouldHideNurseries, useFrameworkContext } from "@/context/framework.provider";
 import { ProjectReportFullDto, TaskFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useReportBreadcrumbs } from "@/hooks/useReportBreadcrumbs";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import { useReportBreadcrumbs } from "@/pages/reports/components/useReportBreadcrumbs";
 import { getReportsIndexUrl, withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
@@ -47,7 +47,8 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
   const currentTab = (router.query.tab as string) ?? "overview";
   const breadcrumbs = useReportBreadcrumbs(
     { label: reportTitle, link: `/reports/project-report/${projectReport.uuid}` },
-    getReportsIndexUrl("project", projectReport.projectUuid!)
+    getReportsIndexUrl("project", projectReport.projectUuid!),
+    { project: projectReport.projectName }
   );
 
   const isRedirectingToReportsIndex = currentTab === "site-reports" || currentTab === "nursery-reports";

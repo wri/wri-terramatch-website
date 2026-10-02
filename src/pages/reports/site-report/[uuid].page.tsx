@@ -16,10 +16,10 @@ import FrameworkProvider, { Framework, toFramework, useFrameworkContext } from "
 import { MapAreaProvider } from "@/context/mapArea.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { SiteFullDto, SiteReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useReportBreadcrumbs } from "@/hooks/useReportBreadcrumbs";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { SuffixButtonConfig } from "@/pages/project/[uuid]/index.page";
-import { useReportBreadcrumbs } from "@/pages/reports/components/useReportBreadcrumbs";
 import { getReportsIndexUrl, withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import Details from "@/pages/reports/site-report/tabs/Details";
 import Overview from "@/pages/reports/site-report/tabs/Overview";
@@ -159,7 +159,8 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
       }),
       link: `/reports/site-report/${siteReportUUID}`
     },
-    getReportsIndexUrl("site", siteReport.siteUuid!)
+    getReportsIndexUrl("site", siteReport.siteUuid!),
+    { project: siteReport.projectName, site: siteReport.siteName }
   );
   const suffixButtons: SuffixButtonConfig[] = useMemo(
     () => [

@@ -1,5 +1,6 @@
 import type { FeedbackTagProps } from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import type { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import { appendQueryParams } from "@/utils/appendQueryParams";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import type {
@@ -109,11 +110,8 @@ export const getReportsIndexHrefFromQuery = (from: unknown, fallback?: string) =
   return isReportsIndexPath(value) ? value : fallback;
 };
 
-export const withReportsIndexReturn = (href: string, indexHref?: string) => {
-  if (indexHref == null || indexHref === "") return href;
-  const separator = href.includes("?") ? "&" : "?";
-  return `${href}${separator}from=${encodeURIComponent(indexHref)}`;
-};
+export const withReportsIndexReturn = (href: string, indexHref?: string) =>
+  appendQueryParams(href, { from: indexHref });
 
 export type ReportProfileOrigin = {
   source: ReportsIndexSource;
@@ -138,21 +136,17 @@ export const getReportViewHref = (
 ) => {
   const href = `/reports/${report.type}/${report.id}`;
   if (profileOrigin == null) return withReportsIndexReturn(href, indexHref);
-  const params = new URLSearchParams({ profile: profileOrigin.source, profileUuid: profileOrigin.uuid });
-  return `${href}?${params.toString()}`;
+  return appendQueryParams(href, { profile: profileOrigin.source, profileUuid: profileOrigin.uuid });
 };
 
 /** Carries the origin params (`from`, `profile`, `profileUuid`) of the current report page over to `href`. */
 export const withReportOrigin = (href: string, query: Record<string, unknown>) => {
-  const params = new URLSearchParams();
+  const params: Record<string, string | undefined> = {};
   for (const key of REPORT_ORIGIN_QUERY_KEYS) {
     const value = query[key];
-    if (typeof value === "string" && value !== "") params.set(key, value);
+    params[key] = typeof value === "string" ? value : undefined;
   }
-  const search = params.toString();
-  if (search === "") return href;
-  const separator = href.includes("?") ? "&" : "?";
-  return `${href}${separator}${search}`;
+  return appendQueryParams(href, params);
 };
 
 export const getReportIndexItemPath = (report: ReportIndexItem) => {

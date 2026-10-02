@@ -8,7 +8,7 @@ import EntityProfileReportsTab from "@/pages/reports/components/EntityProfileRep
 import SiteDetailTab from "@/pages/site/[uuid]/tabs/Details";
 import GoalsAndProgressTab from "@/pages/site/[uuid]/tabs/GoalsAndProgress";
 import SiteOverviewTab from "@/pages/site/[uuid]/tabs/Overview";
-import { SITE_INDEX_SOURCE } from "@/pages/site/components/siteIndex.utils";
+import { getSiteDetailUrl, SITE_INDEX_ORIGIN } from "@/pages/site/components/siteIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import SiteBanner from "@/redesignComponents/content/Banner/SiteBanner/SiteBanner";
 import { ProjectIcon, SiteIcon } from "@/redesignComponents/foundations/Icons";
@@ -26,8 +26,7 @@ const SiteDetailPage: FC = () => {
   const { isLoaded, site, refetch } = useSitePageLoad(siteUUID);
 
   const activeTab = (router.query.tab as string) ?? "overview";
-  const isFromSiteIndex = router.query.from === SITE_INDEX_SOURCE;
-  const fromQuery = isFromSiteIndex ? `&from=${SITE_INDEX_SOURCE}` : "";
+  const isFromSiteIndex = router.query.origin === SITE_INDEX_ORIGIN;
 
   const TabItems = [
     { key: "overview", title: t("Overview"), body: <SiteOverviewTab site={site!} refetch={refetch} /> },
@@ -75,7 +74,7 @@ const SiteDetailPage: FC = () => {
                       link: "/site",
                       icon: <SiteIcon className="!text-theme-primary-900" />
                     },
-                    { label: site.name ?? "", link: `/site/${site.uuid}?from=${SITE_INDEX_SOURCE}` }
+                    { label: site.name ?? "", link: getSiteDetailUrl(site.uuid, true) }
                   ]
                 : [
                     {
@@ -104,7 +103,9 @@ const SiteDetailPage: FC = () => {
                     size="small"
                     className="underline underline-offset-2"
                     onClick={() =>
-                      router.push(`/site/${site.uuid}?tab=reports${fromQuery}`, undefined, { shallow: true })
+                      router.push(getSiteDetailUrl(site.uuid, isFromSiteIndex, "reports"), undefined, {
+                        shallow: true
+                      })
                     }
                   >
                     {t("Site Reports")}
@@ -120,7 +121,9 @@ const SiteDetailPage: FC = () => {
                 })),
                 defaultValue: activeTab,
                 onTabClick: (tabValue: string) => {
-                  router.push(`/site/${siteUUID}?tab=${tabValue}${fromQuery}`, undefined, { shallow: true });
+                  router.push(getSiteDetailUrl(siteUUID, isFromSiteIndex, tabValue), undefined, {
+                    shallow: true
+                  });
                 }
               }
             }}

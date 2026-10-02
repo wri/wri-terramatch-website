@@ -10,8 +10,8 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullDisturbanceReport } from "@/connections/Entity";
 import FrameworkProvider from "@/context/framework.provider";
 import { DisturbanceReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useReportBreadcrumbs } from "@/hooks/useReportBreadcrumbs";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import { useReportBreadcrumbs } from "@/pages/reports/components/useReportBreadcrumbs";
 import { getReportsIndexUrl, withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
@@ -110,7 +110,8 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
     { label: t("Disturbance Report"), link: `/reports/disturbance-report/${disturbanceReportUUID}` },
     disturbanceReport.projectUuid != null
       ? getReportsIndexUrl("project", disturbanceReport.projectUuid, { tab: "additional-reports" })
-      : "/my-projects"
+      : "/my-projects",
+    { project: disturbanceReport.projectName }
   );
 
   return (
