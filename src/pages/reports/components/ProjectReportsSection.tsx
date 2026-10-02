@@ -3,7 +3,6 @@ import { FC, useEffect, useMemo, useState } from "react";
 
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
-import { FolderIcon, FolderOpenIcon } from "@/redesignComponents/foundations/Icons";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
 import { ReportsIndexPeriod, ReportsIndexProjectSection } from "../reportIndex.types";
@@ -12,6 +11,7 @@ import ReportingPeriodSection from "./ReportingPeriodSection";
 
 type ProjectReportsSectionProps = {
   section: ReportsIndexProjectSection;
+  sectionName?: string;
   unfilteredPeriods?: ReportsIndexPeriod[];
   defaultOpen?: boolean;
   metricsReady?: boolean;
@@ -26,6 +26,7 @@ type ProjectReportsSectionProps = {
 
 const ProjectReportsSection: FC<ProjectReportsSectionProps> = ({
   section,
+  sectionName,
   unfilteredPeriods,
   defaultOpen = false,
   metricsReady = true,
@@ -61,7 +62,7 @@ const ProjectReportsSection: FC<ProjectReportsSectionProps> = ({
       header={
         <ListSectionHeader
           level="top-level"
-          title={section.name ?? t("Project")}
+          title={sectionName ?? section.name ?? t("Project")}
           titleHref={`/project/${section.id}`}
           caption={section.organisationName ?? ""}
           open={open}

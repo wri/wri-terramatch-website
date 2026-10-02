@@ -16,7 +16,6 @@ import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchema
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";
 import ProjectOverviewTab from "@/pages/project/[uuid]/tabs/Overview";
-import { getReportsIndexUrl } from "@/pages/reports/reportIndex.utils";
 import ProjectBanner from "@/redesignComponents/content/Banner/ProjectBanner/ProjectBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
@@ -26,6 +25,7 @@ import AuditLog from "./tabs/AuditLog";
 import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
 import ProjectNurseriesTab from "./tabs/ProjectNurseries";
 import ProjectSitesTab from "./tabs/ProjectSites";
+import ReportsTab from "./tabs/Reports";
 import TeamMembersTab from "./tabs/TeamMembers";
 
 type TabItem = {
@@ -90,7 +90,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         )
       },
       { key: "goals", title: t("Progress & Goals"), body: <GoalsAndProgressTab project={project} /> },
-      { key: "reports", title: t("Reports"), body: <></> },
+      { key: "reports", title: t("Reports"), body: <ReportsTab project={project} /> },
       { key: "sites", title: t("Sites"), body: <ProjectSitesTab project={project} /> },
       { key: "team-members", title: t("Team Members"), body: <TeamMembersTab project={project} /> },
       {
@@ -126,13 +126,9 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
 
   const handleTabClick = useCallback(
     (tabValue: string) => {
-      if (tabValue === "reports") {
-        void router.push(getReportsIndexUrl("project", project.uuid));
-        return;
-      }
       navigateToTab(tabValue);
     },
-    [navigateToTab, project.uuid, router]
+    [navigateToTab]
   );
 
   return (

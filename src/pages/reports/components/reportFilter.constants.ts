@@ -101,6 +101,14 @@ export const ADDITIONAL_REPORT_TYPE_OPTIONS: { value: ReportTypeOption; label: s
   { value: "financial-report", label: "Financial Reports" }
 ];
 
+export const REPORTS_TYPE_OPTIONS_ENTITY_PROFILE: { value: ReportTypeOption; label: string }[] = [
+  { value: "project-report", label: "Project Reports" },
+  { value: "site-report", label: "Site Reports" },
+  { value: "nursery-report", label: "Nursery Reports" },
+  { value: "srp-report", label: "Annual SRP" },
+  { value: "disturbance-report", label: "Disturbance Reports" }
+];
+
 export const REPORT_TYPE_LABELS: Record<ReportTypeOption, string> = {
   "project-report": "Project Reports",
   "site-report": "Site Reports",
