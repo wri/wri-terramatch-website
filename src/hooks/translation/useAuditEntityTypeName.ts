@@ -15,7 +15,7 @@ export const useAuditEntityTypeName = () => {
       siteReports: t("Site Report"),
       nurseryReports: t("Nursery Report"),
       disturbanceReports: t("Disturbance Report"),
-      srpReports: t("Srp Report"),
+      srpReports: t("SRP Report"),
       financialReports: t("Financial Report")
     };
   }, [t]);

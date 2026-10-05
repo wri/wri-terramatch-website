@@ -52,6 +52,7 @@ const AuditLog: FC<AuditLogProps> = ({ projectReport }) => {
                 <SiteAuditLogProjectStatus
                   viewPD={true}
                   record={projectReport}
+                  entityType="projectReports"
                   auditLogData={auditLogData}
                   auditData={auditData}
                   refresh={refetch}
