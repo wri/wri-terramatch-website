@@ -42,6 +42,22 @@ const REPORT_TYPES_MAPPING: { [key: number]: string } = {
   7: "disturbance-reports"
 };
 
+const REPORT_ENTITY_TYPES: AuditStatusEntityType[] = [
+  "disturbanceReports",
+  "financialReports",
+  "nurseryReports",
+  "projectReports",
+  "siteReports",
+  "srpReports"
+];
+
+// Keeps acronyms such as "SRP" uppercase when the name is used mid-sentence.
+const toMidSentenceName = (name: string) =>
+  name
+    .split(" ")
+    .map(word => (word === word.toUpperCase() ? word : word.toLowerCase()))
+    .join(" ");
+
 const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
   entityType,
   record,
@@ -74,6 +90,7 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
     }
   };
   const title = record?.title ?? record?.name;
+  const historyTitle = REPORT_ENTITY_TYPES.includes(entityType) ? displayEntityName : title;
   const redirectTo = viewPD
     ? `/${
         isProjectReport
@@ -96,7 +113,7 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
         </Text>
         <Text variant="text-14-light" className="mb-4">
           {t("Update the {displayEntityName} status, view updates, or add comments", {
-            displayEntityName: displayEntityName.toLowerCase()
+            displayEntityName: toMidSentenceName(displayEntityName)
           })}
         </Text>
         <CommentarySection record={record} entity={entityType} refresh={refresh} viewCommentsList={false} />
@@ -104,7 +121,7 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
       {viewPD && (
         <div>
           {!isSite && !verifyEntity && !isNurseryToggle && (
-            <Text variant="text-16-bold">{t("History and Discussion for {title}", { title })}</Text>
+            <Text variant="text-16-bold">{t("History and Discussion for {title}", { title: historyTitle })}</Text>
           )}
           {(isSite || verifyEntity || isNurseryToggle) && (
             <Text variant="text-16-bold">

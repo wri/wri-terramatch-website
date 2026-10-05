@@ -7,6 +7,7 @@ import {
   ProjectLightDto,
   ProjectReportLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useAuditEntityTypeName } from "@/hooks/translation/useAuditEntityTypeName";
 
 import AuditLogTable from "./AuditLogTable";
 
@@ -16,6 +17,7 @@ type SiteAuditLogProjectStatusProps = {
   auditData?: { entity: string; entityUuid: string };
   refresh?: () => void;
   viewPD?: boolean;
+  entityType?: "projects" | "projectReports";
 };
 
 const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({
@@ -23,26 +25,29 @@ const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({
   auditLogData,
   auditData,
   refresh,
-  viewPD = false
+  viewPD = false,
+  entityType = "projects"
 }) => {
   const t = useT();
+  const displayEntityName = useAuditEntityTypeName()[entityType];
+  const historyTitle =
+    entityType === "projects" && record != null && "name" in record ? record.name : displayEntityName;
+
   return (
     <div className="flex flex-col gap-6">
       <div>
         <Text variant="text-24-bold" className="mb-1">
-          {t("Project Status and Comments")}
+          {t("{displayEntityName} Status and Comments", { displayEntityName })}
         </Text>
         <Text variant="text-14-light" className="mb-4">
-          {t("Update the project status, view updates, or add comments")}
+          {t("Update the {displayEntityName} status, view updates, or add comments", {
+            displayEntityName: displayEntityName.toLowerCase()
+          })}
         </Text>
       </div>
       {viewPD && (
         <>
-          <Text variant="text-16-bold">
-            {t("History and Discussion for {name}", {
-              name: record != null && "name" in record ? record.name : "Report"
-            })}
-          </Text>
+          <Text variant="text-16-bold">{t("History and Discussion for {name}", { name: historyTitle })}</Text>
           {auditLogData && <AuditLogTable auditLogData={auditLogData} auditData={auditData} refresh={refresh} />}
         </>
       )}
