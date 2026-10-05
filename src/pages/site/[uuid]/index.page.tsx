@@ -11,7 +11,6 @@ import SiteOverviewTab from "@/pages/site/[uuid]/tabs/Overview";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import SiteBanner from "@/redesignComponents/content/Banner/SiteBanner/SiteBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
-import { useContextAwareBreadcrumbs } from "@/redesignComponents/navigation/Breadcrumbs/ContextAwareBreadcrumb";
 
 import SitePageProviders from "./components/SitePageProviders";
 import { useSitePageLoad } from "./hooks/useSitePageLoad";
@@ -59,19 +58,21 @@ const SiteDetailPage: FC = () => {
     }
   ];
 
-  const breadcrumbs = useContextAwareBreadcrumbs({
-    label: site?.name ?? "",
-    link: `/site/${site?.uuid}`,
-    icon: <ProjectIcon className="!text-theme-primary-900" />
-  });
-
   return (
     <SitePageProviders frameworkKey={site?.frameworkKey} isLoaded={isLoaded}>
       {site == null ? null : (
         <>
           <SiteBanner
             site={site}
-            breadcrumbs={breadcrumbs}
+            breadcrumbs={[
+              {
+                label: t("Projects"),
+                link: "/my-projects",
+                icon: <ProjectIcon className="!text-theme-primary-900" />
+              },
+              { label: site.projectName ?? "", link: `/project/${site.projectUuid}` },
+              { label: site.name ?? "", link: `/site/${site.uuid}` }
+            ]}
             suffix={
               <div className="flex gap-1.5">
                 <div className="flex gap-1.5">

@@ -19,12 +19,12 @@ import { SiteFullDto, SiteReportFullDto } from "@/generated/v3/entityService/ent
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { SuffixButtonConfig } from "@/pages/project/[uuid]/index.page";
+import { getReportsIndexUrl } from "@/pages/reports/reportIndex.utils";
 import Details from "@/pages/reports/site-report/tabs/Details";
 import Overview from "@/pages/reports/site-report/tabs/Overview";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
 import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
-import { useContextAwareBreadcrumbs } from "@/redesignComponents/navigation/Breadcrumbs/ContextAwareBreadcrumb";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
@@ -149,16 +149,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
 
   const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "overview";
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
-
-  const breadcrumbs = useContextAwareBreadcrumbs({
-    label: t("Site Report {window}: {siteName}", {
-      window: getShortPeriodLabel(taskTitle ?? "", true),
-      siteName: site?.name
-    }),
-    link: `/reports/site-report/${siteReportUUID}`,
-    icon: <ReportsIcon className="!text-theme-primary-900" />
-  });
-
+  const reportsIndexHref = getReportsIndexUrl("site", siteReport.siteUuid!);
   const suffixButtons: SuffixButtonConfig[] = useMemo(
     () => [
       { key: "site-profile", labelKey: t("Site Profile") },
@@ -178,7 +169,20 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
         title={headerReportTitle}
         dueAt={taskDueAt ?? siteReport.dueAt}
         entityName="site-report"
-        breadcrumbs={breadcrumbs}
+        breadcrumbs={[
+          {
+            label: t("Reports"),
+            link: reportsIndexHref,
+            icon: <ReportsIcon className="!text-theme-primary-900" />
+          },
+          {
+            label: t("Site Report {window}: {siteName}", {
+              window: getShortPeriodLabel(taskTitle ?? "", true),
+              siteName: site?.name
+            }),
+            link: `/reports/site-report/${siteReportUUID}`
+          }
+        ]}
         suffix={
           <Flex gap={1.5} alignItems="center">
             {suffixButtons.map((button, index) => (

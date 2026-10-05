@@ -16,7 +16,6 @@ import { getReportsIndexUrl } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
 import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
-import { useContextAwareBreadcrumbs } from "@/redesignComponents/navigation/Breadcrumbs/ContextAwareBreadcrumb";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
@@ -46,6 +45,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
   const hideNurseries = shouldHideNurseries(framework);
   const reportTitle = projectReport.reportTitle ?? t("Project Report");
   const currentTab = (router.query.tab as string) ?? "overview";
+  const reportsIndexHref = getReportsIndexUrl("project", projectReport.projectUuid!);
 
   const isRedirectingToReportsIndex = currentTab === "site-reports" || currentTab === "nursery-reports";
 
@@ -121,12 +121,6 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
 
   const activeTabItem = tabItems.find(item => item.key === currentTab) ?? tabItems[0];
 
-  const breadcrumbs = useContextAwareBreadcrumbs({
-    label: reportTitle,
-    link: `/reports/project-report/${projectReport.uuid}`,
-    icon: <ReportsIcon className="!text-theme-primary-900" />
-  });
-
   return (
     <>
       <ResponsiveTypography />
@@ -138,7 +132,14 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
         title={reportTitle}
         dueAt={task?.dueAt ?? projectReport.dueAt}
         entityName="project-report"
-        breadcrumbs={breadcrumbs}
+        breadcrumbs={[
+          {
+            label: t("Reports"),
+            link: reportsIndexHref,
+            icon: <ReportsIcon className="!text-theme-primary-900" />
+          },
+          { label: reportTitle, link: `/reports/project-report/${projectReport.uuid}` }
+        ]}
         suffix={
           <div className="flex gap-1.5">
             <div className="flex gap-1.5">
