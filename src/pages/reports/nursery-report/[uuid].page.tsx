@@ -17,10 +17,10 @@ import { useValueChanged } from "@/hooks/useValueChanged";
 import NurseryReportDetailsTab from "@/pages/reports/nursery-report/tabs/Details";
 import NurseryReportGoalsAndProgressTab from "@/pages/reports/nursery-report/tabs/GoalsAndProgress";
 import NurseryReportOverview from "@/pages/reports/nursery-report/tabs/Overview";
-import { getReportsIndexUrl } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
 import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
+import { useContextAwareBreadcrumbs } from "@/redesignComponents/navigation/Breadcrumbs/ContextAwareBreadcrumb";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
@@ -118,7 +118,15 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
 
   const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "overview";
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
-  const reportsIndexHref = getReportsIndexUrl("nursery", nurseryReport.nurseryUuid!);
+
+  const breadcrumbs = useContextAwareBreadcrumbs({
+    label: t("Nursery Report {window}: {nurseryName}", {
+      window: getShortPeriodLabel(taskTitle ?? "-", true),
+      nurseryName: nursery?.name ?? "-"
+    }),
+    link: `/reports/nursery-report/${nurseryReportUUID}`,
+    icon: <ReportsIcon className="!text-theme-primary-900" />
+  });
 
   return (
     <>
@@ -131,20 +139,7 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
         title={headerReportTitle}
         dueAt={taskDueAt ?? nurseryReport.dueAt}
         entityName="nursery-report"
-        breadcrumbs={[
-          {
-            label: t("Reports"),
-            link: reportsIndexHref,
-            icon: <ReportsIcon className="!text-theme-primary-900" />
-          },
-          {
-            label: t("Nursery Report {window}: {nurseryName}", {
-              window: getShortPeriodLabel(taskTitle ?? "-", true),
-              nurseryName: nursery?.name ?? "-"
-            }),
-            link: `/reports/nursery-report/${nurseryReportUUID}`
-          }
-        ]}
+        breadcrumbs={breadcrumbs}
         suffix={
           <div className="flex items-center gap-1.5">
             {nurseryReport.nurseryUuid != null && (

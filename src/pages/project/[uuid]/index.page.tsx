@@ -18,6 +18,7 @@ import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";
 import ProjectOverviewTab from "@/pages/project/[uuid]/tabs/Overview";
 import ProjectBanner from "@/redesignComponents/content/Banner/ProjectBanner/ProjectBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import { useContextAwareBreadcrumbs } from "@/redesignComponents/navigation/Breadcrumbs/ContextAwareBreadcrumb";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 
 import InviteMonitoringPartnerModal from "./components/InviteMonitoringPartnerModal";
@@ -131,6 +132,12 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     [navigateToTab]
   );
 
+  const breadcrumbs = useContextAwareBreadcrumbs({
+    label: project?.name ?? "",
+    link: `/project/${project?.uuid}`,
+    icon: <ProjectIcon className="!text-theme-primary-900" />
+  });
+
   return (
     <>
       <ResponsiveTypography />
@@ -146,14 +153,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         project={project}
         onAddTeamClick={handleInvite}
         gotoTeamMembers={() => navigateToTab("team-members")}
-        breadcrumbs={[
-          {
-            label: t("Projects"),
-            link: "/my-projects",
-            icon: <ProjectIcon className="!text-theme-primary-900" />
-          },
-          { label: project?.name ?? "", link: `/project/${project?.uuid}` }
-        ]}
+        breadcrumbs={breadcrumbs}
         suffix={null}
         toolbar={{
           tabBar: {
