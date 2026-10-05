@@ -1,3 +1,5 @@
+import type { ParsedUrlQuery } from "querystring";
+
 import type { FeedbackTagProps } from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import type { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { appendQueryParams } from "@/utils/appendQueryParams";
@@ -105,7 +107,7 @@ export const getReportsIndexUrlForEntity = (
   return undefined;
 };
 
-export const getReportsIndexHrefFromQuery = (from: unknown, fallback?: string) => {
+export const getReportsIndexHrefFromQuery = (from: ParsedUrlQuery["from"], fallback?: string) => {
   const value = typeof from === "string" ? from : undefined;
   return isReportsIndexPath(value) ? value : fallback;
 };
@@ -121,8 +123,8 @@ export type ReportProfileOrigin = {
 const REPORT_ORIGIN_QUERY_KEYS = ["from", "profile", "profileUuid"] as const;
 
 export const getReportProfileOriginFromQuery = (
-  profile: unknown,
-  profileUuid: unknown
+  profile: ParsedUrlQuery["profile"],
+  profileUuid: ParsedUrlQuery["profileUuid"]
 ): ReportProfileOrigin | undefined => {
   if (typeof profile !== "string" || !isReportsIndexSource(profile)) return undefined;
   if (typeof profileUuid !== "string" || profileUuid === "") return undefined;
@@ -140,7 +142,7 @@ export const getReportViewHref = (
 };
 
 /** Carries the origin params (`from`, `profile`, `profileUuid`) of the current report page over to `href`. */
-export const withReportOrigin = (href: string, query: Record<string, unknown>) => {
+export const withReportOrigin = (href: string, query: ParsedUrlQuery) => {
   const params: Record<string, string | undefined> = {};
   for (const key of REPORT_ORIGIN_QUERY_KEYS) {
     const value = query[key];
