@@ -11,10 +11,10 @@ import { useFullDisturbanceReport } from "@/connections/Entity";
 import FrameworkProvider from "@/context/framework.provider";
 import { DisturbanceReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import { getReportsIndexHrefFromQuery, getReportsIndexUrl } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
 import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
+import { useContextAwareBreadcrumbs } from "@/redesignComponents/navigation/Breadcrumbs/ContextAwareBreadcrumb";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
@@ -102,11 +102,12 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
 
   const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "report-data";
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
-  const reportsIndexHref =
-    getReportsIndexHrefFromQuery(router.query.from) ??
-    (disturbanceReport.projectUuid != null
-      ? getReportsIndexUrl("project", disturbanceReport.projectUuid, { tab: "additional-reports" })
-      : "/my-projects");
+
+  const breadcrumbs = useContextAwareBreadcrumbs({
+    label: t("Disturbance Report"),
+    link: `/reports/disturbance-report/${disturbanceReportUUID}`,
+    icon: <ReportsIcon className="!text-theme-primary-900" />
+  });
 
   return (
     <>
@@ -119,17 +120,7 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
         title={headerReportTitle}
         dueAt={disturbanceReport.dueAt}
         entityName="disturbance-report"
-        breadcrumbs={[
-          {
-            label: t("Reports"),
-            link: reportsIndexHref,
-            icon: <ReportsIcon className="!text-theme-primary-900" />
-          },
-          {
-            label: t("Disturbance Report"),
-            link: `/reports/disturbance-report/${disturbanceReportUUID}`
-          }
-        ]}
+        breadcrumbs={breadcrumbs}
         suffix={
           disturbanceReport.projectUuid != null ? (
             <Button

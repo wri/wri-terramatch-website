@@ -13,6 +13,7 @@ import EntityProfileReportsTab from "@/pages/reports/components/EntityProfileRep
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import NurseryBanner from "@/redesignComponents/content/Banner/NurseryBanner/NurseryBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import { useContextAwareBreadcrumbs } from "@/redesignComponents/navigation/Breadcrumbs/ContextAwareBreadcrumb";
 import ProjectResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
@@ -68,6 +69,12 @@ const NurseryDetailPage = () => {
     { key: "audit-log", title: t("Audit Log"), body: <AuditLog nursery={nursery} /> }
   ];
 
+  const breadcrumbs = useContextAwareBreadcrumbs({
+    label: nursery?.name ?? "",
+    link: `/nurserie/${nursery?.uuid}`,
+    icon: <ProjectIcon className="!text-theme-primary-900" />
+  });
+
   return (
     <FrameworkProvider frameworkKey={nursery?.frameworkKey}>
       <ProjectResponsiveTypography />
@@ -76,19 +83,7 @@ const NurseryDetailPage = () => {
           <>
             <NurseryBanner
               nursery={nursery}
-              breadcrumbs={[
-                {
-                  label: t("Projects"),
-                  link: "/my-projects",
-                  icon: <ProjectIcon className="!text-theme-primary-900" />
-                },
-                { label: nursery.projectName ?? "", link: `/project/${nursery.projectUuid}` },
-                {
-                  label: "Nurseries",
-                  link: `/project/${nursery.projectUuid}?tab=nurseries`
-                },
-                { label: nursery.name ?? "", link: `/nurserie/${nursery.uuid}` }
-              ]}
+              breadcrumbs={breadcrumbs}
               suffix={
                 <div className="flex gap-1.5">
                   <div className="flex gap-1.5">
