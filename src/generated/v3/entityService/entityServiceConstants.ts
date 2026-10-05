@@ -39,6 +39,7 @@ import {
   FormTranslationDto,
   FormDataDto,
   UpdateRequestDto,
+  MediaMapIndexDto,
   TrackingDto,
   SeedingDto,
   TreeSpeciesDto,
@@ -84,6 +85,7 @@ export const ENTITY_SERVICE_RESOURCES = [
   "formTranslations",
   "formData",
   "updateRequests",
+  "mediaMapIndexes",
   "trackings",
   "seedings",
   "treeSpecies",
@@ -128,6 +130,7 @@ export type EntityServiceApiResources = {
   formTranslations: StoreResourceMap<FormTranslationDto>;
   formData: StoreResourceMap<FormDataDto>;
   updateRequests: StoreResourceMap<UpdateRequestDto>;
+  mediaMapIndexes: StoreResourceMap<MediaMapIndexDto>;
   trackings: StoreResourceMap<TrackingDto>;
   seedings: StoreResourceMap<SeedingDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;

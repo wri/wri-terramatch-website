@@ -7,6 +7,7 @@ import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import ImageGallery from "@/components/elements/ImageGallery/ImageGallery";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
+import { geolocatedMedia } from "@/components/elements/Map-mapbox/layers/mediaTypes";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import type { PolygonEntityScope } from "@/components/elements/Map-mapbox/Map.d";
 import { IconNames } from "@/components/extensive/Icon/Icon";
@@ -145,6 +146,7 @@ const EntityGalleryCard = ({
     () => (mapIndexLoaded ? mapIndex?.polygons ?? [] : []),
     [mapIndexLoaded, mapIndex?.polygons]
   );
+  const mapMedia = useMemo(() => (mediaList == null ? undefined : geolocatedMedia(mediaList)), [mediaList]);
   const polygonEntityScope = useMemo<PolygonEntityScope | undefined>(
     () =>
       (modelName === "projects" || modelName === "sites") && entityUUID
@@ -256,7 +258,7 @@ const EntityGalleryCard = ({
             showLegend
             hasControls
             showPopups
-            mediaFiles={mediaList}
+            mediaFiles={mapMedia}
             entityData={entityData}
             imageGalleryRef={imageGalleryRef}
           />

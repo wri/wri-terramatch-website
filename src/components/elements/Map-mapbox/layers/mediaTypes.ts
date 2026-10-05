@@ -1,10 +1,16 @@
-import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { MediaDto, MediaMapEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
+
+export type MapMedia = MediaMapEntryDto;
 
 // Callbacks shared by both media rendering strategies (DOM markers + GL symbol layer).
 export type MediaCallbacks = {
   setImageCover: (uuid: string) => void;
   handleDownload: (uuid: string, fileName: string) => void;
   handleDelete: (uuid: string) => void;
-  openModalImageDetail: (data: MediaDto) => void;
+  openModalImageDetail: (uuid: string) => void;
   isProjectPath: boolean;
 };
+
+const isGeolocated = (media: MediaDto): media is MediaDto & MapMedia => media.lat != null && media.lng != null;
+
+export const geolocatedMedia = (media: MediaDto[]): MapMedia[] => media.filter(isGeolocated);

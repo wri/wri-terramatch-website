@@ -1,13 +1,11 @@
 import { useT } from "@transifex/react";
 import { Map as MapboxMap } from "mapbox-gl";
-import React, { MutableRefObject, useEffect, useRef } from "react";
+import React, { MutableRefObject, useEffect, useState } from "react";
 
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
 import { deleteMedia, updateMedia } from "@/connections/Media";
 import { openEditPhotoDetailsFromMapPopup } from "@/context/mapArea.utils";
 import { exportImage } from "@/generated/v3/entityService/entityServiceComponents";
-import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDownloadToastMessages } from "@/hooks/translation/useDownloadToastMessages";
 import { TranslatedText } from "@/i18n/types";
 import { runWithDownloadToast } from "@/utils/downloadToast";
@@ -15,15 +13,16 @@ import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
 
 import { useChampionsMap } from "../championsMap.context";
+import MapMediaDetailsModal from "../components/MapMediaDetailsModal";
 import { addMediaMarkers, removeMediaMarkers } from "../layers/mediaMarkers";
-import { addMediaSymbolLayer, removeMediaSymbolLayer } from "../layers/mediaSymbolLayer";
-import { MediaCallbacks } from "../layers/mediaTypes";
+import { removeMediaSymbolLayer, upsertMediaSymbolLayer } from "../layers/mediaSymbolLayer";
+import { MapMedia, MediaCallbacks } from "../layers/mediaTypes";
 import { OverlapPolygonPoint } from "../layers/overlapTypes";
 import { useGeotaggedPhotosVisibility } from "./useGeotaggedPhotosVisibility";
 
 type UseMapMediaParams = {
   map: MutableRefObject<MapboxMap | null>;
-  mediaFiles?: MediaDto[];
+  mediaFiles?: MapMedia[];
   styleReady: boolean;
   styleVersion: number;
   entityData?: any;
@@ -70,39 +69,9 @@ export function useMapMedia({
     isPolygonGeometryLoading,
     overlapPolygons
   });
-  const callbacksRef = useRef<MediaCallbacks | null>(null);
-
-  const applyPhotosVisibility = (mapInstance: MapboxMap): void => {
-    if (hideMediaOnMap || mediaFiles == null) {
-      if (championsMap) {
-        removeMediaMarkers(mapInstance);
-      } else {
-        removeMediaSymbolLayer(mapInstance);
-      }
-      return;
-    }
-
-    if (championsMap) {
-      const callbacks = callbacksRef.current;
-      if (callbacks == null) return;
-      addMediaMarkers(mapInstance, mediaFiles, callbacks, photosVisible, hideMediaPopupActions);
-      return;
-    }
-
-    if (!photosVisible) {
-      removeMediaSymbolLayer(mapInstance);
-      return;
-    }
-
-    const callbacks = callbacksRef.current;
-    if (callbacks == null) return;
-    addMediaSymbolLayer(mapInstance, mediaFiles, callbacks);
-  };
+  const [callbacks, setCallbacks] = useState<MediaCallbacks | null>(null);
 
   useEffect(() => {
-    const mapInstance = map.current;
-    if (mapInstance == null || !styleReady || hideMediaOnMap || mediaFiles == null) return;
-
     const isProjectPath = router.isReady && router.asPath.includes("project");
 
     const handleDelete = async (id: string) => {
@@ -123,6 +92,7 @@ export function useMapMedia({
               polygon_id: "unknown"
             });
             closeModal(ModalId.DELETE_IMAGE);
+            setShouldRefetchMediaData(true);
           },
           `media-delete-${id}`
         );
@@ -131,17 +101,17 @@ export function useMapMedia({
       }
     };
 
-    const openModalImageDetail = (data: MediaDto) => {
+    const openModalImageDetail = (uuid: string) => {
       if (championsMap) {
-        openEditPhotoDetailsFromMapPopup(data);
+        openEditPhotoDetailsFromMapPopup(uuid);
         return;
       }
 
       openModal(
         ModalId.MODAL_IMAGE_DETAIL,
-        <ModalImageDetails
+        <MapMediaDetailsModal
           title="IMAGE DETAILS"
-          data={data}
+          uuid={uuid}
           entityData={entityData}
           onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)}
           reloadGalleryImages={() => setShouldRefetchMediaData(true)}
@@ -187,36 +157,52 @@ export function useMapMedia({
       }
     };
 
-    const callbacks: MediaCallbacks = {
-      setImageCover,
-      handleDownload,
-      handleDelete,
-      openModalImageDetail,
-      isProjectPath
-    };
-    callbacksRef.current = callbacks;
-
-    if (championsMap) {
-      addMediaMarkers(mapInstance, mediaFiles, callbacks, photosVisible, hideMediaPopupActions);
-      return () => {
-        removeMediaMarkers(mapInstance);
-        callbacksRef.current = null;
-      };
-    }
-
-    removeMediaSymbolLayer(mapInstance);
-
-    return () => {
-      removeMediaSymbolLayer(mapInstance);
-      callbacksRef.current = null;
-    };
+    setCallbacks({ setImageCover, handleDownload, handleDelete, openModalImageDetail, isProjectPath });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mediaFiles, styleReady, styleVersion, championsMap, hideMediaPopupActions, hideMediaOnMap]);
+  }, [championsMap, entityData, router.isReady, router.asPath]);
+
+  useEffect(
+    () => () => {
+      const mapInstance = map.current;
+      if (mapInstance == null) return;
+      if (championsMap) {
+        removeMediaMarkers(mapInstance);
+      } else {
+        removeMediaSymbolLayer(mapInstance);
+      }
+    },
+    [map, championsMap]
+  );
 
   useEffect(() => {
     const mapInstance = map.current;
     if (mapInstance == null || !styleReady) return;
-    applyPhotosVisibility(mapInstance);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [photosVisible, championsMap, styleReady, mediaFiles, hideMediaPopupActions, hideMediaOnMap]);
+
+    if (hideMediaOnMap) {
+      if (championsMap) {
+        removeMediaMarkers(mapInstance);
+      } else {
+        removeMediaSymbolLayer(mapInstance);
+      }
+      return;
+    }
+
+    if (mediaFiles == null || callbacks == null) return;
+
+    if (championsMap) {
+      addMediaMarkers(mapInstance, mediaFiles, callbacks, photosVisible, hideMediaPopupActions);
+    } else {
+      upsertMediaSymbolLayer(mapInstance, mediaFiles, callbacks, photosVisible);
+    }
+  }, [
+    map,
+    mediaFiles,
+    callbacks,
+    styleReady,
+    styleVersion,
+    championsMap,
+    photosVisible,
+    hideMediaPopupActions,
+    hideMediaOnMap
+  ]);
 }

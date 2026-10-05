@@ -27,7 +27,6 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto, SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 
@@ -58,6 +57,7 @@ import {
   usePolygonTableHighlightStyle
 } from "./hooks/usePolygonTableHighlight";
 import { addGeojsonToDraw } from "./interactions/draw";
+import { MapMedia } from "./layers/mediaTypes";
 import { CrossSiteOverlapPolygon, OverlapPolygonPoint } from "./layers/overlapTypes";
 import { buildCrossSiteOverlapFeatureCollection, buildCrossSiteOverlapMarkerPoints } from "./layers/overlayLayers";
 import { EMPTY_STATUS_POLYGON_MAP, parsePolygonDataV3 } from "./layers/polygonLayers";
@@ -93,7 +93,7 @@ export interface BaseMapProps {
   showLegend?: boolean;
   hasControls?: boolean;
   entityData?: EntityData;
-  mediaFiles?: MediaDto[];
+  mediaFiles?: MapMedia[];
   tooltipType?: TooltipType;
   sitePolygonData?: SitePolygonLightDto[];
   polygonEntityScope?: PolygonEntityScope;

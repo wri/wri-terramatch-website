@@ -3,11 +3,11 @@ import classNames from "classnames";
 import { type FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
+import { useEntityMapMedia } from "@/components/elements/Map-mapbox/hooks/useEntityMapMedia";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import type { PolygonEntityScope } from "@/components/elements/Map-mapbox/Map.d";
 import { resolveMapExtentBbox, useBoundingBox } from "@/connections/BoundingBox";
 import { useDelayedJobs } from "@/connections/DelayedJob";
-import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { pruneSitePolygonsCache, useSitePolygonMapIndex } from "@/connections/SitePolygons";
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
@@ -49,8 +49,7 @@ const OverviewMapArea: FC<OverviewMapAreaProps> = ({
     setShouldRefetchValidation,
     setShouldRefetchPolygonData,
     polygonData: sitePolygonDataV3,
-    validFilter,
-    setMediaFiles
+    validFilter
   } = useMapAreaContext();
 
   const mapIndexFilter = useMemo(() => {
@@ -84,15 +83,7 @@ const OverviewMapArea: FC<OverviewMapAreaProps> = ({
 
   const mapFunctions = useBaseMap(onSave);
 
-  const [, { data: mediaFiles }] = useMedias({
-    entity: type as SupportedEntity,
-    uuid: entityModel?.uuid,
-    enabled: entityModel?.uuid != null
-  });
-
-  useEffect(() => {
-    setMediaFiles(mediaFiles ?? []);
-  }, [mediaFiles, setMediaFiles]);
+  const mediaFiles = useEntityMapMedia({ entity: entityType, uuid: entityModel?.uuid });
 
   const hasPolygons = (mapIndex?.total ?? 0) > 0;
 
