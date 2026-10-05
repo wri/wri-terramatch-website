@@ -3,12 +3,14 @@ import { useEffect, useMemo, useState } from "react";
 import { projectReportsMetaIndexConnection, useReportCounts } from "@/connections/Entity";
 import { ReportsFilterValues, useReportsContext } from "@/context/reports.provider";
 import { ReportCountsGetQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
-import { useAllPages } from "@/hooks/useConnection";
+import { useInfinitePages } from "@/hooks/useConnection";
 import { useDebounce } from "@/hooks/useDebounce";
 
 import { isProgressReportType } from "./components/reportFilter.constants";
 import { REPORT_INDEX_TYPE_TO_ENTITY } from "./reportIndex.utils";
 import { getDueDateQuery, getDueReportingPeriod } from "./reportPeriodFilter";
+
+const PROJECTS_PAGE_SIZE = 20;
 
 type ReportStatus = NonNullable<ReportCountsGetQueryParams["statuses"]>[number];
 const REPORT_STATUSES: string[] = [
@@ -44,8 +46,9 @@ type AllProjectsReportsDataArgs = {
 };
 
 /**
- * Loads the per-project report meta and the total report count for the "All Projects" view. The
- * reports themselves are only loaded (via useReportsIndexData) once a given project is opened.
+ * Loads the per-project report meta (a page at a time, for infinite scroll) and the total report
+ * count for the "All Projects" view. The reports themselves are only loaded (via
+ * useReportsIndexData) once a given project is opened.
  */
 export const useAllProjectsReportsData = ({ query, enabled }: AllProjectsReportsDataArgs) => {
   const { filters } = useReportsContext();
@@ -57,10 +60,14 @@ export const useAllProjectsReportsData = ({ query, enabled }: AllProjectsReports
     () => ({ ...toReportsQuery(filters), search: search === "" ? undefined : search }),
     [filters, search]
   );
-  const [metasLoaded, metas, metaFailure] = useAllPages(projectReportsMetaIndexConnection, {
-    filter: reportsQuery,
-    enabled
-  });
+  const {
+    loaded: metasLoaded,
+    data: metas,
+    loadFailure: metaFailure,
+    hasMore,
+    loadingMore,
+    loadMore
+  } = useInfinitePages(projectReportsMetaIndexConnection, { filter: reportsQuery, enabled }, PROJECTS_PAGE_SIZE);
   const [, { data: reportCounts }] = useReportCounts(reportsQuery, enabled);
   const reportingPeriods = useMemo(
     () => (reportCounts?.reportingPeriods ?? []).map(getDueReportingPeriod),
@@ -71,6 +78,9 @@ export const useAllProjectsReportsData = ({ query, enabled }: AllProjectsReports
     loading: !metasLoaded,
     metas,
     error: metaFailure != null,
+    hasMore,
+    loadingMore,
+    loadMore,
     reportCount: reportCounts?.totalReports ?? 0,
     reportingPeriods
   };

@@ -110,3 +110,85 @@ export const useAllPages = <
   const allPagesLoaded = pageNumber === Math.ceil(indexTotal / PAGE_SIZE);
   return [allPagesLoaded, data, undefined];
 };
+
+type InfinitePagesState<D, P> = {
+  props: P;
+  pageNumber: number;
+  pagesByNumber: Record<number, D[]>;
+  // The index total as of the most recently accumulated page
+  total?: number;
+};
+
+/**
+ * Loads a paginated index connection one page at a time, for use with infinite scroll. The first
+ * page is loaded immediately, and each call to `loadMore` requests the next page once the current
+ * one has arrived. Accumulated pages are dropped whenever the props change.
+ */
+export const useInfinitePages = <
+  D,
+  S extends IndexConnection<D> & Partial<LoadFailureConnection>,
+  P extends PaginatedConnectionProps & EnabledProp
+>(
+  // & IndexConnection<D> needed to get TS to correctly infer D for the return type
+  // https://stackoverflow.com/a/76295763/139109
+  connection: Connection<S & IndexConnection<D>, P>,
+  props: Omit<P, "pageNumber" | "pageSize">,
+  pageSize = PAGE_SIZE
+) => {
+  const stableProps = useStableProps(props);
+  const [state, setState] = useState<InfinitePagesState<D, typeof stableProps>>(() => ({
+    props: stableProps,
+    pageNumber: 1,
+    pagesByNumber: {}
+  }));
+
+  // Reset during render (instead of in an effect) so that a request is never made for a stale
+  // page number with the new props.
+  let current = state;
+  if (state.props !== stableProps) {
+    current = { props: stableProps, pageNumber: 1, pagesByNumber: {} };
+    setState(current);
+  }
+  const { pageNumber, pagesByNumber, total } = current;
+
+  const [, { data: pageData, indexTotal, loadFailure }] = useConnection(connection, {
+    ...stableProps,
+    pageNumber,
+    pageSize
+  } as P);
+
+  useEffect(() => {
+    if (pageData == null) return;
+    setState(current =>
+      current.props !== stableProps || current.pagesByNumber[pageNumber] === pageData
+        ? current
+        : { ...current, pagesByNumber: { ...current.pagesByNumber, [pageNumber]: pageData }, total: indexTotal }
+    );
+  }, [indexTotal, pageData, pageNumber, stableProps]);
+
+  const data = useMemo(
+    () =>
+      Object.keys(pagesByNumber)
+        .map(Number)
+        .sort((a, b) => a - b)
+        .flatMap(page => pagesByNumber[page]),
+    [pagesByNumber]
+  );
+
+  const currentPageAccumulated = pagesByNumber[pageNumber] != null;
+  const hasMore = total != null && pageNumber * pageSize < total;
+  const loadMore = useCallback(() => {
+    if (!hasMore || !currentPageAccumulated) return;
+    setState(current => (current.props !== stableProps ? current : { ...current, pageNumber: pageNumber + 1 }));
+  }, [currentPageAccumulated, hasMore, pageNumber, stableProps]);
+
+  const disabled = stableProps.enabled === false;
+  return {
+    loaded: disabled || loadFailure != null || pagesByNumber[1] != null,
+    data: disabled || loadFailure != null ? NO_DATA : data,
+    loadFailure,
+    hasMore: !disabled && loadFailure == null && hasMore,
+    loadingMore: pageNumber > 1 && !currentPageAccumulated,
+    loadMore
+  };
+};

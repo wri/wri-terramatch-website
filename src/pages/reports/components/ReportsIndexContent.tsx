@@ -7,6 +7,7 @@ import PageContent from "@/components/extensive/PageElements/PageContent/PageCon
 import { useProjectIndex } from "@/connections/Entity";
 import { useReportsContext } from "@/context/reports.provider";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { InfiniteScrollSentinel } from "@/hooks/useInfiniteScrollSentinel";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import type { HighLevelSelectorItem } from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector.types";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
@@ -90,7 +91,10 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project, source, so
     loading: allProjectsLoading,
     error: allProjectsError,
     reportCount: allProjectsReportCount,
-    reportingPeriods: allProjectsReportingPeriods
+    reportingPeriods: allProjectsReportingPeriods,
+    hasMore: allProjectsHasMore,
+    loadingMore: allProjectsLoadingMore,
+    loadMore: allProjectsLoadMore
   } = useAllProjectsReportsData({ query, enabled: isAllProjectsView && activeTab === "progress-reports" });
   const {
     sections: additionalSections,
@@ -144,6 +148,12 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project, source, so
       activeTab === "additional-reports" ? additionalLoading : isAllProjectsView ? allProjectsLoading : progressLoading;
     if (tabLoading) return;
     if (progressRestore == null && additionalRestore == null && allProjectsRestoreUuid == null) {
+      // The project to restore may be on a page of the "All Projects" view that hasn't loaded yet.
+      if (restore?.projectUuid != null && allProjectsHasMore) {
+        allProjectsLoadMore();
+        return;
+      }
+
       clearReportsIndexRestore();
       setRestore(null);
     }
@@ -151,11 +161,14 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project, source, so
     activeTab,
     additionalLoading,
     additionalRestore,
+    allProjectsHasMore,
+    allProjectsLoadMore,
     allProjectsLoading,
     allProjectsRestoreUuid,
     isAllProjectsView,
     progressLoading,
     progressRestore,
+    restore?.projectUuid,
     restoreReady,
     restoreReportId
   ]);
@@ -348,6 +361,14 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project, source, so
                       onRowRestored={handleRowRestored}
                     />
                   ))}
+                  <InfiniteScrollSentinel
+                    hasMore={allProjectsHasMore}
+                    loading={allProjectsLoading}
+                    loadingMore={allProjectsLoadingMore}
+                    label={t("Loading reports...")}
+                    resetKey={allProjectsMetas.length}
+                    onLoadMore={allProjectsLoadMore}
+                  />
                 </div>
               )
             ) : progressError ? (
