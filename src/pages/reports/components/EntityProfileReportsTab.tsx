@@ -101,7 +101,7 @@ const EntityProfileReportsContent: FC<EntityProfileReportsContentProps> = ({ sou
             }
           />
         ) : (
-          <div className="bg-theme-neutral-200 space-y-0.5 pt-0.5">
+          <div className="space-y-0.5 bg-theme-neutral-200 pt-0.5">
             {periods.map((period, index) => (
               <ReportingPeriodSection
                 key={period.id}
