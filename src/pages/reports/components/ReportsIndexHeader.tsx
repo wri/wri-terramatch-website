@@ -230,7 +230,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
       )}
       {!entityProfile && (
         <Toolbar
-          className="sticky top-11 z-10 items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-2 pt-5"
+          className="border-theme-neutral-200 bg-theme-neutral-100 sticky top-11 z-10 items-end border-b !px-2 pt-5"
           classNameContentLeft="min-w-0"
           classNameContentRight="mt-[-1.25rem]"
           contentLeft={
@@ -276,7 +276,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
         onClickFilterButton={() => setIsFilterDrawerOpen(true)}
         onClearFilters={clearFilters}
         button={
-          !entityProfile
+          !entityProfile || source !== "project"
             ? undefined
             : {
                 size: "small",
