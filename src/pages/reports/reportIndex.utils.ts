@@ -315,9 +315,11 @@ export const getReportTypeSortValue = (type: string) => REPORT_TYPE_SORT_ORDER[t
 
 const REPORTS_INDEX_RESTORE_KEY = "terramatch.reportsIndex.restore";
 
-type ReportsIndexRestoreState = {
+export type ReportsIndexRestoreState = {
   indexHref: string;
   reportId: string;
+  // Allows the "All Projects" view to open the report's project before its reports are loaded.
+  projectUuid?: string;
 };
 
 export type ProgressReportRestoreLocation = {
@@ -336,13 +338,13 @@ const isRestoreState = (value: unknown): value is ReportsIndexRestoreState => {
   return typeof candidate.indexHref === "string" && typeof candidate.reportId === "string";
 };
 
-export const rememberReportsIndexPosition = (indexHref: string | undefined, reportId: string) => {
+export const rememberReportsIndexPosition = (indexHref: string | undefined, reportId: string, projectUuid?: string) => {
   if (typeof window === "undefined" || indexHref == null || indexHref === "") return;
-  const state: ReportsIndexRestoreState = { indexHref, reportId };
+  const state: ReportsIndexRestoreState = { indexHref, reportId, projectUuid };
   sessionStorage.setItem(REPORTS_INDEX_RESTORE_KEY, JSON.stringify(state));
 };
 
-export const readReportsIndexRestore = (indexHref: string): string | null => {
+export const readReportsIndexRestore = (indexHref: string): ReportsIndexRestoreState | null => {
   if (typeof window === "undefined" || indexHref === "") return null;
   const raw = sessionStorage.getItem(REPORTS_INDEX_RESTORE_KEY);
   if (raw == null) return null;
@@ -350,7 +352,7 @@ export const readReportsIndexRestore = (indexHref: string): string | null => {
   try {
     const parsed: unknown = JSON.parse(raw);
     if (!isRestoreState(parsed) || parsed.indexHref !== indexHref) return null;
-    return parsed.reportId;
+    return parsed;
   } catch {
     return null;
   }

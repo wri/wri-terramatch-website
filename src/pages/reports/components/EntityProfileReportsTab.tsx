@@ -6,7 +6,7 @@ import PageContent from "@/components/extensive/PageElements/PageContent/PageCon
 import { useLightProject } from "@/connections/Entity";
 import { ReportsProvider, useReportsContext } from "@/context/reports.provider";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { getReportPeriodOptions } from "@/pages/reports/reportPeriodFilter";
+import { getReportPeriodOptions, getSectionReportingPeriods } from "@/pages/reports/reportPeriodFilter";
 import ReportsSelectionProvider from "@/pages/reports/ReportsSelection.provider";
 import { ReportingPeriodMetricCard } from "@/pages/reports/useReportingPeriodMetrics";
 import { useReportsIndexData } from "@/pages/reports/useReportsIndexData";
@@ -37,7 +37,7 @@ const EntityProfileReportsContent: FC<EntityProfileReportsContentProps> = ({ sou
   const t = useT();
   const { filters } = useReportsContext();
   const [query, setQuery] = useState("");
-  const { sections, loading, error } = useReportsIndexData(project, source, entityUuid, false);
+  const { sections, loading, error } = useReportsIndexData(project, source, entityUuid);
   const { filteredProgressSections, progressReportCount } = useReportsIndexFilters({
     progressSections: sections,
     additionalSections: [],
@@ -55,7 +55,7 @@ const EntityProfileReportsContent: FC<EntityProfileReportsContentProps> = ({ sou
     () => filteredProgressSections.flatMap(section => section.periods),
     [filteredProgressSections]
   );
-  const periodOptions = useMemo(() => getReportPeriodOptions(sections, []), [sections]);
+  const periodOptions = useMemo(() => getReportPeriodOptions(getSectionReportingPeriods(sections), []), [sections]);
   const unfilteredReportsByPeriodId = useMemo(
     () => new Map(sections.flatMap(section => section.periods).map(period => [period.id, period.reports])),
     [sections]

@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import { EnabledProp, FilterProp, IdProp, SideloadsProp, v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader, creationHook } from "@/connections/util/connectionShortcuts";
 import { deleterAsync } from "@/connections/util/resourceDeleter";
@@ -12,8 +14,12 @@ import {
   entityIndex,
   EntityIndexQueryParams,
   EntityIndexVariables,
+  entityReportsMetaIndex,
+  EntityReportsMetaIndexQueryParams,
   entityUpdate,
-  EntityUpdateVariables
+  EntityUpdateVariables,
+  reportCountsGet,
+  ReportCountsGetQueryParams
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { SupportedEntities } from "@/generated/v3/entityService/entityServiceConstants";
 import {
@@ -36,8 +42,10 @@ import {
   ProjectLightDto,
   ProjectReportFullDto,
   ProjectReportLightDto,
+  ProjectReportMetaDto,
   ProjectReportUpdateData,
   ProjectUpdateData,
+  ReportCountsDto,
   SiteCreateData,
   SiteFullDto,
   SiteLightDto,
@@ -49,6 +57,8 @@ import {
   SrpReportLightDto,
   SrpReportUpdateData
 } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useConnection } from "@/hooks/useConnection";
+import { useStableProps } from "@/hooks/useStableProps";
 import ApiSlice from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import { Filter, PaginatedConnectionProps } from "@/types/connection";
@@ -300,6 +310,37 @@ const srpReportListConnection = v3Resource("srpReports").list<SrpReportLightDto>
  */
 export const useLightSRPReportList = connectionHook(srpReportListConnection);
 export const deleteSRPReport = createEntityDeleter("srpReports");
+
+// Report meta / counts
+export const projectReportsMetaIndexConnection = v3Resource("projectReportsMetas", entityReportsMetaIndex)
+  .index<ProjectReportMetaDto>(() => ({ pathParams: { entity: "projects" } }))
+  .pagination()
+  .filter<Filter<EntityReportsMetaIndexQueryParams>>()
+  .enabledProp()
+  .buildConnection();
+
+// The BE sends this virtual resource with a fixed ID regardless of the filters requested.
+const REPORT_COUNTS_ID = "reportCounts";
+const reportCountsConnection = v3Resource("reportCounts", reportCountsGet)
+  .singleByCustomId<ReportCountsDto, FilterProp<ReportCountsGetQueryParams>>(
+    ({ filter }) => ({ queryParams: filter }),
+    () => REPORT_COUNTS_ID
+  )
+  .enabledProp()
+  .buildConnection();
+
+/**
+ * Because the reportCounts resource always has the same ID, the cached value can't be tied to the
+ * filters that produced it. Instead, the cached value is pruned (causing a refetch) any time the
+ * connection becomes enabled or the filter changes.
+ */
+export const useReportCounts = (filter: ReportCountsGetQueryParams, enabled = true) => {
+  const stableFilter = useStableProps(filter);
+  useEffect(() => {
+    if (enabled) ApiSlice.pruneCache("reportCounts", [REPORT_COUNTS_ID]);
+  }, [enabled, stableFilter]);
+  return useConnection(reportCountsConnection, { filter: stableFilter, enabled });
+};
 
 /**
  * Get the full entity connection in a component that is shared amongst entity types. It's technically

@@ -34,7 +34,9 @@ export const getDefaultProgressFiltersForSource = (source: "project" | "site" | 
   return EMPTY_REPORT_FILTERS;
 };
 
-export const isProgressReportType = (value: string | undefined): value is ReportTypeOption =>
+export const isProgressReportType = (
+  value: string | undefined
+): value is Extract<ReportTypeOption, "project-report" | "site-report" | "nursery-report"> =>
   value === "project-report" || value === "site-report" || value === "nursery-report";
 
 export const getInitialProgressFilters = (

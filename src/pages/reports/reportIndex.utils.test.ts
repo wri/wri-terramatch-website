@@ -5,6 +5,7 @@ const report: ReportsIndexReport = {
   id: "report-id",
   name: "Example",
   projectName: "Project",
+  projectUuid: "project-uuid",
   type: "site-report",
   status: "due",
   nothingToReport: false,

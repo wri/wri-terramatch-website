@@ -1,8 +1,10 @@
+import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useEffect, useMemo, useState } from "react";
 
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
+import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
 import { ReportsIndexPeriod, ReportsIndexProjectSection } from "../reportIndex.types";
@@ -22,6 +24,10 @@ type ProjectReportsSectionProps = {
   restorePeriodId?: string;
   restoreReportId?: string;
   onRowRestored?: () => void;
+  /** Overrides the attention count that is otherwise calculated from the section's reports. */
+  attentionCount?: number;
+  loading?: boolean;
+  onOpen?: () => void;
 };
 
 const ProjectReportsSection: FC<ProjectReportsSectionProps> = ({
@@ -36,7 +42,10 @@ const ProjectReportsSection: FC<ProjectReportsSectionProps> = ({
   restoreSectionId,
   restorePeriodId,
   restoreReportId,
-  onRowRestored
+  onRowRestored,
+  attentionCount,
+  loading = false,
+  onOpen
 }) => {
   const t = useT();
   const [open, setOpen] = useState(restoreSectionId != null ? section.id === restoreSectionId : defaultOpen);
@@ -47,10 +56,15 @@ const ProjectReportsSection: FC<ProjectReportsSectionProps> = ({
     }
   }, [expandForPeriodFilter]);
 
-  const attentionCount = useMemo(
+  useEffect(() => {
+    if (open) onOpen?.();
+  }, [onOpen, open]);
+
+  const periodsAttentionCount = useMemo(
     () => section.periods.reduce((total, period) => total + getReportsRequiringAttention(period.reports), 0),
     [section.periods]
   );
+  const displayedAttentionCount = attentionCount ?? periodsAttentionCount;
 
   return (
     <Accordion
@@ -67,32 +81,39 @@ const ProjectReportsSection: FC<ProjectReportsSectionProps> = ({
           caption={section.organisationName ?? ""}
           open={open}
           statusLabels={
-            attentionCount > 0 ? (
-              <TextBadge>{t("{count} Require Attention", { count: attentionCount })}</TextBadge>
+            displayedAttentionCount > 0 ? (
+              <TextBadge>{t("{count} Require Attention", { count: displayedAttentionCount })}</TextBadge>
             ) : null
           }
         />
       }
     >
       <div className="space-y-0.5 bg-theme-neutral-200 pt-0.5">
-        {open
-          ? section.periods.map((period, index) => (
-              <ReportingPeriodSection
-                key={period.id}
-                period={period}
-                allPeriodReports={unfilteredPeriods?.find(item => item.id === period.id)?.reports}
-                defaultOpen={
-                  restorePeriodId != null ? period.id === restorePeriodId : expandForPeriodFilter || index === 0
-                }
-                expandForPeriodFilter={expandForPeriodFilter}
-                metricsReady={metricsReady}
-                hasReportSubset={hasReportSubset}
-                indexHref={indexHref}
-                restoreReportId={period.id === restorePeriodId ? restoreReportId : undefined}
-                onRowRestored={onRowRestored}
-              />
-            ))
-          : null}
+        {!open ? null : loading ? (
+          <Flex minHeight="5rem" alignItems="center" justifyContent="center" gap={3} bg="neutral.100">
+            <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
+            <Text textStyle="400" color="neutral.800">
+              {t("Loading reports...")}
+            </Text>
+          </Flex>
+        ) : (
+          section.periods.map((period, index) => (
+            <ReportingPeriodSection
+              key={period.id}
+              period={period}
+              allPeriodReports={unfilteredPeriods?.find(item => item.id === period.id)?.reports}
+              defaultOpen={
+                restorePeriodId != null ? period.id === restorePeriodId : expandForPeriodFilter || index === 0
+              }
+              expandForPeriodFilter={expandForPeriodFilter}
+              metricsReady={metricsReady}
+              hasReportSubset={hasReportSubset}
+              indexHref={indexHref}
+              restoreReportId={period.id === restorePeriodId ? restoreReportId : undefined}
+              onRowRestored={onRowRestored}
+            />
+          ))
+        )}
       </div>
     </Accordion>
   );

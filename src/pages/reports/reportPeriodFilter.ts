@@ -1,3 +1,6 @@
+import { ReportingPeriodDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { isNotNull } from "@/utils/array";
+
 import { AdditionalReport, AdditionalReportsEntitySection, ReportsIndexProjectSection } from "./reportIndex.types";
 
 const ISO_YEAR = /^\d{4}$/;
@@ -16,14 +19,20 @@ export const getIsoMonth = (value: string | null | undefined): string | undefine
 
 export type ReportPeriod = { month: string; year: string };
 
+/** The reporting period a report is for ends the month before the report is due. */
+export const getDueReportingPeriod = ({ dueYear, dueMonth }: ReportingPeriodDto): ReportPeriod =>
+  dueMonth === 1 ? { month: "12", year: String(dueYear - 1) } : { month: String(dueMonth - 1), year: String(dueYear) };
+
 export const getReportingPeriod = (dueAt: string | null | undefined): ReportPeriod | undefined => {
   const year = getIsoYear(dueAt);
   const month = getIsoMonth(dueAt);
   if (year == null || month == null) return undefined;
 
-  const monthNumber = Number(month);
-  return monthNumber === 1 ? { month: "12", year: String(Number(year) - 1) } : { month: String(monthNumber - 1), year };
+  return getDueReportingPeriod({ dueYear: Number(year), dueMonth: Number(month) });
 };
+
+export const getSectionReportingPeriods = (sections: ReportsIndexProjectSection[]): ReportPeriod[] =>
+  sections.flatMap(({ periods }) => periods.map(({ dueAt }) => getReportingPeriod(dueAt))).filter(isNotNull);
 
 /** Disturbance reports are dated by when the disturbance started, the rest by their due date. */
 export const getAdditionalReportDate = (report: AdditionalReport) =>
@@ -55,7 +64,7 @@ const byYearDescending = (a: string, b: string) => Number(b) - Number(a);
  * current year always present so it heads the list even before anything has been reported yet.
  */
 export const getReportPeriodOptions = (
-  progressSections: ReportsIndexProjectSection[],
+  progressPeriods: ReportPeriod[],
   additionalSections: AdditionalReportsEntitySection[]
 ): ReportPeriodOptions => {
   const currentYear = String(new Date().getFullYear());
@@ -63,14 +72,10 @@ export const getReportPeriodOptions = (
   const progressYears = new Set<string>([currentYear]);
   const additionalYears = new Set<string>([currentYear]);
 
-  progressSections.forEach(section =>
-    section.periods.forEach(period => {
-      const reportingPeriod = getReportingPeriod(period.dueAt);
-      if (reportingPeriod == null) return;
-      progressMonths.add(reportingPeriod.month);
-      progressYears.add(reportingPeriod.year);
-    })
-  );
+  progressPeriods.forEach(({ month, year }) => {
+    progressMonths.add(month);
+    progressYears.add(year);
+  });
 
   const collectAdditionalYears = (section: AdditionalReportsEntitySection) => {
     section.groups.forEach(group =>
@@ -88,4 +93,18 @@ export const getReportPeriodOptions = (
     progressYears: Array.from(progressYears).sort(byYearDescending),
     additionalYears: Array.from(additionalYears).sort(byYearDescending)
   };
+};
+
+/**
+ * The inverse of getReportingPeriod: converts a reporting period month / year refinement into the
+ * due date query params the BE filters on. A reporting period's reports are due the month after it.
+ */
+export const getDueDateQuery = (month: string, year: string) => {
+  if (month === "") {
+    return year === "" ? {} : { dueDateFrom: `${year}-02-01`, dueDateTo: `${Number(year) + 1}-01-31` };
+  }
+
+  const dueMonth = (Number(month) % 12) + 1;
+  if (year === "") return { dueMonth };
+  return { dueMonth, dueYear: dueMonth === 1 ? Number(year) + 1 : Number(year) };
 };

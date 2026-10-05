@@ -10,7 +10,7 @@ import ProjectReportsSection from "@/pages/reports/components/ProjectReportsSect
 import { getDefaultProgressFiltersForSource } from "@/pages/reports/components/reportFilter.constants";
 import ReportsIndexBulkBar from "@/pages/reports/components/ReportsIndexBulkBar";
 import ReportsIndexHeader from "@/pages/reports/components/ReportsIndexHeader";
-import { getReportPeriodOptions } from "@/pages/reports/reportPeriodFilter";
+import { getReportPeriodOptions, getSectionReportingPeriods } from "@/pages/reports/reportPeriodFilter";
 import ReportsSelectionProvider from "@/pages/reports/ReportsSelection.provider";
 import { useAdditionalReportsData } from "@/pages/reports/useAdditionalReportsData";
 import { useReportsIndexData } from "@/pages/reports/useReportsIndexData";
@@ -32,7 +32,7 @@ const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
     sections: progressSections,
     loading: progressLoading,
     error: progressError
-  } = useReportsIndexData(project, "project", project.uuid, false);
+  } = useReportsIndexData(project, "project", project.uuid);
   const {
     sections: additionalSections,
     loading: additionalLoading,
@@ -55,7 +55,7 @@ const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
     hasActiveSearch || hasUserReportTypeFilter || filters.statuses.length > 0 || hasActivePeriodFilter;
 
   const periodOptions = useMemo(
-    () => getReportPeriodOptions(progressSections, additionalSections),
+    () => getReportPeriodOptions(getSectionReportingPeriods(progressSections), additionalSections),
     [additionalSections, progressSections]
   );
   const unfilteredPeriodsByProjectId = useMemo(

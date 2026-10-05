@@ -20,15 +20,18 @@ import {
   getReportsIndexUrl,
   isReportsIndexTab,
   readReportsIndexRestore,
+  ReportsIndexRestoreState,
   ReportsIndexSource,
   ReportsIndexTab
 } from "../reportIndex.utils";
-import { getReportPeriodOptions } from "../reportPeriodFilter";
+import { getReportPeriodOptions, getSectionReportingPeriods } from "../reportPeriodFilter";
 import { useReportsSelectionActions } from "../ReportsSelection.provider";
 import { useAdditionalReportsData } from "../useAdditionalReportsData";
+import { useAllProjectsReportsData } from "../useAllProjectsReportsData";
 import { useReportsIndexData } from "../useReportsIndexData";
 import { useReportsIndexFilters } from "../useReportsIndexFilters";
 import AdditionalReportsContent from "./AdditionalReportsContent";
+import ProjectReportsMetaSection from "./ProjectReportsMetaSection";
 import ProjectReportsSection from "./ProjectReportsSection";
 import { getDefaultProgressFiltersForSource } from "./reportFilter.constants";
 import ReportsIndexBulkBar from "./ReportsIndexBulkBar";
@@ -81,7 +84,14 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project, source, so
     sections: progressSections,
     loading: progressLoading,
     error: progressError
-  } = useReportsIndexData(project, source, sourceEntity.uuid, isAllProjectsView);
+  } = useReportsIndexData(project, source, sourceEntity.uuid, !isAllProjectsView);
+  const {
+    metas: allProjectsMetas,
+    loading: allProjectsLoading,
+    error: allProjectsError,
+    reportCount: allProjectsReportCount,
+    reportingPeriods: allProjectsReportingPeriods
+  } = useAllProjectsReportsData({ query, enabled: isAllProjectsView && activeTab === "progress-reports" });
   const {
     sections: additionalSections,
     loading: additionalLoading,
@@ -98,11 +108,12 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project, source, so
     reportType: reportTypeFromQuery
   });
 
-  const [restoreReportId, setRestoreReportId] = useState<string | null>(null);
+  const [restore, setRestore] = useState<ReportsIndexRestoreState | null>(null);
   const [restoreReady, setRestoreReady] = useState(false);
+  const restoreReportId = restore?.reportId ?? null;
 
   useEffect(() => {
-    setRestoreReportId(readReportsIndexRestore(indexHref));
+    setRestore(readReportsIndexRestore(indexHref));
     setRestoreReady(true);
   }, [indexHref]);
 
@@ -115,30 +126,46 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project, source, so
     [filteredAdditionalSections, restoreReportId]
   );
 
+  // In the "All Projects" view, the reports aren't loaded until a project is opened, so the restore
+  // is located by project and the project section takes it from there.
+  const allProjectsRestoreUuid = useMemo(() => {
+    const projectUuid = restore?.projectUuid;
+    return projectUuid != null && allProjectsMetas.some(({ uuid }) => uuid === projectUuid) ? projectUuid : undefined;
+  }, [allProjectsMetas, restore]);
+
   const handleRowRestored = useCallback(() => {
     clearReportsIndexRestore();
-    setRestoreReportId(null);
+    setRestore(null);
   }, []);
 
   useEffect(() => {
     if (!restoreReady || restoreReportId == null) return;
-    const tabLoading = activeTab === "additional-reports" ? additionalLoading : progressLoading;
+    const tabLoading =
+      activeTab === "additional-reports" ? additionalLoading : isAllProjectsView ? allProjectsLoading : progressLoading;
     if (tabLoading) return;
-    if (progressRestore == null && additionalRestore == null) {
+    if (progressRestore == null && additionalRestore == null && allProjectsRestoreUuid == null) {
       clearReportsIndexRestore();
-      setRestoreReportId(null);
+      setRestore(null);
     }
   }, [
     activeTab,
     additionalLoading,
     additionalRestore,
+    allProjectsLoading,
+    allProjectsRestoreUuid,
+    isAllProjectsView,
     progressLoading,
     progressRestore,
     restoreReady,
     restoreReportId
   ]);
 
-  const reportCount = activeTab === "additional-reports" ? additionalReportCount : progressReportCount;
+  const reportCount =
+    activeTab === "additional-reports"
+      ? additionalReportCount
+      : isAllProjectsView
+      ? allProjectsReportCount
+      : progressReportCount;
   const hasActiveSearch = query.trim().length > 0;
   const hasActivePeriodFilter =
     filters.dueDateFrom !== "" || filters.dueDateTo !== "" || filters.dueMonth !== "" || filters.dueYear !== "";
@@ -150,10 +177,15 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project, source, so
     hasActiveSearch || hasUserReportTypeFilter || filters.statuses.length > 0 || hasActivePeriodFilter;
 
   // Built from the unfiltered sections so refining by a period never shrinks the list of periods
-  // still on offer.
+  // still on offer. In the "All Projects" view, the BE leaves the due date filters off its list of
+  // periods for the same reason.
   const periodOptions = useMemo(
-    () => getReportPeriodOptions(progressSections, additionalSections),
-    [additionalSections, progressSections]
+    () =>
+      getReportPeriodOptions(
+        isAllProjectsView ? allProjectsReportingPeriods : getSectionReportingPeriods(progressSections),
+        additionalSections
+      ),
+    [additionalSections, allProjectsReportingPeriods, isAllProjectsView, progressSections]
   );
 
   const unfilteredPeriodsByProjectId = useMemo(
@@ -287,13 +319,37 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project, source, so
       <PageContent className="h-auto flex-1 px-2 py-0">
         {activeTab === "progress-reports" && (
           <>
-            {progressLoading || isSwitchingProject || !restoreReady ? (
+            {(isAllProjectsView ? allProjectsLoading : progressLoading) || isSwitchingProject || !restoreReady ? (
               <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
                 <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
                 <Text textStyle="400" color="neutral.800">
                   {t("Loading reports...")}
                 </Text>
               </Flex>
+            ) : isAllProjectsView ? (
+              allProjectsError ? (
+                <NoResults
+                  title={t("Reports could not be loaded")}
+                  description={t("Please refresh the page and try again.")}
+                />
+              ) : allProjectsMetas.length === 0 ? (
+                <NoResults title={t("No reports found")} description={t("Try changing your search or filters.")} />
+              ) : (
+                <div className="space-y-4">
+                  {allProjectsMetas.map(meta => (
+                    <ProjectReportsMetaSection
+                      key={meta.uuid}
+                      meta={meta}
+                      query={query}
+                      expandForPeriodFilter={hasActivePeriodFilter}
+                      hasReportSubset={hasReportSubset}
+                      indexHref={indexHref}
+                      restoreReportId={meta.uuid === allProjectsRestoreUuid ? restoreReportId ?? undefined : undefined}
+                      onRowRestored={handleRowRestored}
+                    />
+                  ))}
+                </div>
+              )
             ) : progressError ? (
               <NoResults
                 title={t("Reports could not be loaded")}
@@ -315,7 +371,7 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project, source, so
                     key={section.id}
                     section={section}
                     unfilteredPeriods={unfilteredPeriodsByProjectId.get(section.id)}
-                    defaultOpen={index === 0 && !isAllProjectsView}
+                    defaultOpen={index === 0}
                     expandForPeriodFilter={hasActivePeriodFilter}
                     metricsReady={!progressLoading}
                     hasReportSubset={hasReportSubset}
