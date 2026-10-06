@@ -2,17 +2,12 @@ import { useT } from "@transifex/react";
 import { FC } from "react";
 
 import Text from "@/components/elements/Text/Text";
-import {
-  AuditStatusDto,
-  ProjectLightDto,
-  ProjectReportLightDto
-} from "@/generated/v3/entityService/entityServiceSchemas";
+import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useAuditEntityTypeName } from "@/hooks/translation/useAuditEntityTypeName";
 
 import AuditLogTable from "./AuditLogTable";
 
 type SiteAuditLogProjectStatusProps = {
-  record?: ProjectReportLightDto | ProjectLightDto | null;
   auditLogData?: { data: AuditStatusDto[] };
   auditData?: { entity: string; entityUuid: string };
   refresh?: () => void;
@@ -21,7 +16,6 @@ type SiteAuditLogProjectStatusProps = {
 };
 
 const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({
-  record,
   auditLogData,
   auditData,
   refresh,
@@ -30,8 +24,6 @@ const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({
 }) => {
   const t = useT();
   const displayEntityName = useAuditEntityTypeName()[entityType];
-  const historyTitle =
-    entityType === "projects" && record != null && "name" in record ? record.name : displayEntityName;
 
   return (
     <div className="flex flex-col gap-6">
@@ -47,7 +39,7 @@ const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({
       </div>
       {viewPD && (
         <>
-          <Text variant="text-16-bold">{t("History and Discussion for {name}", { name: historyTitle })}</Text>
+          <Text variant="text-16-bold">{t("History and Discussion")}</Text>
           {auditLogData && <AuditLogTable auditLogData={auditLogData} auditData={auditData} refresh={refresh} />}
         </>
       )}

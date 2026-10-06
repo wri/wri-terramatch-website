@@ -55,7 +55,6 @@ const AuditLog: FC<AuditLogProps> = ({ nurseryReport, refresh: refreshReport }) 
                     record={selected}
                     auditLogData={auditLogData}
                     refresh={refetch}
-                    buttonToggle={nurseryReportButtonToggle}
                     entityType="nurseryReports"
                     viewPD={true}
                   />
