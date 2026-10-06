@@ -1249,6 +1249,38 @@ export type SupportedEntities = {
   ENTITY_TYPES: string[];
 };
 
+export type ReportMetaDto = {
+  name: string | null;
+  /**
+   * The number of reports for this entity with a status of "due", "draft" or "information-required"
+   */
+  reportsRequiringAttention: number;
+};
+
+export type ReportingPeriodDto = {
+  /**
+   * @example 2025
+   */
+  dueYear: number;
+  /**
+   * @minimum 1
+   * @maximum 12
+   * @example 6
+   */
+  dueMonth: number;
+};
+
+export type ReportCountsDto = {
+  /**
+   * The total number of reports matching the requested filters
+   */
+  totalReports: number;
+  /**
+   * The distinct due month / year of reports matching the requested filters, newest first. The due date filters (dueDateFrom, dueDateTo, dueMonth, dueYear) are not applied to this list.
+   */
+  reportingPeriods: ReportingPeriodDto[];
+};
+
 export type ProjectLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -1561,6 +1593,27 @@ export type DisturbanceReportLightDto = {
    * @format date-time
    */
   disturbanceEndDate: string | null;
+};
+
+export type ProjectReportMetaDto = {
+  uuid: string;
+  organisationName: string | null;
+  /**
+   * Report meta for the project reports of this project
+   */
+  project: ReportMetaDto;
+  /**
+   * Report meta for each site in this project, keyed by site UUID
+   */
+  sites: {
+    [key: string]: ReportMetaDto;
+  };
+  /**
+   * Report meta for each nursery in this project, keyed by nursery UUID
+   */
+  nurseries: {
+    [key: string]: ReportMetaDto;
+  };
 };
 
 export type FileDownloadDto = {

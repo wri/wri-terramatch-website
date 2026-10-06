@@ -68,3 +68,22 @@ export type UserServiceApiResources = {
   organisationInvites: StoreResourceMap<OrganisationInviteDto>;
   projectInviteAcceptances: StoreResourceMap<ProjectInviteAcceptanceDto>;
 };
+
+export const Roles = {
+  ROLE_NAMES: {
+    "admin-super": "Super Admin",
+    "admin-ppc": "PPC Admin",
+    "admin-terrafund": "TerraFund Admin",
+    "admin-hbf": "HBF Admin",
+    "admin-epa-ghana-pilot": "EPA Ghana Pilot Admin",
+    "admin-fundo-floral": "Fundo Flora Admin",
+    "admin-wcb": "WCB Admin",
+    "admin-barka-fund": "Barka Fund Admin",
+    "project-developer": "Project Developer",
+    "project-manager": "Project Manager",
+    "greenhouse-service-account": "Greenhouse Service Account",
+    "research-service-account": "Research Service Account",
+    government: "Government",
+    funder: "Funder"
+  } as const
+} as const;

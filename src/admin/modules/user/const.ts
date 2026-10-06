@@ -1,54 +1,13 @@
 import { Framework } from "@/context/framework.provider";
+import { Roles } from "@/generated/v3/userService/userServiceConstants";
 
-export const frameworkAdminPrimaryRoleChoices = [
-  {
-    id: "project-developer",
-    name: "Project Developer"
-  },
-  {
-    id: "project-manager",
-    name: "Project Manager"
-  }
-];
+export const userPrimaryRoleChoices = Object.entries(Roles.ROLE_NAMES).map(([id, name]) => ({ id, name }));
 
-export const userPrimaryRoleChoices = [
-  {
-    id: "admin-ppc",
-    name: "PPC Admin"
-  },
-  {
-    id: "admin-terrafund",
-    name: "TerraFund Admin"
-  },
-  {
-    id: "admin-hbf",
-    name: "HBF Admin"
-  },
-  {
-    id: "admin-epa-ghana-pilot",
-    name: "EPA Ghana Pilot Admin"
-  },
-  {
-    id: "admin-super",
-    name: "Super Admin"
-  },
-  {
-    id: "project-developer",
-    name: "Project Developer"
-  },
-  {
-    id: "project-manager",
-    name: "Project Manager"
-  },
-  {
-    id: "funder",
-    name: "Funder"
-  },
-  {
-    id: "government",
-    name: "Government"
-  }
-];
+const FRAMEWORK_ADMIN_ROLES: string[] = ["project-developer", "project-manager"];
+
+export const frameworkAdminPrimaryRoleChoices = userPrimaryRoleChoices.filter(({ id }) =>
+  FRAMEWORK_ADMIN_ROLES.includes(id)
+);
 
 export const frameworkChoices = [
   {
