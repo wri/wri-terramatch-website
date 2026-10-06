@@ -76,7 +76,7 @@ export const Roles = {
     "admin-terrafund": "TerraFund Admin",
     "admin-hbf": "HBF Admin",
     "admin-epa-ghana-pilot": "EPA Ghana Pilot Admin",
-    "admin-fundo-floral": "Fundo Flora Admin",
+    "admin-fundo-flora": "Fundo Flora Admin",
     "admin-wcb": "WCB Admin",
     "admin-barka-fund": "Barka Fund Admin",
     "project-developer": "Project Developer",
