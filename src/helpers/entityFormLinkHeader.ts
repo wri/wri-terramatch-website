@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import { startCase } from "lodash";
+import type { ParsedUrlQuery } from "querystring";
 import { ReactNode } from "react";
 
 import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
@@ -38,7 +39,7 @@ export type EntityLinkHeaderParams = {
   entity: EntityForLinkHeader | null | undefined;
   firstLinkIcon: ReactNode;
   t: typeof useT;
-  from?: unknown;
+  from?: ParsedUrlQuery["from"];
   taskTitle?: string;
 };
 

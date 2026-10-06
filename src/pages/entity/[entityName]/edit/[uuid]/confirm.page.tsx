@@ -2,6 +2,7 @@ import { useT } from "@transifex/react";
 import DOMPurify from "isomorphic-dompurify";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import type { ParsedUrlQuery } from "querystring";
 import { useMemo } from "react";
 
 import Button, { IButtonProps } from "@/components/elements/Button/Button";
@@ -30,7 +31,7 @@ const getCallToAction = (
   entityName: FormEntity,
   entity: EntityFullDto | undefined,
   t: typeof useT,
-  from: unknown
+  from: ParsedUrlQuery["from"]
 ): IButtonProps[] | undefined => {
   if (entity == null) return undefined;
 

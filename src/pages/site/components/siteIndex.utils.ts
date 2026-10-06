@@ -1,6 +1,8 @@
 import { Framework, isTerrafund, toFramework } from "@/context/framework.provider";
 import type { EntityExportAllQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
 import type { ProjectFullDto, ProjectLightDto, SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { getEntityDetailPageLink } from "@/helpers/entity";
+import { appendQueryParams } from "@/utils/appendQueryParams";
 import { isAbsentChangeRequestStatus } from "@/utils/changeRequestStatusDisplay";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
@@ -13,6 +15,13 @@ import type {
 } from "./siteIndex.types";
 
 export const ALL_PROJECTS_VIEW = "all";
+
+export const SITE_INDEX_ORIGIN = "sites";
+
+export const getSiteDetailUrl = (siteUuid: string, fromSiteIndex: boolean, tab?: string): string =>
+  appendQueryParams(getEntityDetailPageLink("sites", siteUuid, tab), {
+    origin: fromSiteIndex ? SITE_INDEX_ORIGIN : undefined
+  });
 
 export const isSiteApproved = (site: Pick<SiteIndexSite, "status">): boolean => site.status === "approved";
 

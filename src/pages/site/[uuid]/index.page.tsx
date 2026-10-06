@@ -8,9 +8,10 @@ import EntityProfileReportsTab from "@/pages/reports/components/EntityProfileRep
 import SiteDetailTab from "@/pages/site/[uuid]/tabs/Details";
 import GoalsAndProgressTab from "@/pages/site/[uuid]/tabs/GoalsAndProgress";
 import SiteOverviewTab from "@/pages/site/[uuid]/tabs/Overview";
+import { getSiteDetailUrl, SITE_INDEX_ORIGIN } from "@/pages/site/components/siteIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import SiteBanner from "@/redesignComponents/content/Banner/SiteBanner/SiteBanner";
-import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import { ProjectIcon, SiteIcon } from "@/redesignComponents/foundations/Icons";
 
 import SitePageProviders from "./components/SitePageProviders";
 import { useSitePageLoad } from "./hooks/useSitePageLoad";
@@ -25,6 +26,7 @@ const SiteDetailPage: FC = () => {
   const { isLoaded, site, refetch } = useSitePageLoad(siteUUID);
 
   const activeTab = (router.query.tab as string) ?? "overview";
+  const isFromSiteIndex = router.query.origin === SITE_INDEX_ORIGIN;
 
   const TabItems = [
     { key: "overview", title: t("Overview"), body: <SiteOverviewTab site={site!} refetch={refetch} /> },
@@ -64,15 +66,26 @@ const SiteDetailPage: FC = () => {
         <>
           <SiteBanner
             site={site}
-            breadcrumbs={[
-              {
-                label: t("Projects"),
-                link: "/my-projects",
-                icon: <ProjectIcon className="!text-theme-primary-900" />
-              },
-              { label: site.projectName ?? "", link: `/project/${site.projectUuid}` },
-              { label: site.name ?? "", link: `/site/${site.uuid}` }
-            ]}
+            breadcrumbs={
+              isFromSiteIndex
+                ? [
+                    {
+                      label: t("Sites"),
+                      link: "/site",
+                      icon: <SiteIcon className="!text-theme-primary-900" />
+                    },
+                    { label: site.name ?? "", link: getSiteDetailUrl(site.uuid, true) }
+                  ]
+                : [
+                    {
+                      label: t("Projects"),
+                      link: "/my-projects",
+                      icon: <ProjectIcon className="!text-theme-primary-900" />
+                    },
+                    { label: site.projectName ?? "", link: `/project/${site.projectUuid}` },
+                    { label: site.name ?? "", link: `/site/${site.uuid}` }
+                  ]
+            }
             suffix={
               <div className="flex gap-1.5">
                 <div className="flex gap-1.5">
@@ -89,7 +102,11 @@ const SiteDetailPage: FC = () => {
                     variant="borderless"
                     size="small"
                     className="underline underline-offset-2"
-                    onClick={() => router.push(`/site/${site.uuid}?tab=reports`, undefined, { shallow: true })}
+                    onClick={() =>
+                      router.push(getSiteDetailUrl(site.uuid, isFromSiteIndex, "reports"), undefined, {
+                        shallow: true
+                      })
+                    }
                   >
                     {t("Site Reports")}
                   </Button>
@@ -104,7 +121,9 @@ const SiteDetailPage: FC = () => {
                 })),
                 defaultValue: activeTab,
                 onTabClick: (tabValue: string) => {
-                  router.push(`/site/${siteUUID}?tab=${tabValue}`, undefined, { shallow: true });
+                  router.push(getSiteDetailUrl(siteUUID, isFromSiteIndex, tabValue), undefined, {
+                    shallow: true
+                  });
                 }
               }
             }}
