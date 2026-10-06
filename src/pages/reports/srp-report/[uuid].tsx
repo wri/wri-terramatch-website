@@ -10,12 +10,12 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullSRPReport } from "@/connections/Entity";
 import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { SrpReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useReportBreadcrumbs } from "@/hooks/useReportBreadcrumbs";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import { getReportsIndexUrl } from "@/pages/reports/reportIndex.utils";
+import { getReportsIndexUrl, withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
-import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
@@ -46,7 +46,9 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
 
   const navigateToTab = useCallback(
     (tab: string) => {
-      router.push(`/reports/srp-report/${srpReportUUID}?tab=${tab}`, undefined, { shallow: true });
+      router.push(withReportOrigin(`/reports/srp-report/${srpReportUUID}?tab=${tab}`, router.query), undefined, {
+        shallow: true
+      });
     },
     [router, srpReportUUID]
   );
@@ -86,7 +88,11 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
 
   const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "details";
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
-  const reportsIndexHref = getReportsIndexUrl("project", srpReport.projectUuid!, { tab: "additional-reports" });
+  const breadcrumbs = useReportBreadcrumbs(
+    { label: t("SRP Report"), link: `/reports/srp-report/${srpReportUUID}` },
+    getReportsIndexUrl("project", srpReport.projectUuid!, { tab: "additional-reports" }),
+    { project: srpReport.projectName }
+  );
 
   return (
     <>
@@ -99,17 +105,7 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
         title={headerReportTitle}
         dueAt={taskDueAt ?? srpReport.dueAt}
         entityName="srp-report"
-        breadcrumbs={[
-          {
-            label: t("Reports"),
-            link: reportsIndexHref,
-            icon: <ReportsIcon className="!text-theme-primary-900" />
-          },
-          {
-            label: t("SRP Report"),
-            link: `/reports/srp-report/${srpReportUUID}`
-          }
-        ]}
+        breadcrumbs={breadcrumbs}
         suffix={
           <div className="flex items-center gap-1.5">
             {srpReport.projectUuid != null && (

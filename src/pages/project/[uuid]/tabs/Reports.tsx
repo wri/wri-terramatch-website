@@ -11,6 +11,7 @@ import { getDefaultProgressFiltersForSource } from "@/pages/reports/components/r
 import ReportsIndexBulkBar from "@/pages/reports/components/ReportsIndexBulkBar";
 import ReportsIndexHeader from "@/pages/reports/components/ReportsIndexHeader";
 import { getReportPeriodOptions, getSectionReportingPeriods } from "@/pages/reports/reportPeriodFilter";
+import ReportProfileOriginProvider from "@/pages/reports/ReportProfileOrigin.provider";
 import ReportsSelectionProvider from "@/pages/reports/ReportsSelection.provider";
 import { useAdditionalReportsData } from "@/pages/reports/useAdditionalReportsData";
 import { useReportsIndexData } from "@/pages/reports/useReportsIndexData";
@@ -80,7 +81,7 @@ const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
         indexHref=""
         entityProfile
       />
-      <PageContent className="h-auto flex-1 px-2 py-0">
+      <PageContent className="h-auto flex-1 px-2 pt-0 pb-8">
         {loading ? (
           <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
             <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
@@ -136,7 +137,9 @@ const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
 const ReportsTab: FC<ReportsTabProps> = ({ project }) => (
   <ReportsProvider>
     <ReportsSelectionProvider key={`project:${project.uuid}`}>
-      <ReportsTabContent project={project} />
+      <ReportProfileOriginProvider source="project" uuid={project.uuid}>
+        <ReportsTabContent project={project} />
+      </ReportProfileOriginProvider>
     </ReportsSelectionProvider>
   </ReportsProvider>
 );

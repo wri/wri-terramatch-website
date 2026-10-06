@@ -276,7 +276,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
         onClickFilterButton={() => setIsFilterDrawerOpen(true)}
         onClearFilters={clearFilters}
         button={
-          !entityProfile
+          !entityProfile || source !== "project"
             ? undefined
             : {
                 size: "small",

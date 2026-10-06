@@ -114,7 +114,7 @@ const ProjectSitesTabContent: FC<ProjectSitesTabProps> = ({ project }) => {
         onAddSite={handleAddSite}
         onQueryChange={setSearchQuery}
       />
-      <PageContent className="h-auto flex-1 px-2 py-0">
+      <PageContent className="h-auto flex-1 px-2 pt-0 pb-8">
         {loading ? (
           <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
             <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />

@@ -19,9 +19,10 @@ import { ReportsIndexReport } from "../reportIndex.types";
 import {
   getReportStatusSortValue,
   getReportTypeSortValue,
-  rememberReportsIndexPosition,
-  withReportsIndexReturn
+  getReportViewHref,
+  rememberReportsIndexPosition
 } from "../reportIndex.utils";
+import { useReportProfileOrigin } from "../ReportProfileOrigin.provider";
 import { useReportTableSelection } from "../ReportsSelection.provider";
 import ReportsIndexEditButton from "./ReportsIndexEditButton";
 
@@ -33,6 +34,7 @@ const ReportsIndexTable: FC<{
 }> = ({ reports, indexHref, restoreRowId, onRowRestored }) => {
   const t = useT();
   const { format } = useDate();
+  const profileOrigin = useReportProfileOrigin();
   const { selectedRows, isReportSelected, handleRowSelected, handleAllItemsSelected } =
     useReportTableSelection(reports);
 
@@ -99,7 +101,7 @@ const ReportsIndexTable: FC<{
           <ChakraTableCell {...context?.getCellProps("name")}>
             <TitleCell
               label={report.name ?? typeLabels[report.type]}
-              link={withReportsIndexReturn(`/reports/${report.type}/${report.id}`, indexHref)}
+              link={getReportViewHref(report, indexHref, profileOrigin)}
               linkTarget="_self"
               showChevron={false}
               onClick={() => rememberReportsIndexPosition(indexHref, report.id, report.projectUuid)}
@@ -136,7 +138,7 @@ const ReportsIndexTable: FC<{
         </TableRow>
       );
     },
-    [format, handleRowSelected, indexHref, isReportSelected, t, typeLabels]
+    [format, handleRowSelected, indexHref, isReportSelected, profileOrigin, t, typeLabels]
   );
 
   if (reports.length === 0) {

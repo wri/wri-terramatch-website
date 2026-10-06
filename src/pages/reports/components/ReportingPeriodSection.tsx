@@ -212,6 +212,7 @@ const ReportingPeriodSection: FC<ReportingPeriodSectionProps> = ({
         onOpenChange={setOpen}
         className="bg-theme-neutral-100"
         classNameHeader="!mb-0"
+        isScrollable={false}
         header={
           <ListSectionHeader
             level="sub-level"

@@ -7,6 +7,7 @@ import { useLightProject } from "@/connections/Entity";
 import { ReportsProvider, useReportsContext } from "@/context/reports.provider";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getReportPeriodOptions, getSectionReportingPeriods } from "@/pages/reports/reportPeriodFilter";
+import ReportProfileOriginProvider from "@/pages/reports/ReportProfileOrigin.provider";
 import ReportsSelectionProvider from "@/pages/reports/ReportsSelection.provider";
 import { ReportingPeriodMetricCard } from "@/pages/reports/useReportingPeriodMetrics";
 import { useReportsIndexData } from "@/pages/reports/useReportsIndexData";
@@ -78,7 +79,7 @@ const EntityProfileReportsContent: FC<EntityProfileReportsContentProps> = ({ sou
         indexHref=""
         entityProfile
       />
-      <PageContent className="h-auto flex-1 px-2 py-0">
+      <PageContent className="h-auto flex-1 px-2 pt-0 pb-8">
         {loading ? (
           <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
             <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
@@ -132,7 +133,9 @@ const EntityProfileReportsTab: FC<EntityProfileReportsTabProps> = ({ source, ent
   return project == null ? null : (
     <ReportsProvider>
       <ReportsSelectionProvider key={`${source}:${entityUuid}`}>
-        <EntityProfileReportsContent source={source} entityUuid={entityUuid} project={project} />
+        <ReportProfileOriginProvider source={source} uuid={entityUuid}>
+          <EntityProfileReportsContent source={source} entityUuid={entityUuid} project={project} />
+        </ReportProfileOriginProvider>
       </ReportsSelectionProvider>
     </ReportsProvider>
   );
