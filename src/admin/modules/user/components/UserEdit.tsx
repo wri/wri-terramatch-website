@@ -83,7 +83,7 @@ const UserEdit = () => {
           />
         </ReferenceInput>
 
-        {isFrameworkAdmin && <SelectInput source="primaryRole" label="Role" choices={roleChoices} fullWidth />}
+        {isFrameworkAdmin && <SelectArrayInput source="roles" label="Roles" choices={roleChoices} fullWidth />}
         <SelectInput source="program" label="Program" choices={frameworkChoices} fullWidth />
         <SelectInput source="country" label="Country" choices={countryChoices} fullWidth />
         <SelectArrayInput

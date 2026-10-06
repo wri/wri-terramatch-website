@@ -1,4 +1,5 @@
 import { Box, Button, Divider, Grid, Stack, Typography } from "@mui/material";
+import isEmpty from "lodash/isEmpty";
 import { useCallback, useState } from "react";
 import { FunctionField, RaRecord, SelectField, TextField, useNotify, useRefresh, useShowContext } from "react-admin";
 
@@ -12,6 +13,8 @@ import { DECLARED_ENV } from "@/constants/environment";
 import { UserDto } from "@/generated/v3/userService/userServiceSchemas";
 
 import { localeChoices, userPrimaryRoleChoices } from "../const";
+
+const roleName = (role: string) => userPrimaryRoleChoices.find(({ id }) => id === role)?.name ?? role;
 
 export const UserShowAside = () => {
   const notify = useNotify();
@@ -67,10 +70,11 @@ export const UserShowAside = () => {
             <Typography variant="h6" className="admin-text-16 text-darkCustom/60">
               Type
             </Typography>
-            <SelectField
-              source="primaryRole"
-              choices={userPrimaryRoleChoices}
-              emptyText="Not Provided"
+            <FunctionField
+              source="roles"
+              render={(record?: UserDto) =>
+                isEmpty(record?.roles) ? "Not Provided" : record?.roles.map(roleName).join(", ")
+              }
               className="admin-text-16 !font-medium text-darkCustom"
             />
           </Grid>

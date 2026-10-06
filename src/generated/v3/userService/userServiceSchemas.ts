@@ -714,6 +714,7 @@ export type UserDto = {
    */
   fullName: string | null;
   primaryRole: string;
+  roles: string[];
   /**
    * @example person@foocorp.net
    */
@@ -907,9 +908,24 @@ export type UserUpdateAttributes = {
    */
   locale?: "en-US" | "es-MX" | "fr-FR" | "pt-BR" | null;
   /**
-   * Primary role
+   * Replaces the user's full set of roles
    */
-  primaryRole?: string | null;
+  roles?: (
+    | "admin-super"
+    | "admin-ppc"
+    | "admin-terrafund"
+    | "admin-hbf"
+    | "admin-epa-ghana-pilot"
+    | "admin-fundo-floral"
+    | "admin-wcb"
+    | "admin-barka-fund"
+    | "project-developer"
+    | "project-manager"
+    | "greenhouse-service-account"
+    | "research-service-account"
+    | "government"
+    | "funder"
+  )[];
   directFrameworks?: string[] | null;
 };
 
