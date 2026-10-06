@@ -1,0 +1,139 @@
+import { Flex, Text } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
+import { useRouter } from "next/router";
+import { FC } from "react";
+
+import {
+  DisturbanceReportFullDto,
+  FinancialReportFullDto,
+  NurseryReportFullDto,
+  ProjectReportFullDto,
+  SiteReportFullDto,
+  SrpReportFullDto
+} from "@/generated/v3/entityService/entityServiceSchemas";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import { formatMonthYear } from "@/redesignComponents/content/headers/PageHeaders/ProjectHeader/projectHeader.utils";
+import { DownloadIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
+import Avatar from "@/redesignComponents/navigation/Avatar/Avatar";
+import { EntityName, SingularEntityName } from "@/types/common";
+
+import DateRange from "./DateRange";
+import SeparatorDot from "./SeparatorDot";
+
+export interface ReportInfoProps {
+  report:
+    | ProjectReportFullDto
+    | SiteReportFullDto
+    | NurseryReportFullDto
+    | SrpReportFullDto
+    | DisturbanceReportFullDto
+    | FinancialReportFullDto;
+  dueAt?: string | null;
+  entityName: EntityName | SingularEntityName;
+}
+
+const ReportInfo: FC<ReportInfoProps> = ({ report, dueAt, entityName }) => {
+  const t = useT();
+  const router = useRouter();
+
+  const entityTitle =
+    "siteName" in report
+      ? report.siteName ?? ""
+      : "nurseryName" in report
+      ? report.nurseryName ?? ""
+      : "projectName" in report
+      ? report.projectName ?? ""
+      : report.organisationName ?? "";
+  const reportTitle = "reportTitle" in report ? report.reportTitle ?? "" : "";
+
+  const { handleExport, loading: exportLoader } = useGetExportEntityHandler(entityName, report.uuid);
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
+    entityName,
+    entityUUID: report.uuid,
+    entityStatus: report.status,
+    updateRequestStatus: report.updateRequestStatus,
+    feedback: report.feedback,
+    useStatusModal: true,
+    entityTitle,
+    reportTitle,
+    useInformationRequiredModal: true
+  });
+
+  return (
+    <Flex gap={2} direction="column">
+      {EditModals}
+      <Text
+        textStyle="400"
+        color="neutral.900"
+        className="-ml-[0.5rem] flex items-center gap-2 mobile:w-full mobile:max-w-full mobile:overflow-x-auto"
+      >
+        {entityName !== "financial-report" && "projectUuid" in report && (
+          <>
+            <Button
+              variant="borderless"
+              size="small"
+              className="-mr-2"
+              onClick={() => report.projectUuid != null && router.push(`/project/${report.projectUuid}`)}
+            >
+              {report.projectName ?? "—"}
+            </Button>
+            <SeparatorDot />
+          </>
+        )}
+        <Button
+          variant="borderless"
+          size="small"
+          className="-ml-2"
+          onClick={() => report.organisationUuid != null && router.push(`/organization/${report.organisationUuid}`)}
+        >
+          {report.organisationName ?? "—"}
+        </Button>
+      </Text>
+      <DateRange
+        startDate={formatMonthYear(dueAt ?? report.dueAt)}
+        endDate={formatMonthYear(report.updatedAt)}
+        startDateLabel={t("Due:")}
+        endDateLabel={t("Last updated:")}
+      />
+      <Flex gap={2} className="items-center" mb={2.5}>
+        <Text textStyle="300" color="neutral.800" lineHeight="normal">
+          {t("Submitted by:")}
+        </Text>
+        {report.createdByFirstName != null && report.createdByLastName != null ? (
+          <>
+            <Avatar
+              ariaLabel={`${report.createdByFirstName} ${report.createdByLastName} avatar`}
+              name={`${report.createdByFirstName} ${report.createdByLastName}`}
+              size="small"
+            />
+            <Text textStyle="400-bold" color="neutral.900" lineHeight="normal">
+              {report.createdByFirstName} {report.createdByLastName}
+            </Text>
+          </>
+        ) : (
+          <Text textStyle="400" color="neutral.600" lineHeight="normal">
+            —
+          </Text>
+        )}
+      </Flex>
+      <Flex gap={2} alignItems="flex-start" className="mobile:w-full">
+        <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={() => handleEdit()}>
+          {t("Edit")}
+        </Button>
+        <Button
+          variant="secondary"
+          size="small"
+          leftIcon={<DownloadIcon />}
+          onClick={() => void handleExport()}
+          loading={exportLoader}
+        >
+          {t("Download")}
+        </Button>
+      </Flex>
+    </Flex>
+  );
+};
+
+export default ReportInfo;

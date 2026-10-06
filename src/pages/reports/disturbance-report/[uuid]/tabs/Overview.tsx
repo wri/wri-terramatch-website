@@ -1,211 +1,213 @@
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import Link from "next/link";
+import { FC, useMemo, useState } from "react";
 
-import Intensity, { IntensityEnum } from "@/admin/modules/disturbanceReport/components/Intensity";
-import LongTextField from "@/components/elements/Field/LongTextField";
-import Table from "@/components/elements/Table/Table";
-import { VARIANT_TABLE_AIRTABLE_DASHBOARD } from "@/components/elements/Table/TableVariants";
-import Text from "@/components/elements/Text/Text";
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import PageBody from "@/components/extensive/PageElements/Body/PageBody";
-import PageCard from "@/components/extensive/PageElements/Card/PageCard";
-import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
-import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import Container from "@/components/generic/Layout/Container";
-import { formatOptions } from "@/constants/options/disturbanceReports";
-import { shouldHideNurseries, toFramework } from "@/context/framework.provider";
+import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
+import StatusTag from "@/components/elements/StatusTag/StatusTag";
+import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
+import MetricCardsRow from "@/components/extensive/PageElements/MetricCardsRow/MetricCardsRow";
+import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
+import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
+import { PENDING_APPROVAL } from "@/constants/statuses";
 import { DisturbanceReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { useDate } from "@/hooks/useDate";
+import { getEntitySetupButtonLabel } from "@/helpers/entity";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
+import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
+import NothingToReportEmptyState from "@/pages/reports/nursery-report/components/NothingToReportEmptyState";
+import { SITE_POLYGON_MAP_INITIAL_HEIGHT } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
+import { AreaHectaresIcon, ChevronRightIcon, PeopleAffectedIcon } from "@/redesignComponents/foundations/Icons";
+import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
+
+const DISTURBANCE_REPORTING_GUIDE_URL =
+  "https://terramatchsupport.zendesk.com/hc/en-us/articles/50591003474843-How-and-When-to-Report-on-Disturbances-in-your-TerraFund-Project";
 
 type DisturbanceReportOverviewTabProps = {
-  report?: DisturbanceReportFullDto;
+  report: DisturbanceReportFullDto;
+  onViewDetails: () => void;
+  onViewGallery: () => void;
 };
 
-interface SiteAffected {
-  siteUuid: string;
-  siteName: string;
-}
-
-interface NurseryAffected {
-  nurseryUuid: string;
-  nurseryName: string;
-}
-
-interface PolygonAffected {
-  polyUuid: string;
-  polyName: string;
-  siteUuid: string;
-}
-
-const parseFieldValue = (value: any) => {
-  if (typeof value === "string" && value.startsWith("[") && value.endsWith("]")) {
-    try {
-      return JSON.parse(value);
-    } catch (e) {
-      return value;
-    }
-  }
-  return value;
-};
-
-const DisturbanceReportOverviewTab = ({ report }: DisturbanceReportOverviewTabProps) => {
+const DisturbanceReportOverviewTab: FC<DisturbanceReportOverviewTabProps> = ({
+  report,
+  onViewDetails,
+  onViewGallery
+}) => {
   const t = useT();
-  const { format } = useDate();
+  const [isReportSetupComplete, setIsReportSetupComplete] = useState(false);
+  const editButtonLabel = getEntitySetupButtonLabel(t, report.status, isReportSetupComplete);
 
-  if (!report) {
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
+    entityName: "disturbance-reports",
+    entityUUID: report.uuid,
+    entityStatus: report.status,
+    updateRequestStatus: report.updateRequestStatus,
+    entityTitle: report.projectName ?? "",
+    reportTitle: report.title ?? "",
+    feedback: report.feedback,
+    useStatusModal: true,
+    useInformationRequiredModal: true
+  });
+
+  const statusTag = useMemo(() => {
+    if (report.updateRequestStatus === PENDING_APPROVAL) {
+      return <TagSubmission size="small" state="pending-approval" />;
+    }
+
+    return <StatusTag size="small" status={report.status} />;
+  }, [report.status, report.updateRequestStatus]);
+
+  if (report.nothingToReport) {
     return (
-      <Container className="mx-auto rounded-2xl p-8 shadow-all">
-        <Text variant="text-16-light">{t("No disturbance report data available")}</Text>
-      </Container>
+      <PageContent>
+        <NothingToReportEmptyState />
+      </PageContent>
     );
   }
 
-  const hideNurseries = shouldHideNurseries(toFramework(report.frameworkKey));
-
-  const sitesAffectedColumns = [
-    {
-      accessorKey: "sitesAffected",
-      header: t("Sites Affected"),
-      cell: ({ getValue, row }: any) => (
-        <Text variant="text-14-light" className="flex items-center gap-2 leading-none text-blueCustom-900">
-          {getValue()}
-          <Link
-            className="h-4 w-4 cursor-pointer text-darkCustom-300 hover:text-primary"
-            href={`/site/${row.original?.siteUuid}`}
-          >
-            <Icon name={IconNames.LINK_PA} className="h-4 w-4" />
-          </Link>
-        </Text>
-      ),
-      enableSorting: false,
-      meta: { width: "50%" }
-    },
-    {
-      accessorKey: "polygonAffected",
-      header: t("Polygons Affected"),
-      enableSorting: false,
-      meta: { width: "50%" }
-    }
-  ];
-
-  const nurseriesAffectedColumns = [
-    {
-      accessorKey: "nurseriesAffected",
-      header: t("Nurseries Affected"),
-      cell: ({ getValue, row }: any) => (
-        <Text variant="text-14-light" className="flex items-center gap-2 leading-none text-blueCustom-900">
-          {getValue()}
-          <Link
-            className="h-4 w-4 cursor-pointer text-darkCustom-300 hover:text-primary"
-            href={`/nursery/${row.original?.nurseryUuid}`}
-          >
-            <Icon name={IconNames.LINK_PA} className="h-4 w-4" />
-          </Link>
-        </Text>
-      ),
-      enableSorting: false,
-      meta: { width: "50%" }
-    }
-  ];
-
-  const getFieldValue = (fieldName: string) => {
-    const field = report?.entries?.find((f: any) => f.name === fieldName);
-    return field ? parseFieldValue(field.value) : null;
-  };
-
-  const disturbanceType = getFieldValue("disturbance-type");
-  const disturbanceSubtype = getFieldValue("disturbance-subtype");
-  const intensity = getFieldValue("intensity");
-  const extent = getFieldValue("extent");
-  const propertyAffected = getFieldValue("property-affected");
-  const peopleAffected = getFieldValue("people-affected");
-  const financialLoss = getFieldValue("financial-loss");
-  const sitesAffected = getFieldValue("site-affected");
-  const polygonsAffected = getFieldValue("polygon-affected");
-  const nurseriesAffected = getFieldValue("nursery-affected");
-
-  const disturbanceReportData = Array.isArray(sitesAffected)
-    ? sitesAffected.map((site: SiteAffected) => {
-        const sitePolygons =
-          polygonsAffected?.flat().filter((poly: PolygonAffected) => poly?.siteUuid === site?.siteUuid) ?? [];
-
-        return {
-          sitesAffected: site?.siteName,
-          siteUuid: site?.siteUuid,
-          polygonAffected: sitePolygons?.map((poly: PolygonAffected) => poly?.polyName).join(", ")
-        };
-      })
-    : [];
-
-  const nurseriesAffectedData = Array.isArray(nurseriesAffected)
-    ? nurseriesAffected.map((nursery: NurseryAffected) => {
-        return {
-          nurseriesAffected: nursery?.nurseryName,
-          nurseryUuid: nursery?.nurseryUuid
-        };
-      })
-    : [];
   return (
-    <PageBody>
-      <PageRow className="gap-12">
-        <PageColumn>
-          <PageCard title={t("Reported Data")} gap={8}>
-            <LongTextField title={t("Disturbance Type")}>{formatOptions(disturbanceType)}</LongTextField>
-            <LongTextField title={t("Disturbance Subtype")}>
-              {formatOptions(disturbanceSubtype)?.join(", ")}
-            </LongTextField>
-            <LongTextField title={t("Extent")}>{extent ? `${extent}%` : null}</LongTextField>
-            <LongTextField title={t("People Affected")}>
-              {peopleAffected ? Number(peopleAffected)?.toLocaleString() : null}
-            </LongTextField>
-            <LongTextField title={t("Financial Loss")}>
-              {financialLoss ? `$${Number(financialLoss)?.toLocaleString()}` : null}
-            </LongTextField>
-            <LongTextField title={t("Property Affected")}>{formatOptions(propertyAffected)?.join(", ")}</LongTextField>
-            <LongTextField title={t("Disturbance Start Date")}>
-              {format(report?.disturbanceStartDate ?? "")}
-            </LongTextField>
-            <LongTextField title={t("Disturbance End Date")}>{format(report?.disturbanceEndDate ?? "")}</LongTextField>
-            <LongTextField title={t("Intensity")}>
-              {intensity ? <Intensity intensity={intensity?.toLowerCase() as IntensityEnum} className="mb-2" /> : null}
-            </LongTextField>
-          </PageCard>
-        </PageColumn>
-
-        <PageColumn>
-          <PageCard title={t("Description")} gap={8} className="h-full">
-            <LongTextField title={t("Description")}>{report?.description}</LongTextField>
-            <LongTextField title={t("Action Description")}>{report?.actionDescription}</LongTextField>
-          </PageCard>
-        </PageColumn>
-      </PageRow>
-      <PageRow>
-        <PageColumn>
-          <PageCard title={t("Sites Affected")} gap={8}>
-            <Table
-              data={disturbanceReportData}
-              columns={sitesAffectedColumns}
-              hasPagination={false}
-              invertSelectPagination={false}
-              variant={VARIANT_TABLE_AIRTABLE_DASHBOARD}
-            />
-          </PageCard>
-          {!hideNurseries && (
-            <PageCard title={t("Nurseries Affected")} gap={8}>
-              <Table
-                data={nurseriesAffectedData}
-                columns={nurseriesAffectedColumns}
-                hasPagination={false}
-                invertSelectPagination={false}
-                variant={VARIANT_TABLE_AIRTABLE_DASHBOARD}
+    <PageContent>
+      {EditModals}
+      <Flex gap={7} direction="column" width="100%">
+        <Flex gap={7} direction={{ base: "column", lg: "row" }} alignItems={{ lg: "flex-start" }}>
+          <PageItem
+            title={t("Insights")}
+            flexProps={{ flex: 2, minWidth: 0, width: "100%" }}
+            buttonProps={{
+              variant: "secondary",
+              size: "small",
+              children: t("View Report Details"),
+              rightIcon: <ChevronRightIcon />,
+              onClick: onViewDetails
+            }}
+          >
+            <MetricCardsRow>
+              <MetricCard
+                title={t("Affected Area")}
+                progress={0}
+                progressSuffix={t("ha")}
+                goal={0}
+                variant="large"
+                icon={<AreaHectaresIcon />}
+                color="error.900"
+                metricLabel="affected_area"
+                tooltipContent={t("Total area of the polygons affected by this disturbance.")}
+                className="flex-none"
               />
-            </PageCard>
-          )}
-        </PageColumn>
-      </PageRow>
-      <br />
-      <br />
-    </PageBody>
+              <MetricCard
+                title={t("People Affected")}
+                progress={Number(report.entries?.find(entry => entry.name === "people-affected")?.value ?? 0)}
+                goal={0}
+                variant="large"
+                icon={<PeopleAffectedIcon />}
+                color="error.900"
+                metricLabel="people_affected"
+                tooltipContent={t("Number of people affected by this disturbance.")}
+                className="flex-none"
+              />
+            </MetricCardsRow>
+          </PageItem>
+          <PageItem
+            title={t("Disturbance Report")}
+            flexProps={{ flex: 1, minWidth: 0, width: "100%" }}
+            buttonProps={{
+              variant: "primary",
+              size: "small",
+              children: editButtonLabel,
+              rightIcon: <ChevronRightIcon />,
+              onClick: () => handleEdit()
+            }}
+            tag={statusTag}
+          >
+            <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
+              <EntitySetUpSection
+                onStatusChange={setIsReportSetupComplete}
+                onEditStep={handleEdit}
+                entity={report}
+                type="disturbanceReports"
+                entityTitle={report.projectName ?? ""}
+                reportTitle={report.title ?? ""}
+              />
+            </Box>
+          </PageItem>
+        </Flex>
+        {report.projectUuid != null && (
+          <PageItem title={t("Map")} flexProps={{ width: "100%" }} className="min-h-0">
+            <Box className="relative overflow-hidden rounded" minH={SITE_POLYGON_MAP_INITIAL_HEIGHT}>
+              <OverviewMapArea
+                entityModel={{ uuid: report.projectUuid }}
+                type="projects"
+                className="h-full min-h-0 rounded"
+                hideFullscreenControl={true}
+                overviewPolygonPopup={true}
+              />
+            </Box>
+          </PageItem>
+        )}
+        <Flex gap={7} direction={{ base: "column", lg: "row" }} alignItems={{ lg: "flex-start" }}>
+          <PageItem
+            title={t("Images")}
+            flexProps={{ flex: 1, minWidth: 0, width: "100%" }}
+            buttonProps={{
+              variant: "secondary",
+              size: "small",
+              children: t("View Gallery"),
+              rightIcon: <ChevronRightIcon />,
+              onClick: onViewGallery
+            }}
+          >
+            <LatestImagesSectionTab
+              entityUuid={report.uuid}
+              entityName="disturbanceReports"
+              columns={3}
+              rows={2}
+              minItems={6}
+            />
+          </PageItem>
+          <PageItem title={t("About Disturbance Reports")} flexProps={{ flex: 1.2, minWidth: 0, width: "100%" }}>
+            <Flex direction="column" gap={6} backgroundColor="neutral.100" padding={5} borderRadius={1}>
+              <Text color="neutral.900" textStyle="300">
+                <Text as="strong" textStyle="300-bold">
+                  {t("Disturbance reports")}
+                </Text>{" "}
+                {t(
+                  "capture and document information on events that affect the success of project restoration activity. The information contained in this report will help project management staff to evaluate the extent of the damage incurred by a disturbance and to determine what support is needed and if any project objectives need to be adjusted. Please report any disturbance within one week of the event and submit a separate report for each disturbance type."
+                )}
+              </Text>
+              <ContactSupport
+                message={t(
+                  "Reporting disturbances quickly and in detail helps your project manager to support you and adjust your workplan. If you have challenges or need assistance, please reach out to your project manager or"
+                )}
+                subject="Support Request for Disturbance Report"
+              />
+              <Flex direction="column" gap={3}>
+                <Flex direction="column">
+                  <Text color="neutral.900" textStyle="500-bold">
+                    {t("Helpful Link")}
+                  </Text>
+                  <SimpleDivider />
+                </Flex>
+                <Flex alignItems="flex-start">
+                  <Button
+                    as="a"
+                    href={DISTURBANCE_REPORTING_GUIDE_URL}
+                    variant="borderless"
+                    size="small"
+                    rightIcon={<ChevronRightIcon boxSize="0.625rem" />}
+                    className="justify-start truncate !whitespace-nowrap underline mobile:max-w-full mobile:[text-wrap:auto]"
+                  >
+                    {t("Learn How and When to Report Disturbances")}
+                  </Button>
+                </Flex>
+              </Flex>
+            </Flex>
+          </PageItem>
+        </Flex>
+      </Flex>
+    </PageContent>
   );
 };
 
