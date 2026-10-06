@@ -872,6 +872,16 @@ export type Roles = {
   ROLE_NAMES: Record<string, any>;
 };
 
+/**
+ * CONSTANTS
+ */
+export type Frameworks = {
+  /**
+   * @example {"barka-fund":"Barka Fund","enterprises":"TerraFund Enterprises","epa-ghana-pilot":"EPA-Ghana Pilot","fundo-flora":"Fundo Flora","fundo-flora-1":"Fundo Flora 1","hbf":"Harit Bharat Fund","ppc":"PPC","terrafund":"TerraFund Top 100","terrafund-3":"TerraFund Cohort Three","terrafund-landscapes":"TerraFund Landscapes","wcb":"Wildlife Conservation Bond"}
+   */
+  FRAMEWORK_NAMES: Record<string, any>;
+};
+
 export type UserUpdateAttributes = {
   /**
    * Organisation UUID
@@ -936,7 +946,21 @@ export type UserUpdateAttributes = {
     | "government"
     | "funder"
   )[];
-  directFrameworks?: string[] | null;
+  directFrameworks?:
+    | (
+        | "terrafund"
+        | "terrafund-landscapes"
+        | "enterprises"
+        | "epa-ghana-pilot"
+        | "terrafund-3"
+        | "ppc"
+        | "hbf"
+        | "fundo-flora"
+        | "fundo-flora-1"
+        | "wcb"
+        | "barka-fund"
+      )[]
+    | null;
 };
 
 export type UserData = {

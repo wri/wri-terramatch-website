@@ -87,3 +87,19 @@ export const Roles = {
     funder: "Funder"
   } as const
 } as const;
+
+export const Frameworks = {
+  FRAMEWORK_NAMES: {
+    "barka-fund": "Barka Fund",
+    enterprises: "TerraFund Enterprises",
+    "epa-ghana-pilot": "EPA-Ghana Pilot",
+    "fundo-flora": "Fundo Flora",
+    "fundo-flora-1": "Fundo Flora 1",
+    hbf: "Harit Bharat Fund",
+    ppc: "PPC",
+    terrafund: "TerraFund Top 100",
+    "terrafund-3": "TerraFund Cohort Three",
+    "terrafund-landscapes": "TerraFund Landscapes",
+    wcb: "Wildlife Conservation Bond"
+  } as const
+} as const;

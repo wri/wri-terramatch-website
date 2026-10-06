@@ -1,5 +1,5 @@
 import { Framework } from "@/context/framework.provider";
-import { Roles } from "@/generated/v3/userService/userServiceConstants";
+import { Frameworks, Roles } from "@/generated/v3/userService/userServiceConstants";
 
 export const userPrimaryRoleChoices = Object.entries(Roles.ROLE_NAMES).map(([id, name]) => ({ id, name }));
 
@@ -9,16 +9,7 @@ export const frameworkAdminPrimaryRoleChoices = userPrimaryRoleChoices.filter(({
   FRAMEWORK_ADMIN_ROLES.includes(id)
 );
 
-export const frameworkChoices = [
-  {
-    id: "ppc",
-    name: "PPC"
-  },
-  {
-    id: "terrafund",
-    name: "TerraFund"
-  }
-];
+export const frameworkChoices = Object.entries(Frameworks.FRAMEWORK_NAMES).map(([id, name]) => ({ id, name }));
 
 export const localeChoices = [
   { id: "en-US", name: "English" },
