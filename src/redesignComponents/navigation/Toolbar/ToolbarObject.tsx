@@ -23,12 +23,12 @@ const ToolbarObject: FC<ToolbarObjectProps> = ({ breadcrumbs, suffix, className,
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const breadcrumbCount = Math.max(1, breadcrumbs.links.length);
+  const breadcrumbCount = Math.max(1, breadcrumbs?.links?.length!);
   const availableWidth = viewportWidth - HORIZONTAL_PADDING;
   const widthPerCrumb = availableWidth / breadcrumbCount - OVERHEAD_PER_CRUMB;
   const maxLabelLength = isMobile ? Math.max(2, Math.floor(widthPerCrumb / CHAR_WIDTH_PX)) : DESKTOP_MAX_LABEL_LENGTH;
 
-  const truncatedBreadcrumbs = breadcrumbs.links.map(link => {
+  const truncatedBreadcrumbs = breadcrumbs.links?.map(link => {
     const label = t(link.label);
     return {
       ...link,
