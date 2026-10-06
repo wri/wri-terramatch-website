@@ -2994,8 +2994,6 @@ export type MediaMapEntryDto = {
    * Null if the thumbnail conversion was not generated.
    */
   thumbUrl: string | null;
-  isCover: boolean;
-  isPublic: boolean;
   /**
    * @format date-time
    */

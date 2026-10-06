@@ -7,14 +7,14 @@ import { useValueChanged } from "@/hooks/useValueChanged";
 import { MapMedia } from "../layers/mediaTypes";
 
 type UseEntityMapMediaProps = {
-  entity: MediaMapIndexEntity;
+  entity?: MediaMapIndexEntity;
   uuid?: string;
   enabled?: boolean;
 };
 
 export const useEntityMapMedia = ({ entity, uuid, enabled = true }: UseEntityMapMediaProps) => {
   const { shouldRefetchMediaData, setShouldRefetchMediaData, setMediaFiles } = useMapAreaContext();
-  const [, { data, refetch }] = useMediaMapIndex({ entity, uuid, enabled: enabled && uuid != null });
+  const [, { data, refetch }] = useMediaMapIndex({ entity, uuid, enabled: enabled && entity != null && uuid != null });
 
   const key = `${entity}|${uuid}`;
   const [loaded, setLoaded] = useState<{ key: string; media: MapMedia[] }>();

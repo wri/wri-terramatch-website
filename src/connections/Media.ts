@@ -34,13 +34,14 @@ export const useMedia = connectionHook(mediaConnection);
 
 export type MediaMapIndexEntity = MediaMapIndexPathParams["entity"];
 
-type MediaMapIndexProps = { entity: MediaMapIndexEntity; uuid?: string };
+type MediaMapIndexProps = { entity?: MediaMapIndexEntity; uuid?: string };
 
-const mediaMapIndexId = ({ entity, uuid }: MediaMapIndexProps) => (uuid == null ? "" : `${entity}|${uuid}`);
+const mediaMapIndexId = ({ entity, uuid }: MediaMapIndexProps) =>
+  entity == null || uuid == null ? "" : `${entity}|${uuid}`;
 
 const mediaMapIndexConnection = v3Resource("mediaMapIndexes", mediaMapIndex)
   .singleByCustomId<MediaMapIndexDto, MediaMapIndexProps>(
-    ({ entity, uuid }) => (uuid == null ? undefined : { pathParams: { entity, uuid } }),
+    ({ entity, uuid }) => (entity == null || uuid == null ? undefined : { pathParams: { entity, uuid } }),
     mediaMapIndexId
   )
   .enabledProp()

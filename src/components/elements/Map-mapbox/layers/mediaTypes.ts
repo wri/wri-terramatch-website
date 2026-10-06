@@ -1,4 +1,4 @@
-import { MediaDto, MediaMapEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { MediaMapEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 export type MapMedia = MediaMapEntryDto;
 
@@ -10,7 +10,3 @@ export type MediaCallbacks = {
   openModalImageDetail: (uuid: string) => void;
   isProjectPath: boolean;
 };
-
-const isGeolocated = (media: MediaDto): media is MediaDto & MapMedia => media.lat != null && media.lng != null;
-
-export const geolocatedMedia = (media: MediaDto[]): MapMedia[] => media.filter(isGeolocated);

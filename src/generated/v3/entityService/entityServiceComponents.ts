@@ -5148,9 +5148,6 @@ export type MediaMapIndexResponse = {
      * @example mediaMapIndexes
      */
     type?: string;
-    /**
-     * @format uuid
-     */
     id?: string;
     attributes?: Schemas.MediaMapIndexDto;
   };
