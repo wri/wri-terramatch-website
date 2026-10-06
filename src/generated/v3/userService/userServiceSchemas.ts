@@ -714,6 +714,7 @@ export type UserDto = {
    */
   fullName: string | null;
   primaryRole: string;
+  roles: string[];
   /**
    * @example person@foocorp.net
    */
@@ -861,6 +862,26 @@ export type UserTaskDto = {
   associations: UserTaskAssociation[];
 };
 
+/**
+ * CONSTANTS
+ */
+export type Roles = {
+  /**
+   * @example {"admin-super":"Super Admin","admin-ppc":"PPC Admin","admin-terrafund":"TerraFund Admin","admin-hbf":"HBF Admin","admin-epa-ghana-pilot":"EPA Ghana Pilot Admin","admin-fundo-floral":"Fundo Flora Admin","admin-wcb":"WCB Admin","admin-barka-fund":"Barka Fund Admin","project-developer":"Project Developer","project-manager":"Project Manager","greenhouse-service-account":"Greenhouse Service Account","research-service-account":"Research Service Account","government":"Government","funder":"Funder"}
+   */
+  ROLE_NAMES: Record<string, any>;
+};
+
+/**
+ * CONSTANTS
+ */
+export type Frameworks = {
+  /**
+   * @example {"barka-fund":"Barka Fund","enterprises":"TerraFund Enterprises","epa-ghana-pilot":"EPA-Ghana Pilot","fundo-flora":"Fundo Flora","fundo-flora-1":"Fundo Flora 1","hbf":"Harit Bharat Fund","ppc":"PPC","terrafund":"TerraFund Top 100","terrafund-3":"TerraFund Cohort Three","terrafund-landscapes":"TerraFund Landscapes","wcb":"Wildlife Conservation Bond"}
+   */
+  FRAMEWORK_NAMES: Record<string, any>;
+};
+
 export type UserUpdateAttributes = {
   /**
    * Organisation UUID
@@ -907,10 +928,39 @@ export type UserUpdateAttributes = {
    */
   locale?: "en-US" | "es-MX" | "fr-FR" | "pt-BR" | null;
   /**
-   * Primary role
+   * Replaces the user's full set of roles
    */
-  primaryRole?: string | null;
-  directFrameworks?: string[] | null;
+  roles?: (
+    | "admin-super"
+    | "admin-ppc"
+    | "admin-terrafund"
+    | "admin-hbf"
+    | "admin-epa-ghana-pilot"
+    | "admin-fundo-floral"
+    | "admin-wcb"
+    | "admin-barka-fund"
+    | "project-developer"
+    | "project-manager"
+    | "greenhouse-service-account"
+    | "research-service-account"
+    | "government"
+    | "funder"
+  )[];
+  directFrameworks?:
+    | (
+        | "terrafund"
+        | "terrafund-landscapes"
+        | "enterprises"
+        | "epa-ghana-pilot"
+        | "terrafund-3"
+        | "ppc"
+        | "hbf"
+        | "fundo-flora"
+        | "fundo-flora-1"
+        | "wcb"
+        | "barka-fund"
+      )[]
+    | null;
 };
 
 export type UserData = {

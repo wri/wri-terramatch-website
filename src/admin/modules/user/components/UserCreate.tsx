@@ -38,7 +38,7 @@ const UserCreate = () => {
   };
 
   if (isFrameworkAdmin) {
-    schemaObject.role = yup.string().required("Role is required");
+    schemaObject.roles = yup.array().of(yup.string()).min(1, "At least one role is required");
   }
 
   const roleChoices = useMemo(() => {
@@ -67,7 +67,9 @@ const UserCreate = () => {
           <AutocompleteInput label="Organisation" optionText="name" fullWidth />
         </ReferenceInput>
 
-        {isFrameworkAdmin && <SelectInput source="role" label="Role" choices={roleChoices} fullWidth />}
+        {isFrameworkAdmin && (
+          <SelectArrayInput source="roles" label="Roles" choices={roleChoices} defaultValue={[]} fullWidth />
+        )}
 
         <SelectInput source="program" label="Program" choices={frameworkChoices} fullWidth />
 
