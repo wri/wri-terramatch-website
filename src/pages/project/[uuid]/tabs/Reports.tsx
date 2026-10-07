@@ -1,6 +1,7 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useMemo, useState } from "react";
+import { twMerge } from "tailwind-merge";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { ReportsProvider, useReportsContext } from "@/context/reports.provider";
@@ -45,6 +46,7 @@ const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
   const loading = progressLoading || additionalLoading;
   const error = progressError || additionalError;
   const hasResults = filteredProgressSections.length > 0 || filteredAdditionalSections.length > 0;
+  const showNoResults = !loading && (error || !hasResults);
   const hasActiveSearch = query.trim().length > 0;
   const hasActivePeriodFilter =
     filters.dueDateFrom !== "" || filters.dueDateTo !== "" || filters.dueMonth !== "" || filters.dueYear !== "";
@@ -81,7 +83,7 @@ const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
         indexHref=""
         entityProfile
       />
-      <PageContent className="h-auto flex-1 px-2 pt-0 pb-8">
+      <PageContent className={twMerge("h-auto flex-1 px-2 pt-0 pb-8", showNoResults && "bg-theme-neutral-100")}>
         {loading ? (
           <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
             <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />

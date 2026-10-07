@@ -140,6 +140,7 @@ const mockProject = {
   programmeSubmission: [],
   proofOfLandTenureMou: [],
   consortiumPartnershipAgreements: [],
+  communityEngagementDocumentation: [],
   detailedProjectBudget: {
     entityType: "projects",
     entityUuid: "project-1",

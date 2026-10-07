@@ -21,6 +21,7 @@ import Log from "@/utils/log";
 
 import type { ReportIndexItem } from "./reportIndex.types";
 import {
+  getNothingToReportDisabledTooltip,
   getSubmitDisabledTooltip,
   groupReportUuidsByEntity,
   isReportBulkEditable,
@@ -92,6 +93,10 @@ export const useReportsBulkActions = ({ selectedReports, clearSelection }: UseRe
   const canMarkNothingToReport = selectedReports.length > 0 && nothingToReportReports.length === selectedReports.length;
 
   const submitDisabledTooltip = useMemo(() => getSubmitDisabledTooltip(selectedReports, t), [selectedReports, t]);
+  const nothingToReportDisabledTooltip = useMemo(
+    () => getNothingToReportDisabledTooltip(selectedReports, t),
+    [selectedReports, t]
+  );
 
   const handleDownload = useCallback(async () => {
     if (selectedReports.length === 0 || isDownloading) return;
@@ -208,6 +213,7 @@ export const useReportsBulkActions = ({ selectedReports, clearSelection }: UseRe
     canSubmit,
     canMarkNothingToReport,
     submitDisabledTooltip,
+    nothingToReportDisabledTooltip,
     handleDownload,
     handleNothingToReport,
     handleSubmit
