@@ -307,7 +307,6 @@ export function useMapDraw({
 
     const editSession = ++editSessionRef.current;
 
-    filterPolygonFromLayers(polygonuuid, polygonsData, map.current);
     const isProjectPolygon = isProjectPitchesEntityName(polygonFromMap?.entityName ?? "");
     const projectPitchUuid = polygonFromMap?.projectPitchUuid;
     const rawStatus =

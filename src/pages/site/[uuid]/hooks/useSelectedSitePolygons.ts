@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 
-import type { OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
 import type { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { isSitePolygonSubmittable } from "@/utils/sitePolygonSubmit";
 
@@ -10,7 +9,6 @@ type UseSelectedSitePolygonsParams = {
   polygonsData: SitePolygonLightDto[];
   selectedRowIds: Set<string | number>;
   selectedRows: PolygonTableRow[];
-  overlapPolygons: OverlapPolygonPoint[];
   isEditPolygonOpen: boolean;
   editPolygonUuid: string | null;
 };
@@ -19,7 +17,6 @@ export const useSelectedSitePolygons = ({
   polygonsData,
   selectedRowIds,
   selectedRows,
-  overlapPolygons,
   isEditPolygonOpen,
   editPolygonUuid
 }: UseSelectedSitePolygonsParams) => {
@@ -34,18 +31,6 @@ export const useSelectedSitePolygons = ({
     );
     return drawerPolygon?.polygonUuid ?? drawerPolygon?.uuid ?? null;
   }, [isEditPolygonOpen, editPolygonUuid, polygonsData]);
-
-  const overlapPolygonsForMap = useMemo(() => {
-    const overlapMapPolygonUuids = new Set(selectedPolygonUuids);
-    if (editDrawerPolygonUuid != null) {
-      overlapMapPolygonUuids.add(editDrawerPolygonUuid);
-    }
-    if (overlapMapPolygonUuids.size === 0) {
-      return [];
-    }
-
-    return overlapPolygons.filter(point => overlapMapPolygonUuids.has(point.polygonUuid));
-  }, [overlapPolygons, selectedPolygonUuids, editDrawerPolygonUuid]);
 
   const selectedPolygonData = useMemo(() => {
     const sitePolygons: SitePolygonLightDto[] = [];
@@ -99,7 +84,6 @@ export const useSelectedSitePolygons = ({
 
   return {
     selectedPolygonUuids,
-    overlapPolygonsForMap,
     editDrawerPolygonUuid,
     selectedTreesPlanted,
     selectedRestorationAreaRounded: Math.round(selectedRestorationAreaHa * 100) / 100,

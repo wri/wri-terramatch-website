@@ -1,10 +1,10 @@
 import { useT } from "@transifex/react";
+import { sortBy } from "lodash";
 import { useCallback, useMemo } from "react";
 import { ControllerRenderProps } from "react-hook-form";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
-import { useAllSitePolygons } from "@/connections/SitePolygons";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { useSitePolygonMapIndex } from "@/connections/SitePolygons";
 import useDisturbanceReportDescriptions from "@/hooks/translation/useDisturbanceReportDescriptions";
 import { OptionValue } from "@/types/common";
 
@@ -26,30 +26,27 @@ export const DisturbancePolygonAffectedInput = ({
   field
 }: DisturbancePolygonAffectedInputProps) => {
   const t = useT();
-  const { data: polygonsData, isLoading: isLoadingPolygons } = useAllSitePolygons({
+  const hasSite = siteUuid != null && siteUuid !== "";
+  const [isPolygonsLoaded, { data: mapIndex }] = useSitePolygonMapIndex({
     entityName: "sites",
     entityUuid: siteUuid,
-    enabled: siteUuid != null && siteUuid !== "",
-    filter: {
-      "polygonStatus[]": ["approved"]
-    },
-    sortField: "name",
-    sortDirection: "ASC"
+    enabled: hasSite,
+    filter: { "polygonStatus[]": ["approved"] }
   });
   const { DISTURBANCE_POLYGONS_FIELD_DESCRIPTION } = useDisturbanceReportDescriptions();
 
   const polygonChoices = useMemo(() => {
-    if (polygonsData == null || siteUuid == null) return [];
+    if (mapIndex == null || siteUuid == null) return [];
 
-    return polygonsData.map((polygon: SitePolygonLightDto) => ({
-      title: polygon.name || `Polygon ${polygon.uuid}`,
+    return sortBy(mapIndex.polygons, polygon => (polygon.name ?? "").toLowerCase()).map(polygon => ({
+      title: polygon.name ?? `Polygon ${polygon.uuid}`,
       value: polygon.uuid,
-      meta: { practice: polygon.practice ?? "" }
+      meta: { practice: polygon.practice ?? [] }
     }));
-  }, [polygonsData, siteUuid]);
+  }, [mapIndex, siteUuid]);
 
-  const hasSite = siteUuid != null && siteUuid !== "";
-  const hasNoApprovedPolygons = hasSite && !isLoadingPolygons && polygonChoices.length === 0;
+  const isWaitingForPolygons = hasSite && !isPolygonsLoaded;
+  const hasNoApprovedPolygons = hasSite && isPolygonsLoaded && polygonChoices.length === 0;
 
   const fieldIndex = fieldUuid?.match(/\[(\d+)\]/)?.[1];
   const currentPolygons = polygonAffectedValue.find(f => f.name === "polygon-affected")?.value;
@@ -104,7 +101,7 @@ export const DisturbancePolygonAffectedInput = ({
     return [];
   }, [value]);
 
-  if (fieldUuid == null || hasNoApprovedPolygons) {
+  if (fieldUuid == null || isWaitingForPolygons || hasNoApprovedPolygons) {
     return null;
   }
 

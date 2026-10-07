@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import type { OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import {
@@ -314,7 +315,6 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
 
   const {
     selectedPolygonUuids,
-    overlapPolygonsForMap,
     editDrawerPolygonUuid,
     selectedTreesPlanted,
     selectedRestorationAreaRounded,
@@ -327,7 +327,6 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     polygonsData: selectionPolygonsData,
     selectedRowIds,
     selectedRows,
-    overlapPolygons,
     isEditPolygonOpen,
     editPolygonUuid: editPolygon.uuid !== "" ? editPolygon.uuid : null
   });
@@ -339,10 +338,35 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     t
   });
 
-  const mapAlertPolygons = useMemo(
-    () => [...overlapPolygonsForMap, ...disturbanceMarkerPoints],
-    [overlapPolygonsForMap, disturbanceMarkerPoints]
-  );
+  // Overlaps were selection-gated while disturbances always rendered — keep both always visible.
+  const mapAlertPolygons = useMemo(() => {
+    const byUuid = new Map<string, OverlapPolygonPoint>();
+
+    for (const point of overlapPolygons) {
+      if (point.polygonUuid === editDrawerPolygonUuid) {
+        continue;
+      }
+      byUuid.set(point.polygonUuid, point);
+    }
+
+    for (const point of disturbanceMarkerPoints) {
+      const existing = byUuid.get(point.polygonUuid);
+      if (existing == null) {
+        byUuid.set(point.polygonUuid, point);
+        continue;
+      }
+
+      const tooltips = [existing.tooltip, point.tooltip].filter(
+        (tooltip): tooltip is string => tooltip != null && tooltip !== ""
+      );
+      byUuid.set(point.polygonUuid, {
+        ...existing,
+        tooltip: tooltips.length > 0 ? tooltips.join(" · ") : undefined
+      });
+    }
+
+    return Array.from(byUuid.values());
+  }, [overlapPolygons, disturbanceMarkerPoints, editDrawerPolygonUuid]);
 
   const currentSiteGeometryUuids = useMemo(
     () =>
