@@ -29,6 +29,7 @@ type NurseryProjectSectionProps = {
   defaultOpen?: boolean;
   openResetKey?: string;
   onProjectOpened?: (projectId: string) => void;
+  embeddedInProject?: boolean;
 };
 
 const NurseryProjectSection: FC<NurseryProjectSectionProps> = ({
@@ -39,7 +40,8 @@ const NurseryProjectSection: FC<NurseryProjectSectionProps> = ({
   isFiltered = false,
   defaultOpen = false,
   openResetKey,
-  onProjectOpened
+  onProjectOpened,
+  embeddedInProject = false
 }) => {
   const t = useT();
   const [open, setOpen] = useState(defaultOpen);
@@ -160,7 +162,9 @@ const NurseryProjectSection: FC<NurseryProjectSectionProps> = ({
             </Text>
           </Flex>
         ) : null}
-        {open && section.nurseriesLoaded !== false ? <NurseryIndexTable nurseries={visibleNurseries} /> : null}
+        {open && section.nurseriesLoaded !== false ? (
+          <NurseryIndexTable nurseries={visibleNurseries} embeddedInProject={embeddedInProject} />
+        ) : null}
       </Flex>
     </Accordion>
   );

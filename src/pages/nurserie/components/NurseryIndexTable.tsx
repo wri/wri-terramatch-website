@@ -55,7 +55,10 @@ const NurseryUpdate: FC<{ status: NurseryIndexRow["updateRequestStatus"] }> = ({
   );
 };
 
-const NurseryIndexTable: FC<{ nurseries: NurseryIndexRow[] }> = ({ nurseries }) => {
+const NurseryIndexTable: FC<{ nurseries: NurseryIndexRow[]; embeddedInProject: boolean }> = ({
+  nurseries,
+  embeddedInProject
+}) => {
   const t = useT();
   const { format } = useDate();
   const { selectedRows, isNurserySelected, handleRowSelected, handleAllItemsSelected } =
@@ -75,7 +78,7 @@ const NurseryIndexTable: FC<{ nurseries: NurseryIndexRow[] }> = ({ nurseries }) 
 
   const renderRow = useCallback(
     (nursery: NurseryIndexRow, context?: TableRenderRowContext) => {
-      const nurseryHref = getNurseryDetailUrl(nursery.uuid, true);
+      const nurseryHref = getNurseryDetailUrl(nursery.uuid, !embeddedInProject);
       const isSelected = isNurserySelected(nursery);
 
       return (
@@ -131,7 +134,7 @@ const NurseryIndexTable: FC<{ nurseries: NurseryIndexRow[] }> = ({ nurseries }) 
         </TableRow>
       );
     },
-    [format, handleRowSelected, isNurserySelected, t]
+    [format, handleRowSelected, isNurserySelected, t, embeddedInProject]
   );
 
   return (

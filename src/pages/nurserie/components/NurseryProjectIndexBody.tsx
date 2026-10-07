@@ -78,7 +78,7 @@ const NurseryProjectIndexBody: FC<NurseryProjectIndexBodyProps> = ({
             </Text>
           </Flex>
         ) : (
-          <NurseryIndexTable nurseries={visibleNurseries} />
+          <NurseryIndexTable nurseries={visibleNurseries} embeddedInProject />
         )}
       </Flex>
     </Box>
