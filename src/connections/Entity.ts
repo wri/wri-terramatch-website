@@ -319,6 +319,15 @@ export const projectReportsMetaIndexConnection = v3Resource("projectReportsMetas
   .enabledProp()
   .buildConnection();
 
+/**
+ * Prunes the cached report meta and report counts, so that any mounted connections refetch them.
+ * Needed after reports are changed in a way that may affect their counts (e.g. a status change).
+ */
+export const pruneReportsMeta = () => {
+  ApiSlice.pruneCache("projectReportsMetas");
+  ApiSlice.pruneCache("reportCounts");
+};
+
 // The BE sends this virtual resource with a fixed ID regardless of the filters requested.
 const REPORT_COUNTS_ID = "reportCounts";
 const reportCountsConnection = v3Resource("reportCounts", reportCountsGet)

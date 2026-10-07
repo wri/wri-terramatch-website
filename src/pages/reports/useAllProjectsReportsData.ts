@@ -68,7 +68,13 @@ export const useAllProjectsReportsData = ({ query, enabled }: AllProjectsReports
     loadingMore,
     loadMore
   } = useInfinitePages(projectReportsMetaIndexConnection, { filter: reportsQuery, enabled }, PROJECTS_PAGE_SIZE);
-  const [, { data: reportCounts }] = useReportCounts(reportsQuery, enabled);
+  const [, { data: loadedReportCounts }] = useReportCounts(reportsQuery, enabled);
+  // Keep showing the last counts while they're refetched (e.g. after a bulk action).
+  const [lastReportCounts, setLastReportCounts] = useState(loadedReportCounts);
+  useEffect(() => {
+    if (loadedReportCounts != null) setLastReportCounts(loadedReportCounts);
+  }, [loadedReportCounts]);
+  const reportCounts = loadedReportCounts ?? lastReportCounts;
   const reportingPeriods = useMemo(
     () => (reportCounts?.reportingPeriods ?? []).map(getDueReportingPeriod),
     [reportCounts?.reportingPeriods]
