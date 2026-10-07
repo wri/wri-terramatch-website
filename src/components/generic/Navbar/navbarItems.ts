@@ -18,7 +18,7 @@ interface INavbarItems {
 export const getNavbarItems = (t: typeof useT, myOrg?: MyOrganisationConnection): INavbarItems => {
   const { userStatus, organisation } = myOrg ?? {};
   const { status } = organisation ?? {};
-  const visibility = Boolean(organisation && status !== "rejected" && status !== "draft" && userStatus !== "requested");
+  const visibility = Boolean(organisation && status !== "rejected" && status !== "draft" && userStatus !== "pending");
 
   return {
     public: [
