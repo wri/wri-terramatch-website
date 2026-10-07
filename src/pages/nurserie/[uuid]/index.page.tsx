@@ -12,10 +12,11 @@ import NurseryOverviewTab from "@/pages/nurserie/[uuid]/tabs/Overview";
 import EntityProfileReportsTab from "@/pages/reports/components/EntityProfileReportsTab";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import NurseryBanner from "@/redesignComponents/content/Banner/NurseryBanner/NurseryBanner";
-import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import { NurseryIcon, ProjectIcon } from "@/redesignComponents/foundations/Icons";
 import ProjectResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
+import { getNurseryDetailUrl, NURSERY_INDEX_ORIGIN } from "../nurseryIndex.utils";
 import AuditLog from "./tabs/AuditLog";
 import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
 
@@ -39,6 +40,7 @@ const NurseryDetailPage = () => {
   });
 
   const activeTab = (router.query.tab as string) ?? "overview";
+  const isFromNurseryIndex = router.query.origin === NURSERY_INDEX_ORIGIN;
 
   const TabItems = [
     { key: "overview", title: t("Overview"), body: <NurseryOverviewTab nursery={nursery!} /> },
@@ -62,7 +64,12 @@ const NurseryDetailPage = () => {
       key: "reports",
       title: t("Reports"),
       body: (
-        <EntityProfileReportsTab source="nursery" entityUuid={nurseryUUID} projectUuid={nursery?.projectUuid ?? null} />
+        <EntityProfileReportsTab
+          source="nursery"
+          entityUuid={nurseryUUID}
+          projectUuid={nursery?.projectUuid ?? null}
+          origin={isFromNurseryIndex ? NURSERY_INDEX_ORIGIN : undefined}
+        />
       )
     },
     { key: "audit-log", title: t("Audit Log"), body: <AuditLog nursery={nursery} /> }
@@ -76,19 +83,26 @@ const NurseryDetailPage = () => {
           <>
             <NurseryBanner
               nursery={nursery}
-              breadcrumbs={[
-                {
-                  label: t("Projects"),
-                  link: "/my-projects",
-                  icon: <ProjectIcon className="!text-theme-primary-900" />
-                },
-                { label: nursery.projectName ?? "", link: `/project/${nursery.projectUuid}` },
-                {
-                  label: "Nurseries",
-                  link: `/project/${nursery.projectUuid}?tab=nurseries`
-                },
-                { label: nursery.name ?? "", link: `/nurserie/${nursery.uuid}` }
-              ]}
+              breadcrumbs={
+                isFromNurseryIndex
+                  ? [
+                      {
+                        label: t("Nurseries"),
+                        link: "/nurserie",
+                        icon: <NurseryIcon className="!text-theme-primary-900" />
+                      },
+                      { label: nursery.name ?? "-", link: getNurseryDetailUrl(nursery.uuid, true) }
+                    ]
+                  : [
+                      {
+                        label: t("Projects"),
+                        link: "/my-projects",
+                        icon: <ProjectIcon className="!text-theme-primary-900" />
+                      },
+                      { label: nursery.projectName ?? "", link: `/project/${nursery.projectUuid}` },
+                      { label: nursery.name ?? "-", link: `/nurserie/${nursery.uuid}` }
+                    ]
+              }
               suffix={
                 <div className="flex gap-1.5">
                   <div className="flex gap-1.5">
@@ -105,7 +119,11 @@ const NurseryDetailPage = () => {
                       variant="borderless"
                       size="small"
                       className="underline underline-offset-2"
-                      onClick={() => router.push(`/nurserie/${nursery.uuid}?tab=reports`, undefined, { shallow: true })}
+                      onClick={() =>
+                        router.push(getNurseryDetailUrl(nursery.uuid, isFromNurseryIndex, "reports"), undefined, {
+                          shallow: true
+                        })
+                      }
                     >
                       {t("Nursery Reports")}
                     </Button>
@@ -120,7 +138,9 @@ const NurseryDetailPage = () => {
                   })),
                   defaultValue: activeTab,
                   onTabClick: (tabValue: string) => {
-                    router.push(`/nurserie/${nurseryUUID}?tab=${tabValue}`, undefined, { shallow: true });
+                    router.push(getNurseryDetailUrl(nurseryUUID, isFromNurseryIndex, tabValue), undefined, {
+                      shallow: true
+                    });
                   }
                 }
               }}

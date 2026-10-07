@@ -51,7 +51,14 @@ const SiteDetailPage: FC = () => {
     {
       key: "reports",
       title: t("Reports"),
-      body: <EntityProfileReportsTab source="site" entityUuid={siteUUID} projectUuid={site?.projectUuid ?? null} />
+      body: (
+        <EntityProfileReportsTab
+          source="site"
+          entityUuid={siteUUID}
+          projectUuid={site?.projectUuid ?? null}
+          origin={isFromSiteIndex ? SITE_INDEX_ORIGIN : undefined}
+        />
+      )
     },
     {
       key: "audit-log",
@@ -74,7 +81,7 @@ const SiteDetailPage: FC = () => {
                       link: "/site",
                       icon: <SiteIcon className="!text-theme-primary-900" />
                     },
-                    { label: site.name ?? "", link: getSiteDetailUrl(site.uuid, true) }
+                    { label: site.name ?? "-", link: getSiteDetailUrl(site.uuid, true) }
                   ]
                 : [
                     {
@@ -83,7 +90,7 @@ const SiteDetailPage: FC = () => {
                       icon: <ProjectIcon className="!text-theme-primary-900" />
                     },
                     { label: site.projectName ?? "", link: `/project/${site.projectUuid}` },
-                    { label: site.name ?? "", link: `/site/${site.uuid}` }
+                    { label: site.name ?? "-", link: `/site/${site.uuid}` }
                   ]
             }
             suffix={

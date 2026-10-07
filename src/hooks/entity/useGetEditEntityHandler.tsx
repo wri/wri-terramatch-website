@@ -92,14 +92,19 @@ export const useGetEditEntityHandler = ({
   );
 
   const goToEditForm = (targetStepId?: string | null) => {
+    const origin = typeof router.query.origin === "string" ? router.query.origin : undefined;
+    const originParam = origin ? `&origin=${encodeURIComponent(origin)}` : "";
+
     if (targetStepId != null) {
       router.push(
-        `/entity/${editEntityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(targetStepId)}`
+        `/entity/${editEntityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(
+          targetStepId
+        )}${originParam}`
       );
       return;
     }
 
-    router.push(`/entity/${editEntityName}/edit/${entityUUID}?mode=edit`);
+    router.push(`/entity/${editEntityName}/edit/${entityUUID}?mode=edit${originParam}`);
   };
 
   const handleEdit = (stepId?: string | null) => {
@@ -203,17 +208,23 @@ export const useGetEditEntityHandler = ({
               setOpenConfirmEditModal(false);
               const stepId = pendingStepId.current;
               const from = typeof router.query.from === "string" ? router.query.from : undefined;
+              const origin = typeof router.query.origin === "string" ? router.query.origin : undefined;
+              const originParam = origin ? `&origin=${encodeURIComponent(origin)}` : "";
               if (stepId != null) {
                 router.push(
                   withReportsIndexReturn(
-                    `/entity/${editEntityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(stepId)}`,
+                    `/entity/${editEntityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(
+                      stepId
+                    )}${originParam}`,
                     from
                   )
                 );
               } else if (entityStatus === "approved") {
-                router.push(withReportsIndexReturn(getEntityEditPageLink(entityName, entityUUID), from));
+                router.push(withReportsIndexReturn(getEntityEditPageLink(entityName, entityUUID) + originParam, from));
               } else {
-                router.push(withReportsIndexReturn(`/entity/${editEntityName}/edit/${entityUUID}?mode=edit`, from));
+                router.push(
+                  withReportsIndexReturn(`/entity/${editEntityName}/edit/${entityUUID}?mode=edit${originParam}`, from)
+                );
               }
             }
           }

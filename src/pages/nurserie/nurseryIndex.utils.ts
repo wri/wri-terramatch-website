@@ -6,11 +6,20 @@ import type {
   ProjectFullDto,
   ProjectLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
+import { getEntityDetailPageLink } from "@/helpers/entity";
+import { appendQueryParams } from "@/utils/appendQueryParams";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import type { NurseryIndexMetric, NurseryIndexProjectSection, NurseryIndexRow } from "./nurseryIndex.types";
 
+export const NURSERY_INDEX_ORIGIN = "nurseries";
+
 type NurseryWithProjectUuid = NurseryLightDto & { projectUuid?: string | null };
+
+export const getNurseryDetailUrl = (nurseryUuid: string, fromNurseryIndex: boolean, tab?: string): string =>
+  appendQueryParams(getEntityDetailPageLink("nurseries", nurseryUuid, tab), {
+    origin: fromNurseryIndex ? NURSERY_INDEX_ORIGIN : undefined
+  });
 
 const normalize = (value?: string | null) => value?.trim().toLocaleLowerCase() ?? "";
 

@@ -34,7 +34,7 @@ import { SuffixButtonConfig } from "@/pages/project/[uuid]/index.page";
 import { getReportsIndexHrefFromQuery, getReportsIndexUrl } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
-import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
+import { NurseryIcon, ReportsIcon, SiteIcon } from "@/redesignComponents/foundations/Icons";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons/NavigationSections/ProjectIcon";
 import NextLinkAdapter from "@/redesignComponents/navigation/Breadcrumbs/NextLinkAdapter";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
@@ -527,11 +527,16 @@ function WizardForm(props: WizardFormProps) {
         entity: entity,
         firstLinkIcon: models[0].model.includes("Reports") ? (
           <ReportsIcon className="!text-theme-primary-900" />
+        ) : models[0].model == "nurseries" ? (
+          <NurseryIcon className="!text-theme-primary-900" />
+        ) : models[0].model == "sites" ? (
+          <SiteIcon className="!text-theme-primary-900" />
         ) : (
           <ProjectIcon className="!text-theme-primary-900" />
         ),
         t,
         from: router.query.from,
+        origin: router.query.origin,
         taskTitle
       })[models[0].model];
     }
@@ -546,6 +551,7 @@ function WizardForm(props: WizardFormProps) {
     t,
     isAdmin,
     router.query.from,
+    router.query.origin,
     taskTitle
   ]);
 

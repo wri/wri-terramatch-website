@@ -2,18 +2,18 @@ import { Box, Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, PropsWithChildren, useState } from "react";
 
-import { UserIcon } from "../foundations/Icons/Function/UserIcon";
+import { useMyOrg } from "@/connections/Organisation";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
+
 import { DashboardIcon } from "../foundations/Icons/NavigationSections/DashboardIcon";
-import { MessagesIcon } from "../foundations/Icons/NavigationSections/MessagesIcon";
-import { NotificationIcon } from "../foundations/Icons/NavigationSections/NotificationIcon";
 import { NurseryIcon } from "../foundations/Icons/NavigationSections/NurseryIcon";
 import { OrganizationIcon } from "../foundations/Icons/NavigationSections/OrganizationIcon";
-import { ProgrammeIcon } from "../foundations/Icons/NavigationSections/ProgrammeIcon";
 import { ProjectIcon } from "../foundations/Icons/NavigationSections/ProjectIcon";
 import { ReportsIcon } from "../foundations/Icons/NavigationSections/ReportsIcon";
 import { SiteIcon } from "../foundations/Icons/NavigationSections/SiteIcon";
 import Navbar from "../navigation/NavBar/Navbar";
 import SideNavigation from "../navigation/NavBar/SideNavigation/SideNavigation";
+import { useNavbarData } from "../navigation/NavBar/useNavbarData";
 import InlineMessage from "../status/InlineMessage/InlineMessage";
 import { LayoutShellProvider, useLayoutShell } from "./LayoutShell.provider";
 
@@ -21,6 +21,9 @@ import { LayoutShellProvider, useLayoutShell } from "./LayoutShell.provider";
 const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
   const [isWarningVisible, setIsWarningVisible] = useState(true);
   const { isSidebarCollapseDisabled } = useLayoutShell();
+  const [, myOrg] = useMyOrg();
+  const data = useNavbarData();
+  const isAdmin = useIsAdmin();
   const t = useT();
 
   return (
@@ -28,92 +31,75 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
       <Box as="header" className="fixed inset-x-0 top-0 z-50 h-[3rem]">
         <Navbar />
       </Box>
-      <Flex className="min-h-0 overflow-hidden pt-[3rem]">
-        <SideNavigation
-          collapsed={true}
-          isCollapsedDisabled={isSidebarCollapseDisabled}
-          groups={[
-            {
-              id: "communication",
-              links: [
-                {
-                  href: "#",
-                  icon: <NotificationIcon boxSize={4} />,
-                  label: "Notifications"
-                },
-                {
-                  href: "#",
-                  icon: <MessagesIcon boxSize={4} />,
-                  label: "Messages"
-                }
-              ]
-            },
-            {
-              id: "management",
-              links: [
-                {
-                  href: "#",
-                  icon: <DashboardIcon boxSize={4} />,
-                  label: "Dashboard"
-                },
-                {
-                  href: "#",
-                  icon: <OrganizationIcon boxSize={4} />,
-                  label: "Organizations"
-                },
-                {
-                  href: "#",
-                  icon: <ProgrammeIcon boxSize={4} />,
-                  label: "Programmes"
-                },
-                {
-                  href: "#",
-                  icon: <ProjectIcon boxSize={4} />,
-                  label: "Projects"
-                },
-                {
-                  href: "#",
-                  icon: <SiteIcon boxSize={4} />,
-                  label: "Sites"
-                },
-                {
-                  href: "#",
-                  icon: <NurseryIcon boxSize={4} />,
-                  label: "Nurseries"
-                },
-                {
-                  href: "#",
-                  icon: <ReportsIcon boxSize={4} />,
-                  label: "Reports"
-                },
-                {
-                  href: "#",
-                  icon: <UserIcon boxSize={4} />,
-                  label: "Users"
-                }
-              ]
-            }
-          ]}
-          title="Management Panel"
-        />
-        <Flex as="main" className="min-h-0 flex-[1_1_0] flex-col overflow-auto">
-          {isWarningVisible && (
-            <InlineMessage
-              className="!w-full"
-              variant="warning"
-              label={t("We are improving TerraMatch")}
-              caption={t(
-                "You may notice some pages look different while we update the design to make your experience better."
-              )}
-              size="full-width"
-              actionLabel={t("Close")}
-              onActionClick={() => setIsWarningVisible(false)}
-              isButtonRight
-            />
-          )}
-          {children}
+      {data.isLoggedIn ? (
+        <Flex className="min-h-0 overflow-hidden pt-[3rem]">
+          <SideNavigation
+            collapsed={true}
+            isCollapsedDisabled={isSidebarCollapseDisabled}
+            groups={[
+              {
+                id: "management",
+                links: [
+                  {
+                    href: "/dashboard",
+                    icon: <DashboardIcon boxSize={4} />,
+                    label: "Dashboard"
+                  },
+                  {
+                    href: isAdmin
+                      ? "/admin#/organisation"
+                      : myOrg?.organisationId
+                      ? `/organization/${myOrg?.organisationId}`
+                      : "/",
+                    icon: <OrganizationIcon boxSize={4} />,
+                    label: "Organizations"
+                  },
+                  {
+                    href: "/my-projects",
+                    icon: <ProjectIcon boxSize={4} />,
+                    label: "Projects"
+                  },
+                  {
+                    href: isAdmin ? "/admin#/site" : "/site",
+                    icon: <SiteIcon boxSize={4} />,
+                    label: "Sites"
+                  },
+                  {
+                    href: isAdmin ? "/admin#/nursery" : "/nurseries",
+                    icon: <NurseryIcon boxSize={4} />,
+                    label: "Nurseries"
+                  },
+                  {
+                    href: isAdmin ? "/admin#/projectReport" : "/reports",
+                    icon: <ReportsIcon boxSize={4} />,
+                    label: "Reports"
+                  }
+                ]
+              }
+            ]}
+            title="Management Panel"
+          />
+          <Flex as="main" className="min-h-0 flex-[1_1_0] flex-col overflow-auto">
+            {isWarningVisible && (
+              <InlineMessage
+                className="!w-full"
+                variant="warning"
+                label={t("We are improving TerraMatch")}
+                caption={t(
+                  "You may notice some pages look different while we update the design to make your experience better."
+                )}
+                size="full-width"
+                actionLabel={t("Close")}
+                onActionClick={() => setIsWarningVisible(false)}
+                isButtonRight
+              />
+            )}
+            {children}
+          </Flex>
         </Flex>
-      </Flex>
+      ) : (
+        <>{children}</>
+      )}
     </Flex>
   );
 };

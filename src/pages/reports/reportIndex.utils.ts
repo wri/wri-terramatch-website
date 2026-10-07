@@ -120,7 +120,7 @@ export type ReportProfileOrigin = {
   uuid: string;
 };
 
-const REPORT_ORIGIN_QUERY_KEYS = ["from", "profile", "profileUuid"] as const;
+const REPORT_ORIGIN_QUERY_KEYS = ["from", "profile", "profileUuid", "origin"] as const;
 
 export const getReportProfileOriginFromQuery = (
   profile: ParsedUrlQuery["profile"],
@@ -134,11 +134,25 @@ export const getReportProfileOriginFromQuery = (
 export const getReportViewHref = (
   report: Pick<ReportIndexItem, "type" | "id">,
   indexHref?: string,
-  profileOrigin?: ReportProfileOrigin
+  profileOrigin?: ReportProfileOrigin & { contextOrigin?: string; projectName?: string | null }
 ) => {
   const href = `/reports/${report.type}/${report.id}`;
-  if (profileOrigin == null) return withReportsIndexReturn(href, indexHref);
-  return appendQueryParams(href, { profile: profileOrigin.source, profileUuid: profileOrigin.uuid });
+  if (profileOrigin == null) {
+    const params: Record<string, string | undefined> = { origin: "reports" };
+    if (indexHref) params.from = indexHref;
+    return appendQueryParams(href, params);
+  }
+  const params: Record<string, string | undefined> = {
+    profile: profileOrigin.source,
+    profileUuid: profileOrigin.uuid
+  };
+  if (profileOrigin.contextOrigin) {
+    params.origin = profileOrigin.contextOrigin;
+  }
+  if (profileOrigin.projectName) {
+    params.projectName = profileOrigin.projectName;
+  }
+  return appendQueryParams(href, params);
 };
 
 /** Carries the origin params (`from`, `profile`, `profileUuid`) of the current report page over to `href`. */
