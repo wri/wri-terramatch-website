@@ -64,7 +64,8 @@ const ModalSelection: FC<Props> = ({
                 </Text>
               )}
               <Text textStyle="500-bold" color="neutral.900" className="text-center">
-                {items[0].label}?
+                {items[0].label}
+                {!isDelete ? "?" : ""}
               </Text>
               {isDelete && (
                 <Text textStyle="400" color="neutral.900" className="text-center">

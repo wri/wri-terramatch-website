@@ -72,7 +72,6 @@ const SiteIndexBulkActionToolbar: FC<SiteIndexBulkActionToolbarProps> = ({
             id: "download",
             children: t("Download"),
             onClick: onDownload,
-            loading: isDownloading,
             disabled: isDownloading || isUpdating
           },
           ...(canEdit

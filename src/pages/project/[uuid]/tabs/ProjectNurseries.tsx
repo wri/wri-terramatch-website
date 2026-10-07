@@ -1,6 +1,7 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { twMerge } from "tailwind-merge";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import type { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -48,6 +49,9 @@ const ProjectNurseriesTabContent: FC<ProjectNurseriesTabProps> = ({ project }) =
   const hasActiveSearch = query.trim().length > 0;
   const hasActiveFilters = hasActiveSearch || hasAppliedFilters;
   const nurseryCount = hasActiveFilters && section != null ? section.nurseries.length : nurseryTotal;
+  const showEmptyProject =
+    section == null || (section.nurseriesLoaded !== false && section.nurseries.length === 0 && !hasActiveFilters);
+  const showNoResults = !loading && (error || showEmptyProject);
 
   const addNurseryHref =
     project.frameworkKey == null
@@ -79,7 +83,7 @@ const ProjectNurseriesTabContent: FC<ProjectNurseriesTabProps> = ({ project }) =
         onViewChange={() => undefined}
         onQueryChange={setQuery}
       />
-      <PageContent className="h-auto flex-1 px-2 py-0">
+      <PageContent className={twMerge("h-auto flex-1 px-2 py-0", showNoResults && "bg-theme-neutral-100")}>
         {loading ? (
           <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
             <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
@@ -92,8 +96,7 @@ const ProjectNurseriesTabContent: FC<ProjectNurseriesTabProps> = ({ project }) =
             title={t("Nurseries could not be loaded")}
             description={t("Please refresh the page and try again.")}
           />
-        ) : section == null ||
-          (section.nurseriesLoaded !== false && section.nurseries.length === 0 && !hasActiveFilters) ? (
+        ) : showEmptyProject ? (
           <NoResults
             title={t("No nurseries found")}
             description={

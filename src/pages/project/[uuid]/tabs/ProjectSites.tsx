@@ -2,6 +2,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { twMerge } from "tailwind-merge";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { toFramework } from "@/context/framework.provider";
@@ -98,6 +99,8 @@ const ProjectSitesTabContent: FC<ProjectSitesTabProps> = ({ project }) => {
   const showEmptyFiltered =
     siteProject != null && siteProject.sitesLoaded && visibleSites.length === 0 && hasActiveFilters;
 
+  const showNoResults = !loading && (error || siteProject == null || showEmptyProject || showEmptyFiltered);
+
   return (
     <div className="flex w-full min-w-0 flex-1 flex-col">
       <SiteIndexHeader
@@ -114,7 +117,7 @@ const ProjectSitesTabContent: FC<ProjectSitesTabProps> = ({ project }) => {
         onAddSite={handleAddSite}
         onQueryChange={setSearchQuery}
       />
-      <PageContent className="h-auto flex-1 px-2 pt-0 pb-8">
+      <PageContent className={twMerge("h-auto flex-1 px-2 pt-0 pb-8", showNoResults && "bg-theme-neutral-100")}>
         {loading ? (
           <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
             <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
@@ -123,7 +126,11 @@ const ProjectSitesTabContent: FC<ProjectSitesTabProps> = ({ project }) => {
             </Text>
           </Flex>
         ) : error ? (
-          <NoResults title={t("Sites could not be loaded")} description={t("Please refresh the page and try again.")} />
+          <NoResults
+            className="py-4"
+            title={t("Sites could not be loaded")}
+            description={t("Please refresh the page and try again.")}
+          />
         ) : siteProject == null || showEmptyProject ? (
           <NoResults
             title={t("No sites found")}
@@ -135,6 +142,7 @@ const ProjectSitesTabContent: FC<ProjectSitesTabProps> = ({ project }) => {
           />
         ) : showEmptyFiltered ? (
           <NoResults
+            className="py-4"
             title={t("No sites found")}
             description={
               hasActiveSearch

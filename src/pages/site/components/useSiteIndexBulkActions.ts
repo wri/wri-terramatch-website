@@ -13,6 +13,7 @@ import Log from "@/utils/log";
 
 import type { SiteIndexSite } from "./siteIndex.types";
 import { groupSiteUuidsByFramework } from "./siteIndex.utils";
+import { useSiteIndexSelectionActions } from "./SiteIndexSelection.provider";
 import { isSiteDeletable, isSiteEditable, isSiteSubmittable } from "./siteIndexSubmit";
 
 type UseSiteIndexBulkActionsProps = {
@@ -37,6 +38,7 @@ export const useSiteIndexBulkActions = ({ selectedSites, onSitesChanged }: UseSi
   const t = useT();
   const router = useRouter();
   const downloadToastMessages = useDownloadToastMessages();
+  const { clearSelection } = useSiteIndexSelectionActions();
   const [isDownloading, setIsDownloading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -59,10 +61,11 @@ export const useSiteIndexBulkActions = ({ selectedSites, onSitesChanged }: UseSi
     }
 
     setIsDownloading(true);
+    clearSelection();
     try {
       await runWithDownloadToast(
         {
-          downloading: t("Downloading sites"),
+          downloading: selectedSites.length === 1 ? t("Downloading site profile") : t("Downloading site profiles"),
           complete: downloadToastMessages.complete,
           error: downloadToastMessages.error
         },
@@ -81,7 +84,7 @@ export const useSiteIndexBulkActions = ({ selectedSites, onSitesChanged }: UseSi
     } finally {
       setIsDownloading(false);
     }
-  }, [downloadToastMessages, isDownloading, selectedSites, t]);
+  }, [clearSelection, downloadToastMessages, isDownloading, selectedSites, t]);
 
   const handleEdit = useCallback(() => {
     if (!canEdit) {
@@ -106,14 +109,16 @@ export const useSiteIndexBulkActions = ({ selectedSites, onSitesChanged }: UseSi
         label: t("Site Profile(s) deleted"),
         type: "success",
         placement: "bottom",
-        duration: 5000
+        duration: 5000,
+        maxWidth: "auto"
       });
     } catch (error) {
       Log.error("Failed to delete selected sites", error);
       showToast({
         label: t("Something went wrong!"),
         type: "error",
-        placement: "bottom"
+        placement: "bottom",
+        maxWidth: "auto"
       });
       throw error;
     } finally {
@@ -138,7 +143,8 @@ export const useSiteIndexBulkActions = ({ selectedSites, onSitesChanged }: UseSi
       showToast({
         label: t("Something went wrong!"),
         type: "error",
-        placement: "bottom"
+        placement: "bottom",
+        maxWidth: "auto"
       });
       throw error;
     } finally {
