@@ -6,9 +6,15 @@ import { useCallback, useMemo, useState } from "react";
 import { deleteNursery } from "@/connections/Entity";
 import { entityExportAll, entityUpdate } from "@/generated/v3/entityService/entityServiceComponents";
 import { getEntityEditPageLink } from "@/helpers/entity";
-import { useDownloadToastMessages } from "@/hooks/translation/useDownloadToastMessages";
 import ApiSlice from "@/store/apiSlice";
-import { runWithDownloadToast } from "@/utils/downloadToast";
+import {
+  closeEntityProgressToast,
+  completeEntityProgressToast,
+  ENTITY_TOAST_IDS,
+  showEntityErrorToast,
+  showEntityProgressToast
+} from "@/utils/entityOperationToasts";
+import Log from "@/utils/log";
 
 import type { NurseryIndexRow } from "./nurseryIndex.types";
 import { groupNurseryUuidsByFramework } from "./nurseryIndex.utils";
@@ -35,7 +41,6 @@ const updateNurseryStatus = async (nurseryUuid: string, status: "pending-approva
 export const useNurseriesBulkActions = ({ selectedNurseries, onNurseriesChanged }: UseNurseriesBulkActionsProps) => {
   const t = useT();
   const router = useRouter();
-  const downloadToastMessages = useDownloadToastMessages();
   const [isDownloading, setIsDownloading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -59,32 +64,26 @@ export const useNurseriesBulkActions = ({ selectedNurseries, onNurseriesChanged 
 
     setIsDownloading(true);
     try {
-      await runWithDownloadToast(
-        {
-          downloading: t("Downloading nurseries"),
-          complete: downloadToastMessages.complete,
-          error: downloadToastMessages.error
-        },
-        async () => {
-          for (const { frameworkKey, uuids } of grouped) {
-            await entityExportAll.downloadFile({
-              pathParams: { entity: "nurseries" },
-              queryParams: { frameworkKey, uuids }
-            });
-          }
-        },
-        "nurseriesBulkExportToast"
+      showEntityProgressToast(
+        t,
+        selectedNurseries.length === 1 ? t("Downloading nursery") : t("Downloading nurseries"),
+        ENTITY_TOAST_IDS.downloading
       );
+      for (const { frameworkKey, uuids } of grouped) {
+        await entityExportAll.downloadFile({
+          pathParams: { entity: "nurseries" },
+          queryParams: { frameworkKey, uuids }
+        });
+      }
+      completeEntityProgressToast(ENTITY_TOAST_IDS.downloading, t("Download Complete"));
     } catch (error) {
-      showToast({
-        label: t("Failed to download selected nurseries"),
-        type: "error",
-        placement: "bottom"
-      });
+      Log.error("Failed to download selected nurseries", error);
+      closeEntityProgressToast(ENTITY_TOAST_IDS.downloading);
+      showEntityErrorToast(t("Error Downloading Nurseries"));
     } finally {
       setIsDownloading(false);
     }
-  }, [downloadToastMessages, isDownloading, selectedNurseries, t]);
+  }, [isDownloading, selectedNurseries, t]);
 
   const handleEdit = useCallback(() => {
     if (!canEdit) {
