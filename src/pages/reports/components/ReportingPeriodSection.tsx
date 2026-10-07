@@ -14,6 +14,7 @@ import { useLightProjectReport } from "@/connections/Entity";
 import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { useDate } from "@/hooks/useDate";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useReportsIndexAnalytics } from "@/hooks/useReportsIndexAnalytics";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
@@ -169,6 +170,7 @@ const ReportingPeriodSection: FC<ReportingPeriodSectionProps> = ({
 }) => {
   const t = useT();
   const { format } = useDate();
+  const isAdmin = useIsAdmin();
   const [open, setOpen] = useState(defaultOpen);
   const { trackAttentionDisplayed } = useReportsIndexAnalytics();
 
@@ -179,7 +181,7 @@ const ReportingPeriodSection: FC<ReportingPeriodSectionProps> = ({
   }, [expandForPeriodFilter]);
 
   const attentionCount = useMemo(() => getReportsRequiringAttention(period.reports), [period.reports]);
-  const periodStatus = getReportingPeriodAnalyticsStatus(period.dueAt, period.reports);
+  const periodStatus = getReportingPeriodAnalyticsStatus(period.dueAt, period.reports, isAdmin);
 
   useEffect(() => {
     if (attentionCount === 0) return;
@@ -195,7 +197,7 @@ const ReportingPeriodSection: FC<ReportingPeriodSectionProps> = ({
   });
   const frameworkKey = projectReport?.frameworkKey ?? period.frameworkKey;
   const metricsLoading = open && (!metricsReady || (projectReportUuid != null && !reportLoaded));
-  const dueDateType = getReportingPeriodDueDateType(period.dueAt, period.reports);
+  const dueDateType = getReportingPeriodDueDateType(period.dueAt, period.reports, isAdmin);
   const formattedDueDate = period.dueAt == null ? undefined : format(period.dueAt);
   const dueDateLabel =
     formattedDueDate == null

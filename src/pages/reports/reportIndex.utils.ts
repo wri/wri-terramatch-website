@@ -197,27 +197,37 @@ export const isReportingPeriodDueDatePast = (dueAt: string) => {
   return dueDay < today;
 };
 
+// Pending approval only needs action from an admin, so it only counts as overdue for admins.
+const REPORTS_INDEX_ADMIN_ATTENTION_STATUSES: ReadonlySet<TagSubmissionState> = new Set([
+  ...REPORTS_INDEX_ATTENTION_STATUSES,
+  "pending-approval"
+]);
+
 /**
  * Sub-level reporting period date tag:
  * - future/today due date → info-white
- * - past due date, all reports complete → info-grey
- * - past due date, incomplete items remain → error
+ * - past due date, reports pending the user's attention → error (overdue)
+ * - past due date, nothing pending the user's attention → info-grey
  */
 export const getReportingPeriodDueDateType = (
   dueAt: string | null | undefined,
-  reports: Array<{ status: TagSubmissionState }>
+  reports: Array<{ status: TagSubmissionState }>,
+  isAdmin: boolean
 ): ReportingPeriodDueDateType | undefined => {
   if (dueAt == null) return undefined;
   if (!isReportingPeriodDueDatePast(dueAt)) return "info-white";
-  return areAllReportsComplete(reports) ? "info-grey" : "error";
+  const attentionStatuses = isAdmin ? REPORTS_INDEX_ADMIN_ATTENTION_STATUSES : REPORTS_INDEX_ATTENTION_STATUSES;
+  return reports.some(report => attentionStatuses.has(report.status)) ? "error" : "info-grey";
 };
 
 export type ReportingPeriodAnalyticsStatus = "open" | "overdue";
 
 export const getReportingPeriodAnalyticsStatus = (
   dueAt: string | null | undefined,
-  reports: Array<{ status: TagSubmissionState }>
-): ReportingPeriodAnalyticsStatus => (getReportingPeriodDueDateType(dueAt, reports) === "error" ? "overdue" : "open");
+  reports: Array<{ status: TagSubmissionState }>,
+  isAdmin: boolean
+): ReportingPeriodAnalyticsStatus =>
+  getReportingPeriodDueDateType(dueAt, reports, isAdmin) === "error" ? "overdue" : "open";
 
 export const getReportStatusCounts = (reports: Array<{ status: TagSubmissionState }>) =>
   reports.reduce(

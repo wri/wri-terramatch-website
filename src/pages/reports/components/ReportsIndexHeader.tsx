@@ -49,6 +49,17 @@ type ReportsIndexHeaderProps = {
   entityProfile?: boolean;
 };
 
+const getSearchPlaceholder = (
+  t: ReturnType<typeof useT>,
+  source: ReportsIndexHeaderProps["source"],
+  activeTab: string,
+  entityProfile: boolean
+) => {
+  if (entityProfile && source === "site") return t("Search sites");
+  if (entityProfile && source === "nursery") return t("Search nurseries");
+  return activeTab === "progress-reports" ? t("Search projects, sites, nurseries") : t("Search");
+};
+
 const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
   activeTab,
   source,
@@ -68,6 +79,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
   const router = useRouter();
   const { format } = useDate();
   const { setFilters } = useReportsContext();
+  const searchPlaceholder = getSearchPlaceholder(t, source, activeTab, entityProfile);
   const { trackFilterApplied, trackDisturbanceReportClicked } = useReportsIndexAnalytics();
 
   const reportTypeFromQuery = typeof router.query.reportType === "string" ? router.query.reportType : undefined;
@@ -230,7 +242,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
       )}
       {!entityProfile && (
         <Toolbar
-          className="sticky top-11 z-10 items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-2 pt-5"
+          className="border-theme-neutral-200 bg-theme-neutral-100 sticky top-11 z-10 items-end border-b !px-2 pt-5"
           classNameContentLeft="min-w-0"
           classNameContentRight="mt-[-1.25rem]"
           contentLeft={
@@ -263,7 +275,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
         className={classNames("!px-6 !pb-6 !pt-5", entityProfile ? "!bg-theme-neutral-100" : "!bg-theme-neutral-200 ")}
         classNameContentLeft="flex-1"
         search={{
-          placeholder: activeTab === "progress-reports" ? t("Search projects, sites, nurseries") : t("Search"),
+          placeholder: searchPlaceholder,
           options: [],
           displayResults: "none",
           count: reportCount,
