@@ -47,7 +47,6 @@ const NurseriesIndexBulkBar: FC<NurseriesIndexBulkBarProps> = ({ onNurseriesChan
 
   return (
     <>
-      {selectedNurseries.length > 0 ? <div aria-hidden className="h-24" /> : null}
       <NurseriesIndexBulkActionToolbar
         selectedNurseries={selectedNurseries}
         isDownloading={isDownloading}

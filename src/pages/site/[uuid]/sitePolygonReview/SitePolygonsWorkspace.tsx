@@ -816,29 +816,6 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
             onClearFilters={handleClearPolygonFilters}
           />
         </PageItem>
-        <PolygonBulkActionToolbar
-          visible={hasPolygonSelection && !isDeletedAuditView}
-          itemCount={selectedRows.length}
-          isBulkEditDrawerOpen={showBulkEditDrawer}
-          isAdminReview={isAdminReview}
-          submitLabel={bulkToolbarSubmitLabel}
-          polygons={selectedRows}
-          selectedGeometryPolygonUuids={selectedGeometryPolygonUuids}
-          isDownloading={isDownloadingSelectedPolygons}
-          isValidating={isValidatingPolygons}
-          onCancel={clearBulkTableSelection}
-          onClearSelection={clearBulkTableSelection}
-          onDelete={handleOpenDeletePolygonModal}
-          onDownload={handleBulkDownloadClick}
-          onEdit={handleBulkEditDetails}
-          onRunValidation={runValidationWithResultsModal}
-          onSubmit={handleOpenSubmitPolygonsModal}
-          onOpenApproveModal={handleOpenApprovePolygonModal}
-          onOpenRequestInformationModal={handleOpenRequestInformationModal}
-          isOverlapFixAction={hasSelectedOverlapFailure}
-          canAutoFixOverlap={hasFixableSelectedOverlap}
-          isSubmitDisabled={isBulkSubmitDisabled}
-        />
         <SitePolygonModals
           siteUuid={site.uuid}
           isEditPolygonOpen={isEditPolygonOpen}
@@ -990,6 +967,29 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
             />
           </>
         )}
+        <PolygonBulkActionToolbar
+          visible={hasPolygonSelection && !isDeletedAuditView}
+          itemCount={selectedRows.length}
+          isBulkEditDrawerOpen={showBulkEditDrawer}
+          isAdminReview={isAdminReview}
+          submitLabel={bulkToolbarSubmitLabel}
+          polygons={selectedRows}
+          selectedGeometryPolygonUuids={selectedGeometryPolygonUuids}
+          isDownloading={isDownloadingSelectedPolygons}
+          isValidating={isValidatingPolygons}
+          onCancel={clearBulkTableSelection}
+          onClearSelection={clearBulkTableSelection}
+          onDelete={handleOpenDeletePolygonModal}
+          onDownload={handleBulkDownloadClick}
+          onEdit={handleBulkEditDetails}
+          onRunValidation={runValidationWithResultsModal}
+          onSubmit={handleOpenSubmitPolygonsModal}
+          onOpenApproveModal={handleOpenApprovePolygonModal}
+          onOpenRequestInformationModal={handleOpenRequestInformationModal}
+          isOverlapFixAction={hasSelectedOverlapFailure}
+          canAutoFixOverlap={hasFixableSelectedOverlap}
+          isSubmitDisabled={isBulkSubmitDisabled}
+        />
       </PageContent>
     </>
   );

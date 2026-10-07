@@ -1,10 +1,8 @@
-import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
 import { FC, useEffect, useMemo, useRef, useState } from "react";
 
 import { bulkDeleteUserAssociations, updateOrganisationUserStatuses } from "@/connections/UserAssociation";
-import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useLayoutShell } from "@/redesignComponents/Layout/LayoutShell.provider";
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 import type { BulkToolbarAction } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
@@ -19,8 +17,7 @@ type TeamBulkActionToolbarProps = {
 
 const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUuid, selectedMembers, onCancel }) => {
   const t = useT();
-  const isAdmin = useIsAdmin();
-  const { isBulkActionToolbarVisible, setBulkActionToolbarVisible, setSidebarCollapseDisabled } = useLayoutShell();
+  const { setSidebarCollapseDisabled } = useLayoutShell();
   const [modalAction, setModalAction] = useState<TeamMemberAction | null>(null);
   const isSubmittingRef = useRef(false);
   const selectedCount = selectedMembers.length;
@@ -44,14 +41,12 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
   const hasRejectedMembers = rejectedMembers.length > 0;
 
   useEffect(() => {
-    setBulkActionToolbarVisible(visible);
     setSidebarCollapseDisabled(visible);
 
     return () => {
-      setBulkActionToolbarVisible(false);
       setSidebarCollapseDisabled(false);
     };
-  }, [setBulkActionToolbarVisible, setSidebarCollapseDisabled, visible]);
+  }, [setSidebarCollapseDisabled, visible]);
 
   const actions = useMemo<BulkToolbarAction[]>(() => {
     const nextActions: BulkToolbarAction[] = [];
@@ -202,19 +197,17 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
     }
   };
 
-  if (!isBulkActionToolbarVisible) return null;
+  if (!visible) return null;
 
   return (
     <>
-      <Box position="fixed" zIndex="100" bottom={3} left={isAdmin ? 14 : 3} right={isAdmin ? 3 : 0}>
-        <BulkActionToolbar
-          selectedCount={selectedCount}
-          cancelAction={{ children: t("Cancel"), onClick: onCancel }}
-          deleteAction={destructiveAction}
-          actions={actions}
-          primaryAction={primaryAction}
-        />
-      </Box>
+      <BulkActionToolbar
+        selectedCount={selectedCount}
+        cancelAction={{ children: t("Cancel"), onClick: onCancel }}
+        deleteAction={destructiveAction}
+        actions={actions}
+        primaryAction={primaryAction}
+      />
       <TeamMemberActionModal
         action={modalAction}
         members={modalMembers}

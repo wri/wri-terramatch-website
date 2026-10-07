@@ -1,4 +1,3 @@
-import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { type FC, useEffect, useMemo } from "react";
 
@@ -36,16 +35,16 @@ const NurseriesIndexBulkActionToolbar: FC<NurseriesIndexBulkActionToolbarProps> 
   onSubmit
 }) => {
   const t = useT();
-  const { setBulkActionToolbarVisible } = useLayoutShell();
+  const { setSidebarCollapseDisabled } = useLayoutShell();
   const selectedCount = selectedNurseries.length;
   const visible = selectedCount > 0;
   const canSubmit = selectedCount > 0 && selectedNurseries.every(isNurserySubmittable);
   const approvalLockReason = useMemo(() => getSelectionApprovalLockReason(selectedNurseries), [selectedNurseries]);
 
   useEffect(() => {
-    setBulkActionToolbarVisible(visible);
-    return () => setBulkActionToolbarVisible(false);
-  }, [setBulkActionToolbarVisible, visible]);
+    setSidebarCollapseDisabled(visible);
+    return () => setSidebarCollapseDisabled(false);
+  }, [setSidebarCollapseDisabled, visible]);
 
   const infoTooltip = useMemo(() => {
     const statusLine =
@@ -78,49 +77,47 @@ const NurseriesIndexBulkActionToolbar: FC<NurseriesIndexBulkActionToolbarProps> 
   if (!visible) return null;
 
   return (
-    <Box position="fixed" zIndex="100" bottom={3} left={3} right={3}>
-      <BulkActionToolbar
-        selectedCount={selectedCount}
-        cancelAction={{
-          children: t("Cancel"),
-          onClick: onCancel,
-          disabled: isUpdating
-        }}
-        deleteAction={{
-          id: "delete",
-          tone: "danger",
-          children: t("Delete"),
-          onClick: onDelete,
-          disabled: !canDelete || isUpdating,
-          tooltip: deleteTooltip
-        }}
-        actions={[
-          {
-            id: "download",
-            children: t("Download"),
-            onClick: onDownload,
-            loading: isDownloading,
-            disabled: isDownloading || isUpdating
-          },
-          ...(canEdit
-            ? [
-                {
-                  id: "edit",
-                  children: t("Edit"),
-                  onClick: onEdit,
-                  disabled: isUpdating
-                }
-              ]
-            : [])
-        ]}
-        primaryAction={{
-          children: t("Submit"),
-          disabled: !canSubmit || isUpdating,
-          onClick: onSubmit
-        }}
-        infoTooltip={infoTooltip}
-      />
-    </Box>
+    <BulkActionToolbar
+      selectedCount={selectedCount}
+      cancelAction={{
+        children: t("Cancel"),
+        onClick: onCancel,
+        disabled: isUpdating
+      }}
+      deleteAction={{
+        id: "delete",
+        tone: "danger",
+        children: t("Delete"),
+        onClick: onDelete,
+        disabled: !canDelete || isUpdating,
+        tooltip: deleteTooltip
+      }}
+      actions={[
+        {
+          id: "download",
+          children: t("Download"),
+          onClick: onDownload,
+          loading: isDownloading,
+          disabled: isDownloading || isUpdating
+        },
+        ...(canEdit
+          ? [
+              {
+                id: "edit",
+                children: t("Edit"),
+                onClick: onEdit,
+                disabled: isUpdating
+              }
+            ]
+          : [])
+      ]}
+      primaryAction={{
+        children: t("Submit"),
+        disabled: !canSubmit || isUpdating,
+        onClick: onSubmit
+      }}
+      infoTooltip={infoTooltip}
+    />
   );
 };
 

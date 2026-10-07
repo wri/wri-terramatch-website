@@ -1,8 +1,6 @@
-import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useEffect, useMemo } from "react";
 
-import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useLayoutShell } from "@/redesignComponents/Layout/LayoutShell.provider";
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 import type { BulkToolbarAction } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
@@ -45,7 +43,6 @@ const ReportsBulkActionToolbar: FC<ReportsBulkActionToolbarProps> = ({
   onSubmit
 }) => {
   const t = useT();
-  const isAdmin = useIsAdmin();
   const { setSidebarCollapseDisabled } = useLayoutShell();
 
   const downloadAction: BulkToolbarAction = {
@@ -97,20 +94,18 @@ const ReportsBulkActionToolbar: FC<ReportsBulkActionToolbarProps> = ({
   if (!visible) return null;
 
   return (
-    <Box position="fixed" zIndex="100" bottom={3} left={isAdmin ? 14 : 3} right={3}>
-      <BulkActionToolbar
-        selectedCount={itemCount}
-        cancelAction={{ children: t("Cancel"), onClick: onCancel, disabled: isUpdating }}
-        deleteAction={downloadAction}
-        actions={actions}
-        primaryAction={{
-          children: t("Submit"),
-          disabled: submitDisabled || isUpdating,
-          onClick: onSubmit
-        }}
-        infoTooltip={submitDisabled ? submitDisabledTooltip : undefined}
-      />
-    </Box>
+    <BulkActionToolbar
+      selectedCount={itemCount}
+      cancelAction={{ children: t("Cancel"), onClick: onCancel, disabled: isUpdating }}
+      deleteAction={downloadAction}
+      actions={actions}
+      primaryAction={{
+        children: t("Submit"),
+        disabled: submitDisabled || isUpdating,
+        onClick: onSubmit
+      }}
+      infoTooltip={submitDisabled ? submitDisabledTooltip : undefined}
+    />
   );
 };
 

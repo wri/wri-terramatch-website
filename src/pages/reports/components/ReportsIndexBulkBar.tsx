@@ -31,7 +31,6 @@ const ReportsIndexBulkBar: FC = () => {
 
   return (
     <>
-      {selectedReports.length > 0 ? <div aria-hidden className="h-24" /> : null}
       <ReportsBulkActionToolbar
         visible={selectedReports.length > 0}
         itemCount={selectedReports.length}
