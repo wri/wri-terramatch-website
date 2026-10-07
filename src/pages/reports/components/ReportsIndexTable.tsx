@@ -104,7 +104,7 @@ const ReportsIndexTable: FC<{
               link={getReportViewHref(report, indexHref, profileOrigin)}
               linkTarget="_self"
               showChevron={false}
-              onClick={() => rememberReportsIndexPosition(indexHref, report.id)}
+              onClick={() => rememberReportsIndexPosition(indexHref, report.id, report.projectUuid)}
             />
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("type")}>

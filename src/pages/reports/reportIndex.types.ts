@@ -11,6 +11,7 @@ export type ReportsIndexReport = {
   id: string;
   name: string | null;
   projectName: string;
+  projectUuid: string;
   type: ReportsIndexReportType;
   status: ReportsIndexStatus;
   nothingToReport: boolean;

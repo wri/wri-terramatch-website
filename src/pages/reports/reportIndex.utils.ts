@@ -201,27 +201,37 @@ export const isReportingPeriodDueDatePast = (dueAt: string) => {
   return dueDay < today;
 };
 
+// Pending approval only needs action from an admin, so it only counts as overdue for admins.
+const REPORTS_INDEX_ADMIN_ATTENTION_STATUSES: ReadonlySet<TagSubmissionState> = new Set([
+  ...REPORTS_INDEX_ATTENTION_STATUSES,
+  "pending-approval"
+]);
+
 /**
  * Sub-level reporting period date tag:
  * - future/today due date → info-white
- * - past due date, all reports complete → info-grey
- * - past due date, incomplete items remain → error
+ * - past due date, reports pending the user's attention → error (overdue)
+ * - past due date, nothing pending the user's attention → info-grey
  */
 export const getReportingPeriodDueDateType = (
   dueAt: string | null | undefined,
-  reports: Array<{ status: TagSubmissionState }>
+  reports: Array<{ status: TagSubmissionState }>,
+  isAdmin: boolean
 ): ReportingPeriodDueDateType | undefined => {
   if (dueAt == null) return undefined;
   if (!isReportingPeriodDueDatePast(dueAt)) return "info-white";
-  return areAllReportsComplete(reports) ? "info-grey" : "error";
+  const attentionStatuses = isAdmin ? REPORTS_INDEX_ADMIN_ATTENTION_STATUSES : REPORTS_INDEX_ATTENTION_STATUSES;
+  return reports.some(report => attentionStatuses.has(report.status)) ? "error" : "info-grey";
 };
 
 export type ReportingPeriodAnalyticsStatus = "open" | "overdue";
 
 export const getReportingPeriodAnalyticsStatus = (
   dueAt: string | null | undefined,
-  reports: Array<{ status: TagSubmissionState }>
-): ReportingPeriodAnalyticsStatus => (getReportingPeriodDueDateType(dueAt, reports) === "error" ? "overdue" : "open");
+  reports: Array<{ status: TagSubmissionState }>,
+  isAdmin: boolean
+): ReportingPeriodAnalyticsStatus =>
+  getReportingPeriodDueDateType(dueAt, reports, isAdmin) === "error" ? "overdue" : "open";
 
 export const getReportStatusCounts = (reports: Array<{ status: TagSubmissionState }>) =>
   reports.reduce(
@@ -355,9 +365,11 @@ export const getReportTypeSortValue = (type: string) => REPORT_TYPE_SORT_ORDER[t
 
 const REPORTS_INDEX_RESTORE_KEY = "terramatch.reportsIndex.restore";
 
-type ReportsIndexRestoreState = {
+export type ReportsIndexRestoreState = {
   indexHref: string;
   reportId: string;
+  // Allows the "All Projects" view to open the report's project before its reports are loaded.
+  projectUuid?: string;
 };
 
 export type ProgressReportRestoreLocation = {
@@ -376,13 +388,13 @@ const isRestoreState = (value: unknown): value is ReportsIndexRestoreState => {
   return typeof candidate.indexHref === "string" && typeof candidate.reportId === "string";
 };
 
-export const rememberReportsIndexPosition = (indexHref: string | undefined, reportId: string) => {
+export const rememberReportsIndexPosition = (indexHref: string | undefined, reportId: string, projectUuid?: string) => {
   if (typeof window === "undefined" || indexHref == null || indexHref === "") return;
-  const state: ReportsIndexRestoreState = { indexHref, reportId };
+  const state: ReportsIndexRestoreState = { indexHref, reportId, projectUuid };
   sessionStorage.setItem(REPORTS_INDEX_RESTORE_KEY, JSON.stringify(state));
 };
 
-export const readReportsIndexRestore = (indexHref: string): string | null => {
+export const readReportsIndexRestore = (indexHref: string): ReportsIndexRestoreState | null => {
   if (typeof window === "undefined" || indexHref === "") return null;
   const raw = sessionStorage.getItem(REPORTS_INDEX_RESTORE_KEY);
   if (raw == null) return null;
@@ -390,7 +402,7 @@ export const readReportsIndexRestore = (indexHref: string): string | null => {
   try {
     const parsed: unknown = JSON.parse(raw);
     if (!isRestoreState(parsed) || parsed.indexHref !== indexHref) return null;
-    return parsed.reportId;
+    return parsed;
   } catch {
     return null;
   }

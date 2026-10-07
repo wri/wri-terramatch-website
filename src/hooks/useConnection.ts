@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { shallowEqual, useSelector } from "react-redux";
 
 import { EnabledProp, IndexConnection, LoadFailureConnection } from "@/connections/util/apiConnectionFactory";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -109,4 +109,120 @@ export const useAllPages = <
 
   const allPagesLoaded = pageNumber === Math.ceil(indexTotal / PAGE_SIZE);
   return [allPagesLoaded, data, undefined];
+};
+
+type InfinitePagesState<D, P> = {
+  props: P;
+  pageCount: number;
+  // The most recently loaded data for each page, displayed while that page is being refetched.
+  lastDataByPage: Record<number, D[]>;
+  // The index total as of the most recently loaded page
+  total?: number;
+};
+
+/**
+ * Loads a paginated index connection one page at a time, for use with infinite scroll. The first
+ * page is loaded immediately, and each call to `loadMore` requests the next page once the last one
+ * has arrived. Accumulated pages are dropped whenever the props change.
+ *
+ * Every page that has been loaded is selected from the store, so if the cache for the connection's
+ * resource is pruned, all of the loaded pages are refetched. The previously loaded data for a page
+ * continues to be delivered until its refetch completes.
+ */
+export const useInfinitePages = <
+  D,
+  S extends IndexConnection<D> & Partial<LoadFailureConnection>,
+  P extends PaginatedConnectionProps & EnabledProp
+>(
+  // & IndexConnection<D> needed to get TS to correctly infer D for the return type
+  // https://stackoverflow.com/a/76295763/139109
+  connection: Connection<S & IndexConnection<D>, P>,
+  props: Omit<P, "pageNumber" | "pageSize">,
+  pageSize = PAGE_SIZE
+) => {
+  const stableProps = useStableProps(props);
+  const [state, setState] = useState<InfinitePagesState<D, typeof stableProps>>(() => ({
+    props: stableProps,
+    pageCount: 1,
+    lastDataByPage: {}
+  }));
+
+  // Reset during render (instead of in an effect) so that a request is never made for a stale
+  // page number with the new props.
+  let current = state;
+  if (state.props !== stableProps) {
+    current = { props: stableProps, pageCount: 1, lastDataByPage: {} };
+    setState(current);
+  }
+  const { pageCount, lastDataByPage, total } = current;
+
+  const pageProps = useMemo(
+    () => Array.from({ length: pageCount }, (_, index) => ({ ...stableProps, pageNumber: index + 1, pageSize } as P)),
+    [pageCount, pageSize, stableProps]
+  );
+
+  const { getState, selector, isLoaded, load } = connection;
+  // The connection selector is cached per set of props, so each page's selection is stable until
+  // the store data for that page changes.
+  const selectedPages = useSelector((store: AppStore) => {
+    const state = (getState ?? ApiSlice.getState)(store);
+    return pageProps.map(props => selector(state, props));
+  }, shallowEqual);
+
+  // Each page's data, or undefined if it hasn't (re)loaded yet.
+  const loadedPages = useMemo(
+    () =>
+      selectedPages.map((selected, index) =>
+        isLoaded == null || isLoaded(selected, pageProps[index]) ? selected : undefined
+      ),
+    [isLoaded, pageProps, selectedPages]
+  );
+
+  useEffect(() => {
+    if (load == null) return;
+    // load() only issues a request for a page that isn't loaded and isn't already in progress.
+    selectedPages.forEach((selected, index) => load(selected, pageProps[index]));
+  }, [load, pageProps, selectedPages]);
+
+  useEffect(() => {
+    setState(current => {
+      if (current.props !== stableProps) return current;
+
+      let next = current;
+      loadedPages.forEach((selected, index) => {
+        const pageNumber = index + 1;
+        if (selected?.data == null || next.lastDataByPage[pageNumber] === selected.data) return;
+        next = {
+          ...next,
+          lastDataByPage: { ...next.lastDataByPage, [pageNumber]: selected.data },
+          total: selected.indexTotal ?? next.total
+        };
+      });
+      return next;
+    });
+  }, [loadedPages, stableProps]);
+
+  const pages = useMemo(
+    () => loadedPages.map((selected, index) => selected?.data ?? lastDataByPage[index + 1]),
+    [lastDataByPage, loadedPages]
+  );
+  const data = useMemo(() => pages.flatMap(page => page ?? []), [pages]);
+  const loadFailure = loadedPages.find(selected => selected?.loadFailure != null)?.loadFailure;
+
+  const lastPageLoaded = pages[pageCount - 1] != null;
+  const hasMore = total != null && pageCount * pageSize < total;
+  const loadMore = useCallback(() => {
+    if (!hasMore || !lastPageLoaded) return;
+    setState(current => (current.props !== stableProps ? current : { ...current, pageCount: pageCount + 1 }));
+  }, [hasMore, lastPageLoaded, pageCount, stableProps]);
+
+  const disabled = stableProps.enabled === false;
+  return {
+    loaded: disabled || loadFailure != null || pages[0] != null,
+    data: disabled || loadFailure != null ? NO_DATA : data,
+    loadFailure,
+    hasMore: !disabled && loadFailure == null && hasMore,
+    loadingMore: pageCount > 1 && !lastPageLoaded,
+    loadMore
+  };
 };
