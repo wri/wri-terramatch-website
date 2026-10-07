@@ -93,7 +93,6 @@ export const Frameworks = {
     "barka-fund": "Barka Fund",
     enterprises: "TerraFund Enterprises",
     "epa-ghana-pilot": "EPA-Ghana Pilot",
-    "fundo-flora": "Fundo Flora",
     "fundo-flora-1": "Fundo Flora 1",
     hbf: "Harit Bharat Fund",
     ppc: "PPC",

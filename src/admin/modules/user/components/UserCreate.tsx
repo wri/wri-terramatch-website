@@ -15,6 +15,7 @@ import {
   directFrameworkChoices,
   frameworkAdminPrimaryRoleChoices,
   frameworkChoices,
+  ROLES_SCHEMA,
   userPrimaryRoleChoices
 } from "@/admin/modules/user/const";
 import { validateForm } from "@/admin/utils/forms";
@@ -38,7 +39,7 @@ const UserCreate = () => {
   };
 
   if (isFrameworkAdmin) {
-    schemaObject.roles = yup.array().of(yup.string()).min(1, "At least one role is required");
+    schemaObject.roles = ROLES_SCHEMA;
   }
 
   const roleChoices = useMemo(() => {
