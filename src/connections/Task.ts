@@ -33,6 +33,7 @@ export const taskIndexConnection = v3Resource("tasks", taskIndex)
   .pagination()
   .filter<Filter<Omit<TaskIndexQueryParams, "sideloadReports">>>()
   .addProps<{ sideloads?: TaskIndexQueryParams["sideloads"] }>(({ sideloads }) => ({ queryParams: { sideloads } }))
+  .enabledProp()
   .buildConnection();
 
 const taskConnection = v3Resource("tasks", taskGet)

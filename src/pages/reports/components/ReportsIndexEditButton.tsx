@@ -30,7 +30,11 @@ const ReportsIndexEditButton: FC<{ report: ReportIndexItem; indexHref?: string }
           button={{
             children: t("Edit"),
             onClick: () => {
-              rememberReportsIndexPosition(indexHref, report.id);
+              rememberReportsIndexPosition(
+                indexHref,
+                report.id,
+                "projectUuid" in report ? report.projectUuid : undefined
+              );
               handleEdit();
             },
             leftIcon: (

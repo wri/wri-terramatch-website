@@ -9,6 +9,7 @@ import {
   loadFullProjectReport,
   loadFullSiteReport,
   loadFullSRPReport,
+  pruneReportsMeta,
   SupportedEntity
 } from "@/connections/Entity";
 import { entityExportAll, entityUpdate } from "@/generated/v3/entityService/entityServiceComponents";
@@ -66,12 +67,16 @@ const reloadReport = (report: ReportIndexItem) => {
   }
 };
 
-/** Invalidate only touched UUIDs, then refetch so progress `.list()` cache and indexes see fresh data. */
+/**
+ * Invalidate only touched UUIDs, then refetch so progress `.list()` cache and indexes see fresh data.
+ * The report meta (attention counts) and report counts are pruned as well so that they're refetched.
+ */
 const refreshSelectedReports = async (reports: ReportIndexItem[]) => {
   for (const [entity, uuids] of Object.entries(groupReportUuidsByEntity(reports))) {
     if (uuids == null || uuids.length === 0) continue;
     ApiSlice.pruneCache(entity as SupportedEntity, uuids);
   }
+  pruneReportsMeta();
   await Promise.all(reports.map(reloadReport));
 };
 

@@ -32,7 +32,11 @@ type ReportsIndexRawReport = ProjectReportLightDto | SiteReportLightDto | Nurser
 
 const UNSCHEDULED_PERIOD = "unscheduled";
 
-const toReport = (report: ReportsIndexRawReport, type: ReportsIndexReportType): ReportsIndexReport => {
+const toReport = (
+  report: ReportsIndexRawReport,
+  type: ReportsIndexReportType,
+  projectUuid: string
+): ReportsIndexReport => {
   const name =
     type === "project-report"
       ? (report as ProjectReportLightDto).title
@@ -44,6 +48,7 @@ const toReport = (report: ReportsIndexRawReport, type: ReportsIndexReportType): 
     id: report.uuid,
     name,
     projectName: report.projectName ?? "",
+    projectUuid,
     type,
     status: resolveReportsIndexStatus(report),
     nothingToReport: "nothingToReport" in report && report.nothingToReport === true,
@@ -80,24 +85,25 @@ const useTasksReports = <LightDto>(
   return reports;
 };
 
+export type ReportsIndexProject = Pick<ProjectLightDto, "uuid" | "name" | "organisationName" | "organisationUuid">;
+
 /**
  * Loads the progress reports (project, site and nursery) that belong to the entity the reports page
- * was opened for, or to every project in the "All Projects" view, and groups them by project and
- * then by reporting period.
+ * was opened for, and groups them by project and then by reporting period.
  */
 export const useReportsIndexData = (
-  project: ProjectLightDto,
+  project: ReportsIndexProject,
   source: ReportsIndexSource,
   sourceUuid: string,
-  allProjects: boolean
+  enabled = true
 ): ReportsIndexDataState => {
   const { uuid: projectUuid, name: projectName, organisationName, organisationUuid } = project;
 
   const props = useMemo(() => {
-    const props: ConnectionProps<typeof taskIndexConnection> = {};
+    const props: ConnectionProps<typeof taskIndexConnection> = { enabled };
 
-    if (allProjects || source === "project") {
-      if (!allProjects) props.filter = { projectUuid };
+    if (source === "project") {
+      props.filter = { projectUuid };
       props.sideloads = ["projectReports", "siteReports", "nurseryReports"];
     } else if (source === "site") {
       props.filter = { siteUuid: sourceUuid };
@@ -108,7 +114,7 @@ export const useReportsIndexData = (
     }
 
     return props;
-  }, [allProjects, projectUuid, source, sourceUuid]);
+  }, [enabled, projectUuid, source, sourceUuid]);
   // TODO: this will need to load page by page with infinite scroll behavior in a future ticket.
   const [tasksLoaded, tasks, taskFailure] = useAllPages(taskIndexConnection, props);
   // These are all cached because they were sideloaded on the tasks index request.
@@ -157,10 +163,10 @@ export const useReportsIndexData = (
             : (report as SiteReportLightDto | NurseryReportLightDto).projectReportUuid;
       }
 
-      period.reports.push(toReport(report, type));
+      period.reports.push(toReport(report, type, reportProjectUuid));
     };
 
-    if (allProjects || source === "project") {
+    if (source === "project") {
       projectReports.forEach(report => addReport(report, "project-report"));
       siteReports.forEach(report => addReport(report, "site-report"));
       nurseryReports.forEach(report => addReport(report, "nursery-report"));
@@ -188,7 +194,6 @@ export const useReportsIndexData = (
   }, [
     tasksLoaded,
     taskFailure,
-    allProjects,
     source,
     projectUuid,
     projectName,

@@ -92,24 +92,23 @@ const normalizeArrayQueryKeys = (queryParams?: FetchParams | null): FetchParams 
 export const getStableQuery = (queryParams?: FetchParams, replaceEmptyBrackets = true) => {
   if (queryParams == null) return "";
 
-  const keys = Object.keys(queryParams);
-  if (keys.length === 0) return "";
-
-  // qs will gleefully stringify null and undefined values as `key=` if you leave the key in place.
-  // For our implementation, we never want to send the empty key to the server in the query, so
-  // delete any keys that have such a value.
-  for (const key of keys) {
-    if (queryParams[key] == null) delete queryParams[key];
-  }
+  // The normalized params are built in a copy: the caller's object is often a memoized connection
+  // prop, and mutating it breaks deep equality checks against other copies of the same props.
+  const normalized: FetchParams = {};
   for (const [key, value] of Object.entries(queryParams)) {
-    // Copy the array in case the original is read only.
-    if (Array.isArray(value)) queryParams[key] = [...value].sort() as FetchParamValue[] | FetchParams[];
-    if (value instanceof Date) {
-      (queryParams as Record<string, unknown>)[key] = value.toISOString();
-    }
+    // qs will gleefully stringify null and undefined values as `key=` if you leave the key in place.
+    // For our implementation, we never want to send the empty key to the server in the query, so
+    // skip any keys that have such a value.
+    if (value == null) continue;
+
+    normalized[key] = Array.isArray(value)
+      ? ([...value].sort() as FetchParamValue[] | FetchParams[])
+      : value instanceof Date
+      ? value.toISOString()
+      : value;
   }
 
-  const query = qs.stringify(normalizeArrayQueryKeys(queryParams), {
+  const query = qs.stringify(normalizeArrayQueryKeys(normalized), {
     arrayFormat: "indices",
     sort: (a, b) => a.localeCompare(b)
   });
