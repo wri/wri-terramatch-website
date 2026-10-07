@@ -77,7 +77,8 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
     params;
   const linkLabel = t(startCase(model));
 
-  const originParam = origin ? `?origin=${encodeURIComponent(origin)}` : "";
+  const originStr = typeof origin === "string" ? origin : undefined;
+  const originParam = originStr ? `?origin=${encodeURIComponent(originStr)}` : "";
   const editLink = uuid
     ? `/entity/${singularEntityName(model as EntityName | SingularEntityName)}/edit/${uuid}${originParam}`
     : "#";
@@ -91,18 +92,19 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
   const entityPageLink =
     isAdmin && redirectEntityPage == undefined ? adminListPath! : redirectEntityPage ?? "/my-projects";
 
-  const isFromIndex = origin != null && (origin === "sites" || origin === "nurseries" || origin === "reports");
+  const isFromIndex =
+    originStr != null && (originStr === "sites" || originStr === "nurseries" || originStr === "reports");
   const indexLabel =
-    origin === "sites"
+    originStr === "sites"
       ? t("Sites")
-      : origin === "nurseries"
+      : originStr === "nurseries"
       ? t("Nurseries")
-      : origin === "reports"
+      : originStr === "reports"
       ? t("Reports")
       : undefined;
 
   const entityPageLinkWithOrigin =
-    isFromIndex && origin ? `${entityPageLink}?origin=${encodeURIComponent(origin)}` : entityPageLink;
+    isFromIndex && originStr ? `${entityPageLink}?origin=${encodeURIComponent(originStr)}` : entityPageLink;
 
   const progressReportsHref =
     getReportsIndexHrefFromQuery(from, getReportsIndexUrlForEntity("progress-reports", entity ?? {}, "project")) ??
