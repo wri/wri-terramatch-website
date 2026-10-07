@@ -1849,6 +1849,7 @@ export type ProjectFullDto = {
   programmeSubmission: MediaDto[];
   proofOfLandTenureMou: MediaDto[];
   consortiumPartnershipAgreements: MediaDto[];
+  communityEngagementDocumentation: MediaDto[];
   detailedProjectBudget: MediaDto;
   /**
    * QA status for polygon dataset stage 1

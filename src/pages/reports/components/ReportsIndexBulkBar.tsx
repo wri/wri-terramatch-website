@@ -18,6 +18,7 @@ const ReportsIndexBulkBar: FC = () => {
     canSubmit,
     canMarkNothingToReport,
     submitDisabledTooltip,
+    nothingToReportDisabledTooltip,
     handleDownload,
     handleNothingToReport,
     handleSubmit
@@ -41,6 +42,7 @@ const ReportsIndexBulkBar: FC = () => {
         submitDisabled={!canSubmit}
         isUpdating={isUpdating}
         submitDisabledTooltip={submitDisabledTooltip}
+        nothingToReportDisabledTooltip={nothingToReportDisabledTooltip}
         onCancel={clearSelection}
         onDownload={() => void handleDownload()}
         onNothingToReport={() => void handleNothingToReport()}

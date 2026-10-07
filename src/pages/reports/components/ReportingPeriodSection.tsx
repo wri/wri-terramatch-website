@@ -221,10 +221,12 @@ const ReportingPeriodSection: FC<ReportingPeriodSectionProps> = ({
             dueIcon={
               <Flex alignItems="center">
                 <DueIcon color={dueDateType === "error" ? "error.500" : undefined} />
-                <Text textStyle="200">
-                  {t("Overdue:")}
-                  {"\u00A0"}
-                </Text>
+                {dueDateType === "error" && (
+                  <Text textStyle="200">
+                    {t("Overdue:")}
+                    {"\u00A0"}
+                  </Text>
+                )}
               </Flex>
             }
             dueDate={dueDateLabel}

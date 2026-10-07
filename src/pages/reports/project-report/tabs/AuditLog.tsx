@@ -51,7 +51,7 @@ const AuditLog: FC<AuditLogProps> = ({ projectReport }) => {
               <div className="grid w-[64%] gap-6 mobile:block mobile:w-full">
                 <SiteAuditLogProjectStatus
                   viewPD={true}
-                  record={projectReport}
+                  entityType="projectReports"
                   auditLogData={auditLogData}
                   auditData={auditData}
                   refresh={refetch}
