@@ -14,10 +14,15 @@ import {
 } from "@/connections/Entity";
 import { entityExportAll, entityUpdate } from "@/generated/v3/entityService/entityServiceComponents";
 import { EntityUpdateBody } from "@/generated/v3/entityService/entityServiceSchemas";
-import { useDownloadToastMessages } from "@/hooks/translation/useDownloadToastMessages";
 import { useReportsIndexAnalytics } from "@/hooks/useReportsIndexAnalytics";
 import ApiSlice from "@/store/apiSlice";
-import { runWithDownloadToast } from "@/utils/downloadToast";
+import {
+  closeEntityProgressToast,
+  completeEntityProgressToast,
+  ENTITY_TOAST_IDS,
+  showEntityErrorToast,
+  showEntityProgressToast
+} from "@/utils/entityOperationToasts";
 import Log from "@/utils/log";
 
 import type { ReportIndexItem } from "./reportIndex.types";
@@ -82,7 +87,6 @@ const refreshSelectedReports = async (reports: ReportIndexItem[]) => {
 
 export const useReportsBulkActions = ({ selectedReports, clearSelection }: UseReportsBulkActionsProps) => {
   const t = useT();
-  const downloadToastMessages = useDownloadToastMessages();
   const { trackBulkActionSubmitted } = useReportsIndexAnalytics();
   const [isDownloading, setIsDownloading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -108,36 +112,28 @@ export const useReportsBulkActions = ({ selectedReports, clearSelection }: UseRe
 
     setIsDownloading(true);
     try {
-      await runWithDownloadToast(
-        {
-          downloading: t("Downloading reports"),
-          complete: downloadToastMessages.complete,
-          error: downloadToastMessages.error
-        },
-        async () => {
-          const grouped = groupReportUuidsByEntity(selectedReports);
-          for (const [entity, uuids] of Object.entries(grouped)) {
-            if (uuids == null || uuids.length === 0) continue;
-            await entityExportAll.downloadFile({
-              pathParams: { entity: entity as SupportedEntity },
-              queryParams: { uuids }
-            });
-          }
-        },
-        "reportsBulkExportToast"
+      showEntityProgressToast(
+        t,
+        selectedReports.length === 1 ? t("Downloading report") : t("Downloading reports"),
+        ENTITY_TOAST_IDS.downloading
       );
+      const grouped = groupReportUuidsByEntity(selectedReports);
+      for (const [entity, uuids] of Object.entries(grouped)) {
+        if (uuids == null || uuids.length === 0) continue;
+        await entityExportAll.downloadFile({
+          pathParams: { entity: entity as SupportedEntity },
+          queryParams: { uuids }
+        });
+      }
+      completeEntityProgressToast(ENTITY_TOAST_IDS.downloading, t("Download Complete"));
     } catch (error) {
-      showToast({
-        label: downloadToastMessages.error,
-        type: "error",
-        placement: "bottom",
-        duration: 5000,
-        maxWidth: "auto"
-      });
+      Log.error("Failed to download selected reports", error);
+      closeEntityProgressToast(ENTITY_TOAST_IDS.downloading);
+      showEntityErrorToast(t("Error Downloading Reports"));
     } finally {
       setIsDownloading(false);
     }
-  }, [downloadToastMessages, isDownloading, selectedReports, t]);
+  }, [isDownloading, selectedReports, t]);
 
   const handleNothingToReport = useCallback(async () => {
     if (!canMarkNothingToReport || isUpdating) return;

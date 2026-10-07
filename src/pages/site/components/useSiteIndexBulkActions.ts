@@ -6,9 +6,14 @@ import { useCallback, useMemo, useState } from "react";
 import { deleteSite } from "@/connections/Entity";
 import { entityExportAll, entityUpdate } from "@/generated/v3/entityService/entityServiceComponents";
 import { getEntityEditPageLink } from "@/helpers/entity";
-import { useDownloadToastMessages } from "@/hooks/translation/useDownloadToastMessages";
 import ApiSlice from "@/store/apiSlice";
-import { runWithDownloadToast } from "@/utils/downloadToast";
+import {
+  closeEntityProgressToast,
+  completeEntityProgressToast,
+  ENTITY_TOAST_IDS,
+  showEntityErrorToast,
+  showEntityProgressToast
+} from "@/utils/entityOperationToasts";
 import Log from "@/utils/log";
 
 import type { SiteIndexSite } from "./siteIndex.types";
@@ -37,7 +42,6 @@ const updateSiteStatus = async (siteUuid: string, status: "pending-approval") =>
 export const useSiteIndexBulkActions = ({ selectedSites, onSitesChanged }: UseSiteIndexBulkActionsProps) => {
   const t = useT();
   const router = useRouter();
-  const downloadToastMessages = useDownloadToastMessages();
   const { clearSelection } = useSiteIndexSelectionActions();
   const [isDownloading, setIsDownloading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -63,28 +67,26 @@ export const useSiteIndexBulkActions = ({ selectedSites, onSitesChanged }: UseSi
     setIsDownloading(true);
     clearSelection();
     try {
-      await runWithDownloadToast(
-        {
-          downloading: selectedSites.length === 1 ? t("Downloading site profile") : t("Downloading site profiles"),
-          complete: downloadToastMessages.complete,
-          error: downloadToastMessages.error
-        },
-        async () => {
-          for (const { frameworkKey, uuids } of grouped) {
-            await entityExportAll.downloadFile({
-              pathParams: { entity: "sites" },
-              queryParams: { frameworkKey, uuids }
-            });
-          }
-        },
-        "sitesBulkExportToast"
+      showEntityProgressToast(
+        t,
+        selectedSites.length === 1 ? t("Downloading site profile") : t("Downloading site profiles"),
+        ENTITY_TOAST_IDS.downloading
       );
+      for (const { frameworkKey, uuids } of grouped) {
+        await entityExportAll.downloadFile({
+          pathParams: { entity: "sites" },
+          queryParams: { frameworkKey, uuids }
+        });
+      }
+      completeEntityProgressToast(ENTITY_TOAST_IDS.downloading, t("Download Complete"));
     } catch (error) {
       Log.error("Failed to download selected sites", error);
+      closeEntityProgressToast(ENTITY_TOAST_IDS.downloading);
+      showEntityErrorToast(t("Error Downloading Sites"));
     } finally {
       setIsDownloading(false);
     }
-  }, [clearSelection, downloadToastMessages, isDownloading, selectedSites, t]);
+  }, [clearSelection, isDownloading, selectedSites, t]);
 
   const handleEdit = useCallback(() => {
     if (!canEdit) {
