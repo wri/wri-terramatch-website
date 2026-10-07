@@ -65,7 +65,7 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
       },
       {
         key: "audit-log",
-        title: t("Audit Log"),
+        title: t("History"),
         renderBody: () => <AuditLog srpReport={srpReport} />
       }
     ],
@@ -135,7 +135,7 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
                 {t("Project Profile")}
               </Button>
             )}
-            <span className="text-sm text-theme-neutral-300">|</span>
+            <span className="text-theme-neutral-300 text-sm">|</span>
             <Button
               variant="borderless"
               size="small"
