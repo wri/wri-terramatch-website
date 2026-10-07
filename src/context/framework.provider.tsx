@@ -9,7 +9,6 @@ export enum Framework {
   ENTERPRISES = "enterprises",
   HBF = "hbf",
   EPA_GHANA_PILOT = "epa-ghana-pilot",
-  FF = "fundo-flora",
   FF_1 = "fundo-flora-1",
   WCB = "wcb",
   BARKA_FUND = "barka-fund",
@@ -27,8 +26,6 @@ export const TERRAFUND_AFR100_BANNER_LOGO_FRAMEWORKS: readonly Framework[] = [
   Framework.ENTERPRISES,
   Framework.EPA_GHANA_PILOT
 ];
-
-export const ALL_FF = [Framework.FF, Framework.FF_1];
 
 export const FRAMEWORKS_WITHOUT_NURSERIES: readonly Framework[] = [Framework.PPC, Framework.HBF];
 
