@@ -29,6 +29,7 @@ interface EntityProfileReportsTabProps {
   source: "site" | "nursery";
   entityUuid: string;
   projectUuid: string | null;
+  origin?: string;
 }
 
 interface EntityProfileReportsContentProps extends Omit<EntityProfileReportsTabProps, "projectUuid"> {
@@ -129,14 +130,14 @@ const EntityProfileReportsContent: FC<EntityProfileReportsContentProps> = ({ sou
  * The Reports tab on a site or nursery profile: the progress reports of that one entity, grouped by
  * reporting period.
  */
-const EntityProfileReportsTab: FC<EntityProfileReportsTabProps> = ({ source, entityUuid, projectUuid }) => {
+const EntityProfileReportsTab: FC<EntityProfileReportsTabProps> = ({ source, entityUuid, projectUuid, origin }) => {
   const [, { data: project }] = useLightProject({ id: projectUuid ?? undefined });
 
   return project == null ? null : (
     <ReportsProvider>
       <ReportsSelectionProvider key={`${source}:${entityUuid}`}>
-        <ReportProfileOriginProvider source={source} uuid={entityUuid}>
-          <EntityProfileReportsContent source={source} entityUuid={entityUuid} project={project} />
+        <ReportProfileOriginProvider source={source} uuid={entityUuid} origin={origin} projectName={project?.name!}>
+          <EntityProfileReportsContent source={source} entityUuid={entityUuid} project={project} origin={origin} />
         </ReportProfileOriginProvider>
       </ReportsSelectionProvider>
     </ReportsProvider>

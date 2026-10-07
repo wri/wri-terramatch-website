@@ -51,7 +51,14 @@ const SiteDetailPage: FC = () => {
     {
       key: "reports",
       title: t("Reports"),
-      body: <EntityProfileReportsTab source="site" entityUuid={siteUUID} projectUuid={site?.projectUuid ?? null} />
+      body: (
+        <EntityProfileReportsTab
+          source="site"
+          entityUuid={siteUUID}
+          projectUuid={site?.projectUuid ?? null}
+          origin={isFromSiteIndex ? SITE_INDEX_ORIGIN : undefined}
+        />
+      )
     },
     {
       key: "audit-log",

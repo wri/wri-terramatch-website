@@ -64,7 +64,12 @@ const NurseryDetailPage = () => {
       key: "reports",
       title: t("Reports"),
       body: (
-        <EntityProfileReportsTab source="nursery" entityUuid={nurseryUUID} projectUuid={nursery?.projectUuid ?? null} />
+        <EntityProfileReportsTab
+          source="nursery"
+          entityUuid={nurseryUUID}
+          projectUuid={nursery?.projectUuid ?? null}
+          origin={isFromNurseryIndex ? NURSERY_INDEX_ORIGIN : undefined}
+        />
       )
     },
     { key: "audit-log", title: t("Audit Log"), body: <AuditLog nursery={nursery} /> }

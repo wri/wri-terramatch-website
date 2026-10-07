@@ -17,6 +17,7 @@ import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 import { singularEntityName } from "./entity";
 
 type EntityForLinkHeader = {
+  uuid?: string | null;
   title?: string | null;
   name?: string | null;
   projectName?: string | null;
@@ -208,7 +209,10 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
               label: projectTitle,
               link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}`
             },
-            { label: entity?.reportTitle, link: entityPageLink },
+            {
+              label: entity?.reportTitle,
+              link: `${entityPageLink}?profile=project&profileUuid=${entity?.projectUuid}`
+            },
             { label: t("Edit"), link: editLink }
           ]),
     siteReports:
@@ -223,7 +227,11 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
               label: projectTitle,
               link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}`
             },
-            { label: siteReportBreadcrumbLabel, link: entityPageLink },
+            { label: entity?.siteName, link: `/site/${entity?.siteUuid ?? ""}` },
+            {
+              label: siteReportBreadcrumbLabel,
+              link: `${entityPageLink}?profile=site&profileUuid=${entity?.siteUuid}`
+            },
             { label: t("Edit"), link: editLink }
           ]),
     nurseryReports:
@@ -238,7 +246,10 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
               label: projectTitle,
               link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}`
             },
-            { label: nurseryReportBreadcrumbLabel, link: entityPageLink },
+            {
+              label: nurseryReportBreadcrumbLabel,
+              link: `${entityPageLink}?profile=nursery&profileUuid=${entity?.nurseryUuid}`
+            },
             { label: t("Edit"), link: editLink }
           ]),
     financialReports:
