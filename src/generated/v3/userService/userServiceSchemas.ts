@@ -742,7 +742,6 @@ export type UserDto = {
   lastLoggedInAt: string | null;
   jobRole: string | null;
   country: string | null;
-  program: string | null;
   locale: string | null;
   frameworks: UserFramework[];
   directFrameworks: UserFramework[];
@@ -919,10 +918,6 @@ export type UserUpdateAttributes = {
    */
   country?: string | null;
   /**
-   * Program
-   */
-  program?: string | null;
-  /**
    * New default locale for the given user
    */
   locale?: "en-US" | "es-MX" | "fr-FR" | "pt-BR" | null;
@@ -981,7 +976,6 @@ export type UserCreateBaseAttributes = {
   phoneNumber: string | null;
   jobRole: string | null;
   country: string | null;
-  program: string | null;
 };
 
 export type UserCreateBaseData = {
