@@ -21,7 +21,6 @@ import {
   isReportsIndexTab,
   readReportsIndexRestore,
   ReportsIndexRestoreState,
-  ReportsIndexSource,
   ReportsIndexTab
 } from "../reportIndex.utils";
 import { getReportPeriodOptions, getSectionReportingPeriods } from "../reportPeriodFilter";
@@ -91,7 +90,7 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
     sections: progressSections,
     loading: progressLoading,
     error: progressError
-  } = useReportsIndexData(project, source, sourceEntity.uuid, !isAllProjectsView);
+  } = useReportsIndexData(project, SOURCE, project.uuid, !isAllProjectsView);
   const {
     metas: allProjectsMetas,
     loading: allProjectsLoading,

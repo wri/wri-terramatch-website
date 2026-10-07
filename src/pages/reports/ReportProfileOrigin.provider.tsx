@@ -4,7 +4,7 @@ import { ReportProfileOrigin, ReportsIndexSource } from "./reportIndex.utils";
 
 export type ReportProfileOriginWithContext = ReportProfileOrigin & {
   contextOrigin?: string;
-  projectName?: string;
+  projectName?: string | null;
 };
 
 const ReportProfileOriginContext = createContext<ReportProfileOriginWithContext | undefined>(undefined);
@@ -16,7 +16,7 @@ type ReportProfileOriginProviderProps = {
   source: ReportsIndexSource;
   uuid: string;
   origin?: string;
-  projectName?: string;
+  projectName?: string | null;
 };
 
 const ReportProfileOriginProvider: FC<PropsWithChildren<ReportProfileOriginProviderProps>> = ({

@@ -136,7 +136,7 @@ const EntityProfileReportsTab: FC<EntityProfileReportsTabProps> = ({ source, ent
   return project == null ? null : (
     <ReportsProvider>
       <ReportsSelectionProvider key={`${source}:${entityUuid}`}>
-        <ReportProfileOriginProvider source={source} uuid={entityUuid} origin={origin} projectName={project?.name!}>
+        <ReportProfileOriginProvider source={source} uuid={entityUuid} origin={origin} projectName={project?.name}>
           <EntityProfileReportsContent source={source} entityUuid={entityUuid} project={project} origin={origin} />
         </ReportProfileOriginProvider>
       </ReportsSelectionProvider>
