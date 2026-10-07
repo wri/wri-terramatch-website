@@ -683,7 +683,6 @@ export type AboutSectionIndexQueryParams = {
     | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
     | "barka-fund";
@@ -4009,7 +4008,6 @@ export type EntityExportAllQueryParams = {
     | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
     | "barka-fund";
