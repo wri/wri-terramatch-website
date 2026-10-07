@@ -259,3 +259,120 @@ export const formatProfitValue = (value: number, currencySymbol: string, isoCurr
     return `${sign}${currencySymbol}${absValue.toLocaleString(locale)}`;
   }
 };
+
+export const NON_PROFIT_ORGANISATION_TYPE = "non-profit-organization";
+
+/** A current ratio at or above this value (current assets cover current liabilities) is considered healthy. */
+export const HEALTHY_CURRENT_RATIO = 1;
+
+export type FinancialYearSummary = {
+  year: number;
+  revenue: number | null;
+  expenses: number | null;
+  profit: number | null;
+  currentRatio: number | null;
+  currentAssets: number | null;
+  currentLiabilities: number | null;
+  budget: number | null;
+};
+
+const FINANCIAL_SUMMARY_KEYS: Record<string, keyof Omit<FinancialYearSummary, "year">> = {
+  revenue: "revenue",
+  expenses: "expenses",
+  profit: "profit",
+  "current-ratio": "currentRatio",
+  "current-assets": "currentAssets",
+  "current-liabilities": "currentLiabilities",
+  budget: "budget"
+};
+
+const USD = "USD";
+
+/**
+ * Builds the multiplier that converts a year's local-currency amounts to USD
+ * (local amount × that year's exchange rate). Years without a usable rate cannot be converted.
+ */
+const getUsdConversion = (collection: FinancialIndicatorDto[], currency: string | null) => {
+  if (currency == null || currency === USD) return () => 1;
+
+  const rates = new Map(
+    collection
+      .filter(({ collection: name, exchangeRate }) => name === "description-documents" && exchangeRate != null)
+      .map(({ year, exchangeRate }) => [year, exchangeRate as number])
+  );
+  return (year: number) => {
+    const rate = rates.get(year);
+    return rate == null || rate === 0 ? null : rate;
+  };
+};
+
+/**
+ * Groups financial indicators into one summary row per year, sorted by year. Monetary values are
+ * converted to USD; a value that can't be converted (no exchange rate for its year) is null.
+ */
+export const getFinancialYearSummaries = (
+  collection: FinancialIndicatorDto[],
+  currency: string | null
+): FinancialYearSummary[] => {
+  const usdMultiplier = getUsdConversion(collection, currency);
+  const byYear = new Map<number, FinancialYearSummary>();
+  for (const { year, collection: collectionName, amount: rawAmount } of collection) {
+    const key = FINANCIAL_SUMMARY_KEYS[collectionName];
+    if (key == null) continue;
+
+    const multiplier = key === "currentRatio" ? 1 : usdMultiplier(year);
+    const amount = rawAmount == null || multiplier == null ? null : rawAmount * multiplier;
+
+    const summary = byYear.get(year) ?? {
+      year,
+      revenue: null,
+      expenses: null,
+      profit: null,
+      currentRatio: null,
+      currentAssets: null,
+      currentLiabilities: null,
+      budget: null
+    };
+    summary[key] = amount;
+    byYear.set(year, summary);
+  }
+
+  return [...byYear.values()]
+    .map(summary => ({
+      ...summary,
+      profit:
+        summary.profit ??
+        (summary.revenue != null && summary.expenses != null ? summary.revenue - summary.expenses : null),
+      currentRatio:
+        summary.currentRatio ??
+        (summary.currentAssets != null && summary.currentLiabilities != null && summary.currentLiabilities !== 0
+          ? summary.currentAssets / summary.currentLiabilities
+          : null)
+    }))
+    .sort((a, b) => a.year - b.year);
+};
+
+/**
+ * Sums funding source amounts (already stored in USD) per year. Covers the given financial indicator
+ * years (falling back to the funding years when there are none); a year without funding is null.
+ */
+export const getExternalFinanceByYear = (
+  fundingTypes: { year: number | null; amount: number | null }[],
+  indicatorYears: number[]
+) => {
+  const byYear = new Map<number, number>();
+  for (const { year, amount } of fundingTypes) {
+    if (year == null || amount == null) continue;
+    byYear.set(year, (byYear.get(year) ?? 0) + amount);
+  }
+
+  const years = indicatorYears.length > 0 ? indicatorYears : [...byYear.keys()];
+  return [...years].sort((a, b) => a - b).map(year => ({ year, amount: byYear.get(year) ?? null }));
+};
+
+/** Full-precision USD display for chart tooltips (e.g. "$123,000"). */
+export const formatUsdAmount = (value: number) =>
+  new Intl.NumberFormat("en-US", { style: "currency", currency: USD, maximumFractionDigits: 0 }).format(value);
+
+/** Compact USD display for chart axes (e.g. "$150K", "-$5M"). */
+export const formatCompactUsd = (value: number) => formatProfitValue(value, currencyInput[USD]);
