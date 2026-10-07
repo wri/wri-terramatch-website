@@ -80,7 +80,7 @@ const SrpReportOverviewTab: FC<SrpReportOverviewTabProps> = ({ report, onViewDet
                 goal={0}
                 variant="large"
                 icon={<PartnersIcon />}
-                color="primary.700"
+                color="primary.600"
                 metricLabel="total_unique_restoration_partners"
                 tooltipContent={t(
                   "This is the total number of unique restoration partners reported for this reporting year."
