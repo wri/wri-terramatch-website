@@ -120,7 +120,7 @@ export type ReportProfileOrigin = {
   uuid: string;
 };
 
-const REPORT_ORIGIN_QUERY_KEYS = ["from", "profile", "profileUuid"] as const;
+const REPORT_ORIGIN_QUERY_KEYS = ["from", "profile", "profileUuid", "origin"] as const;
 
 export const getReportProfileOriginFromQuery = (
   profile: ParsedUrlQuery["profile"],
@@ -137,7 +137,11 @@ export const getReportViewHref = (
   profileOrigin?: ReportProfileOrigin
 ) => {
   const href = `/reports/${report.type}/${report.id}`;
-  if (profileOrigin == null) return withReportsIndexReturn(href, indexHref);
+  if (profileOrigin == null) {
+    const params: Record<string, string | undefined> = { origin: "reports" };
+    if (indexHref) params.from = indexHref;
+    return appendQueryParams(href, params);
+  }
   return appendQueryParams(href, { profile: profileOrigin.source, profileUuid: profileOrigin.uuid });
 };
 

@@ -88,10 +88,20 @@ const matchesAdditionalReport = (report: AdditionalReport, criteria: ReportFilte
   ) {
     return false;
   }
-  if (!matchesTypeAndStatus(report, criteria)) return false;
+  if (criteria.statuses.length > 0 && !criteria.statuses.includes(report.status)) return false;
 
-  const date = getAdditionalReportDate(report);
-  return matchesReportPeriod(date, { month: getIsoMonth(date), year: getAdditionalReportYear(report) }, criteria);
+  const additionalReportTypes = ["financial-report", "srp-report", "disturbance-report"];
+  if (criteria.reportTypes.length > 0) {
+    const hasValidType = criteria.reportTypes.some(type => additionalReportTypes.includes(type));
+    if (hasValidType && !criteria.reportTypes.includes(report.type)) return false;
+  }
+
+  if (criteria.dueDateFrom !== "" || criteria.dueDateTo !== "") {
+    const date = getAdditionalReportDate(report);
+    return matchesReportPeriod(date, { month: getIsoMonth(date), year: getAdditionalReportYear(report) }, criteria);
+  }
+
+  return true;
 };
 
 export const filterProgressPeriods = (periods: ReportsIndexPeriod[], criteria: ReportFilterCriteria) =>

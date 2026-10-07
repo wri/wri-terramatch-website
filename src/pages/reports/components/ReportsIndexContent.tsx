@@ -11,7 +11,6 @@ import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import type { HighLevelSelectorItem } from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector.types";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 
-import { ReportsIndexSourceEntity } from "../reportIndex.types";
 import {
   ALL_PROJECTS_VIEW_VALUE,
   clearReportsIndexRestore,
@@ -20,7 +19,6 @@ import {
   getReportsIndexUrl,
   isReportsIndexTab,
   readReportsIndexRestore,
-  ReportsIndexSource,
   ReportsIndexTab
 } from "../reportIndex.utils";
 import { getReportPeriodOptions } from "../reportPeriodFilter";
@@ -36,11 +34,10 @@ import ReportsIndexHeader from "./ReportsIndexHeader";
 
 type ReportsIndexContentProps = {
   project: ProjectLightDto;
-  source: ReportsIndexSource;
-  sourceEntity: ReportsIndexSourceEntity;
 };
 
-const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project, source, sourceEntity }) => {
+const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
+  const SOURCE = "project" as const;
   const t = useT();
   const router = useRouter();
   const { filters } = useReportsContext();
@@ -75,24 +72,32 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project, source, so
   const isAllProjectsView = viewValue === ALL_PROJECTS_VIEW_VALUE || isOrganisationView;
   const isSwitchingProject = !isAllProjectsView && viewValue !== project.uuid;
   const additionalOrganisationUuid =
-    viewValue === ALL_PROJECTS_VIEW_VALUE ? null : isOrganisationView ? viewValue : project.organisationUuid ?? null;
+    activeTab === "additional-reports"
+      ? viewValue === ALL_PROJECTS_VIEW_VALUE
+        ? null
+        : viewValue
+      : viewValue === ALL_PROJECTS_VIEW_VALUE
+      ? null
+      : isOrganisationView
+      ? viewValue
+      : project.organisationUuid ?? null;
 
   const {
     sections: progressSections,
     loading: progressLoading,
     error: progressError
-  } = useReportsIndexData(project, source, sourceEntity.uuid, isAllProjectsView);
+  } = useReportsIndexData(project, SOURCE, project.uuid, isAllProjectsView);
   const {
     sections: additionalSections,
     loading: additionalLoading,
     error: additionalError
-  } = useAdditionalReportsData(project, activeTab === "additional-reports", additionalOrganisationUuid);
+  } = useAdditionalReportsData(project, true, additionalOrganisationUuid);
 
   const { filteredProgressSections, filteredAdditionalSections, progressReportCount, additionalReportCount } =
     useReportsIndexFilters({ progressSections, additionalSections, query });
 
   const reportTypeFromQuery = typeof router.query.reportType === "string" ? router.query.reportType : undefined;
-  const indexHref = getReportsIndexUrl(source, sourceEntity.uuid, {
+  const indexHref = getReportsIndexUrl(SOURCE, project.uuid, {
     tab: activeTab,
     view: viewValue === ALL_PROJECTS_VIEW_VALUE || isOrganisationView ? viewValue : undefined,
     reportType: reportTypeFromQuery
@@ -142,7 +147,7 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project, source, so
   const hasActiveSearch = query.trim().length > 0;
   const hasActivePeriodFilter =
     filters.dueDateFrom !== "" || filters.dueDateTo !== "" || filters.dueMonth !== "" || filters.dueYear !== "";
-  const defaultReportTypes = getDefaultProgressFiltersForSource(source).reportTypes;
+  const defaultReportTypes = getDefaultProgressFiltersForSource(SOURCE).reportTypes;
   const hasUserReportTypeFilter =
     filters.reportTypes.length !== defaultReportTypes.length ||
     defaultReportTypes.some(type => !filters.reportTypes.includes(type));
@@ -190,16 +195,14 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project, source, so
 
   useEffect(() => {
     if (!router.isReady) return;
-    // Site/nursery entry points put the entity uuid in the query, not the project. Only project
-    // URLs should drive the View selector from `uuid`.
     const nextView =
       viewFromQuery === ALL_PROJECTS_VIEW_VALUE || (viewFromQuery != null && viewFromQuery !== "")
         ? viewFromQuery
-        : source === "project"
-        ? uuidFromQuery ?? project.uuid
-        : project.uuid;
+        : activeTab === "additional-reports"
+        ? project.organisationUuid ?? ALL_PROJECTS_VIEW_VALUE
+        : uuidFromQuery ?? project.uuid;
     setViewValue(nextView);
-  }, [project.uuid, router.isReady, source, uuidFromQuery, viewFromQuery]);
+  }, [project.uuid, project.organisationUuid, router.isReady, uuidFromQuery, viewFromQuery, activeTab]);
 
   const handleViewChange = useCallback(
     (nextView: string) => {
@@ -244,7 +247,7 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project, source, so
       }
 
       void router.replace(
-        getReportsIndexUrl("project", nextView, {
+        getReportsIndexUrl(SOURCE, nextView, {
           reportType: reportTypeFromQuery
         }),
         undefined,
@@ -260,9 +263,11 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project, source, so
       const query = { ...router.query };
       if (tab === "additional-reports") {
         query.tab = tab;
+        delete query.reportType;
       } else {
         delete query.tab;
       }
+      setQuery("");
       void router.replace({ pathname: router.pathname, query }, undefined, { shallow: true });
     },
     [clearSelection, router]
@@ -272,8 +277,8 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project, source, so
     <>
       <ReportsIndexHeader
         activeTab={activeTab}
-        source={source}
-        sourceUuid={sourceEntity.uuid}
+        source={SOURCE}
+        sourceUuid={project.uuid}
         projectUuid={project.uuid}
         reportCount={reportCount}
         viewValue={headerViewValue}

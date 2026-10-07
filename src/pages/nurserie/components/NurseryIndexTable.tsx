@@ -2,7 +2,6 @@ import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/re
 import { useT } from "@transifex/react";
 import { FC, useCallback, useMemo } from "react";
 
-import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
@@ -19,6 +18,7 @@ import { isAbsentChangeRequestStatus } from "@/utils/changeRequestStatusDisplay"
 
 import { useNurseryTableSelection } from "../NurseriesSelection.provider";
 import type { NurseryIndexRow } from "../nurseryIndex.types";
+import { getNurseryDetailUrl } from "../nurseryIndex.utils";
 import NurseryIndexEditButton from "./NurseryIndexEditButton";
 
 const NurseryUpdate: FC<{ status: NurseryIndexRow["updateRequestStatus"] }> = ({ status }) => {
@@ -75,7 +75,7 @@ const NurseryIndexTable: FC<{ nurseries: NurseryIndexRow[] }> = ({ nurseries }) 
 
   const renderRow = useCallback(
     (nursery: NurseryIndexRow, context?: TableRenderRowContext) => {
-      const nurseryHref = getEntityDetailPageLink("nurseries", nursery.uuid);
+      const nurseryHref = getNurseryDetailUrl(nursery.uuid, true);
       const isSelected = isNurserySelected(nursery);
 
       return (
