@@ -24,6 +24,7 @@ import {
   ReminderDto,
   AuditStatusDto,
   AggregateReportsDto,
+  ReportCountsDto,
   ProjectLightDto,
   ProjectFullDto,
   SiteLightDto,
@@ -34,6 +35,7 @@ import {
   FinancialReportFullDto,
   DisturbanceReportLightDto,
   DisturbanceReportFullDto,
+  ProjectReportMetaDto,
   FileDownloadDto,
   DelayedJobDto,
   FormTranslationDto,
@@ -74,11 +76,13 @@ export const ENTITY_SERVICE_RESOURCES = [
   "reminders",
   "auditStatuses",
   "aggregateReports",
+  "reportCounts",
   "projects",
   "sites",
   "nurseries",
   "financialReports",
   "disturbanceReports",
+  "projectReportsMetas",
   "fileDownloads",
   "delayedJobs",
   "formTranslations",
@@ -118,11 +122,13 @@ export type EntityServiceApiResources = {
   reminders: StoreResourceMap<ReminderDto>;
   auditStatuses: StoreResourceMap<AuditStatusDto>;
   aggregateReports: StoreResourceMap<AggregateReportsDto>;
+  reportCounts: StoreResourceMap<ReportCountsDto>;
   projects: StoreResourceMap<ProjectLightDto | ProjectFullDto>;
   sites: StoreResourceMap<SiteLightDto | SiteFullDto>;
   nurseries: StoreResourceMap<NurseryLightDto | NurseryFullDto>;
   financialReports: StoreResourceMap<FinancialReportLightDto | FinancialReportFullDto>;
   disturbanceReports: StoreResourceMap<DisturbanceReportLightDto | DisturbanceReportFullDto>;
+  projectReportsMetas: StoreResourceMap<ProjectReportMetaDto>;
   fileDownloads: StoreResourceMap<FileDownloadDto>;
   delayedJobs: StoreResourceMap<DelayedJobDto>;
   formTranslations: StoreResourceMap<FormTranslationDto>;

@@ -65,7 +65,7 @@ const ModalSelection: FC<Props> = ({
               )}
               <Text textStyle="500-bold" color="neutral.900" className="text-center">
                 {items[0].label}
-                {!isDelete ? "?" : ""}
+                {!isDelete && "?"}
               </Text>
               {isDelete && (
                 <Text textStyle="400" color="neutral.900" className="text-center">
@@ -80,7 +80,7 @@ const ModalSelection: FC<Props> = ({
             </Flex>
           ) : (
             <Box className="px-4">
-              <Text textStyle="400" color="neutral.900" className={isDelete ? "mb-3" : undefined}>
+              <Text textStyle="400" color="neutral.900" className={"mb-3"}>
                 {copy.description}
                 {notice != null && (
                   <>

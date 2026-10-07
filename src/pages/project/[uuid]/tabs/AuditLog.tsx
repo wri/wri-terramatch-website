@@ -109,13 +109,12 @@ const AuditLog: FC<AuditLogProps> = ({ project, refresh: refreshProject }) => {
                       existNurseries={project?.totalNurseries > 0}
                     />
                     {buttonToggle === ButtonStates.PROJECTS ? (
-                      <SiteAuditLogProjectStatus viewPD={true} record={project} auditLogData={auditLogData} />
+                      <SiteAuditLogProjectStatus viewPD={true} auditLogData={auditLogData} />
                     ) : (
                       <SiteAuditLogEntityStatus
                         record={selected}
                         auditLogData={auditLogData}
                         refresh={refetch}
-                        buttonToggle={buttonToggle}
                         entityType={entityType}
                         viewPD={true}
                       />

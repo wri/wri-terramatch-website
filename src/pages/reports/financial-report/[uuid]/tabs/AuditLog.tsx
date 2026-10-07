@@ -48,7 +48,6 @@ const AuditLog: FC<AuditLogProps> = ({ financialReport, refresh: refetchReport }
                     record={selected}
                     auditLogData={auditLogData}
                     refresh={refetch}
-                    buttonToggle={AuditLogButtonStates.FINANCIAL_REPORT}
                     entityType="financialReports"
                     viewPD={true}
                   />

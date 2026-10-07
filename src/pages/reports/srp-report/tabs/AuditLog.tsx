@@ -88,7 +88,6 @@ const AuditLog: FC<AuditLogProps> = ({ srpReport, refresh: refreshReport }) => {
                       record={selected}
                       auditLogData={auditLogData}
                       refresh={refetch}
-                      buttonToggle={buttonToggle}
                       entityType={entityTypeSrpReport}
                       viewPD={true}
                     />

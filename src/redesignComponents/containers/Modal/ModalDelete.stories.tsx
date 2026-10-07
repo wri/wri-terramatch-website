@@ -12,9 +12,12 @@ const meta = {
   tags: ["autodocs"],
   args: {
     open: false,
-    items: [{ id: "north", label: "North plot" }],
-    singular: { title: "Delete plot?", description: "will be permanently removed from this site." },
-    plural: { title: "Delete plots?", description: "The following plots will be permanently removed from this site." }
+    items: [{ id: "polygon1", label: "Polygon Name 1" }],
+    singular: { title: "Delete polygon?", description: "will be permanently removed from this site." },
+    plural: {
+      title: "Delete polygons?",
+      description: "The following polygons will be permanently removed from this site."
+    }
   },
   render: args => {
     const t = useT();
@@ -36,16 +39,8 @@ export const Singular: Story = {};
 export const Plural: Story = {
   args: {
     items: [
-      { id: "north", label: "North plot" },
-      { id: "south", label: "South plot" }
+      { id: "polygon1", label: "Polygon Name 1" },
+      { id: "polygon2", label: "Polygon Name 2" }
     ]
   }
-};
-
-export const Loading: Story = {
-  args: { isLoading: true }
-};
-
-export const EmptySelection: Story = {
-  args: { items: [] }
 };
