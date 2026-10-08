@@ -849,7 +849,6 @@ export type UserTaskDto = {
     | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
     | "barka-fund"
@@ -877,7 +876,7 @@ export type Roles = {
  */
 export type Frameworks = {
   /**
-   * @example {"barka-fund":"Barka Fund","enterprises":"TerraFund Enterprises","epa-ghana-pilot":"EPA-Ghana Pilot","fundo-flora":"Fundo Flora","fundo-flora-1":"Fundo Flora 1","hbf":"Harit Bharat Fund","ppc":"PPC","terrafund":"TerraFund Top 100","terrafund-3":"TerraFund Cohort Three","terrafund-landscapes":"TerraFund Landscapes","wcb":"Wildlife Conservation Bond"}
+   * @example {"barka-fund":"Barka Fund","enterprises":"TerraFund Enterprises","epa-ghana-pilot":"EPA-Ghana Pilot","fundo-flora-1":"Fundo Flora 1","hbf":"Harit Bharat Fund","ppc":"PPC","terrafund":"TerraFund Top 100","terrafund-3":"TerraFund Cohort Three","terrafund-landscapes":"TerraFund Landscapes","wcb":"Wildlife Conservation Bond"}
    */
   FRAMEWORK_NAMES: Record<string, any>;
 };
@@ -955,7 +954,6 @@ export type UserUpdateAttributes = {
         | "terrafund-3"
         | "ppc"
         | "hbf"
-        | "fundo-flora"
         | "fundo-flora-1"
         | "wcb"
         | "barka-fund"

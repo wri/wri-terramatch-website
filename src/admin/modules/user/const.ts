@@ -1,3 +1,5 @@
+import * as yup from "yup";
+
 import { Framework } from "@/context/framework.provider";
 import { Frameworks, Roles } from "@/generated/v3/userService/userServiceConstants";
 
@@ -8,6 +10,8 @@ const FRAMEWORK_ADMIN_ROLES: string[] = ["project-developer", "project-manager"]
 export const frameworkAdminPrimaryRoleChoices = userPrimaryRoleChoices.filter(({ id }) =>
   FRAMEWORK_ADMIN_ROLES.includes(id)
 );
+
+export const ROLES_SCHEMA = yup.array().of(yup.string()).required().min(1, "At least one role is required");
 
 export const frameworkChoices = Object.entries(Frameworks.FRAMEWORK_NAMES).map(([id, name]) => ({ id, name }));
 

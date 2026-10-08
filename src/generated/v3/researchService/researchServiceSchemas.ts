@@ -1327,7 +1327,6 @@ export type PolygonAttributeDefinitionDto = {
     | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
     | "barka-fund";
@@ -1367,7 +1366,6 @@ export type CreatePolygonAttributeDefinitionAttributes = {
     | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
     | "barka-fund";
