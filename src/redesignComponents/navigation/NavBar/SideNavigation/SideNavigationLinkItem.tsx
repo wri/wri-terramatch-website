@@ -15,7 +15,6 @@ export interface SideNavigationLinkItemProps {
   icon: ReactNode;
   label: string;
   href: string;
-  /** Route prefixes that mark this item as active; defaults to `href`. */
   activePaths?: string[];
   onAddClick?: () => void;
   MenuItems?: MenuItemOption[];
@@ -42,7 +41,6 @@ const SideNavigationLinkItem: FC<SideNavigationLinkItemProps> = ({
   const t = useT();
   let currentPath = "";
 
-  // The hash is kept so admin links like "/admin#/site" can still be told apart.
   if (pathname != null) {
     currentPath = `${pathname}${typeof window !== "undefined" ? window.location.hash : ""}`;
   } else if (typeof window !== "undefined") {

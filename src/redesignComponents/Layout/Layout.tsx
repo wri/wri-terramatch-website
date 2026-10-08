@@ -66,9 +66,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
                     label: "Sites"
                   },
                   {
-                    href: isAdmin ? "/admin#/nursery" : "/nurseries",
-                    // "/nurseries" redirects to the "/nurserie" route
-                    activePaths: isAdmin ? undefined : ["/nurserie"],
+                    href: isAdmin ? "/admin#/nursery" : "/nurserie",
                     icon: <NurseryIcon boxSize={4} />,
                     label: "Nurseries"
                   },
