@@ -4,6 +4,7 @@ import { FC, useEffect, useMemo, useState } from "react";
 
 import { loadFullProject } from "@/connections/Entity";
 import type { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useIndexAccordionOpen } from "@/hooks/useIndexAccordionOpen";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
@@ -44,7 +45,7 @@ const NurseryProjectSection: FC<NurseryProjectSectionProps> = ({
   embeddedInProject = false
 }) => {
   const t = useT();
-  const [open, setOpen] = useState(defaultOpen);
+  const [open, setOpen] = useIndexAccordionOpen({ defaultOpen, resetKey: openResetKey });
   const [fullProject, setFullProject] = useState<ProjectFullDto | null>(null);
   const [goalReady, setGoalReady] = useState(section.projectUuid == null);
   const nurseries = section.nurseries;
@@ -65,10 +66,6 @@ const NurseryProjectSection: FC<NurseryProjectSectionProps> = ({
   );
   const filteredSeedlings = useMemo(() => sumNurserySeedlingsGrown(visibleNurseries), [visibleNurseries]);
   const selectedSeedlings = useMemo(() => sumNurserySeedlingsGrown(selectedRows), [selectedRows]);
-
-  useEffect(() => {
-    setOpen(defaultOpen);
-  }, [defaultOpen, openResetKey]);
 
   useEffect(() => {
     if (!open || section.nurseriesLoaded !== false || section.projectUuid == null) return;
