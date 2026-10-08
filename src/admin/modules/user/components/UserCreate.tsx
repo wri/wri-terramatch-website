@@ -14,7 +14,6 @@ import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import {
   directFrameworkChoices,
   frameworkAdminPrimaryRoleChoices,
-  frameworkChoices,
   ROLES_SCHEMA,
   userPrimaryRoleChoices
 } from "@/admin/modules/user/const";
@@ -34,7 +33,6 @@ const UserCreate = () => {
     phoneNumber: yup.string().nullable(),
     jobRole: yup.string().nullable(),
     organisationUuid: yup.string().nullable(),
-    program: yup.string().nullable(),
     country: yup.string().nullable()
   };
 
@@ -71,8 +69,6 @@ const UserCreate = () => {
         {isFrameworkAdmin && (
           <SelectArrayInput source="roles" label="Roles" choices={roleChoices} defaultValue={[]} fullWidth />
         )}
-
-        <SelectInput source="program" label="Program" choices={frameworkChoices} fullWidth />
 
         <SelectInput source="country" label="Country" choices={countryChoices} fullWidth />
 

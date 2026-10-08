@@ -14,7 +14,6 @@ import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import {
   directFrameworkChoices,
   frameworkAdminPrimaryRoleChoices,
-  frameworkChoices,
   localeChoices,
   ROLES_SCHEMA,
   userPrimaryRoleChoices
@@ -89,7 +88,6 @@ const UserEdit = () => {
         </ReferenceInput>
 
         {isFrameworkAdmin && <SelectArrayInput source="roles" label="Roles" choices={roleChoices} fullWidth />}
-        <SelectInput source="program" label="Program" choices={frameworkChoices} fullWidth />
         <SelectInput source="country" label="Country" choices={countryChoices} fullWidth />
         <SelectArrayInput
           source="directFrameworks"
