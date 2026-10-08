@@ -81,7 +81,7 @@ const EntityProfileReportsContent: FC<EntityProfileReportsContentProps> = ({ sou
         indexHref=""
         entityProfile
       />
-      <PageContent className={twMerge("bg-theme-neutral-100 h-auto flex-1 px-2 pt-0 pb-8")}>
+      <PageContent className={twMerge("h-auto flex-1 bg-theme-neutral-100 px-2 pt-0 pb-8")}>
         {loading ? (
           <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
             <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
@@ -104,7 +104,7 @@ const EntityProfileReportsContent: FC<EntityProfileReportsContentProps> = ({ sou
             }
           />
         ) : (
-          <div className="bg-theme-neutral-200 space-y-0.5 pt-0.5">
+          <div className="space-y-0.5 bg-theme-neutral-200 pt-0.5">
             {periods.map((period, index) => (
               <ReportingPeriodSection
                 key={period.id}

@@ -115,7 +115,7 @@ const ProjectSitesTabContent: FC<ProjectSitesTabProps> = ({ project }) => {
         onAddSite={handleAddSite}
         onQueryChange={setSearchQuery}
       />
-      <PageContent className={twMerge("bg-theme-neutral-100 h-auto flex-1 px-2 pt-0 pb-8")}>
+      <PageContent className={twMerge("h-auto flex-1 bg-theme-neutral-100 px-2 pt-0 pb-8")}>
         {loading ? (
           <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
             <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
