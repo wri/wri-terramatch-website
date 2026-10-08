@@ -15,6 +15,7 @@ type SideNavigationChildItem = {
   icon: ReactNode;
   label: string;
   href: string;
+  activePaths?: string[];
   notificationValue?: number;
   onAddClick?: () => void;
   MenuItems?: MenuItemOption[];
@@ -29,6 +30,7 @@ interface SideNavigationItemProps {
   onAddClick?: () => void;
   MenuItems?: MenuItemOption[];
   href?: string;
+  activePaths?: string[];
   items?: SideNavigationChildItem[];
   isCollapsed?: boolean;
 }
@@ -53,6 +55,7 @@ const SideNavigationItem: FC<SideNavigationItemProps> = props => {
     onAddClick = undefined,
     MenuItems = [],
     href = "",
+    activePaths,
     items = [],
     isCollapsed = false
   } = props;
@@ -165,6 +168,7 @@ const SideNavigationItem: FC<SideNavigationItemProps> = props => {
                     icon={item.icon}
                     label={item.label}
                     href={item.href ?? ""}
+                    activePaths={item.activePaths}
                     onAddClick={item.onAddClick}
                     MenuItems={item.MenuItems}
                     isCollapsed={isCollapsed}
@@ -185,6 +189,7 @@ const SideNavigationItem: FC<SideNavigationItemProps> = props => {
         icon={icon}
         label={label}
         href={href}
+        activePaths={activePaths}
         onAddClick={onAddClick}
         MenuItems={MenuItems}
         isCollapsed={isCollapsed}

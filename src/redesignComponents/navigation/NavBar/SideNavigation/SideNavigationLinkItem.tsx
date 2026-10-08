@@ -15,6 +15,7 @@ export interface SideNavigationLinkItemProps {
   icon: ReactNode;
   label: string;
   href: string;
+  activePaths?: string[];
   onAddClick?: () => void;
   MenuItems?: MenuItemOption[];
   isCollapsed: boolean;
@@ -23,10 +24,14 @@ export interface SideNavigationLinkItemProps {
 
 const actionButtonClassName = "min-h-0 min-w-0 h-fit";
 
+const isRouteActive = (currentPath: string, route: string) =>
+  currentPath === route || currentPath.startsWith(`${route}/`);
+
 const SideNavigationLinkItem: FC<SideNavigationLinkItemProps> = ({
   icon,
   label,
   href,
+  activePaths,
   onAddClick,
   MenuItems = [],
   isCollapsed,
@@ -37,14 +42,12 @@ const SideNavigationLinkItem: FC<SideNavigationLinkItemProps> = ({
   let currentPath = "";
 
   if (pathname != null) {
-    currentPath = `${pathname}${
-      typeof window !== "undefined" ? `${window.location.search}${window.location.hash}` : ""
-    }`;
+    currentPath = `${pathname}${typeof window !== "undefined" ? window.location.hash : ""}`;
   } else if (typeof window !== "undefined") {
-    currentPath = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    currentPath = `${window.location.pathname}${window.location.hash}`;
   }
 
-  const isActive = currentPath === href;
+  const isActive = (activePaths ?? [href]).some(route => isRouteActive(currentPath, route));
 
   const handleLinkKeyDown = (event: KeyboardEvent<HTMLAnchorElement>) => {
     if (event.key === "Enter") {
