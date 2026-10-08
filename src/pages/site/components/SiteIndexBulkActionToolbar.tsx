@@ -40,6 +40,16 @@ const SiteIndexBulkActionToolbar: FC<SiteIndexBulkActionToolbarProps> = ({
   const canSubmit = selectedCount > 0 && selectedSites.every(isSiteSubmittable);
   const submitTooltip = useMemo(() => getSiteIndexSubmitTooltip(selectedSites, t), [selectedSites, t]);
 
+  const deleteTooltip = useMemo(() => {
+    if (canDelete) return undefined;
+    if (selectedCount === 1) {
+      return t("This profile can't be deleted because it's already submitted or approved");
+    }
+    return t(
+      "One or more selected profiles can't be deleted because only drafts can be deleted. Deselect those to continue"
+    );
+  }, [canDelete, selectedCount, t]);
+
   useEffect(() => {
     setSidebarCollapseDisabled(visible);
     return () => setSidebarCollapseDisabled(false);
@@ -61,7 +71,8 @@ const SiteIndexBulkActionToolbar: FC<SiteIndexBulkActionToolbarProps> = ({
         tone: "danger",
         children: t("Delete"),
         onClick: onDelete,
-        disabled: !canDelete || isUpdating
+        disabled: !canDelete || isUpdating,
+        tooltip: deleteTooltip
       }}
       actions={[
         {
