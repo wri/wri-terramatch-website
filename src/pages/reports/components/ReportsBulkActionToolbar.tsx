@@ -62,16 +62,12 @@ const ReportsBulkActionToolbar: FC<ReportsBulkActionToolbarProps> = ({
         tooltip: nothingToReportDisabled ? nothingToReportDisabledTooltip : undefined,
         onClick: onNothingToReport
       },
-      ...(canEdit
-        ? [
-            {
-              id: "edit",
-              children: t("Edit"),
-              disabled: editDisabled || isUpdating,
-              onClick: onEdit
-            }
-          ]
-        : [])
+      {
+        id: "edit",
+        children: t("Edit"),
+        disabled: !canEdit || editDisabled || isUpdating,
+        onClick: onEdit
+      }
     ];
 
     return nextActions;
