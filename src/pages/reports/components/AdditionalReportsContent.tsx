@@ -1,6 +1,6 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useMemo, useState } from "react";
+import { FC, useMemo } from "react";
 
 import { useIndexAccordionOpen } from "@/hooks/useIndexAccordionOpen";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
@@ -40,12 +40,15 @@ const getGroupLabel = (type: AdditionalReportType, t: ReturnType<typeof useT>) =
 
 const AdditionalReportGroupSection: FC<{
   group: AdditionalReportGroup;
+  defaultOpen: boolean;
+  openResetKey?: string;
+  restoreOpen?: boolean;
   indexHref?: string;
   restoreReportId?: string;
   onRowRestored?: () => void;
-}> = ({ group, indexHref, restoreReportId, onRowRestored }) => {
+}> = ({ group, defaultOpen, openResetKey, restoreOpen, indexHref, restoreReportId, onRowRestored }) => {
   const t = useT();
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useIndexAccordionOpen({ defaultOpen, resetKey: openResetKey, restoreOpen });
 
   return (
     <Accordion
@@ -134,10 +137,13 @@ const AdditionalReportsEntitySection: FC<{
           }
         >
           <div className="space-y-1 bg-theme-neutral-200 pt-0.5">
-            {section.groups.map(group => (
+            {section.groups.map((group, index) => (
               <AdditionalReportGroupSection
                 key={group.id}
                 group={group}
+                defaultOpen={index === 0}
+                openResetKey={openResetKey}
+                restoreOpen={restoreGroupId == null ? undefined : group.id === restoreGroupId}
                 indexHref={indexHref}
                 restoreReportId={group.id === restoreGroupId ? restoreReportId : undefined}
                 onRowRestored={onRowRestored}

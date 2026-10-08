@@ -432,7 +432,7 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
           />
         )}
 
-        <ReportsIndexBulkBar />
+        <ReportsIndexBulkBar indexHref={indexHref} />
       </PageContent>
     </>
   );

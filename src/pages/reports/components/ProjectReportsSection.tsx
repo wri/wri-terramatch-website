@@ -109,9 +109,9 @@ const ProjectReportsSection: FC<ProjectReportsSectionProps> = ({
               key={period.id}
               period={period}
               allPeriodReports={unfilteredPeriods?.find(item => item.id === period.id)?.reports}
-              defaultOpen={
-                restorePeriodId != null ? period.id === restorePeriodId : expandForPeriodFilter || index === 0
-              }
+              defaultOpen={expandForPeriodFilter || index === 0}
+              openResetKey={openResetKey}
+              restoreOpen={restorePeriodId == null ? undefined : period.id === restorePeriodId}
               expandForPeriodFilter={expandForPeriodFilter}
               metricsReady={metricsReady}
               hasReportSubset={hasReportSubset}

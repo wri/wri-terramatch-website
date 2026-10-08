@@ -27,10 +27,11 @@ import Log from "@/utils/log";
 
 import type { ReportIndexItem } from "./reportIndex.types";
 import {
+  getEditDisabledTooltip,
   getNothingToReportDisabledTooltip,
   getSubmitDisabledTooltip,
   groupReportUuidsByEntity,
-  isReportBulkEditable,
+  isReportEditable,
   isReportNothingToReportEligible,
   isReportSubmittable,
   REPORT_INDEX_TYPE_TO_ENTITY
@@ -97,10 +98,11 @@ export const useReportsBulkActions = ({ selectedReports, clearSelection }: UseRe
     [selectedReports]
   );
 
-  const canEdit = selectedReports.length === 1 && isReportBulkEditable(selectedReports[0]);
+  const canEdit = selectedReports.length === 1 && isReportEditable(selectedReports[0]);
   const canSubmit = selectedReports.length > 0 && submittableReports.length === selectedReports.length;
   const canMarkNothingToReport = selectedReports.length > 0 && nothingToReportReports.length === selectedReports.length;
 
+  const editDisabledTooltip = useMemo(() => getEditDisabledTooltip(selectedReports, t), [selectedReports, t]);
   const submitDisabledTooltip = useMemo(() => getSubmitDisabledTooltip(selectedReports, t), [selectedReports, t]);
   const nothingToReportDisabledTooltip = useMemo(
     () => getNothingToReportDisabledTooltip(selectedReports, t),
@@ -212,6 +214,7 @@ export const useReportsBulkActions = ({ selectedReports, clearSelection }: UseRe
     isDownloading,
     isUpdating,
     canEdit,
+    editDisabledTooltip,
     canSubmit,
     canMarkNothingToReport,
     submitDisabledTooltip,

@@ -40,7 +40,6 @@ export const REPORT_INDEX_TYPE_TO_ENTITY = {
 export type ReportsIndexEntity = (typeof REPORT_INDEX_TYPE_TO_ENTITY)[ReportIndexItem["type"]];
 
 const SUBMITTABLE_STATUSES: ReadonlySet<TagSubmissionState> = new Set(["draft", "information-required"]);
-const EDITABLE_STATUSES: ReadonlySet<TagSubmissionState> = new Set(["due", "draft", "information-required"]);
 const SUBMITTED_UPDATE_REQUEST_STATUSES: ReadonlySet<string> = new Set(["pending-approval", "information-required"]);
 
 const NOTHING_TO_REPORT_TYPES: ReadonlySet<ReportIndexItem["type"]> = new Set([
@@ -171,14 +170,6 @@ export const withReportOrigin = (href: string, query: ParsedUrlQuery) => {
   return appendQueryParams(href, params);
 };
 
-export const getReportIndexItemPath = (report: ReportIndexItem) => {
-  if (["approved", "pending-approval"].includes(report.status)) {
-    return `/reports/${report.type}/${report.id}`;
-  }
-
-  return `/entity/${report.type}s/edit/${report.id}`;
-};
-
 type ReportWithStatus = {
   status: string | null;
   updateRequestStatus?: string | null;
@@ -262,8 +253,12 @@ export const getReportStatusCounts = (reports: Array<{ status: TagSubmissionStat
 
 const hasOpenChangeRequestDraft = (report: ReportIndexItem) => report.updateRequestStatus === "draft";
 
-export const isReportBulkEditable = (report: ReportIndexItem) =>
-  report.nothingToReport === true || EDITABLE_STATUSES.has(report.status);
+export const isReportEditable = (report: ReportIndexItem) => report.status !== "pending-approval";
+
+export const getEditDisabledTooltip = (reports: ReportIndexItem[], t: Translate): string | undefined =>
+  reports.length !== 1 || isReportEditable(reports[0])
+    ? undefined
+    : t("This report has already been submitted for review and can’t be edited");
 
 export const isReportCompleteEnoughToSubmit = (report: ReportIndexItem) => {
   if (report.nothingToReport && NOTHING_TO_REPORT_TYPES.has(report.type)) return true;
