@@ -79,7 +79,7 @@ export const useAllPages = <
   useEffect(() => {
     if (pageData == null) return;
     setPagesByNumber(current => (pageNumber === 1 ? { 1: pageData } : { ...current, [pageNumber]: pageData }));
-  }, [pageData, pageNumber]);
+  }, [pageData, pageNumber, stableProps]);
 
   useEffect(() => {
     // Walk forward until the last page has been consumed. Depends on page data rather than only
