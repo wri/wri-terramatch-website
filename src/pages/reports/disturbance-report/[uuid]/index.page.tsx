@@ -9,12 +9,13 @@ import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullDisturbanceReport } from "@/connections/Entity";
 import FrameworkProvider from "@/context/framework.provider";
+import { MapAreaProvider } from "@/context/mapArea.provider";
 import { DisturbanceReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportBreadcrumbs } from "@/hooks/useReportBreadcrumbs";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { getReportsIndexUrl, withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
+import DisturbanceReportBanner from "@/redesignComponents/content/Banner/DisturbanceReportBanner/DisturbanceReportBanner";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
@@ -36,7 +37,7 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
   const t = useT();
   const router = useRouter();
   const disturbanceReportUUID = disturbanceReport.uuid;
-  const currentTab = (router.query.tab as string) ?? "report-data";
+  const currentTab = (router.query.tab as string) ?? "overview";
 
   const headerReportTitle = disturbanceReport.projectName + " - " + disturbanceReport.title;
 
@@ -54,9 +55,15 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
   const tabItems = useMemo<TabItem[]>(
     () => [
       {
-        key: "report-data",
-        title: t("Report Data"),
-        renderBody: () => <DisturbanceReportOverviewTab report={disturbanceReport} />
+        key: "overview",
+        title: t("Overview"),
+        renderBody: () => (
+          <DisturbanceReportOverviewTab
+            report={disturbanceReport}
+            onViewDetails={() => navigateToTab("details")}
+            onViewGallery={() => navigateToTab("gallery")}
+          />
+        )
       },
       {
         key: "details",
@@ -84,12 +91,12 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
         renderBody: () => <AuditLog disturbanceReport={disturbanceReport} />
       }
     ],
-    [disturbanceReport, t]
+    [disturbanceReport, navigateToTab, t]
   );
 
   const visibleTabItems = useMemo(() => {
     if (disturbanceReport.nothingToReport) {
-      return tabItems.filter(item => item.key === "report-data");
+      return tabItems.filter(item => item.key === "overview");
     }
 
     return tabItems;
@@ -104,7 +111,7 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
     [visibleTabItems]
   );
 
-  const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "report-data";
+  const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "overview";
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
   const breadcrumbs = useReportBreadcrumbs(
     { label: t("Disturbance Report"), link: `/reports/disturbance-report/${disturbanceReportUUID}` },
@@ -118,13 +125,11 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
     <>
       <ResponsiveTypography />
       <Head>
-        <title>{disturbanceReport.projectName + " - " + disturbanceReport.title}</title>
+        <title>{headerReportTitle}</title>
       </Head>
-      <ReportBanner
+      <DisturbanceReportBanner
         report={disturbanceReport}
         title={headerReportTitle}
-        dueAt={disturbanceReport.dueAt}
-        entityName="disturbance-report"
         breadcrumbs={breadcrumbs}
         suffix={
           disturbanceReport.projectUuid != null ? (
@@ -132,9 +137,9 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
               variant="borderless"
               size="small"
               className="underline underline-offset-2"
-              onClick={() => router.push(`/project/${disturbanceReport.projectUuid}?tab=sites`)}
+              onClick={() => router.push(`/project/${disturbanceReport.projectUuid}`)}
             >
-              {t("Sites")}
+              {t("Project Profile")}
             </Button>
           ) : null
         }
@@ -175,9 +180,11 @@ const DisturbanceReportDetailPage = () => {
 
   return (
     <FrameworkProvider frameworkKey={disturbanceReport?.frameworkKey}>
-      <LoadingContainer loading={!isLoaded}>
-        {disturbanceReport == null ? null : <DisturbanceReportContent disturbanceReport={disturbanceReport} />}
-      </LoadingContainer>
+      <MapAreaProvider>
+        <LoadingContainer loading={!isLoaded}>
+          {disturbanceReport == null ? null : <DisturbanceReportContent disturbanceReport={disturbanceReport} />}
+        </LoadingContainer>
+      </MapAreaProvider>
     </FrameworkProvider>
   );
 };

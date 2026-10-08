@@ -1,194 +1,167 @@
+import { Box, Flex, Grid } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { FC, useMemo, useState } from "react";
 
-import FinancialDescriptionsSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialDescriptionsSection";
-import FinancialDocumentsSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialDocumentsSection";
-import FinancialExchangeSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialExchangeSection";
-import FundingSourcesSection from "@/admin/components/ResourceTabs/HistoryTab/components/FundingSourcesSection";
-import Text from "@/components/elements/Text/Text";
-import Container from "@/components/generic/Layout/Container";
-import { getCurrencyOptions } from "@/constants/options/localCurrency";
-import { getMonthOptions } from "@/constants/options/months";
-import { FinancialIndicatorDto } from "@/generated/v3/userService/userServiceSchemas";
-import CardFinancial from "@/pages/organization/[id]/components/financial/components/cardFinancial";
+import StatusTag from "@/components/elements/StatusTag/StatusTag";
+import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
+import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
+import { PENDING_APPROVAL } from "@/constants/statuses";
+import { FinancialReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { getEntitySetupButtonLabel } from "@/helpers/entity";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
+import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 import {
-  calculateFinancialRatioStats,
-  formatDescriptionData,
-  formatDocumentData,
-  formatExchangeData
+  getExternalFinanceByYear,
+  getFinancialYearSummaries,
+  NON_PROFIT_ORGANISATION_TYPE
 } from "@/utils/financialReport";
 
-import FinancialBudgetStackedBarChart from "../components/FinancialBudgetStackedBarChart";
-import FinancialCurrentRatioChart from "../components/FinancialCurrentRatioChart";
-import FinancialStackedBarChart from "../components/FinancialStackedBarChart";
+import AboutFinancialReport from "../components/overview/AboutFinancialReport";
+import CurrentRatioChart from "../components/overview/CurrentRatioChart";
+import ExternalFinanceChart from "../components/overview/ExternalFinanceChart";
+import FinancialInsightsEmptyState from "../components/overview/FinancialInsightsEmptyState";
+import NetProfitChart from "../components/overview/NetProfitChart";
+import OperatingBudgetChart from "../components/overview/OperatingBudgetChart";
 
 type FinancialReportOverviewTabProps = {
-  report?: any;
+  report: FinancialReportFullDto;
+  onViewDetails: () => void;
 };
 
-const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps) => {
+const FinancialReportOverviewTab: FC<FinancialReportOverviewTabProps> = ({ report, onViewDetails }) => {
   const t = useT();
+  const [isReportSetupComplete, setIsReportSetupComplete] = useState(false);
+  const editButtonLabel = getEntitySetupButtonLabel(t, report.status, isReportSetupComplete);
+  const isEnterprise = report.organisationType !== NON_PROFIT_ORGANISATION_TYPE;
 
-  if (!report) {
-    return (
-      <Container className="mx-auto rounded-2xl p-8 shadow-all">
-        <Text variant="text-16-light">{t("No financial report data available")}</Text>
-      </Container>
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
+    entityName: "financial-reports",
+    entityUUID: report.uuid,
+    entityStatus: report.status,
+    updateRequestStatus: report.updateRequestStatus,
+    entityTitle: report.organisationName ?? "",
+    reportTitle: report.reportTitle ?? "",
+    feedback: report.feedback,
+    useStatusModal: true,
+    useInformationRequiredModal: true
+  });
+
+  const statusTag = useMemo(() => {
+    if (report.updateRequestStatus === PENDING_APPROVAL) {
+      return <TagSubmission size="small" state="pending-approval" />;
+    }
+
+    return <StatusTag size="small" status={report.status} />;
+  }, [report.status, report.updateRequestStatus]);
+
+  const { summaries, externalFinance, hasInsights } = useMemo(() => {
+    const yearSummaries = getFinancialYearSummaries(report.financialCollection ?? [], report.currency);
+    const externalFinanceByYear = getExternalFinanceByYear(
+      report.fundingTypes ?? [],
+      yearSummaries.map(({ year }) => year)
     );
-  }
-
-  const financialCollection = report?.financialCollection as FinancialIndicatorDto[];
-  const finStartMonth = report?.fin_start_month ?? report?.finStartMonth;
-
-  const financialRatioStats = calculateFinancialRatioStats(financialCollection);
-
-  const hasNetProfitData =
-    Array.isArray(financialCollection) &&
-    financialCollection.some(
-      item =>
-        (item.collection === "revenue" && item.amount) ||
-        (item.collection === "expenses" && item.amount) ||
-        (item.collection === "profit" && item.amount)
+    const hasIndicatorData = yearSummaries.some(summary =>
+      isEnterprise
+        ? summary.revenue != null ||
+          summary.expenses != null ||
+          summary.profit != null ||
+          summary.currentRatio != null ||
+          summary.currentAssets != null ||
+          summary.currentLiabilities != null
+        : summary.budget != null
     );
-  const hasCurrentRatioData =
-    Array.isArray(financialCollection) &&
-    financialCollection.some(item => item.collection === "current-ratio" && item.amount);
-  const hasBudgetData =
-    Array.isArray(financialCollection) && financialCollection.some(item => item.collection === "budget" && item.amount);
+
+    return {
+      summaries: yearSummaries,
+      externalFinance: externalFinanceByYear,
+      hasInsights: hasIndicatorData || externalFinanceByYear.some(({ amount }) => amount != null)
+    };
+  }, [isEnterprise, report.currency, report.financialCollection, report.fundingTypes]);
+
+  // Enterprise reports have a taller insights column, so the About section moves into the sidebar.
+  const showAboutInSidebar = hasInsights && isEnterprise;
 
   return (
-    <Container className="mx-0 flex max-w-full flex-col gap-14 px-0 pb-15">
-      <Container className="max-w-full bg-neutral-50 px-0 py-16">
-        <Container className="mx-auto grid grid-cols-1 gap-6">
-          <div className="flex flex-col gap-4 rounded-lg bg-white p-8 text-center shadow-all">
-            <Text variant="text-22-bold" className="mb-2">
-              {t("Basic Info")}
-            </Text>
-            <div className="flex flex-col gap-1">
-              <Text variant="text-16-light">{t("Local Currency")}</Text>
-              <Text variant="text-18-bold">
-                {report?.currency
-                  ? getCurrencyOptions(t).find(opt => opt.value == report?.currency)?.title
-                  : "Not Provided"}
-              </Text>
-            </div>
-            <div className="flex flex-col gap-1">
-              <Text variant="text-16-light">{t("Financial Year Start Month")}</Text>
-              <Text variant="text-18-bold">
-                {finStartMonth ? getMonthOptions(t).find(opt => opt.value == finStartMonth)?.title : "Not Provided"}
-              </Text>
-            </div>
-          </div>
-        </Container>
-      </Container>
-
-      {hasNetProfitData && (
-        <Container className="mx-auto rounded-2xl p-8 shadow-all">
-          <Text variant="text-24-bold" className="mb-2">
-            {t("Net Profit By Year")}
-          </Text>
-          <div className="grid grid-cols-2 gap-6">
-            <div className="flex flex-col gap-6">
-              <FinancialStackedBarChart data={financialCollection} currency={report?.currency} />
-            </div>
-            <div className="grid grid-cols-3 gap-x-4 gap-y-4">
-              {financialCollection
-                .filter((item: FinancialIndicatorDto) => item.collection === "profit")
-                .map((item: FinancialIndicatorDto) => (
-                  <CardFinancial
-                    key={item.entityUuid}
-                    title={t(item?.year?.toString())}
-                    data={item.amount && item.amount > 0 ? `+${item.amount}` : item.amount ? `-${item.amount}` : "0"}
-                    description={t("Net Profit")}
-                    currency={report?.currency}
-                  />
-                ))}
-            </div>
-          </div>
-        </Container>
-      )}
-
-      {hasCurrentRatioData && (
-        <Container className="mx-auto rounded-2xl p-8 shadow-all">
-          <div className="grid grid-cols-2 gap-6">
-            <div className="flex flex-col gap-6">
-              <Text variant="text-24-bold" className="mb-2">
-                {t("Current Ratio by Year")}
-              </Text>
-              <FinancialCurrentRatioChart data={financialCollection} currency={report?.currency} />
-            </div>
-            <div className="flex h-full flex-col justify-center">
-              <div className="grid h-fit grid-cols-3 gap-x-4 gap-y-4">
-                <CardFinancial
-                  title={t("Latest Ratio")}
-                  data={financialRatioStats?.latestRatio?.toString()}
-                  description={financialRatioStats?.latestYear?.toString()}
-                  currency={""}
+    <PageContent>
+      {EditModals}
+      <Flex gap={7} direction="column" width="100%">
+        <Flex gap={7} direction={{ base: "column", lg: "row" }} alignItems={{ lg: "flex-start" }}>
+          <PageItem
+            title={hasInsights ? t("Financial Insights") : t("Key Indicators & Insights")}
+            flexProps={{ flex: 2, minWidth: 0, width: "100%" }}
+            buttonProps={
+              hasInsights
+                ? {
+                    variant: "secondary",
+                    size: "small",
+                    children: t("View Report Details"),
+                    rightIcon: <ChevronRightIcon />,
+                    onClick: onViewDetails
+                  }
+                : undefined
+            }
+          >
+            {hasInsights ? (
+              <Grid templateColumns={{ base: "minmax(0, 1fr)", md: "repeat(2, minmax(0, 1fr))" }} gap={5}>
+                {isEnterprise ? (
+                  <>
+                    <NetProfitChart summaries={summaries} />
+                    <CurrentRatioChart summaries={summaries} />
+                    <Box gridColumn="1 / -1" minWidth={0}>
+                      <ExternalFinanceChart data={externalFinance} />
+                    </Box>
+                  </>
+                ) : (
+                  <>
+                    <OperatingBudgetChart summaries={summaries} />
+                    <ExternalFinanceChart data={externalFinance} />
+                  </>
+                )}
+              </Grid>
+            ) : (
+              <FinancialInsightsEmptyState />
+            )}
+          </PageItem>
+          <Flex direction="column" gap={7} flex={1} minWidth={0} width="100%">
+            <PageItem
+              title={t("Financial Report")}
+              flexProps={{ minWidth: 0, width: "100%", flex: "none" }}
+              buttonProps={{
+                variant: "primary",
+                size: "small",
+                children: editButtonLabel,
+                rightIcon: <ChevronRightIcon />,
+                onClick: () => handleEdit()
+              }}
+              tag={statusTag}
+            >
+              <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
+                <EntitySetUpSection
+                  onStatusChange={setIsReportSetupComplete}
+                  onEditStep={handleEdit}
+                  entity={report}
+                  type="financialReports"
+                  entityTitle={report.organisationName ?? ""}
+                  reportTitle={report.reportTitle ?? ""}
                 />
-                <CardFinancial
-                  title={t(`${financialRatioStats.yearCount}-Year Average`)}
-                  data={financialRatioStats?.averageRatio?.toString()}
-                  description={financialRatioStats?.yearRange}
-                  currency={""}
-                />
-              </div>
-            </div>
-          </div>
-        </Container>
-      )}
-
-      {hasBudgetData && (
-        <Container className="mx-auto rounded-2xl p-8 shadow-all">
-          <Text variant="text-24-bold" className="mb-2">
-            {t("Budget By Year")}
-          </Text>
-          <div className="grid grid-cols-2 gap-6">
-            <div className="flex flex-col gap-6">
-              <FinancialBudgetStackedBarChart data={financialCollection} currency={report?.currency} />
-            </div>
-            <div className="grid grid-cols-3 gap-x-4 gap-y-4">
-              {financialCollection
-                .filter((item: FinancialIndicatorDto) => item.collection === "budget")
-                .map((item: FinancialIndicatorDto) => (
-                  <CardFinancial
-                    key={item.entityUuid}
-                    title={t(item.year.toString())}
-                    data={item.amount && item.amount > 0 ? `+${item.amount}` : item.amount ? `-${item.amount}` : "0"}
-                    description={t("Budget")}
-                    currency={report?.currency}
-                  />
-                ))}
-            </div>
-          </div>
-        </Container>
-      )}
-
-      <Container className="mx-auto grid grid-cols-2 gap-6">
-        <div className="flex flex-col gap-4 rounded-lg bg-white p-8 shadow-all">
-          <Text variant="text-24-bold" className="mb-2">
-            {t("Financial Documents per Year")}
-          </Text>
-          <FinancialDocumentsSection files={formatDocumentData(financialCollection)} />
-        </div>
-        <div className="flex flex-col gap-4 rounded-lg bg-white p-8 shadow-all">
-          <Text variant="text-24-bold" className="mb-2">
-            {t("Descriptions of Financials per Year")}
-          </Text>
-          <FinancialDescriptionsSection items={formatDescriptionData(financialCollection)} />
-        </div>
-        <div className="flex flex-col gap-4 rounded-lg bg-white p-8 shadow-all">
-          <Text variant="text-24-bold" className="mb-2">
-            {t("Exchange Rate by Year")}
-          </Text>
-          <FinancialExchangeSection items={formatExchangeData(financialCollection)} />
-        </div>
-      </Container>
-      <Container className="mx-auto rounded-2xl p-8 shadow-all">
-        <Text variant="text-24-bold" className="mb-2">
-          {t("Major Funding Sources by Year")}
-        </Text>
-        <FundingSourcesSection data={report?.funding_types ?? report?.fundingTypes} currency={report?.currency} />
-      </Container>
-    </Container>
+              </Box>
+            </PageItem>
+            {showAboutInSidebar && (
+              <PageItem title={t("About Financial Report")} flexProps={{ flex: "none", width: "100%" }}>
+                <AboutFinancialReport layout="stacked" isEnterprise={isEnterprise} />
+              </PageItem>
+            )}
+          </Flex>
+        </Flex>
+        {!showAboutInSidebar && (
+          <PageItem title={t("About Financial Report")} flexProps={{ width: "100%" }}>
+            <AboutFinancialReport layout="split" isEnterprise={isEnterprise} />
+          </PageItem>
+        )}
+      </Flex>
+    </PageContent>
   );
 };
 

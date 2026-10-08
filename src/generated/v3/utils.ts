@@ -260,8 +260,18 @@ export class V3ApiEndpoint<
 
       // avoid importing the FileDownloadDto due to circular dependency
       const downloadUrl = data.attributes.url as string;
-      const fileName = downloadUrl.split("/").pop();
-      downloadFileUrl(downloadUrl, fileName ?? defaultFileName);
+      const fileName = downloadUrl.split("/").pop() ?? defaultFileName;
+      // Fetching the file and saving it as a local blob (the same way polygon downloads work) means
+      // the caller's promise only resolves once the file is in hand, and avoids Safari's "allow
+      // downloads" prompt for a cross-origin link clicked outside a user gesture.
+      try {
+        const fileResponse = await fetch(downloadUrl);
+        if (!fileResponse.ok) throw new Error(`File download failed with status ${fileResponse.status}`);
+        await downloadFileBlob(await fileResponse.blob(), fileName);
+      } catch (error) {
+        Log.warn("Unable to fetch file download as blob, falling back to direct link", error);
+        downloadFileUrl(downloadUrl, fileName);
+      }
       return;
     }
 
