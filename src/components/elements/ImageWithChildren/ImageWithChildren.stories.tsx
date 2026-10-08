@@ -18,7 +18,7 @@ type Story = StoryObj<typeof Component>;
 export const Primary: Story = {
   render: (args: Props) => <Component {...args} />,
   args: {
-    imageSrc: TreesHeaderImage,
+    imageSrc: TreesHeaderImage.src,
     className: "h-[203px] w-full",
     children: (
       <div className="m-auto flex h-full w-full max-w-7xl flex-col items-start justify-between p-10 text-white">
