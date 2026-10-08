@@ -88,7 +88,8 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
           id: member.uuid,
           roleName: member.roleName ?? "",
           //TODO: replace with actual image once it is implemented
-          status: member?.status == "active" || member?.isManager ? "Accepted" : "Pending"
+          // Every listed user is already a project member; pending invites live in v2_project_invites.
+          status: "Accepted"
         })) ?? [];
 
     const q = searchQuery.trim().toLowerCase();

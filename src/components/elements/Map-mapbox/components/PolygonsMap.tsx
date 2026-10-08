@@ -6,11 +6,11 @@ import type { FC } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { type MapDrawSaveHandler, useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
+import { useEntityMapMedia } from "@/components/elements/Map-mapbox/hooks/useEntityMapMedia";
 import { CrossSiteOverlapPolygon, OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import type { PolygonEntityScope, PolygonFromMapState } from "@/components/elements/Map-mapbox/Map.d";
 import { resolveMapExtentBbox, useBoundingBox } from "@/connections/BoundingBox";
-import { SupportedEntity, useAllMedias } from "@/connections/EntityAssociation";
 import { DELETED_AUDIT_POLYGONS } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
@@ -80,13 +80,10 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   const {
     editPolygon,
     shouldRefetchPolygonData,
-    shouldRefetchMediaData,
     setSelectedPolygonsInCheckbox,
-    setMediaFiles,
     shouldRefetchValidation,
     setShouldRefetchValidation,
     setShouldRefetchPolygonData,
-    setShouldRefetchMediaData,
     polygonData: sitePolygonDataV3
   } = useMapAreaContext();
 
@@ -107,24 +104,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
 
   const mapFunctions = useBaseMap(onSave, undefined, { deferDrawCreateSave: true });
 
-  const [, { data: mediaFiles, refetch: refetchMediaFiles }] = useAllMedias({
-    entity: type as SupportedEntity,
-    uuid: entityModel.uuid,
-    filter: {
-      isGeotagged: true
-    }
-  });
-
-  useEffect(() => {
-    setMediaFiles(mediaFiles ?? []);
-  }, [mediaFiles, setMediaFiles]);
-
-  useValueChanged(shouldRefetchMediaData, () => {
-    if (shouldRefetchMediaData) {
-      refetchMediaFiles?.();
-      setShouldRefetchMediaData(false);
-    }
-  });
+  const mediaFiles = useEntityMapMedia({ entity: type, uuid: entityModel.uuid });
 
   const hasPolygons = polygons.length > 0;
 

@@ -546,7 +546,7 @@ export type OrganisationCreationResponse = {
          */
         id?: string;
         meta?: {
-          userStatus?: "approved" | "requested" | "rejected" | "na";
+          userStatus?: "pending" | "approved" | "rejected" | "na";
         };
       };
     };
@@ -1124,7 +1124,7 @@ export type UserCreationResponse = {
          */
         id?: string;
         meta?: {
-          userStatus?: "approved" | "requested" | "rejected" | "na";
+          userStatus?: "pending" | "approved" | "rejected" | "na";
         };
       };
     };
@@ -1220,7 +1220,7 @@ export type UsersFindResponse = {
          */
         id?: string;
         meta?: {
-          userStatus?: "approved" | "requested" | "rejected" | "na";
+          userStatus?: "pending" | "approved" | "rejected" | "na";
         };
       };
     };
@@ -1327,7 +1327,7 @@ export type UserUpdateResponse = {
          */
         id?: string;
         meta?: {
-          userStatus?: "approved" | "requested" | "rejected" | "na";
+          userStatus?: "pending" | "approved" | "rejected" | "na";
         };
       };
     };
@@ -1480,7 +1480,7 @@ export type UserVerifyResponse = {
          */
         id?: string;
         meta?: {
-          userStatus?: "approved" | "requested" | "rejected" | "na";
+          userStatus?: "pending" | "approved" | "rejected" | "na";
         };
       };
     };
@@ -1575,9 +1575,9 @@ export type GetUserAssociationQueryParams = {
    */
   isManager?: boolean;
   /**
-   * Filter by association status (for organisations: 'requested', 'approved', 'rejected')
+   * Filter by association status (organisations only)
    */
-  status?: "requested" | "approved" | "rejected";
+  status?: "pending" | "approved" | "rejected";
 };
 
 export type GetUserAssociationError = Fetcher.ErrorWrapper<{

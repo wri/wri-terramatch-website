@@ -17,7 +17,7 @@ const PolygonSubmissionAnnouncement: FC = () => {
     modalId: ModalId.POLYGON_SUBMISSION_ANNOUNCEMENT,
     renderModal: ({ onSkip, onPrimaryAction, onDontShowAgain }) => (
       <AnnouncementModal
-        bannerImage={WelcomeBanner}
+        bannerImage={WelcomeBanner.src}
         title={t("A new polygon submission experience is here")}
         body={t(
           `We have redesigned the polygon submission interface to give you more tools to manage your data. You can now view and edit polygon attributes in a dedicated table, filter and search your polygon list, submit and run validations in bulk, and much more. <a href="{polygonSubmissionTutorialsLink}" target="_blank" rel="noopener noreferrer">Visit our tutorials page</a> to learn how to make the most of the new experience.<br><br>If you have any questions about your current polygon submission or have any bugs to report, please reach out to <a href="mailto:info@terramatch.org">info@terramatch.org</a>`,

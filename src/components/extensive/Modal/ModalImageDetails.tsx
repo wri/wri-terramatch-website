@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 import { LngLat } from "mapbox-gl";
-import Image from "next/image";
 import React, { FC, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
@@ -300,7 +299,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
           />
           {activeIndex === 0 ? (
             thumbUrl && (
-              <Image
+              <img
                 src={thumbUrl}
                 alt={t("Image")}
                 height={400}
