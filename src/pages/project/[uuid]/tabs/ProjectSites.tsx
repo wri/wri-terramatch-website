@@ -161,7 +161,6 @@ const ProjectSitesTabContent: FC<ProjectSitesTabProps> = ({ project }) => {
             defaultOpen
             openResetKey={`${project.uuid}:${debouncedSearch}:${statusFilters.join(",")}:${updateFilter ?? ""}`}
             onProjectOpened={onProjectOpened}
-            onSitesChanged={handleSitesChanged}
           />
         )}
         <SiteIndexBulkBar onSitesChanged={handleSitesChanged} />

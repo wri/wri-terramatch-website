@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo, useState } from "react";
 
 import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
-import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullProject } from "@/connections/Entity";
@@ -164,7 +163,6 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         }}
       />
       <div className="flex w-full min-w-0 flex-1 flex-col">{tabItems.find(item => item.key === activeTab)?.body}</div>
-      <PageFooter />
     </>
   );
 };
