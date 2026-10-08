@@ -65,7 +65,7 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
       },
       {
         key: "audit-log",
-        title: t("Audit Log"),
+        title: t("History"),
         renderBody: () => <AuditLog srpReport={srpReport} />
       }
     ],
@@ -146,6 +146,19 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
                 onClick={() => router.push(`/project/${srpReport.projectUuid}`)}
               >
                 {t("Project Profile")}
+              </Button>
+              <span className="text-theme-neutral-300 text-sm">|</span>
+              <Button
+                variant="borderless"
+                size="small"
+                className="underline underline-offset-2"
+                onClick={() => {
+                  router.push(`/reports/project-report/${srpReport.projectReportUuid}`, undefined, {
+                    shallow: true
+                  });
+                }}
+              >
+                {t("Project Report")}
               </Button>
             </div>
           )

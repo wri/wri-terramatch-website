@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useEffect, useMemo } from "react";
 
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
-import { getFormHeaderLabel, getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
+import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullFinancialReport } from "@/connections/Entity";
 import FrameworkProvider, { toFramework } from "@/context/framework.provider";
@@ -14,7 +14,7 @@ import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
-import { OrganizationIcon } from "@/redesignComponents/foundations/Icons";
+import { DocumentIcon } from "@/redesignComponents/foundations/Icons";
 import ApiSlice from "@/store/apiSlice";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
@@ -38,12 +38,15 @@ const FinancialReportContent: FC<FinancialReportContentProps> = ({ financialRepo
   const t = useT();
   const router = useRouter();
   const financialReportUUID = financialReport.uuid;
-  const currentTab = (router.query.tab as string) ?? "report-data";
+  const currentTab = (router.query.tab as string) ?? "overview";
 
   const window = useReportingWindow(toFramework(financialReport.frameworkKey), financialReport?.dueAt!);
   const taskTitle = t("Reporting Task {window}", { window });
 
-  const headerReportTitle = getFormHeaderLabel(financialReport.organisationName ?? "", taskTitle);
+  // Champions don't name financial reports, so the title is fixed to the reporting year.
+  const headerReportTitle = t("Financial Report - {year}", {
+    year: financialReport.yearOfReport ?? getShortPeriodLabel(taskTitle, true)
+  });
 
   const navigateToTab = useCallback(
     (tab: string) => {
@@ -55,9 +58,11 @@ const FinancialReportContent: FC<FinancialReportContentProps> = ({ financialRepo
   const tabItems = useMemo<TabItem[]>(
     () => [
       {
-        key: "report-data",
-        title: t("Report Data"),
-        renderBody: () => <FinancialReportOverviewTab report={financialReport} />
+        key: "overview",
+        title: t("Overview"),
+        renderBody: () => (
+          <FinancialReportOverviewTab report={financialReport} onViewDetails={() => navigateToTab("details")} />
+        )
       },
       {
         key: "details",
@@ -70,28 +75,20 @@ const FinancialReportContent: FC<FinancialReportContentProps> = ({ financialRepo
         renderBody: () => <AuditLog financialReport={financialReport} />
       }
     ],
-    [financialReport, t]
+    [financialReport, navigateToTab, t]
   );
-
-  const visibleTabItems = useMemo(() => {
-    if (financialReport.nothingToReport) {
-      return tabItems.filter(item => item.key === "report-data");
-    }
-
-    return tabItems;
-  }, [financialReport.nothingToReport, tabItems]);
 
   const tabBarTabs = useMemo(
     () =>
-      visibleTabItems.map(item => ({
+      tabItems.map(item => ({
         value: item.key,
         label: item.title
       })),
-    [visibleTabItems]
+    [tabItems]
   );
 
-  const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "report-data";
-  const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
+  const activeTab = tabItems.some(item => item.key === currentTab) ? currentTab : "overview";
+  const activeTabItem = tabItems.find(item => item.key === activeTab) ?? tabItems[0];
 
   return (
     <>
@@ -106,16 +103,12 @@ const FinancialReportContent: FC<FinancialReportContentProps> = ({ financialRepo
         entityName="financial-report"
         breadcrumbs={[
           {
-            label: t("Organization - {organisationName}", { organisationName: financialReport.organisationName }),
+            label: t("Reports"),
             link: `/organization/${financialReport.organisationUuid}?tab=financial_information`,
-            icon: <OrganizationIcon className="!text-theme-primary-900" />
+            icon: <DocumentIcon className="!text-theme-primary-900" />
           },
           {
-            label: t("Financial Reports"),
-            link: `/organization/${financialReport.organisationUuid}?tab=financial_information`
-          },
-          {
-            label: t("Financial Report - {period}", { period: getShortPeriodLabel(taskTitle ?? "", true) }),
+            label: headerReportTitle,
             link: `/reports/financial-report/${financialReportUUID}`
           }
         ]}
@@ -131,7 +124,7 @@ const FinancialReportContent: FC<FinancialReportContentProps> = ({ financialRepo
             </Button>
             {financialReport.organisationUuid != null && (
               <>
-                <span className="text-sm text-theme-neutral-300">|</span>
+                <span className="text-theme-neutral-300 text-sm">|</span>
                 <Button
                   variant="borderless"
                   size="small"
