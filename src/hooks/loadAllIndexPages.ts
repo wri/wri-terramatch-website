@@ -14,9 +14,10 @@ export const loadAllIndexPages = async <T>(
   const items = [...(firstPage.data ?? [])];
   const total = firstPage.indexTotal ?? items.length;
   const lastPage = Math.max(1, Math.ceil(total / pageSize));
+  const remainingPageNumbers = Array.from({ length: lastPage - 1 }, (_, index) => index + 2);
 
-  for (let pageNumber = 2; pageNumber <= lastPage; pageNumber++) {
-    const page = await loadPage(pageNumber);
+  const remainingPages = await Promise.all(remainingPageNumbers.map(pageNumber => loadPage(pageNumber)));
+  for (const page of remainingPages) {
     if (page.loadFailure != null) throw page.loadFailure;
     items.push(...(page.data ?? []));
   }
