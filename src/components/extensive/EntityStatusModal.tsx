@@ -42,10 +42,14 @@ const EntityStatusModal: FC<EntityStatusModalProps> = ({
   const handleClose = () => onOpenChange(false);
   const handleProvideFeedback = () => {
     const targetStepId = formStepId ?? "summary";
+    const origin = typeof router.query.origin === "string" ? router.query.origin : undefined;
+    const originParam = origin ? `&origin=${encodeURIComponent(origin)}` : "";
 
     handleClose();
     router.push(
-      `/entity/${kebabCase(entityName)}/edit/${entityUuid}?${STEP_QUERY_PARAM}=${encodeURIComponent(targetStepId)}`
+      `/entity/${kebabCase(entityName)}/edit/${entityUuid}?${STEP_QUERY_PARAM}=${encodeURIComponent(
+        targetStepId
+      )}${originParam}`
     );
   };
 

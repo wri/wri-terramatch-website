@@ -71,7 +71,7 @@ const ProjectCard: FC<ProjectCardProps> = ({ project, title, children, className
               </>
             ) : (
               <>
-                <Button as={Link} variant="secondary" href={`/project/${project.uuid}?tab=reporting-tasks`}>
+                <Button as={Link} variant="secondary" href={`/project/${project.uuid}?tab=reports`}>
                   {t("View reporting tasks")}
                 </Button>
                 <Button as={Link} href={`/project/${project.uuid}`}>

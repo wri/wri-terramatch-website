@@ -45,25 +45,7 @@ export const getNavbarItems = (t: typeof useT, myOrg?: MyOrganisationConnection)
         visibility
       },
       {
-        title: t("Opportunities"),
-        url: "/opportunities",
-        visibility,
-        tourTarget: tourSelectors.OPPORTUNITIES
-      },
-      {
-        title: t("My projects"),
-        url: "/my-projects",
-        visibility,
-        tourTarget: tourSelectors.PROJECTS
-      },
-      {
-        title: t("My Organization"),
-        url: myOrg?.organisationId ? `/organization/${myOrg?.organisationId}` : "/",
-        visibility,
-        tourTarget: tourSelectors.ORGANIZATION
-      },
-      {
-        title: t("Help Center"),
+        title: t("Help"),
         url: zendeskSupportLink,
         visibility: true,
         tourTarget: tourSelectors.HELP

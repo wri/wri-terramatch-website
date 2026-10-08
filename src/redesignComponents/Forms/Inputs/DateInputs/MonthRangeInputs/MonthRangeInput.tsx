@@ -171,7 +171,7 @@ export const MonthRangeInput: FC<MonthRangeInputProps> = ({
           >
             <CalendarIcon style={{ color: getThemedColor("neutral", 600) }} />
             <div className="flex justify-center">
-              <DatePicker.Input index={0} placeholder="MM/YYYY" onKeyDown={handleInputKeyDown} />
+              <DatePicker.Input index={0} placeholder="MMM YYYY" onKeyDown={handleInputKeyDown} />
             </div>
 
             <span
@@ -183,7 +183,7 @@ export const MonthRangeInput: FC<MonthRangeInputProps> = ({
             </span>
 
             <div className="flex justify-center">
-              <DatePicker.Input index={1} placeholder="MM/YYYY" onKeyDown={handleInputKeyDown} />
+              <DatePicker.Input index={1} placeholder="MMM YYYY" onKeyDown={handleInputKeyDown} />
             </div>
           </DatePicker.Control>
           <Portal>

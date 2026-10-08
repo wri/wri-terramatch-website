@@ -10,11 +10,11 @@ import { useFullFinancialReport } from "@/connections/Entity";
 import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { FinancialReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useReportBreadcrumbs } from "@/hooks/useReportBreadcrumbs";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
-import { DocumentIcon } from "@/redesignComponents/foundations/Icons";
 import ApiSlice from "@/store/apiSlice";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
@@ -50,7 +50,14 @@ const FinancialReportContent: FC<FinancialReportContentProps> = ({ financialRepo
 
   const navigateToTab = useCallback(
     (tab: string) => {
-      router.push(`/reports/financial-report/${financialReportUUID}?tab=${tab}`, undefined, { shallow: true });
+      void router.push(
+        {
+          pathname: `/reports/financial-report/${financialReportUUID}`,
+          query: { ...router.query, tab }
+        },
+        undefined,
+        { shallow: true }
+      );
     },
     [router, financialReportUUID]
   );
@@ -101,17 +108,7 @@ const FinancialReportContent: FC<FinancialReportContentProps> = ({ financialRepo
         title={headerReportTitle}
         dueAt={taskDueAt ?? financialReport.dueAt}
         entityName="financial-report"
-        breadcrumbs={[
-          {
-            label: t("Reports"),
-            link: `/organization/${financialReport.organisationUuid}?tab=financial_information`,
-            icon: <DocumentIcon className="!text-theme-primary-900" />
-          },
-          {
-            label: headerReportTitle,
-            link: `/reports/financial-report/${financialReportUUID}`
-          }
-        ]}
+        breadcrumbs={breadcrumbs}
         suffix={
           <div className="flex items-center gap-1.5">
             <Button

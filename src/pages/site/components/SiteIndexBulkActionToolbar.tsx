@@ -1,0 +1,111 @@
+import { useT } from "@transifex/react";
+import { type FC, useEffect, useMemo } from "react";
+
+import { useLayoutShell } from "@/redesignComponents/Layout/LayoutShell.provider";
+import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
+import ToolbarInfoTooltipContent from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
+
+import type { SiteIndexSite } from "./siteIndex.types";
+import { getSiteIndexSubmitTooltip, isSiteSubmittable } from "./siteIndexSubmit";
+
+interface SiteIndexBulkActionToolbarProps {
+  selectedSites: SiteIndexSite[];
+  isDownloading?: boolean;
+  isUpdating?: boolean;
+  canEdit?: boolean;
+  canDelete?: boolean;
+  onCancel: () => void;
+  onDelete: () => void;
+  onDownload: () => void;
+  onEdit: () => void;
+  onSubmit: () => void;
+}
+
+const SiteIndexBulkActionToolbar: FC<SiteIndexBulkActionToolbarProps> = ({
+  selectedSites,
+  isDownloading = false,
+  isUpdating = false,
+  canEdit = false,
+  canDelete = false,
+  onCancel,
+  onDelete,
+  onDownload,
+  onEdit,
+  onSubmit
+}) => {
+  const t = useT();
+  const { setSidebarCollapseDisabled } = useLayoutShell();
+  const selectedCount = selectedSites.length;
+  const visible = selectedCount > 0;
+  const canSubmit = selectedCount > 0 && selectedSites.every(isSiteSubmittable);
+  const submitTooltip = useMemo(() => getSiteIndexSubmitTooltip(selectedSites, t), [selectedSites, t]);
+
+  const deleteTooltip = useMemo(() => {
+    if (canDelete) return undefined;
+    if (selectedCount === 1) {
+      return t("This profile can't be deleted because it's already submitted or approved");
+    }
+    return t(
+      "One or more selected profiles can't be deleted because only drafts can be deleted. Deselect those to continue"
+    );
+  }, [canDelete, selectedCount, t]);
+
+  useEffect(() => {
+    setSidebarCollapseDisabled(visible);
+    return () => setSidebarCollapseDisabled(false);
+  }, [setSidebarCollapseDisabled, visible]);
+
+  if (!visible) return null;
+
+  return (
+    <BulkActionToolbar
+      selectedCount={selectedCount}
+      cancelAction={{
+        children: t("Cancel"),
+        onClick: onCancel,
+        disabled: isUpdating
+      }}
+      deleteAction={{
+        id: "delete",
+        variant: "negative",
+        tone: "danger",
+        children: t("Delete"),
+        onClick: onDelete,
+        disabled: !canDelete || isUpdating,
+        tooltip: deleteTooltip
+      }}
+      actions={[
+        {
+          id: "download",
+          children: t("Download"),
+          disabled: isDownloading || isUpdating,
+          onClick: onDownload
+        },
+        ...(canEdit
+          ? [
+              {
+                id: "edit",
+                children: t("Edit"),
+                onClick: onEdit,
+                disabled: isUpdating
+              }
+            ]
+          : [])
+      ]}
+      primaryAction={{
+        children: t("Submit"),
+        disabled: !canSubmit || isUpdating,
+        onClick: onSubmit
+      }}
+      infoTooltip={
+        submitTooltip == null ? undefined : Array.isArray(submitTooltip) ? (
+          <ToolbarInfoTooltipContent lines={submitTooltip} />
+        ) : (
+          submitTooltip
+        )
+      }
+    />
+  );
+};
+
+export default SiteIndexBulkActionToolbar;

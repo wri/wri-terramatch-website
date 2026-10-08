@@ -1,22 +1,21 @@
+import { Flex, Text } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
 import { useCallback } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import Button from "@/components/elements/Button/Button";
-import Input from "@/components/elements/Inputs/Input/Input";
-import Text from "@/components/elements/Text/Text";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { ModalBase } from "@/components/extensive/Modal/ModalsBases";
-import InlineLoader from "@/components/generic/Loading/InlineLoader";
 import { useInviteOrganisationUser } from "@/connections/UserAssociation";
-import { useModalContext } from "@/context/modal.provider";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
-
+import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
+import Modal from "@/redesignComponents/containers/Modal/Modal";
+import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
+import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 interface InviteTeamMemberModalProps {
   organisationUUID: string;
+  open: boolean;
+  onClose: () => void;
   onSuccess?: () => void;
 }
 
@@ -26,12 +25,11 @@ const schema = yup.object({
 
 type FormValues = yup.InferType<typeof schema>;
 
-const InviteTeamMemberModal = ({ organisationUUID, onSuccess }: InviteTeamMemberModalProps) => {
+const InviteTeamMemberModal = ({ organisationUUID, open, onClose, onSuccess }: InviteTeamMemberModalProps) => {
   const t = useT();
-  const { closeModal } = useModalContext();
 
   const {
-    register,
+    control,
     formState: { errors },
     setError,
     reset,
@@ -43,9 +41,9 @@ const InviteTeamMemberModal = ({ organisationUUID, onSuccess }: InviteTeamMember
   });
 
   const hideModal = useCallback(() => {
-    closeModal(ModalId.INVITE_MONITORING_PARTNER_MODAL);
+    onClose();
     reset();
-  }, [closeModal, reset]);
+  }, [onClose, reset]);
 
   useRequestComplete(
     isLoading,
@@ -83,33 +81,57 @@ const InviteTeamMemberModal = ({ organisationUUID, onSuccess }: InviteTeamMember
   };
 
   return (
-    <ModalBase>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex w-full flex-col gap-8">
-        <Text variant="text-bold-headline-1000" className="text-center uppercase">
-          {t("Invite Team Member")}
-        </Text>
-        <Text variant="text-light-body-300" className="mt-2 text-center" containHtml>
-          {t(
-            "Here, you can invite someone to create a TerraMatch account as member of your organization. This will allow them to access all your applications and project pitches."
-          )}
-        </Text>
-        <Input
-          {...register("email", { required: true })}
-          label={t("Email Address")}
-          type="email"
-          error={errors.email}
+    <Modal
+      open={open}
+      onClose={hideModal}
+      header={<b className="text-theme-neutral-800">{t("Invite Monitoring Partner")}</b>}
+      content={
+        <Flex className="flex-col gap-3">
+          <Text textStyle="300" color="neutral.800" lineHeight="20px">
+            {t(
+              "Enter an email address to invite a new user to create a TerraMatch account and join your organization."
+            )}
+          </Text>
+          <InlineMessage
+            label={t(
+              "This user will receive an email with a link to create a TerraMatch account and join your organization."
+            )}
+            variant="warning"
+            size="small"
+          />
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <TextInput
+                {...field}
+                label={t("Email Address")}
+                type="email"
+                errorMessage={errors.email?.message}
+                required
+              />
+            )}
+          />
+        </Flex>
+      }
+      footer={
+        <ButtonGroup
+          buttons={[
+            {
+              id: "cancel",
+              variant: "borderless",
+              children: t("Cancel"),
+              onClick: hideModal
+            },
+            {
+              id: "send",
+              children: t("Send Invite"),
+              onClick: handleSubmit(onSubmit)
+            }
+          ]}
         />
-        <div className="flex w-full justify-between gap-3">
-          <Button variant="secondary" onClick={() => hideModal()}>
-            {t("Cancel")}
-          </Button>
-          <Button type="submit" disabled={isLoading}>
-            {t("Invite Team Member")}
-            <InlineLoader loading={isLoading} />
-          </Button>
-        </div>
-      </form>
-    </ModalBase>
+      }
+    />
   );
 };
 

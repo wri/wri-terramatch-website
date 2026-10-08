@@ -125,7 +125,7 @@ type PolygonEditAccordionSection = "details" | "optional-attributes" | "monitori
 const isoStringToDateValue = (value: string | null | undefined): DateValue[] => {
   if (value == null || value === "") return [];
   const [year, month, day] = value.split("T")[0].split("-").map(Number);
-  if (!year || !month || !day) return [];
+  if (![year, month, day].every(part => Number.isFinite(part) && part > 0)) return [];
   return [new CalendarDate(year, month, day)];
 };
 

@@ -1,5 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { useRouter } from "next/router";
 import { FC, ReactNode } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -41,6 +42,7 @@ const Navbar: FC<NavbarProps> = ({
   const t = useT();
 
   const data = useNavbarData();
+  const router = useRouter();
 
   const navLinks = data.isAdmin ? [] : navLinksProp ?? data.navLinks;
   const languageItems = languageItemsProp ?? data.languageItems;
@@ -106,10 +108,11 @@ const Navbar: FC<NavbarProps> = ({
                 className="hover:!border-theme-primary-800 hover:!text-theme-primary-800"
                 size="small"
                 disabled={linksDisabled}
+                onClick={() => router.push("/auth/signup")}
               >
                 {t("Create account")}
               </Button>
-              <Button variant="primary" size="small" disabled={linksDisabled}>
+              <Button variant="primary" size="small" onClick={() => router.push("/auth/login")}>
                 {t("Sign in")}
               </Button>
             </>

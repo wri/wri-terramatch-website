@@ -16,6 +16,59 @@ const nextConfig = {
   //Added "page.tsx", "page.ts" to get middleware.page.ts working
   // https://github.com/vercel/next.js/issues/38233#issuecomment-1172457237
   pageExtensions: ["tsx", "page.tsx", "page.ts"],
+  async redirects() {
+    return [
+      {
+        source: "/project/:uuid/reporting-task/:reportingTaskUUID",
+        destination: "/reports?source=project&uuid=:uuid",
+        permanent: true
+      },
+      {
+        source: "/project/:uuid",
+        has: [{ type: "query", key: "tab", value: "reporting-tasks" }],
+        destination: "/reports?source=project&uuid=:uuid",
+        permanent: true
+      },
+      {
+        source: "/site/:uuid",
+        has: [{ type: "query", key: "tab", value: "completed-tasks" }],
+        destination: "/reports?source=site&uuid=:uuid",
+        permanent: true
+      },
+      {
+        source: "/nurserie/:uuid",
+        has: [{ type: "query", key: "tab", value: "completed-tasks" }],
+        destination: "/reports?source=nursery&uuid=:uuid",
+        permanent: true
+      },
+      {
+        source: "/site/:uuid/polygon-review",
+        has: [{ type: "query", key: "tab", value: "completed-tasks" }],
+        destination: "/reports?source=site&uuid=:uuid",
+        permanent: true
+      },
+      {
+        source: "/sites",
+        destination: "/site",
+        permanent: true
+      },
+      {
+        source: "/nurseries",
+        destination: "/nurserie",
+        permanent: true
+      },
+      {
+        source: "/nursery/:path*",
+        destination: "/nurserie/:path*",
+        permanent: true
+      },
+      {
+        source: "/reports/report-index",
+        destination: "/reports",
+        permanent: true
+      }
+    ];
+  },
   images: { domains: process.env.IMAGE_DOMAINS?.split(",") ?? ["s3-eu-west-1.amazonaws.com"] },
   // webpack5: true,
   webpack(config) {

@@ -1,0 +1,158 @@
+import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
+import { FC, useCallback, useMemo } from "react";
+
+import { useDate } from "@/hooks/useDate";
+import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
+import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
+import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import TitleCell from "@/redesignComponents/dataDisplay/Table/components/TitleCell";
+import Table, {
+  CHECKBOX_COLUMN_KEY,
+  TableColumn,
+  TableRenderRowContext
+} from "@/redesignComponents/dataDisplay/Table/Table";
+import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
+import { CalendarIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
+import { isAbsentChangeRequestStatus } from "@/utils/changeRequestStatusDisplay";
+
+import { useNurseryTableSelection } from "../NurseriesSelection.provider";
+import type { NurseryIndexRow } from "../nurseryIndex.types";
+import { getNurseryDetailUrl } from "../nurseryIndex.utils";
+import NurseryIndexEditButton from "./NurseryIndexEditButton";
+
+const NurseryUpdate: FC<{ status: NurseryIndexRow["updateRequestStatus"] }> = ({ status }) => {
+  const t = useT();
+
+  if (status == null || isAbsentChangeRequestStatus(status)) {
+    return (
+      <Text textStyle="300" color="neutral.800">
+        –
+      </Text>
+    );
+  }
+
+  const complete = status === "approved";
+  const updateLabel = {
+    draft: t("Draft"),
+    "pending-approval": t("Pending Approval"),
+    "information-required": t("Information Required"),
+    approved: t("Complete")
+  }[status];
+
+  return (
+    <Box className="flex items-center gap-1 text-theme-neutral-800">
+      <EditIcon boxSize={2.5} />
+      {!complete ? (
+        <Text as="span" textStyle="200">
+          {t("Editing:")}
+        </Text>
+      ) : null}
+      <Text as="span" textStyle="200-bold">
+        {updateLabel}
+      </Text>
+    </Box>
+  );
+};
+
+const NurseryIndexTable: FC<{ nurseries: NurseryIndexRow[]; embeddedInProject: boolean }> = ({
+  nurseries,
+  embeddedInProject
+}) => {
+  const t = useT();
+  const { format } = useDate();
+  const { selectedRows, isNurserySelected, handleRowSelected, handleAllItemsSelected } =
+    useNurseryTableSelection(nurseries);
+
+  const columns = useMemo<TableColumn[]>(
+    () => [
+      { key: "name", label: t("Name"), sortable: true, width: "384px" },
+      { key: "status", label: t("Status"), sortable: true, width: "200px" },
+      { key: "updateRequestStatus", label: t("Updates"), sortable: true, width: "250px" },
+      { key: "updatedAt", label: t("Latest Update"), sortable: true, width: "170px" },
+      { key: "createdAt", label: t("Date Created"), sortable: true, width: "150px" },
+      { key: "actions", label: "", width: "130px" }
+    ],
+    [t]
+  );
+
+  const renderRow = useCallback(
+    (nursery: NurseryIndexRow, context?: TableRenderRowContext) => {
+      const nurseryHref = getNurseryDetailUrl(nursery.uuid, !embeddedInProject);
+      const isSelected = isNurserySelected(nursery);
+
+      return (
+        <TableRow
+          className={context?.className != null ? `group ${context.className}` : "group"}
+          aria-selected={isSelected}
+        >
+          <ChakraTableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)}>
+            <Checkbox
+              name={`nursery-${nursery.id}`}
+              aria-label={t("Select {nursery}", { nursery: nursery.name ?? t("Nursery") })}
+              checked={isSelected}
+              onCheckedChange={({ checked }) => handleRowSelected(nursery, checked === true)}
+            />
+          </ChakraTableCell>
+          <ChakraTableCell {...context?.getCellProps("name")}>
+            <TitleCell label={nursery.name ?? t("Nursery")} link={nurseryHref} linkTarget="_self" showChevron={false} />
+          </ChakraTableCell>
+          <ChakraTableCell {...context?.getCellProps("status")}>
+            {nursery.status == null ? <Text>—</Text> : <TagSubmission state={nursery.status} size="small" />}
+          </ChakraTableCell>
+          <ChakraTableCell {...context?.getCellProps("updateRequestStatus")}>
+            <NurseryUpdate status={nursery.updateRequestStatus} />
+          </ChakraTableCell>
+          <ChakraTableCell {...context?.getCellProps("updatedAt")}>
+            {nursery.updatedAt !== "" ? (
+              <Box w="min-content">
+                <FeedbackTag
+                  type="info-white"
+                  size="default"
+                  label={format(nursery.updatedAt)}
+                  icon={<CalendarIcon boxSize={2.5} />}
+                />
+              </Box>
+            ) : (
+              <Text textStyle="300" color="neutral.800">
+                –
+              </Text>
+            )}
+          </ChakraTableCell>
+          <ChakraTableCell {...context?.getCellProps("createdAt")}>
+            <ActionStatusTag
+              state="neutral-light"
+              label={format(nursery.createdAt)}
+              icon={<CalendarIcon boxSize="0.625rem" />}
+              size="small"
+              className="rounded bg-theme-neutral-200"
+            />
+          </ChakraTableCell>
+          <ChakraTableCell {...context?.getCellProps("actions")}>
+            <NurseryIndexEditButton nursery={nursery} />
+          </ChakraTableCell>
+        </TableRow>
+      );
+    },
+    [format, handleRowSelected, isNurserySelected, t, embeddedInProject]
+  );
+
+  return (
+    <Box className="mobile:!w-full mobile:overflow-auto">
+      <Table<NurseryIndexRow>
+        data={nurseries}
+        columns={columns}
+        selectable
+        selectedRows={selectedRows}
+        onRowSelected={handleRowSelected}
+        onAllItemsSelected={handleAllItemsSelected}
+        renderRow={renderRow}
+        pageSize={10}
+        totalItems={nurseries.length}
+        className="overflow-hidden rounded"
+      />
+    </Box>
+  );
+};
+
+export default NurseryIndexTable;

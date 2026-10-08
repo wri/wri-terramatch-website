@@ -11,6 +11,7 @@ import { FormEntity } from "@/connections/Form";
 import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
 import { getEntityEditPageLink, getEntityEditPathSegment, v3EntityName } from "@/helpers/entity";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
+import { withReportsIndexReturn } from "@/pages/reports/reportIndex.utils";
 import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
 import { WarningIcon } from "@/redesignComponents/foundations/Icons/Function/WarningIcon";
 import { EntityName, SingularEntityName } from "@/types/common";
@@ -91,14 +92,19 @@ export const useGetEditEntityHandler = ({
   );
 
   const goToEditForm = (targetStepId?: string | null) => {
+    const origin = typeof router.query.origin === "string" ? router.query.origin : undefined;
+    const originParam = origin ? `&origin=${encodeURIComponent(origin)}` : "";
+
     if (targetStepId != null) {
       router.push(
-        `/entity/${editEntityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(targetStepId)}`
+        `/entity/${editEntityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(
+          targetStepId
+        )}${originParam}`
       );
       return;
     }
 
-    router.push(`/entity/${editEntityName}/edit/${entityUUID}?mode=edit`);
+    router.push(`/entity/${editEntityName}/edit/${entityUUID}?mode=edit${originParam}`);
   };
 
   const handleEdit = (stepId?: string | null) => {
@@ -201,14 +207,24 @@ export const useGetEditEntityHandler = ({
             onClick: () => {
               setOpenConfirmEditModal(false);
               const stepId = pendingStepId.current;
+              const from = typeof router.query.from === "string" ? router.query.from : undefined;
+              const origin = typeof router.query.origin === "string" ? router.query.origin : undefined;
+              const originParam = origin ? `&origin=${encodeURIComponent(origin)}` : "";
               if (stepId != null) {
                 router.push(
-                  `/entity/${editEntityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(stepId)}`
+                  withReportsIndexReturn(
+                    `/entity/${editEntityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(
+                      stepId
+                    )}${originParam}`,
+                    from
+                  )
                 );
               } else if (entityStatus === "approved") {
-                router.push(getEntityEditPageLink(entityName, entityUUID));
+                router.push(withReportsIndexReturn(getEntityEditPageLink(entityName, entityUUID) + originParam, from));
               } else {
-                router.push(`/entity/${editEntityName}/edit/${entityUUID}?mode=edit`);
+                router.push(
+                  withReportsIndexReturn(`/entity/${editEntityName}/edit/${entityUUID}?mode=edit${originParam}`, from)
+                );
               }
             }
           }

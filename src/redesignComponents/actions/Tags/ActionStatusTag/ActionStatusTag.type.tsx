@@ -3,8 +3,8 @@ import { ReactElement, ReactNode } from "react";
 export type ActionStatusTagState =
   | "neutral-light"
   | "neutral-dark"
-  | "attention"
   | "information"
+  | "attention"
   | "success"
   | "warning";
 

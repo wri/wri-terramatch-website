@@ -6,7 +6,11 @@ import {
   trackMetricsCardEvent
 } from "@/utils/ga4";
 
-import { PAGE_CONTEXT_REPORT_OVERVIEW, PageContext } from "./pageContext";
+import { PAGE_CONTEXT_REPORT_OVERVIEW, PAGE_CONTEXT_REPORTS_INDEX, PageContext } from "./pageContext";
+
+export type MetricsCardFramework = "terrafund" | "ppc" | "hbf";
+export type MetricsCardScope = "period" | "selection";
+
 const METRICS_CARD_ENTITY_TYPES = new Set<MetricsCardEntityType>([
   "project-report",
   "site-report",
@@ -49,6 +53,8 @@ type MetricsCardAnalyticsPayload = {
   entityId?: string | null;
   metricLabel?: string | null;
   pageContext?: PageContext;
+  framework?: MetricsCardFramework;
+  metricScope?: MetricsCardScope;
 };
 const isValidMetricsCardPayload = (
   eventName: MetricsCardEventName,
@@ -66,8 +72,14 @@ const isValidMetricsCardPayload = (
 
 const viewedMetricsCards = new Set<string>();
 
-const getMetricsCardViewKey = (entityType: MetricsCardEntityType, entityId: string): string =>
-  `${entityType}:${entityId}`;
+const getMetricsCardViewKey = (payload: Omit<MetricsCardAnalyticsPayload, "metricLabel">, entityId: string): string =>
+  [
+    payload.pageContext ?? PAGE_CONTEXT_REPORT_OVERVIEW,
+    payload.entityType,
+    entityId,
+    payload.framework ?? "",
+    payload.metricScope ?? ""
+  ].join(":");
 
 export const trackMetricsCardAnalyticsEvent = (
   eventName: MetricsCardEventName,
@@ -75,20 +87,28 @@ export const trackMetricsCardAnalyticsEvent = (
 ): void => {
   if (!isValidMetricsCardPayload(eventName, payload)) return;
 
+  const pageContext = payload.pageContext ?? PAGE_CONTEXT_REPORT_OVERVIEW;
+  const isReportsIndex = pageContext === PAGE_CONTEXT_REPORTS_INDEX;
+
   trackMetricsCardEvent(eventName, {
     ...getMetricsCardAnalyticsContext({
       entityType: payload.entityType,
       entityId: payload.entityId,
-      metricLabel: payload.metricLabel
+      metricLabel: isReportsIndex ? undefined : payload.metricLabel
     }),
-    page_context: payload.pageContext ?? PAGE_CONTEXT_REPORT_OVERVIEW
+    page_context: pageContext,
+    ...(payload.framework != null ? { framework: payload.framework } : {}),
+    ...(payload.metricScope != null ? { metric_scope: payload.metricScope } : {}),
+    ...(isReportsIndex && payload.metricLabel != null && payload.metricLabel !== ""
+      ? { metric_name: payload.metricLabel }
+      : {})
   });
 };
 export const trackMetricsCardViewedOnce = (payload: Omit<MetricsCardAnalyticsPayload, "metricLabel">): void => {
   const entityId = payload.entityId?.trim() ?? "";
   if (entityId === "") return;
 
-  const viewKey = getMetricsCardViewKey(payload.entityType, entityId);
+  const viewKey = getMetricsCardViewKey(payload, entityId);
   if (viewedMetricsCards.has(viewKey)) return;
 
   viewedMetricsCards.add(viewKey);

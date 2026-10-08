@@ -5,7 +5,14 @@ import { ReportEventName, trackReportEvent } from "@/utils/ga4";
 
 import { PageContext } from "./pageContext";
 
-export type ReportEntityType = "project-report" | "site-report" | "nursery-report" | "financial-report";
+/** GA4 entity_type values for reports. Disturbance and SRP use the same kebab-case as the index/report routes. */
+export type ReportEntityType =
+  | "project-report"
+  | "site-report"
+  | "nursery-report"
+  | "financial-report"
+  | "disturbance-report"
+  | "srp-report";
 export type ReportUserRole = "admin" | "project-developer";
 
 export type { PageContext };
@@ -22,21 +29,27 @@ const REPORT_MODEL_TYPES: Partial<Record<FormModelType, ReportEntityType>> = {
   projectReports: "project-report",
   siteReports: "site-report",
   nurseryReports: "nursery-report",
-  financialReports: "financial-report"
+  financialReports: "financial-report",
+  disturbanceReports: "disturbance-report",
+  srpReports: "srp-report"
 };
 
 const REPORT_ENTITY_NAMES: Partial<Record<EntityName, ReportEntityType>> = {
   "project-reports": "project-report",
   "site-reports": "site-report",
   "nursery-reports": "nursery-report",
-  "financial-reports": "financial-report"
+  "financial-reports": "financial-report",
+  "disturbance-reports": "disturbance-report",
+  "srp-reports": "srp-report"
 };
 
 const ADMIN_REPORT_RESOURCES: Record<string, ReportEntityType> = {
   projectReport: "project-report",
   siteReport: "site-report",
   nurseryReport: "nursery-report",
-  financialReport: "financial-report"
+  financialReport: "financial-report",
+  disturbanceReport: "disturbance-report",
+  srpReport: "srp-report"
 };
 
 export const resolveReportEntityTypeFromAdminResource = (resource?: string | null): ReportEntityType | null => {

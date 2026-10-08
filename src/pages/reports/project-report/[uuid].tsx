@@ -2,21 +2,20 @@ import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { FC, ReactElement, useMemo } from "react";
+import { FC, ReactElement, useEffect, useMemo } from "react";
 
 import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
-import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullProject, useFullProjectReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
-import FrameworkProvider, { shouldHideNurseries, toFramework, useFrameworkContext } from "@/context/framework.provider";
+import FrameworkProvider, { shouldHideNurseries, useFrameworkContext } from "@/context/framework.provider";
 import { ProjectReportFullDto, TaskFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { useReportingWindow } from "@/hooks/useReportingWindow";
+import { useReportBreadcrumbs } from "@/hooks/useReportBreadcrumbs";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import { getReportsIndexUrl, withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
-import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
@@ -44,11 +43,25 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
   const { framework } = useFrameworkContext();
   const [, { data: project }] = useFullProject({ id: projectReport.projectUuid! });
   const hideNurseries = shouldHideNurseries(framework);
-  const reportingWindow = useReportingWindow(toFramework(projectReport?.frameworkKey), projectReport?.dueAt!);
-  const taskTitle = t("Reporting Task {window}", { window: reportingWindow });
-
   const reportTitle = projectReport.reportTitle ?? t("Project Report");
   const currentTab = (router.query.tab as string) ?? "overview";
+  const breadcrumbs = useReportBreadcrumbs(
+    { label: reportTitle, link: `/reports/project-report/${projectReport.uuid}` },
+    getReportsIndexUrl("project", projectReport.projectUuid!),
+    { project: projectReport.projectName }
+  );
+
+  const isRedirectingToReportsIndex = currentTab === "site-reports" || currentTab === "nursery-reports";
+
+  useEffect(() => {
+    if (projectReport.projectUuid == null) return;
+    if (currentTab === "site-reports") {
+      void router.replace(getReportsIndexUrl("project", projectReport.projectUuid, { reportType: "site-report" }));
+    }
+    if (currentTab === "nursery-reports") {
+      void router.replace(getReportsIndexUrl("project", projectReport.projectUuid, { reportType: "nursery-report" }));
+    }
+  }, [currentTab, projectReport.projectUuid, router]);
 
   const tabItems = useMemo<TabItem[]>(
     () => [
@@ -123,26 +136,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
         title={reportTitle}
         dueAt={task?.dueAt ?? projectReport.dueAt}
         entityName="project-report"
-        breadcrumbs={[
-          {
-            label: t("Projects"),
-            link: `/my-projects`,
-            icon: <ProjectIcon className="!text-theme-primary-900" />
-          },
-          {
-            label: projectReport.projectName ?? t("Project"),
-            link: `/project/${projectReport.projectUuid}`
-          },
-          {
-            label: t("Reports"),
-            link: `/project/${projectReport.projectUuid}?tab=reporting-tasks`
-          },
-          {
-            label: getShortPeriodLabel(taskTitle ?? "", true),
-            link: `/project/${projectReport.projectUuid ?? ""}/reporting-task/${projectReport.taskUuid ?? ""}`
-          },
-          { label: reportTitle, link: `/reports/project-report/${projectReport.uuid}` }
-        ]}
+        breadcrumbs={breadcrumbs}
         suffix={
           <div className="flex gap-1.5">
             <div className="flex gap-1.5">
@@ -159,11 +153,12 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
                 variant="borderless"
                 size="small"
                 className="underline underline-offset-2"
-                onClick={() =>
-                  router.push(`/reports/project-report/${projectReport.uuid}?tab=site-reports`, undefined, {
-                    shallow: true
-                  })
-                }
+                onClick={() => {
+                  if (projectReport.projectUuid == null) return;
+                  void router.push(
+                    getReportsIndexUrl("project", projectReport.projectUuid, { reportType: "site-report" })
+                  );
+                }}
               >
                 {t("Site Reports")}
               </Button>
@@ -174,11 +169,12 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
                     variant="borderless"
                     size="small"
                     className="underline underline-offset-2"
-                    onClick={() =>
-                      router.push(`/reports/project-report/${projectReport.uuid}?tab=nursery-reports`, undefined, {
-                        shallow: true
-                      })
-                    }
+                    onClick={() => {
+                      if (projectReport.projectUuid == null) return;
+                      void router.push(
+                        getReportsIndexUrl("project", projectReport.projectUuid, { reportType: "nursery-report" })
+                      );
+                    }}
                   >
                     {t("Nursery Reports")}
                   </Button>
@@ -192,14 +188,16 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
             tabs: tabBarTabs,
             defaultValue: currentTab,
             onTabClick: (tabValue: string) => {
-              router.push(`/reports/project-report/${projectReport.uuid}?tab=${tabValue}`, undefined, {
-                shallow: true
-              });
+              router.push(
+                withReportOrigin(`/reports/project-report/${projectReport.uuid}?tab=${tabValue}`, router.query),
+                undefined,
+                { shallow: true }
+              );
             }
           }
         }}
       />
-      <div className="flex flex-1">{activeTabItem.renderBody()}</div>
+      <div className="flex flex-1">{isRedirectingToReportsIndex ? null : activeTabItem.renderBody()}</div>
       <PageFooter />
     </>
   );

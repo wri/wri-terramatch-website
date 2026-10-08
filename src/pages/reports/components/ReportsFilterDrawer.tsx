@@ -1,0 +1,270 @@
+import type { DateValue } from "@ark-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
+import { CalendarDate } from "@internationalized/date";
+import { useT } from "@transifex/react";
+import { FC, useEffect, useMemo, useState } from "react";
+
+import { getReportStatusOptions } from "@/constants/options/status";
+import { useDate } from "@/hooks/useDate";
+import FilterCard from "@/redesignComponents/containers/FilterPanel/FilterPanelElements/FilterCards";
+import IndexFilterDrawer from "@/redesignComponents/containers/FilterPanel/IndexFilterDrawer";
+import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
+import DateRangeInput from "@/redesignComponents/Forms/Inputs/DateInputs/DateRangeInputs/DateRangeInput";
+import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
+
+import { ReportPeriodOptions } from "../reportPeriodFilter";
+import {
+  ADDITIONAL_REPORT_TYPE_OPTIONS,
+  clearReportPeriodFilters,
+  EMPTY_REPORT_FILTERS,
+  formatMonthLabel,
+  formatReportPeriodLabel,
+  getReportPeriodControl,
+  hasReportTypeFilter,
+  PROGRESS_REPORT_TYPE_OPTIONS,
+  REPORT_TYPE_LABELS,
+  ReportFilterState,
+  REPORTS_TYPE_OPTIONS_ENTITY_PROFILE,
+  ReportTypeOption
+} from "./reportFilter.constants";
+
+type CheckboxChange = { checked?: boolean | "indeterminate" };
+
+const setArrayValue = <T extends string>(values: T[], value: T, checked: boolean): T[] => {
+  if (checked) {
+    return values.includes(value) ? values : [...values, value];
+  }
+  return values.filter(item => item !== value);
+};
+
+const isoStringToDateValue = (value: string): DateValue | undefined => {
+  if (value === "") return undefined;
+  const [year, month, day] = value.split("-").map(Number);
+  if (![year, month, day].every(part => Number.isFinite(part) && part > 0)) return undefined;
+  return new CalendarDate(year, month, day);
+};
+
+const dateValueToIsoString = (value: DateValue | undefined): string => {
+  if (value == null) return "";
+  const mm = String(value.month).padStart(2, "0");
+  const dd = String(value.day).padStart(2, "0");
+  return `${value.year}-${mm}-${dd}`;
+};
+
+const toSelectValue = (value: string): string[] => (value === "" ? [] : [value]);
+
+interface ReportsFilterDrawerProps {
+  open?: boolean;
+  activeTab: string;
+  filters: ReportFilterState;
+  periodOptions: ReportPeriodOptions;
+  onApplyFilters: (filters: ReportFilterState) => void;
+  onOpenChange?: (open: boolean) => void;
+  source?: "project" | "site" | "nursery";
+  entityProfile?: boolean;
+}
+
+const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
+  open,
+  activeTab,
+  filters,
+  periodOptions,
+  onApplyFilters,
+  onOpenChange,
+  source = "project",
+  entityProfile = false
+}) => {
+  const t = useT();
+  const { format } = useDate();
+  const [draftFilters, setDraftFilters] = useState<ReportFilterState>(filters);
+  const statusOptions = useMemo(() => getReportStatusOptions(t), [t]);
+  const reportTypeOptions = entityProfile
+    ? REPORTS_TYPE_OPTIONS_ENTITY_PROFILE
+    : activeTab === "additional-reports"
+    ? ADDITIONAL_REPORT_TYPE_OPTIONS
+    : PROGRESS_REPORT_TYPE_OPTIONS;
+  const periodControl = getReportPeriodControl(activeTab, draftFilters.reportTypes);
+
+  useEffect(() => {
+    if (open) {
+      setDraftFilters(filters);
+    }
+  }, [filters, open]);
+
+  const activeFilterTags = useMemo(() => {
+    const tags: { id: string; label: string }[] = [];
+
+    if (hasReportTypeFilter(source, entityProfile)) {
+      draftFilters.reportTypes.forEach(type => {
+        tags.push({ id: `type-${type}`, label: t(REPORT_TYPE_LABELS[type]) });
+      });
+    }
+    draftFilters.statuses.forEach(status => {
+      const option = statusOptions.find(item => item.value === status);
+      tags.push({ id: `status-${status}`, label: option?.title ?? status });
+    });
+
+    const periodLabel = formatReportPeriodLabel(draftFilters, format);
+    if (periodLabel != null) {
+      tags.push({ id: "due-period", label: periodLabel });
+    }
+
+    return tags;
+  }, [draftFilters, entityProfile, format, source, statusOptions, t]);
+
+  const dueDateValue = useMemo<DateValue[]>(() => {
+    const from = isoStringToDateValue(draftFilters.dueDateFrom);
+    const to = isoStringToDateValue(draftFilters.dueDateTo);
+    if (from != null && to != null) return [from, to];
+    if (from != null) return [from];
+    if (to != null) return [to];
+    return [];
+  }, [draftFilters.dueDateFrom, draftFilters.dueDateTo]);
+
+  const monthItems = useMemo(
+    () => periodOptions.progressMonths.map(month => ({ value: month, label: formatMonthLabel(month, format) })),
+    [format, periodOptions.progressMonths]
+  );
+
+  const yearItems = useMemo(() => {
+    const years = periodControl === "year" ? periodOptions.additionalYears : periodOptions.progressYears;
+    return years.map(year => ({ value: year, label: year }));
+  }, [periodControl, periodOptions.additionalYears, periodOptions.progressYears]);
+
+  // Swapping between the range picker and the period selects would otherwise leave a value from a
+  // control that is no longer on screen filtering the list.
+  const withReportTypes = (current: ReportFilterState, reportTypes: ReportTypeOption[]): ReportFilterState => {
+    const next = { ...current, reportTypes };
+    const controlChanged =
+      getReportPeriodControl(activeTab, reportTypes) !== getReportPeriodControl(activeTab, current.reportTypes);
+    return controlChanged ? clearReportPeriodFilters(next) : next;
+  };
+
+  const handleReportTypeChange = (value: ReportTypeOption, { checked }: CheckboxChange) => {
+    setDraftFilters(current => withReportTypes(current, setArrayValue(current.reportTypes, value, checked === true)));
+  };
+
+  const handleStatusChange = (value: string, { checked }: CheckboxChange) => {
+    setDraftFilters(current => ({
+      ...current,
+      statuses: setArrayValue(current.statuses, value, checked === true)
+    }));
+  };
+
+  const handleDueDateChange = (dates: DateValue[]) => {
+    setDraftFilters(current => ({
+      ...current,
+      dueDateFrom: dateValueToIsoString(dates[0]),
+      dueDateTo: dateValueToIsoString(dates[1])
+    }));
+  };
+
+  const handleMonthChange = (value: string[]) => {
+    setDraftFilters(current => ({ ...current, dueMonth: value[0] ?? "" }));
+  };
+
+  const handleYearChange = (value: string[]) => {
+    setDraftFilters(current => ({ ...current, dueYear: value[0] ?? "" }));
+  };
+
+  const removeFilterTag = (id: string) => {
+    if (id.startsWith("type-")) {
+      const value = id.replace("type-", "");
+      setDraftFilters(current =>
+        withReportTypes(
+          current,
+          current.reportTypes.filter(type => type !== value)
+        )
+      );
+      return;
+    }
+    if (id.startsWith("status-")) {
+      const value = id.replace("status-", "");
+      setDraftFilters(current => ({
+        ...current,
+        statuses: current.statuses.filter(status => status !== value)
+      }));
+      return;
+    }
+    if (id === "due-period") {
+      setDraftFilters(clearReportPeriodFilters);
+    }
+  };
+
+  return (
+    <IndexFilterDrawer
+      open={open}
+      onOpenChange={onOpenChange}
+      tags={activeFilterTags}
+      onRemoveTag={removeFilterTag}
+      onClear={() => setDraftFilters(EMPTY_REPORT_FILTERS)}
+      onApply={() => onApplyFilters(draftFilters)}
+      drawerMaxW="22rem"
+    >
+      {hasReportTypeFilter(source, entityProfile) && (
+        <FilterCard label={t("Report Type")}>
+          {reportTypeOptions.map(option => (
+            <Checkbox
+              key={option.value}
+              name={`report-type-${option.value}`}
+              value={option.value}
+              checked={draftFilters.reportTypes.includes(option.value)}
+              onCheckedChange={(change: CheckboxChange) => handleReportTypeChange(option.value, change)}
+            >
+              {t(option.label)}
+            </Checkbox>
+          ))}
+        </FilterCard>
+      )}
+      <FilterCard label={t("Status")}>
+        {statusOptions.map(option => (
+          <Checkbox
+            key={String(option.value)}
+            name={`report-status-${option.value}`}
+            value={String(option.value)}
+            checked={draftFilters.statuses.includes(String(option.value))}
+            onCheckedChange={(change: CheckboxChange) => handleStatusChange(String(option.value), change)}
+          >
+            {option.title}
+          </Checkbox>
+        ))}
+      </FilterCard>
+      <FilterCard label={t("Reporting Period")}>
+        {periodControl === "date-range" ? (
+          <DateRangeInput size="small" noMarginBottom value={dueDateValue} onValueChange={handleDueDateChange} />
+        ) : periodControl === "month-year" ? (
+          <Flex gap={2}>
+            <Box flex={1} minW={0}>
+              <SelectInput
+                placeholder={t("Month")}
+                size="small"
+                value={toSelectValue(draftFilters.dueMonth)}
+                items={monthItems}
+                onChange={handleMonthChange}
+              />
+            </Box>
+            <Box flex={1} minW={0}>
+              <SelectInput
+                placeholder={t("Year")}
+                size="small"
+                value={toSelectValue(draftFilters.dueYear)}
+                items={yearItems}
+                onChange={handleYearChange}
+              />
+            </Box>
+          </Flex>
+        ) : (
+          <SelectInput
+            placeholder={t("Select Year")}
+            size="small"
+            value={toSelectValue(draftFilters.dueYear)}
+            items={yearItems}
+            onChange={handleYearChange}
+          />
+        )}
+      </FilterCard>
+    </IndexFilterDrawer>
+  );
+};
+
+export default ReportsFilterDrawer;

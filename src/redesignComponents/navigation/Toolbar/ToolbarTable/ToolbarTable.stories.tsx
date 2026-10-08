@@ -16,7 +16,7 @@ const meta: Meta<typeof ToolbarTable> = {
     },
     filters: {
       description:
-        "Array of MultiActionButton configs rendered as 'Filter by:' dropdowns. When provided, hides the Add Filter button"
+        "Array of MultiActionButton configs rendered as 'Filter by:' dropdowns. When provided, these replace the Add Filter button and are interactive immediately, so no drawer is involved"
     },
     selectedFilters: {
       description: "Active filter tags shown as dismissible chips in the toolbar"
@@ -54,7 +54,7 @@ const baseSearch = {
 };
 
 export const Default: Story = {
-  name: "With Selected Filter Tags",
+  name: "With Add Filter Button",
   args: {
     search: { ...baseSearch, count: 0 },
     className: "w-full",
@@ -62,6 +62,52 @@ export const Default: Story = {
     showClearFilters: false,
     onClearFilters: () => console.log("clear filters"),
     onClickFilterButton: () => console.log("open filter panel")
+  }
+};
+
+const roleOptions = [
+  { label: "Monitoring Partner", value: "project-developer", onClick: () => console.log("role: project-developer") },
+  { label: "Project Manager", value: "project-manager", onClick: () => console.log("role: project-manager") }
+];
+
+const statusOptions = [
+  { label: "Accepted", value: "accepted", onClick: () => console.log("status: accepted") },
+  { label: "Pending", value: "pending", onClick: () => console.log("status: pending") }
+];
+
+export const WithInlineFilters: Story = {
+  name: "With Inline Filter Dropdown",
+  args: {
+    search: { ...baseSearch, count: 42 },
+    className: "w-full",
+    classNameContentLeft: "w-full",
+    showClearFilters: false,
+    onClearFilters: () => console.log("clear filters"),
+    filters: [
+      {
+        mainActionLabel: "Role",
+        mainActionOnClick: () => console.log("reset role"),
+        otherActions: roleOptions,
+        variant: "secondary"
+      }
+    ]
+  }
+};
+
+export const WithInlineFiltersApplied: Story = {
+  name: "With Inline Filter Dropdown (value selected)",
+  args: {
+    ...WithInlineFilters.args,
+    search: { ...baseSearch, count: 7 },
+    showClearFilters: true,
+    filters: [
+      {
+        mainActionLabel: "Status",
+        mainActionOnClick: () => console.log("reset status"),
+        otherActions: statusOptions,
+        variant: "secondary"
+      }
+    ]
   }
 };
 

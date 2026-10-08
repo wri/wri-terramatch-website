@@ -1,31 +1,32 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
+import { FC } from "react";
 
 import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
-import SiteCompletedReportsTab from "@/pages/site/[uuid]/tabs/CompletedReports";
+import EntityProfileReportsTab from "@/pages/reports/components/EntityProfileReportsTab";
 import SiteDetailTab from "@/pages/site/[uuid]/tabs/Details";
 import GoalsAndProgressTab from "@/pages/site/[uuid]/tabs/GoalsAndProgress";
 import SiteOverviewTab from "@/pages/site/[uuid]/tabs/Overview";
+import { getSiteDetailUrl, SITE_INDEX_ORIGIN } from "@/pages/site/components/siteIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import SiteBanner from "@/redesignComponents/content/Banner/SiteBanner/SiteBanner";
-import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import { ProjectIcon, SiteIcon } from "@/redesignComponents/foundations/Icons";
 
 import SitePageProviders from "./components/SitePageProviders";
 import { useSitePageLoad } from "./hooks/useSitePageLoad";
 import AuditLog from "./tabs/AuditLog";
 import SitePolygonsTab from "./tabs/SitePolygonsTab";
 
-const SiteDetailPage = () => {
+const SiteDetailPage: FC = () => {
   const t = useT();
   const router = useRouter();
   const siteUUID = router.query.uuid as string;
 
   const { isLoaded, site, refetch } = useSitePageLoad(siteUUID);
 
-  const currentTab = (router.query.tab as string) ?? "overview";
-  const isSuffixView = currentTab === "completed-tasks";
-  const activeTab = isSuffixView ? "overview" : currentTab;
+  const activeTab = (router.query.tab as string) ?? "overview";
+  const isFromSiteIndex = router.query.origin === SITE_INDEX_ORIGIN;
 
   const TabItems = [
     { key: "overview", title: t("Overview"), body: <SiteOverviewTab site={site!} refetch={refetch} /> },
@@ -48,13 +49,23 @@ const SiteDetailPage = () => {
     },
     { key: "goals", title: t("Progress & Goals"), body: <GoalsAndProgressTab site={site!} /> },
     {
+      key: "reports",
+      title: t("Reports"),
+      body: (
+        <EntityProfileReportsTab
+          source="site"
+          entityUuid={siteUUID}
+          projectUuid={site?.projectUuid ?? null}
+          origin={isFromSiteIndex ? SITE_INDEX_ORIGIN : undefined}
+        />
+      )
+    },
+    {
       key: "audit-log",
-      title: t("Audit Log"),
+      title: t("History"),
       body: <AuditLog site={site!} refresh={refetch} />
     }
   ];
-
-  const suffixContent = isSuffixView ? <SiteCompletedReportsTab site={site!} /> : null;
 
   return (
     <SitePageProviders frameworkKey={site?.frameworkKey} isLoaded={isLoaded}>
@@ -62,16 +73,26 @@ const SiteDetailPage = () => {
         <>
           <SiteBanner
             site={site}
-            breadcrumbs={[
-              {
-                label: t("Projects"),
-                link: "/my-projects",
-                icon: <ProjectIcon className="!text-theme-primary-900" />
-              },
-              { label: site.projectName ?? "", link: `/project/${site.projectUuid}` },
-              { label: site.name ?? "", link: `/site/${site.uuid}` },
-              ...(isSuffixView ? [{ label: t("Reports"), link: `/site/${site.uuid}?tab=completed-tasks` }] : [])
-            ]}
+            breadcrumbs={
+              isFromSiteIndex
+                ? [
+                    {
+                      label: t("Sites"),
+                      link: "/site",
+                      icon: <SiteIcon className="!text-theme-primary-900" />
+                    },
+                    { label: site.name ?? "-", link: getSiteDetailUrl(site.uuid, true) }
+                  ]
+                : [
+                    {
+                      label: t("Projects"),
+                      link: "/my-projects",
+                      icon: <ProjectIcon className="!text-theme-primary-900" />
+                    },
+                    { label: site.projectName ?? "", link: `/project/${site.projectUuid}` },
+                    { label: site.name ?? "-", link: `/site/${site.uuid}` }
+                  ]
+            }
             suffix={
               <div className="flex gap-1.5">
                 <div className="flex gap-1.5">
@@ -88,7 +109,11 @@ const SiteDetailPage = () => {
                     variant="borderless"
                     size="small"
                     className="underline underline-offset-2"
-                    onClick={() => router.push(`/site/${site.uuid}?tab=completed-tasks`)}
+                    onClick={() =>
+                      router.push(getSiteDetailUrl(site.uuid, isFromSiteIndex, "reports"), undefined, {
+                        shallow: true
+                      })
+                    }
                   >
                     {t("Site Reports")}
                   </Button>
@@ -101,14 +126,16 @@ const SiteDetailPage = () => {
                   value: item.key,
                   label: item.title
                 })),
-                defaultValue: isSuffixView ? "__none__" : activeTab,
+                defaultValue: activeTab,
                 onTabClick: (tabValue: string) => {
-                  router.push(`/site/${siteUUID}?tab=${tabValue}`, undefined, { shallow: true });
+                  router.push(getSiteDetailUrl(siteUUID, isFromSiteIndex, tabValue), undefined, {
+                    shallow: true
+                  });
                 }
               }
             }}
           />
-          <div className="flex flex-1">{suffixContent ?? TabItems.find(item => item.key === activeTab)?.body}</div>
+          <div className="flex flex-1">{TabItems.find(item => item.key === activeTab)?.body}</div>
         </>
       )}
       <PageFooter />

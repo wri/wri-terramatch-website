@@ -1,7 +1,7 @@
 import { Box, Flex, useBreakpointValue } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import router from "next/router";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import StatusTag from "@/components/elements/StatusTag/StatusTag";
@@ -28,7 +28,7 @@ interface SiteOverviewTabProps {
   refetch?: () => void;
 }
 
-const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
+const SiteOverviewTab: FC<SiteOverviewTabProps> = ({ site }) => {
   const t = useT();
   const contextMapArea = useMapAreaContext();
   const { setSiteData, resetSiteMapInteractionState } = contextMapArea;

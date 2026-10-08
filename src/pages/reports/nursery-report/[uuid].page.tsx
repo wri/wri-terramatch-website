@@ -12,14 +12,15 @@ import { useFullNursery, useFullNurseryReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
 import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { NurseryFullDto, NurseryReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useReportBreadcrumbs } from "@/hooks/useReportBreadcrumbs";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import NurseryReportDetailsTab from "@/pages/reports/nursery-report/tabs/Details";
 import NurseryReportGoalsAndProgressTab from "@/pages/reports/nursery-report/tabs/GoalsAndProgress";
 import NurseryReportOverview from "@/pages/reports/nursery-report/tabs/Overview";
+import { getReportsIndexUrl, withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
-import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
@@ -51,7 +52,13 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
 
   const navigateToTab = useCallback(
     (tab: string) => {
-      router.push(`/reports/nursery-report/${nurseryReportUUID}?tab=${tab}`, undefined, { shallow: true });
+      router.push(
+        withReportOrigin(`/reports/nursery-report/${nurseryReportUUID}?tab=${tab}`, router.query),
+        undefined,
+        {
+          shallow: true
+        }
+      );
     },
     [router, nurseryReportUUID]
   );
@@ -117,6 +124,17 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
 
   const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "overview";
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
+  const breadcrumbs = useReportBreadcrumbs(
+    {
+      label: t("Nursery Report {window}: {nurseryName}", {
+        window: getShortPeriodLabel(taskTitle ?? "-", true),
+        nurseryName: nursery?.name ?? "-"
+      }),
+      link: `/reports/nursery-report/${nurseryReportUUID}`
+    },
+    getReportsIndexUrl("nursery", nurseryReport.nurseryUuid!),
+    { project: nurseryReport.projectName, nursery: nurseryReport.nurseryName }
+  );
 
   return (
     <>
@@ -129,33 +147,7 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
         title={headerReportTitle}
         dueAt={taskDueAt ?? nurseryReport.dueAt}
         entityName="nursery-report"
-        breadcrumbs={[
-          {
-            label: t("Projects"),
-            link: "/my-projects",
-            icon: <ProjectIcon className="!text-theme-primary-900" />
-          },
-          {
-            label: nurseryReport.projectName ?? t("Project"),
-            link: `/project/${nurseryReport.projectUuid}`
-          },
-          {
-            label: t("Nurseries"),
-            link: `/project/${nurseryReport.projectUuid}?tab=nurseries`
-          },
-          {
-            label: nurseryReport.nurseryName ?? t("Nursery"),
-            link: `/nursery/${nurseryReport.nurseryUuid}`
-          },
-          {
-            label: t("Reports"),
-            link: `/nursery/${nurseryReport.nurseryUuid}?tab=completed-tasks`
-          },
-          {
-            label: t("Nursery Report - {window}", { window: getShortPeriodLabel(taskTitle ?? "", true) }),
-            link: `/reports/nursery-report/${nurseryReportUUID}`
-          }
-        ]}
+        breadcrumbs={breadcrumbs}
         suffix={
           <div className="flex items-center gap-1.5">
             {nurseryReport.nurseryUuid != null && (
@@ -163,7 +155,7 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
                 variant="borderless"
                 size="small"
                 className="underline underline-offset-2"
-                onClick={() => router.push(`/nursery/${nurseryReport.nurseryUuid}`)}
+                onClick={() => router.push(`/nurserie/${nurseryReport.nurseryUuid}`)}
               >
                 {t("Nursery Profile")}
               </Button>

@@ -28,6 +28,8 @@ export {
 };
 
 export type IndexFilterField = "report_type" | "status" | "due_date";
+export type IndexDateDimension = "disturbance_date" | "due_date";
+export type IndexPeriodStatus = "open" | "overdue";
 
 const trackReportsIndexAnalyticsEvent = (
   eventName: ReportsIndexEventName,
@@ -65,16 +67,19 @@ export const resolveIndexMixedEligibility = (
 export const trackIndexFilterApplied = ({
   filterField,
   filterValue,
-  isDefaultFilter
+  isDefaultFilter,
+  dateDimension
 }: {
   filterField: IndexFilterField;
   filterValue: string;
   isDefaultFilter: boolean;
+  dateDimension?: IndexDateDimension;
 }): void => {
   trackReportsIndexAnalyticsEvent("index_filter_applied", {
     filter_field: filterField,
     filter_value: filterValue,
-    is_default_filter: isDefaultFilter
+    is_default_filter: isDefaultFilter,
+    ...(dateDimension != null ? { date_dimension: dateDimension } : {})
   });
 };
 
@@ -205,4 +210,21 @@ export const trackReportOverviewReportOpened = ({
     userRole,
     page_context: PAGE_CONTEXT_REPORT_OVERVIEW
   });
+};
+
+export const trackAttentionCountDisplayed = ({
+  attentionCount,
+  periodStatus
+}: {
+  attentionCount: number;
+  periodStatus: IndexPeriodStatus;
+}): void => {
+  trackReportsIndexAnalyticsEvent("attention_count_displayed", {
+    attention_count: attentionCount,
+    period_status: periodStatus
+  });
+};
+
+export const trackAddDisturbanceReportClicked = (): void => {
+  trackReportsIndexAnalyticsEvent("add_disturbance_report_clicked", {});
 };

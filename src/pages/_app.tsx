@@ -13,7 +13,6 @@ import Toast from "@/components/elements/Toast/Toast";
 import CookieBanner from "@/components/extensive/CookieBanner/CookieBanner";
 import ModalRoot from "@/components/extensive/Modal/ModalRoot";
 import DashboardLayout from "@/components/generic/Layout/DashboardLayout";
-import MainLayout from "@/components/generic/Layout/MainLayout";
 import * as environment from "@/constants/environment";
 import EntityScopeFromRouter from "@/context/EntityScopeFromRouter";
 import FloatNotificationProvider from "@/context/floatNotification.provider";
@@ -25,6 +24,7 @@ import NotificationProvider from "@/context/notification.provider";
 import RouteHistoryProvider from "@/context/routeHistory.provider";
 import ToastProvider from "@/context/toast.provider";
 import { system } from "@/lib/theme";
+import Layout from "@/redesignComponents/Layout/Layout";
 import { LayoutShellProvider } from "@/redesignComponents/Layout/LayoutShell.provider";
 import { WrappedReduxProvider } from "@/store/store";
 import Bootstrap from "@/utils/Bootstrap";
@@ -72,10 +72,10 @@ const PDStack = ({ children }: PropsWithChildren) => (
         <ModalRoot />
         <Toast />
         <WRIToast />
-        <MainLayout>
+        <Layout>
           {children}
           <CookieBanner />
-        </MainLayout>
+        </Layout>
       </NavbarProvider>
     </FloatNotificationProvider>
   </RouteHistoryProvider>
@@ -88,10 +88,10 @@ const SiteRouteStack = ({ children, withMainLayout = true }: PropsWithChildren<{
       <Toast />
       <WRIToast />
       {withMainLayout ? (
-        <MainLayout>
+        <Layout>
           {children}
           <CookieBanner />
-        </MainLayout>
+        </Layout>
       ) : (
         children
       )}

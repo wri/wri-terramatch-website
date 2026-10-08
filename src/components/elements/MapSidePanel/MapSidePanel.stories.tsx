@@ -31,7 +31,7 @@ export const Default: Story = {
   }
 };
 
-const items: SitePolygonLightDto[] = [
+const items = [
   {
     uuid: "1",
     lightResource: true,
@@ -134,4 +134,4 @@ const items: SitePolygonLightDto[] = [
     deletedAt: null,
     customAttributes: {}
   }
-];
+] as SitePolygonLightDto[];

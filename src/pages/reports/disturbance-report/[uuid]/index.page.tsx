@@ -11,7 +11,9 @@ import { useFullDisturbanceReport } from "@/connections/Entity";
 import FrameworkProvider from "@/context/framework.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
 import { DisturbanceReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useReportBreadcrumbs } from "@/hooks/useReportBreadcrumbs";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import { getReportsIndexUrl, withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import DisturbanceReportBanner from "@/redesignComponents/content/Banner/DisturbanceReportBanner/DisturbanceReportBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
@@ -42,7 +44,11 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
 
   const navigateToTab = useCallback(
     (tab: string) => {
-      router.push(`/reports/disturbance-report/${disturbanceReportUUID}?tab=${tab}`, undefined, { shallow: true });
+      router.push(
+        withReportOrigin(`/reports/disturbance-report/${disturbanceReportUUID}?tab=${tab}`, router.query),
+        undefined,
+        { shallow: true }
+      );
     },
     [router, disturbanceReportUUID]
   );
@@ -108,6 +114,13 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
 
   const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "overview";
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
+  const breadcrumbs = useReportBreadcrumbs(
+    { label: t("Disturbance Report"), link: `/reports/disturbance-report/${disturbanceReportUUID}` },
+    disturbanceReport.projectUuid != null
+      ? getReportsIndexUrl("project", disturbanceReport.projectUuid, { tab: "additional-reports" })
+      : "/my-projects",
+    { project: disturbanceReport.projectName }
+  );
 
   return (
     <>
@@ -118,25 +131,9 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
       <DisturbanceReportBanner
         report={disturbanceReport}
         title={headerReportTitle}
-        breadcrumbs={[
-          {
-            label: t("Projects"),
-            link: "/my-projects",
-            icon: <ProjectIcon className="!text-theme-primary-900" />
-          },
-          {
-            label: disturbanceReport.projectName ?? t("Project"),
-            link: `/project/${disturbanceReport.projectUuid}`
-          },
-          {
-            label: t("Reports"),
-            link: `/project/${disturbanceReport.projectUuid}?tab=reporting-tasks`
-          },
-          {
-            label: headerReportTitle,
-            link: `/reports/disturbance-report/${disturbanceReportUUID}`
-          }
-        ]}
+        dueAt={disturbanceReport.dueAt}
+        entityName="disturbance-report"
+        breadcrumbs={breadcrumbs}
         suffix={
           disturbanceReport.projectUuid != null ? (
             <Button
