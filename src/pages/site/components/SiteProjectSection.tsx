@@ -98,7 +98,7 @@ const SiteUpdate: FC<{ update: SiteIndexUpdate | null }> = ({ update }) => {
   }[update];
 
   return (
-    <Box className="flex items-center gap-1 text-theme-neutral-800">
+    <Box className="text-theme-neutral-800 flex items-center gap-1">
       <EditIcon boxSize={2.5} />
       {update != "complete" && (
         <Text as="span" textStyle="200">
@@ -380,7 +380,6 @@ const SiteProjectTable: FC<{
       selectable
       pageSize={10}
       showPagination
-      showItemCount={false}
       selectedRows={selectedRows}
       onRowSelected={handleRowSelected}
       onAllItemsSelected={handleAllItemsSelected}
@@ -444,13 +443,15 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
         label: t("Site Profile(s) deleted"),
         type: "success",
         placement: "bottom",
-        duration: 5000
+        duration: 5000,
+        maxWidth: "auto"
       });
     } catch (error) {
       showToast({
         label: t("Something went wrong!"),
         type: "error",
-        placement: "bottom"
+        placement: "bottom",
+        maxWidth: "auto"
       });
       throw error;
     }
@@ -495,7 +496,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
   if (embeddedInProject) {
     return (
       <Flex direction="column" gap="0.5rem">
-        <Box className="overflow-hidden rounded bg-theme-neutral-100">{sectionBody}</Box>
+        <Box className="bg-theme-neutral-100 overflow-hidden rounded">{sectionBody}</Box>
         {deleteSiteModal}
       </Flex>
     );
@@ -508,7 +509,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
         open={open}
         onOpenChange={setOpen}
         isScrollable={false}
-        className="w-full overflow-hidden rounded bg-theme-neutral-100"
+        className="bg-theme-neutral-100 w-full overflow-hidden rounded"
         classNameHeader="!mb-0"
         header={
           <ListSectionHeader
