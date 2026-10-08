@@ -1786,6 +1786,90 @@ export const mediaDelete = new V3ApiEndpoint<MediaDeleteResponse, MediaDeleteErr
   "DELETE"
 );
 
+export type MediaMapIndexPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * Entity type whose map photos are requested.
+   */
+  entity: "projects" | "sites";
+};
+
+export type MediaMapIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type MediaMapIndexResponse = {
+  meta?: {
+    /**
+     * @example mediaMapIndexes
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example mediaMapIndexes
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.MediaMapIndexDto;
+  };
+};
+
+export type MediaMapIndexVariables = {
+  pathParams: MediaMapIndexPathParams;
+};
+
+/**
+ * Covers the same media as the entity's media association index (a project includes its sites,
+ *       nurseries and reports). Not paginated by design: map markers need the complete set in one response, and
+ *       each entry only carries the few attributes the map needs. Use the media association index for galleries.
+ */
+export const mediaMapIndex = new V3ApiEndpoint<MediaMapIndexResponse, MediaMapIndexError, MediaMapIndexVariables, {}>(
+  "/entities/v3/files/{entity}/{uuid}/mediaMapIndex",
+  "GET"
+);
+
 export type SiteMediaBulkUploadPathParams = {
   /**
    * Entity type to upload media to
@@ -5083,90 +5167,6 @@ export const updateRequestUpdate = new V3ApiEndpoint<
   {}
 >("/entities/v3/{entity}/{uuid}/updateRequest", "PATCH");
 
-export type MediaMapIndexPathParams = {
-  /**
-   * UUID of the resource.
-   */
-  uuid: string;
-  /**
-   * Entity type whose map photos are requested.
-   */
-  entity: "projects" | "sites";
-};
-
-export type MediaMapIndexError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
-
-export type MediaMapIndexResponse = {
-  meta?: {
-    /**
-     * @example mediaMapIndexes
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example mediaMapIndexes
-     */
-    type?: string;
-    id?: string;
-    attributes?: Schemas.MediaMapIndexDto;
-  };
-};
-
-export type MediaMapIndexVariables = {
-  pathParams: MediaMapIndexPathParams;
-};
-
-/**
- * Covers the same media as the entity's media association index (a project includes its sites,
- *       nurseries and reports). Not paginated by design: map markers need the complete set in one response, and
- *       each entry only carries the few attributes the map needs. Use the media association index for galleries.
- */
-export const mediaMapIndex = new V3ApiEndpoint<MediaMapIndexResponse, MediaMapIndexError, MediaMapIndexVariables, {}>(
-  "/entities/v3/{entity}/{uuid}/mediaMapIndex",
-  "GET"
-);
-
 export type EntityAssociationIndexPathParams = {
   /**
    * UUID of the resource.
@@ -7675,7 +7675,16 @@ export const operationsByTag = {
   },
   aboutSections: { aboutSectionIndex, aboutSectionCreate, aboutSectionGet, aboutSectionUpdate, aboutSectionDelete },
   tasks: { taskIndex, taskGet, taskUpdate },
-  files: { exportImage, getMedia, mediaUpdate, mediaDelete, siteMediaBulkUpload, uploadFile, mediaBulkDelete },
+  files: {
+    exportImage,
+    getMedia,
+    mediaUpdate,
+    mediaDelete,
+    mediaMapIndex,
+    siteMediaBulkUpload,
+    uploadFile,
+    mediaBulkDelete
+  },
   trees: {
     treeScientificNamesSearch,
     establishmentTreesFind,
@@ -7703,7 +7712,6 @@ export const operationsByTag = {
   },
   formData: { formDataGet, formDataUpdate },
   updateRequests: { updateRequestGet, updateRequestUpdate },
-  mediaMapIndex: { mediaMapIndex },
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
   linkedFields: { linkedFieldsIndex },
