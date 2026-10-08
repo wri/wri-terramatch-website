@@ -51,7 +51,6 @@ const ProjectNurseriesTabContent: FC<ProjectNurseriesTabProps> = ({ project }) =
   const nurseryCount = hasActiveFilters && section != null ? section.nurseries.length : nurseryTotal;
   const showEmptyProject =
     section == null || (section.nurseriesLoaded !== false && section.nurseries.length === 0 && !hasActiveFilters);
-  const showNoResults = !loading && (error || showEmptyProject);
 
   const addNurseryHref =
     project.frameworkKey == null
@@ -83,7 +82,7 @@ const ProjectNurseriesTabContent: FC<ProjectNurseriesTabProps> = ({ project }) =
         onViewChange={() => undefined}
         onQueryChange={setQuery}
       />
-      <PageContent className={twMerge("h-auto flex-1 px-2 py-0", showNoResults && "bg-theme-neutral-100")}>
+      <PageContent className={twMerge("bg-theme-neutral-100 h-auto flex-1 px-2 pt-0 pb-8")}>
         {loading ? (
           <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
             <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />

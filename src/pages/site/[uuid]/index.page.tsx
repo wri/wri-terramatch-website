@@ -62,7 +62,7 @@ const SiteDetailPage: FC = () => {
     },
     {
       key: "audit-log",
-      title: t("Audit Log"),
+      title: t("History"),
       body: <AuditLog site={site!} refresh={refetch} />
     }
   ];
@@ -104,7 +104,7 @@ const SiteDetailPage: FC = () => {
                   >
                     {t("Project Profile")}
                   </Button>
-                  <span className="text-sm text-theme-neutral-300">|</span>
+                  <span className="text-theme-neutral-300 text-sm">|</span>
                   <Button
                     variant="borderless"
                     size="small"

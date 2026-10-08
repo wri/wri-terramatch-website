@@ -99,8 +99,6 @@ const ProjectSitesTabContent: FC<ProjectSitesTabProps> = ({ project }) => {
   const showEmptyFiltered =
     siteProject != null && siteProject.sitesLoaded && visibleSites.length === 0 && hasActiveFilters;
 
-  const showNoResults = !loading && (error || siteProject == null || showEmptyProject || showEmptyFiltered);
-
   return (
     <div className="flex w-full min-w-0 flex-1 flex-col">
       <SiteIndexHeader
@@ -117,7 +115,7 @@ const ProjectSitesTabContent: FC<ProjectSitesTabProps> = ({ project }) => {
         onAddSite={handleAddSite}
         onQueryChange={setSearchQuery}
       />
-      <PageContent className={twMerge("h-auto flex-1 px-2 pt-0 pb-8", showNoResults && "bg-theme-neutral-100")}>
+      <PageContent className={twMerge("bg-theme-neutral-100 h-auto flex-1 px-2 pt-0 pb-8")}>
         {loading ? (
           <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
             <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
