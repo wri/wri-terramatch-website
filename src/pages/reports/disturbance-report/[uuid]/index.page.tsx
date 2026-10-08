@@ -16,7 +16,6 @@ import { useValueChanged } from "@/hooks/useValueChanged";
 import { getReportsIndexUrl, withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import DisturbanceReportBanner from "@/redesignComponents/content/Banner/DisturbanceReportBanner/DisturbanceReportBanner";
-import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
@@ -131,8 +130,6 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
       <DisturbanceReportBanner
         report={disturbanceReport}
         title={headerReportTitle}
-        dueAt={disturbanceReport.dueAt}
-        entityName="disturbance-report"
         breadcrumbs={breadcrumbs}
         suffix={
           disturbanceReport.projectUuid != null ? (
