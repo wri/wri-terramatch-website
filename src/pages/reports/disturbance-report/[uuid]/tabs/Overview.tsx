@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import StatusTag from "@/components/elements/StatusTag/StatusTag";
@@ -8,8 +8,10 @@ import ContactSupport from "@/components/extensive/PageElements/ContactSupport/C
 import MetricCardsRow from "@/components/extensive/PageElements/MetricCardsRow/MetricCardsRow";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
+import { loadAllSitePolygons } from "@/connections/SitePolygons";
 import { PENDING_APPROVAL } from "@/constants/statuses";
 import { DisturbanceReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { getEntitySetupButtonLabel } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
@@ -21,6 +23,9 @@ import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSu
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { AreaHectaresIcon, ChevronRightIcon, PeopleAffectedIcon } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
+import Log from "@/utils/log";
+
+type PolygonAffectedEntry = { polyUuid: string; polyName: string; siteUuid: string };
 
 const DISTURBANCE_REPORTING_GUIDE_URL =
   "https://terramatchsupport.zendesk.com/hc/en-us/articles/50591003474843-How-and-When-to-Report-on-Disturbances-in-your-TerraFund-Project";
@@ -39,6 +44,46 @@ const DisturbanceReportOverviewTab: FC<DisturbanceReportOverviewTabProps> = ({
   const t = useT();
   const [isReportSetupComplete, setIsReportSetupComplete] = useState(false);
   const editButtonLabel = getEntitySetupButtonLabel(t, report.status, isReportSetupComplete);
+  const polygonAffected = report.entries?.find(entry => entry.name === "polygon-affected")?.value ?? "";
+  const polygonUuidsBySite = useMemo(() => {
+    if (polygonAffected === "") return {};
+    const parsed = JSON.parse(polygonAffected) as (PolygonAffectedEntry | PolygonAffectedEntry[])[];
+    return parsed.flat().reduce<Record<string, string[]>>((acc, polygon) => {
+      acc[polygon.siteUuid] = [...(acc[polygon.siteUuid] ?? []), polygon.polyUuid];
+      return acc;
+    }, {});
+  }, [polygonAffected]);
+  const [polygonsData, setPolygonsData] = useState<SitePolygonLightDto[]>([]);
+  const totalAffectedArea = useMemo(
+    () => polygonsData.reduce((total, polygon) => total + (polygon.calcArea ?? 0), 0),
+    [polygonsData]
+  );
+  useEffect(() => {
+    const siteEntries = Object.entries(polygonUuidsBySite);
+    if (siteEntries.length === 0) {
+      setPolygonsData([]);
+      return;
+    }
+
+    let cancelled = false;
+    void Promise.all(
+      siteEntries.map(async ([siteUuid, sitePolygonUuids]) => {
+        const sitePolygons = await loadAllSitePolygons({ entityName: "sites", entityUuid: siteUuid, enabled: true });
+        const affectedUuids = new Set(sitePolygonUuids);
+        return sitePolygons.filter(polygon => affectedUuids.has(polygon.uuid));
+      })
+    )
+      .then(results => {
+        if (!cancelled) setPolygonsData(results.flat());
+      })
+      .catch(error => {
+        Log.error("Failed to load disturbance report affected polygons", { error });
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [polygonUuidsBySite]);
 
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "disturbance-reports",
@@ -87,14 +132,14 @@ const DisturbanceReportOverviewTab: FC<DisturbanceReportOverviewTabProps> = ({
             <MetricCardsRow>
               <MetricCard
                 title={t("Affected Area")}
-                progress={0}
+                progress={totalAffectedArea}
                 progressSuffix={t("ha")}
                 goal={0}
                 variant="large"
                 icon={<AreaHectaresIcon />}
                 color="error.900"
                 metricLabel="affected_area"
-                tooltipContent={t("Total area of the polygons affected by this disturbance.")}
+                tooltipContent={t("This is the area where the disturbance occurred.")}
                 className="flex-none"
               />
               <MetricCard
@@ -105,7 +150,9 @@ const DisturbanceReportOverviewTab: FC<DisturbanceReportOverviewTabProps> = ({
                 icon={<PeopleAffectedIcon />}
                 color="error.900"
                 metricLabel="people_affected"
-                tooltipContent={t("Number of people affected by this disturbance.")}
+                tooltipContent={t(
+                  "This is the estimated total number of individuals impacted over the duration of the disturbance event."
+                )}
                 className="flex-none"
               />
             </MetricCardsRow>
