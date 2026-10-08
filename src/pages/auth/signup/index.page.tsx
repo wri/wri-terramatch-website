@@ -21,7 +21,6 @@ const SignUpFormDataSchema = (t: any) =>
     password: yup.string().required(),
     role: yup.string().required(),
     country: yup.string(),
-    program: yup.string(),
     confirm_password: yup.string().oneOf([yup.ref("password")], t("Passwords must match.")),
     terms: yup.boolean().isTrue(t("Please accept terms and conditions.")),
     consent: yup.boolean().isTrue(t("Please accept consent."))
@@ -95,8 +94,7 @@ const SignUpPage = ({
       jobRole: data.job_role,
       callbackUrl: window.location.origin + "/auth/verify/email/",
       roles: ["project-developer"],
-      country: selectedTitleOption == "Select Country" ? (selectedOption as any) : null,
-      program: selectedTitleOption == "Select Framework" ? (selectedOption?.toLowerCase() as any) : null
+      country: selectedTitleOption == "Select Country" ? (selectedOption as any) : null
     });
   };
 

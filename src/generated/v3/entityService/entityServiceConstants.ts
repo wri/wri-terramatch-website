@@ -15,6 +15,7 @@ import {
   SrpReportLightDto,
   SrpReportFullDto,
   MediaDto,
+  MediaMapIndexDto,
   MediaBulkErrorDto,
   ScientificNameDto,
   EstablishmentsTreesDto,
@@ -67,6 +68,7 @@ export const ENTITY_SERVICE_RESOURCES = [
   "nurseryReports",
   "srpReports",
   "media",
+  "mediaMapIndexes",
   "mediaBulkResponses",
   "treeSpeciesScientificNames",
   "establishmentTrees",
@@ -113,6 +115,7 @@ export type EntityServiceApiResources = {
   nurseryReports: StoreResourceMap<NurseryReportLightDto | NurseryReportFullDto>;
   srpReports: StoreResourceMap<SrpReportLightDto | SrpReportFullDto>;
   media: StoreResourceMap<MediaDto>;
+  mediaMapIndexes: StoreResourceMap<MediaMapIndexDto>;
   mediaBulkResponses: StoreResourceMap<MediaBulkErrorDto>;
   treeSpeciesScientificNames: StoreResourceMap<ScientificNameDto>;
   establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;

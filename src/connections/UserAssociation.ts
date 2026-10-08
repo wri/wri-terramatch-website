@@ -107,7 +107,7 @@ export const useUserAssociationCreation = connectionHook(userAssociationCreation
 
 export type OrganisationUserAssociationsProps = {
   organisationUuid: string;
-  status?: "requested" | "approved" | "rejected";
+  status?: "pending" | "approved" | "rejected";
 };
 
 const organisationUserAssociationConnection = v3Resource("associatedUsers", getUserAssociation)

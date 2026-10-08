@@ -78,9 +78,10 @@ const TeamTabContent: FC = () => {
     organisationUuid,
     status: "approved"
   });
-  const [pendingLoaded, { data: pendingUsers }] = useOrganisationUserAssociations({
-    organisationUuid,
-    status: "requested"
+
+  const [, { data: pendingUsers }] = useOrganisationUserAssociations({
+    organisationUuid: String(query.id),
+    status: "pending"
   });
   const [rejectedLoaded, { data: rejectedUsers }] = useOrganisationUserAssociations({
     organisationUuid,
