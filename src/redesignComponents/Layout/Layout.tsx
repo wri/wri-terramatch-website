@@ -56,6 +56,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
                   },
                   {
                     href: "/my-projects",
+                    activePaths: ["/my-projects", "/project"],
                     icon: <ProjectIcon boxSize={4} />,
                     label: "Projects"
                   },
@@ -66,6 +67,8 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
                   },
                   {
                     href: isAdmin ? "/admin#/nursery" : "/nurseries",
+                    // "/nurseries" redirects to the "/nurserie" route
+                    activePaths: isAdmin ? undefined : ["/nurserie"],
                     icon: <NurseryIcon boxSize={4} />,
                     label: "Nurseries"
                   },
