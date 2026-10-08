@@ -9,6 +9,7 @@ import { deleteSite } from "@/connections/Entity";
 import { Framework, isTerrafund } from "@/context/framework.provider";
 import { getEntityEditPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
+import { useIndexAccordionOpen } from "@/hooks/useIndexAccordionOpen";
 import { getThemedColor } from "@/lib/theme";
 import { useKeyIndicatorsTooltipContent } from "@/pages/project/[uuid]/tabs/constants/keyIndicatorsTooltipContent";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
@@ -403,7 +404,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
   embeddedInProject = false
 }) => {
   const t = useT();
-  const [open, setOpen] = useState(defaultOpen);
+  const [open, setOpen] = useIndexAccordionOpen({ defaultOpen, resetKey: openResetKey });
   const [siteToDelete, setSiteToDelete] = useState<SiteIndexSite | null>(null);
   const { setSiteSelected } = useSiteIndexSelectionActions();
   const showSitesLoading = (embeddedInProject || open) && (project.sitesLoading || !project.sitesLoaded);
@@ -426,10 +427,6 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
     if (!open || project.sitesLoaded || project.sitesLoading) return;
     onProjectOpened(project.id);
   }, [embeddedInProject, onProjectOpened, open, project.id, project.sitesLoaded, project.sitesLoading]);
-
-  useEffect(() => {
-    setOpen(defaultOpen);
-  }, [defaultOpen, openResetKey]);
 
   const handleConfirmRowDelete = useCallback(async () => {
     if (siteToDelete == null) {

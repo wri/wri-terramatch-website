@@ -1,7 +1,8 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo } from "react";
 
+import { useIndexAccordionOpen } from "@/hooks/useIndexAccordionOpen";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
@@ -16,6 +17,7 @@ type ProjectReportsSectionProps = {
   sectionName?: string;
   unfilteredPeriods?: ReportsIndexPeriod[];
   defaultOpen?: boolean;
+  openResetKey?: string;
   metricsReady?: boolean;
   hasReportSubset?: boolean;
   indexHref?: string;
@@ -35,6 +37,7 @@ const ProjectReportsSection: FC<ProjectReportsSectionProps> = ({
   sectionName,
   unfilteredPeriods,
   defaultOpen = false,
+  openResetKey,
   metricsReady = true,
   hasReportSubset = false,
   indexHref,
@@ -48,13 +51,17 @@ const ProjectReportsSection: FC<ProjectReportsSectionProps> = ({
   onOpen
 }) => {
   const t = useT();
-  const [open, setOpen] = useState(restoreSectionId != null ? section.id === restoreSectionId : defaultOpen);
+  const [open, setOpen] = useIndexAccordionOpen({
+    defaultOpen,
+    resetKey: openResetKey,
+    restoreOpen: restoreSectionId == null ? undefined : section.id === restoreSectionId
+  });
 
   useEffect(() => {
     if (expandForPeriodFilter) {
       setOpen(true);
     }
-  }, [expandForPeriodFilter]);
+  }, [expandForPeriodFilter, setOpen]);
 
   useEffect(() => {
     if (open) onOpen?.();

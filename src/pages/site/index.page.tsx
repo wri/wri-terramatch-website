@@ -49,7 +49,6 @@ const SiteIndexPageContent: FC = () => {
   const hasActiveSearch = searchQuery.trim().length > 0;
   const hasAppliedFilters = statusFilters.length > 0 || updateFilter != null;
   const hasActiveFilters = hasActiveSearch || hasAppliedFilters;
-  const shouldAutoOpenFolders = selectedProject !== ALL_PROJECTS_VIEW || hasActiveFilters;
   const filtering = searchQuery.trim() !== debouncedSearch;
   const { loading, loadingMore, hasMore, loadMore, viewProjects, projects, totalSiteCount, onProjectOpened, error } =
     useSiteIndexData({
@@ -178,7 +177,7 @@ const SiteIndexPageContent: FC = () => {
         ) : (
           <>
             <div className="space-y-4">
-              {visibleProjects.map(project => (
+              {visibleProjects.map((project, index) => (
                 <SiteProjectSection
                   key={project.id}
                   project={project}
@@ -188,7 +187,7 @@ const SiteIndexPageContent: FC = () => {
                   searchQuery={debouncedSearch}
                   statusFilters={statusFilters}
                   updateFilter={updateFilter}
-                  defaultOpen={shouldAutoOpenFolders}
+                  defaultOpen={index === 0}
                   openResetKey={accordionOpenResetKey}
                   onProjectOpened={onProjectOpened}
                   onSitesChanged={handleSitesChanged}

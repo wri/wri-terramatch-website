@@ -2,6 +2,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useMemo, useState } from "react";
 
+import { useIndexAccordionOpen } from "@/hooks/useIndexAccordionOpen";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
@@ -23,6 +24,8 @@ type AdditionalReportsContentProps = {
   loading: boolean;
   error: boolean;
   hasActiveSearch?: boolean;
+  openResetKey?: string;
+  openFirstSection?: boolean;
   indexHref?: string;
   restoreGroupId?: string;
   restoreReportId?: string;
@@ -78,13 +81,28 @@ const AdditionalReportGroupSection: FC<{
 const AdditionalReportsEntitySection: FC<{
   section: AdditionalReportsEntitySectionData;
   sectionName?: string;
+  defaultOpen: boolean;
+  openResetKey?: string;
   indexHref?: string;
   restoreGroupId?: string;
   restoreReportId?: string;
   onRowRestored?: () => void;
-}> = ({ section, sectionName, indexHref, restoreGroupId, restoreReportId, onRowRestored }) => {
+}> = ({
+  section,
+  sectionName,
+  defaultOpen,
+  openResetKey,
+  indexHref,
+  restoreGroupId,
+  restoreReportId,
+  onRowRestored
+}) => {
   const t = useT();
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useIndexAccordionOpen({
+    defaultOpen,
+    resetKey: openResetKey,
+    restoreOpen: restoreGroupId == null ? undefined : section.groups.some(group => group.id === restoreGroupId)
+  });
   const reports = useMemo(() => section.groups.flatMap(group => group.reports), [section.groups]);
   const attentionCount = useMemo(() => getReportsRequiringAttention(reports), [reports]);
   const childSections = section.children ?? [];
@@ -128,11 +146,13 @@ const AdditionalReportsEntitySection: FC<{
           </div>
         </Accordion>
       ) : null}
-      {childSections.map(child => (
+      {childSections.map((child, index) => (
         <AdditionalReportsEntitySection
           key={`${child.type}-${child.id}`}
           section={child}
           sectionName={sectionName}
+          defaultOpen={defaultOpen && section.groups.length === 0 && index === 0}
+          openResetKey={openResetKey}
           indexHref={indexHref}
           restoreGroupId={restoreGroupId}
           restoreReportId={restoreReportId}
@@ -149,6 +169,8 @@ const AdditionalReportsContent: FC<AdditionalReportsContentProps> = ({
   loading,
   error,
   hasActiveSearch = false,
+  openResetKey,
+  openFirstSection = true,
   indexHref,
   restoreGroupId,
   restoreReportId,
@@ -178,11 +200,13 @@ const AdditionalReportsContent: FC<AdditionalReportsContentProps> = ({
         )
       ) : (
         <div className="space-y-4">
-          {sections.map(section => (
+          {sections.map((section, index) => (
             <AdditionalReportsEntitySection
               key={`${section.type}-${section.id}`}
               section={section}
               sectionName={sectionName}
+              defaultOpen={openFirstSection && index === 0}
+              openResetKey={openResetKey}
               indexHref={indexHref}
               restoreGroupId={restoreGroupId}
               restoreReportId={restoreReportId}

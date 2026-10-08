@@ -14,6 +14,8 @@ const NO_ADDITIONAL_SECTIONS: AdditionalReportsEntitySection[] = [];
 type ProjectReportsMetaSectionProps = {
   meta: ProjectReportMetaDto;
   query: string;
+  defaultOpen: boolean;
+  openResetKey: string;
   expandForPeriodFilter: boolean;
   hasReportSubset: boolean;
   indexHref: string;
@@ -28,6 +30,8 @@ type ProjectReportsMetaSectionProps = {
 const ProjectReportsMetaSection: FC<ProjectReportsMetaSectionProps> = ({
   meta,
   query,
+  defaultOpen,
+  openResetKey,
   expandForPeriodFilter,
   hasReportSubset,
   indexHref,
@@ -78,6 +82,8 @@ const ProjectReportsMetaSection: FC<ProjectReportsMetaSectionProps> = ({
       section={section}
       unfilteredPeriods={sections[0]?.periods}
       attentionCount={attentionCount}
+      defaultOpen={defaultOpen}
+      openResetKey={openResetKey}
       loading={loadRequested && loading}
       onOpen={handleOpen}
       // Opening every project for a period filter would load every project's reports, so the

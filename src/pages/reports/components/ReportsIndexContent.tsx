@@ -17,6 +17,7 @@ import {
   clearReportsIndexRestore,
   findAdditionalReportLocation,
   findProgressReportLocation,
+  getReportsAccordionResetKey,
   getReportsIndexUrl,
   isReportsIndexTab,
   readReportsIndexRestore,
@@ -187,6 +188,7 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
   const hasActiveSearch = query.trim().length > 0;
   const hasActivePeriodFilter =
     filters.dueDateFrom !== "" || filters.dueDateTo !== "" || filters.dueMonth !== "" || filters.dueYear !== "";
+  const accordionOpenResetKey = `${viewValue}:${getReportsAccordionResetKey(query, filters)}`;
   const defaultReportTypes = getDefaultProgressFiltersForSource(SOURCE).reportTypes;
   const hasUserReportTypeFilter =
     filters.reportTypes.length !== defaultReportTypes.length ||
@@ -354,11 +356,13 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
                 <NoResults title={t("No reports found")} description={t("Try changing your search or filters.")} />
               ) : (
                 <div className="space-y-4">
-                  {allProjectsMetas.map(meta => (
+                  {allProjectsMetas.map((meta, index) => (
                     <ProjectReportsMetaSection
                       key={meta.uuid}
                       meta={meta}
                       query={query}
+                      defaultOpen={index === 0}
+                      openResetKey={accordionOpenResetKey}
                       expandForPeriodFilter={hasActivePeriodFilter}
                       hasReportSubset={hasReportSubset}
                       indexHref={indexHref}
@@ -398,6 +402,7 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
                     section={section}
                     unfilteredPeriods={unfilteredPeriodsByProjectId.get(section.id)}
                     defaultOpen={index === 0}
+                    openResetKey={accordionOpenResetKey}
                     expandForPeriodFilter={hasActivePeriodFilter}
                     metricsReady={!progressLoading}
                     hasReportSubset={hasReportSubset}
@@ -419,6 +424,7 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
             loading={additionalLoading || isSwitchingProject || !restoreReady}
             error={additionalError}
             hasActiveSearch={hasActiveSearch}
+            openResetKey={accordionOpenResetKey}
             indexHref={indexHref}
             restoreGroupId={additionalRestore?.groupId}
             restoreReportId={restoreReportId ?? undefined}

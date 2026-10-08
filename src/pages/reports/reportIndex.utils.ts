@@ -1,5 +1,6 @@
 import type { ParsedUrlQuery } from "querystring";
 
+import type { ReportsFilterValues } from "@/context/reports.provider";
 import type { FeedbackTagProps } from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import type { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { appendQueryParams } from "@/utils/appendQueryParams";
@@ -51,6 +52,11 @@ const NOTHING_TO_REPORT_TYPES: ReadonlySet<ReportIndexItem["type"]> = new Set([
 ]);
 
 const NOTHING_TO_REPORT_STATUSES: ReadonlySet<TagSubmissionState> = new Set(["draft", "due"]);
+
+export const getReportsAccordionResetKey = (
+  query: string,
+  { dueDateFrom, dueDateTo, dueMonth, dueYear, reportTypes, statuses }: ReportsFilterValues
+) => [query.trim(), dueDateFrom, dueDateTo, dueMonth, dueYear, reportTypes.join(","), statuses.join(",")].join(":");
 
 export const isReportsIndexSource = (value: string | undefined): value is ReportsIndexSource =>
   REPORTS_INDEX_SOURCES.some(source => source === value);

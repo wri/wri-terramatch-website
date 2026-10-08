@@ -11,6 +11,7 @@ import ProjectReportsSection from "@/pages/reports/components/ProjectReportsSect
 import { getDefaultProgressFiltersForSource } from "@/pages/reports/components/reportFilter.constants";
 import ReportsIndexBulkBar from "@/pages/reports/components/ReportsIndexBulkBar";
 import ReportsIndexHeader from "@/pages/reports/components/ReportsIndexHeader";
+import { getReportsAccordionResetKey } from "@/pages/reports/reportIndex.utils";
 import { getReportPeriodOptions, getSectionReportingPeriods } from "@/pages/reports/reportPeriodFilter";
 import ReportProfileOriginProvider from "@/pages/reports/ReportProfileOrigin.provider";
 import ReportsSelectionProvider from "@/pages/reports/ReportsSelection.provider";
@@ -61,6 +62,7 @@ const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
     () => getReportPeriodOptions(getSectionReportingPeriods(progressSections), additionalSections),
     [additionalSections, progressSections]
   );
+  const accordionOpenResetKey = getReportsAccordionResetKey(query, filters);
   const unfilteredPeriodsByProjectId = useMemo(
     () => new Map(progressSections.map(section => [section.id, section.periods])),
     [progressSections]
@@ -116,6 +118,7 @@ const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
                 sectionName={t("Progress Reports")}
                 unfilteredPeriods={unfilteredPeriodsByProjectId.get(section.id)}
                 defaultOpen={index === 0}
+                openResetKey={accordionOpenResetKey}
                 hasReportSubset={hasReportSubset}
                 indexHref=""
               />
@@ -126,6 +129,8 @@ const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
                 sectionName={t("Additional Reports")}
                 loading={false}
                 error={false}
+                openResetKey={accordionOpenResetKey}
+                openFirstSection={filteredProgressSections.length === 0}
                 indexHref=""
               />
             )}
