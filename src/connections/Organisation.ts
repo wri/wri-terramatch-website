@@ -49,7 +49,7 @@ type FinancialIndicator = FinancialIndicatorDto & {
   organisationUuid?: string;
 };
 
-type UserStatus = "approved" | "rejected" | "requested";
+type UserStatus = "approved" | "rejected" | "pending";
 
 export type MyOrganisationConnection = OrganisationConnection & {
   organisationId?: string;

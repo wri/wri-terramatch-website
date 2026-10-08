@@ -1014,7 +1014,10 @@ export type UserAssociationDto = {
   uuid: string;
   emailAddress: string;
   fullName: string;
-  status: string;
+  /**
+   * Organisation membership status. Always null for project associations.
+   */
+  status: "pending" | "approved" | "rejected" | null;
   isManager: boolean;
   organisationName: string;
   roleName: string | null;
