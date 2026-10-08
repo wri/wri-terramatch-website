@@ -147,19 +147,6 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
               >
                 {t("Project Profile")}
               </Button>
-              <span className="text-theme-neutral-300 text-sm">|</span>
-              <Button
-                variant="borderless"
-                size="small"
-                className="underline underline-offset-2"
-                onClick={() => {
-                  router.push(`/reports/project-report/${srpReport.projectReportUuid}`, undefined, {
-                    shallow: true
-                  });
-                }}
-              >
-                {t("Project Report")}
-              </Button>
             </div>
           )
         }
