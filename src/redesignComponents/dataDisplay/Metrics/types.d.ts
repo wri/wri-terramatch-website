@@ -76,6 +76,9 @@ type NoGoalMetricCardContentKeys =
 
 export type NoGoalMetricCardContentProps = Pick<MetricCardCommonVariantProps, NoGoalMetricCardContentKeys>;
 
+export type NoGoalMediumMetricCardContentProps = NoGoalMetricCardContentProps &
+  Pick<MetricCardProps, "selection" | "filtered">;
+
 type ProgressBarMetricCardContentKeys =
   | "title"
   | "progress"
