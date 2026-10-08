@@ -16,6 +16,7 @@ import {
   frameworkAdminPrimaryRoleChoices,
   frameworkChoices,
   localeChoices,
+  ROLES_SCHEMA,
   userPrimaryRoleChoices
 } from "@/admin/modules/user/const";
 import { validateForm } from "@/admin/utils/forms";
@@ -54,6 +55,10 @@ const UserEdit = () => {
     jobRole: yup.string().nullable().required(),
     organisationUuid: yup.string().nullable().required()
   };
+
+  if (isFrameworkAdmin) {
+    schemaObject.roles = ROLES_SCHEMA;
+  }
 
   const roleChoices = useMemo(() => {
     if (isSuperAdmin) {
