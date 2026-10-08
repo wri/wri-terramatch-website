@@ -16,6 +16,7 @@ import {
 } from "@/utils/entityOperationToasts";
 import Log from "@/utils/log";
 
+import { useNurseriesSelectionActions } from "./NurseriesSelection.provider";
 import type { NurseryIndexRow } from "./nurseryIndex.types";
 import { groupNurseryUuidsByFramework } from "./nurseryIndex.utils";
 import { isNurseryDeletable, isNurseryEditable, isNurserySubmittable } from "./nurseryIndexSubmit";
@@ -41,6 +42,7 @@ const updateNurseryStatus = async (nurseryUuid: string, status: "pending-approva
 export const useNurseriesBulkActions = ({ selectedNurseries, onNurseriesChanged }: UseNurseriesBulkActionsProps) => {
   const t = useT();
   const router = useRouter();
+  const { clearSelection } = useNurseriesSelectionActions();
   const [isDownloading, setIsDownloading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -63,6 +65,7 @@ export const useNurseriesBulkActions = ({ selectedNurseries, onNurseriesChanged 
     }
 
     setIsDownloading(true);
+    clearSelection();
     try {
       showEntityProgressToast(
         t,
@@ -83,7 +86,7 @@ export const useNurseriesBulkActions = ({ selectedNurseries, onNurseriesChanged 
     } finally {
       setIsDownloading(false);
     }
-  }, [isDownloading, selectedNurseries, t]);
+  }, [clearSelection, isDownloading, selectedNurseries, t]);
 
   const handleEdit = useCallback(() => {
     if (!canEdit) {

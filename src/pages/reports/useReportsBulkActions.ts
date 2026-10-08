@@ -111,6 +111,7 @@ export const useReportsBulkActions = ({ selectedReports, clearSelection }: UseRe
     if (selectedReports.length === 0 || isDownloading) return;
 
     setIsDownloading(true);
+    clearSelection();
     try {
       showEntityProgressToast(
         t,
@@ -133,7 +134,7 @@ export const useReportsBulkActions = ({ selectedReports, clearSelection }: UseRe
     } finally {
       setIsDownloading(false);
     }
-  }, [isDownloading, selectedReports, t]);
+  }, [clearSelection, isDownloading, selectedReports, t]);
 
   const handleNothingToReport = useCallback(async () => {
     if (!canMarkNothingToReport || isUpdating) return;
