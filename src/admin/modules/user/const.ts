@@ -1,65 +1,19 @@
+import * as yup from "yup";
+
 import { Framework } from "@/context/framework.provider";
+import { Frameworks, Roles } from "@/generated/v3/userService/userServiceConstants";
 
-export const frameworkAdminPrimaryRoleChoices = [
-  {
-    id: "project-developer",
-    name: "Project Developer"
-  },
-  {
-    id: "project-manager",
-    name: "Project Manager"
-  }
-];
+export const userPrimaryRoleChoices = Object.entries(Roles.ROLE_NAMES).map(([id, name]) => ({ id, name }));
 
-export const userPrimaryRoleChoices = [
-  {
-    id: "admin-ppc",
-    name: "PPC Admin"
-  },
-  {
-    id: "admin-terrafund",
-    name: "TerraFund Admin"
-  },
-  {
-    id: "admin-hbf",
-    name: "HBF Admin"
-  },
-  {
-    id: "admin-epa-ghana-pilot",
-    name: "EPA Ghana Pilot Admin"
-  },
-  {
-    id: "admin-super",
-    name: "Super Admin"
-  },
-  {
-    id: "project-developer",
-    name: "Project Developer"
-  },
-  {
-    id: "project-manager",
-    name: "Project Manager"
-  },
-  {
-    id: "funder",
-    name: "Funder"
-  },
-  {
-    id: "government",
-    name: "Government"
-  }
-];
+const FRAMEWORK_ADMIN_ROLES: string[] = ["project-developer", "project-manager"];
 
-export const frameworkChoices = [
-  {
-    id: "ppc",
-    name: "PPC"
-  },
-  {
-    id: "terrafund",
-    name: "TerraFund"
-  }
-];
+export const frameworkAdminPrimaryRoleChoices = userPrimaryRoleChoices.filter(({ id }) =>
+  FRAMEWORK_ADMIN_ROLES.includes(id)
+);
+
+export const ROLES_SCHEMA = yup.array().of(yup.string()).required().min(1, "At least one role is required");
+
+export const frameworkChoices = Object.entries(Frameworks.FRAMEWORK_NAMES).map(([id, name]) => ({ id, name }));
 
 export const localeChoices = [
   { id: "en-US", name: "English" },

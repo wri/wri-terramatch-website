@@ -68,3 +68,37 @@ export type UserServiceApiResources = {
   organisationInvites: StoreResourceMap<OrganisationInviteDto>;
   projectInviteAcceptances: StoreResourceMap<ProjectInviteAcceptanceDto>;
 };
+
+export const Roles = {
+  ROLE_NAMES: {
+    "admin-super": "Super Admin",
+    "admin-ppc": "PPC Admin",
+    "admin-terrafund": "TerraFund Admin",
+    "admin-hbf": "HBF Admin",
+    "admin-epa-ghana-pilot": "EPA Ghana Pilot Admin",
+    "admin-fundo-flora": "Fundo Flora Admin",
+    "admin-wcb": "WCB Admin",
+    "admin-barka-fund": "Barka Fund Admin",
+    "project-developer": "Project Developer",
+    "project-manager": "Project Manager",
+    "greenhouse-service-account": "Greenhouse Service Account",
+    "research-service-account": "Research Service Account",
+    government: "Government",
+    funder: "Funder"
+  } as const
+} as const;
+
+export const Frameworks = {
+  FRAMEWORK_NAMES: {
+    "barka-fund": "Barka Fund",
+    enterprises: "TerraFund Enterprises",
+    "epa-ghana-pilot": "EPA-Ghana Pilot",
+    "fundo-flora-1": "Fundo Flora 1",
+    hbf: "Harit Bharat Fund",
+    ppc: "PPC",
+    terrafund: "TerraFund Top 100",
+    "terrafund-3": "TerraFund Cohort Three",
+    "terrafund-landscapes": "TerraFund Landscapes",
+    wcb: "Wildlife Conservation Bond"
+  } as const
+} as const;
