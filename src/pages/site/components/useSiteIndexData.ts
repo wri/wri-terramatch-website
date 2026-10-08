@@ -40,10 +40,10 @@ export const useSiteIndexData = ({
 
   const onProjectOpened = useCallback(
     async (projectId: string) => {
-      await loadProjectChildren(projectId);
-      if (fullProjectsRef.current.has(projectId)) return;
+      const fullProjectRequest = fullProjectsRef.current.has(projectId) ? null : loadFullProject({ id: projectId });
+      const [result] = await Promise.all([fullProjectRequest, loadProjectChildren(projectId)]);
+      if (result == null) return;
 
-      const result = await loadFullProject({ id: projectId });
       const fullProject = asFullProject(result.data);
       if (fullProject == null) return;
       setFullProjectsById(current => {
