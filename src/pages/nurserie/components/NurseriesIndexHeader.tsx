@@ -1,5 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { useRouter } from "next/router";
 import { FC, useMemo, useState } from "react";
 
@@ -125,7 +126,10 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
         </>
       )}
       <ToolbarTable
-        className="!bg-theme-neutral-200 !px-6 !pb-6 !pt-5"
+        className={classNames(
+          "!px-6 !pb-6 !pt-5",
+          embeddedInProject ? "border-b border-theme-neutral-300 !bg-theme-neutral-100" : "!bg-theme-neutral-200"
+        )}
         classNameContentLeft={embeddedInProject ? "min-w-0 flex-1 !shrink" : "w-full"}
         classNameContentSearch="w-[19rem] max-w-full"
         search={{
