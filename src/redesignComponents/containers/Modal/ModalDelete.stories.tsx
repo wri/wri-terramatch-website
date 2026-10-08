@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { fn } from "@storybook/test";
 import { useT } from "@transifex/react";
 import { useState } from "react";
 
@@ -12,6 +13,8 @@ const meta = {
   tags: ["autodocs"],
   args: {
     open: false,
+    onOpenChange: fn(),
+    onConfirm: fn(),
     items: [{ id: "polygon1", label: "Polygon Name 1" }],
     singular: { title: "Delete polygon?", description: "will be permanently removed from this site." },
     plural: {

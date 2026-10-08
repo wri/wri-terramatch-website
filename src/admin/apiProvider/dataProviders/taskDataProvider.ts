@@ -25,7 +25,7 @@ export const taskDataProvider: DataProvider = {
       srpReportUuids,
       loadFailure
     } = await loadTask({
-      id: params.id
+      id: params.id as string
     });
     if (loadFailure != null) {
       throw v3ErrorForRA("Task get fetch failed", loadFailure);

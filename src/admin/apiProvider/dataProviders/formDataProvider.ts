@@ -77,7 +77,7 @@ export const formDataProvider: Partial<DataProvider> = {
     }
   },
 
-  async update<RecordType>(_: string, params: UpdateParams<RecordType>) {
+  async update<RecordType>(_: string, params: UpdateParams) {
     try {
       const body = omitBy(omit(params.data, UPLOAD_KEYS), isUndefined) as FormBuilderData;
 

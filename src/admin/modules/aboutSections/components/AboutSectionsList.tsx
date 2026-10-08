@@ -38,8 +38,8 @@ const AboutSectionsList: FC = () => {
           <FunctionField
             source="frameworks"
             label="Override Frameworks"
-            render={(record?: AboutSectionDto) =>
-              (record?.frameworks ?? [])
+            render={(record: AboutSectionDto) =>
+              (record.frameworks ?? [])
                 .map(frameworkKey => frameworkChoices.find(({ id }) => id === frameworkKey)?.name ?? frameworkKey)
                 .join(", ")
             }

@@ -31,7 +31,7 @@ const InputLabel = forwardRef<HTMLInputElement, InputLabelProps>((props, ref) =>
     <>
       <Text<HTMLLabelElement>
         {...labelProps}
-        ref={ref as RefObject<HTMLLabelElement>}
+        ref={ref as RefObject<HTMLLabelElement | null>}
         as="label"
         variant={labelVariant ?? "text-bold-body-300"}
         className={classNames("mr-2 inline uppercase", className)}

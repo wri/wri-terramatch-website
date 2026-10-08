@@ -1,6 +1,6 @@
 import { RefObject, useEffect } from "react";
 
-const useHideOnScroll = (ref: RefObject<HTMLElement>, container?: HTMLElement | null, onHide?: () => void) => {
+const useHideOnScroll = (ref: RefObject<HTMLElement | null>, container?: HTMLElement | null, onHide?: () => void) => {
   useEffect(() => {
     const hideElement = () => {
       if (ref.current) {

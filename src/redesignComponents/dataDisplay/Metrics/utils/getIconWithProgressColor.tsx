@@ -1,4 +1,4 @@
-import { cloneElement, isValidElement, ReactElement, ReactNode } from "react";
+import { cloneElement, isValidElement, ReactNode } from "react";
 
 import { MetricCardVariant } from "../types";
 
@@ -10,10 +10,10 @@ export function getIconWithProgressColor(
   color?: string,
   variant?: MetricCardVariant
 ): ReactNode {
-  if (!isValidElement(iconElement)) {
+  if (!isValidElement<{ color?: string; boxSize?: string }>(iconElement)) {
     return iconElement;
   }
   // Grey only when no data or progress is 0. Use color when there is progress.
   const iconColor = progress === 0 ? "neutral.400" : color ?? "primary.600";
-  return cloneElement(iconElement as ReactElement, { color: iconColor, boxSize });
+  return cloneElement(iconElement, { color: iconColor, boxSize });
 }

@@ -12,9 +12,6 @@ export const AppBar = (props: AppBarProps) => {
         onClick={() => {
           window.location.href = "/dashboard";
         }}
-        placeholder={undefined}
-        onPointerEnterCapture={undefined}
-        onPointerLeaveCapture={undefined}
       />
       <Logout redirectTo="/auth/login" />
     </UserMenu>

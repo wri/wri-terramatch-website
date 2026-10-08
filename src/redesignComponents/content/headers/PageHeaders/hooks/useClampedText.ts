@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 const CLAMP_THRESHOLD_PX = 1;
 
 export interface UseClampedTextReturn {
-  descriptionRef: React.RefObject<HTMLParagraphElement>;
+  descriptionRef: React.RefObject<HTMLParagraphElement | null>;
   isClamped: boolean;
   isExpanded: boolean;
   toggleExpand: () => void;

@@ -154,7 +154,7 @@ export interface AdminMapExtras {
   hideFullscreenControl?: boolean;
   setPolygonFromMap?: SetPolygonFromMap;
   polygonFromMap?: PolygonFromMapState;
-  imageGalleryRef?: React.RefObject<HTMLDivElement>;
+  imageGalleryRef?: React.RefObject<HTMLDivElement | null>;
   showViewGallery?: boolean;
 }
 

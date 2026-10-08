@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge";
 import { useChampionsMap } from "../championsMap.context";
 
 interface MapCanvasProps {
-  mapContainer: RefObject<HTMLDivElement>;
+  mapContainer: RefObject<HTMLDivElement | null>;
   className?: string;
   isFullscreen?: boolean;
   children?: ReactNode;

@@ -12,7 +12,7 @@ import { ModalTranslatedProps } from "./Modal";
 import { ExpandModalBase } from "./ModalsBases";
 
 export type ModalBaseProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
-type ModalExpandProps = ModalTranslatedProps & {
+type ModalExpandProps = Omit<ModalTranslatedProps, "content"> & {
   id: string;
   popUpContent?: TranslatedText;
   closeModal: (id: string) => void;

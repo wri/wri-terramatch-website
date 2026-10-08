@@ -1,4 +1,4 @@
-import { ComponentStory } from "@storybook/react";
+import { StoryFn } from "@storybook/react";
 
 import List, { ListProps } from "./List";
 
@@ -13,10 +13,7 @@ export default {
   }
 };
 
-const Template: ComponentStory<typeof List> = ({
-  numberOfItems,
-  ...args
-}: ListProps<any, any> & { numberOfItems: number }) => {
+const Template: StoryFn<ListProps<any, any> & { numberOfItems: number }> = ({ numberOfItems, ...args }) => {
   const items: any[] = Array.from({ length: numberOfItems }, (_, i) => ({ key: i + 1 }));
 
   return (
@@ -33,6 +30,5 @@ const Template: ComponentStory<typeof List> = ({
 export const _List = Template.bind({});
 
 _List.args = {
-  // @ts-expect-error
   numberOfItems: 5
 };

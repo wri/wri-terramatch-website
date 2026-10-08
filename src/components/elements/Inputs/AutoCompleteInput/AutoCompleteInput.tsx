@@ -65,6 +65,7 @@ const AutoCompleteInput = forwardRef(
         </Popover.Button>
 
         <Transition
+          as="div"
           show={searchResult.list.length > 0 || !!loading}
           enter="transition duration-100 ease-out"
           enterFrom="transform scale-95 opacity-0"

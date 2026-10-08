@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { fn } from "@storybook/test";
 import { useT } from "@transifex/react";
 import { useState } from "react";
 
@@ -12,6 +13,8 @@ const meta = {
   tags: ["autodocs"],
   args: {
     open: false,
+    onOpenChange: fn(),
+    onConfirm: fn(),
     items: [{ id: "site1", label: "Site Name 1" }],
     singular: { title: "Submit site?", description: "Are you sure you want to submit" },
     plural: { title: "Submit sites?", description: "Are you sure you want to submit these sites?" }

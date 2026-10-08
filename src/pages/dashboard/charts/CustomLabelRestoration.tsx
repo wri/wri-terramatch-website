@@ -11,7 +11,7 @@ export const CustomLabel: React.FC<any> = props => {
       y={isSmallBar ? y - 8 : y + height / 2}
       fill={isSmallBar ? "#000000" : "white"}
       textAnchor="middle"
-      dominantBaseline={isSmallBar ? "bottom" : "middle"}
+      dominantBaseline={isSmallBar ? "auto" : "middle"}
       className="text-12"
     >
       {`${Math.round(value).toLocaleString()} ha`}

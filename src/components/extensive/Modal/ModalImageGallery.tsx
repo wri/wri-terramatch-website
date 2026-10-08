@@ -27,7 +27,7 @@ export interface TabImagesItem {
   images: ImageItem[];
 }
 
-export interface ModalImageGalleryProps extends ModalProps {
+export interface ModalImageGalleryProps extends Omit<ModalProps, "content"> {
   tabItems: TabImagesItem[];
   onClose: () => void;
   WrapperClassName?: string;

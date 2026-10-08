@@ -18,6 +18,7 @@ const Toast: FC<IProps> = ({ className, ...rest }) => {
 
   return (
     <Transition
+      as="div"
       show={details.open}
       enter="transition-all ease-in duration-300 transform"
       enterFrom="translate-y-full opacity-0"

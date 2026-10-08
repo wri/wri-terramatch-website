@@ -1,0 +1,28 @@
+diff --git a/node_modules/ra-ui-materialui/dist/cjs/input/BooleanInput.d.ts b/node_modules/ra-ui-materialui/dist/cjs/input/BooleanInput.d.ts
+index 043641f..e1397ee 100644
+--- a/node_modules/ra-ui-materialui/dist/cjs/input/BooleanInput.d.ts
++++ b/node_modules/ra-ui-materialui/dist/cjs/input/BooleanInput.d.ts
+@@ -14,7 +14,7 @@ export declare const BooleanInput: {
+         source: PropTypes.Requireable<string>;
+     };
+ };
+-export type BooleanInputProps = CommonInputProps & SwitchProps & Omit<FormGroupProps, 'defaultValue' | 'onChange' | 'onBlur' | 'onFocus'> & {
++export type BooleanInputProps = CommonInputProps & Omit<SwitchProps, 'defaultValue'> & Omit<FormGroupProps, 'defaultValue' | 'onChange' | 'onBlur' | 'onFocus'> & {
+     options?: SwitchProps;
+ };
+ //# sourceMappingURL=BooleanInput.d.ts.map
+\ No newline at end of file
+diff --git a/node_modules/ra-ui-materialui/dist/esm/input/BooleanInput.d.ts b/node_modules/ra-ui-materialui/dist/esm/input/BooleanInput.d.ts
+index 043641f..e1397ee 100644
+--- a/node_modules/ra-ui-materialui/dist/esm/input/BooleanInput.d.ts
++++ b/node_modules/ra-ui-materialui/dist/esm/input/BooleanInput.d.ts
+@@ -14,7 +14,7 @@ export declare const BooleanInput: {
+         source: PropTypes.Requireable<string>;
+     };
+ };
+-export type BooleanInputProps = CommonInputProps & SwitchProps & Omit<FormGroupProps, 'defaultValue' | 'onChange' | 'onBlur' | 'onFocus'> & {
++export type BooleanInputProps = CommonInputProps & Omit<SwitchProps, 'defaultValue'> & Omit<FormGroupProps, 'defaultValue' | 'onChange' | 'onBlur' | 'onFocus'> & {
+     options?: SwitchProps;
+ };
+ //# sourceMappingURL=BooleanInput.d.ts.map
+\ No newline at end of file

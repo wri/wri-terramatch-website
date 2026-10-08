@@ -61,11 +61,10 @@ const ColoredChipFieldArray = (props: ColoredChipFieldArrayProps) => {
     <ArrayField {...props} record={{ [props.source!]: groupedPolygons }}>
       <SingleFieldList linkType={false}>
         <FunctionField
-          render={(record?: { status: string; count: number }) => {
-            if (record == null) return null;
-            const status = record?.status;
+          render={(record: { status: string; count: number }) => {
+            const status = record.status;
             const choice = props.choices.find(i => i.id === status);
-            const PolygonStatusLabel = record?.count + " " + choice?.name!;
+            const PolygonStatusLabel = record.count + " " + choice?.name!;
             return (
               <ChipField
                 record={{ status: PolygonStatusLabel }}

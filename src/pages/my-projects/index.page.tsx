@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import Head from "next/head";
 import Link from "next/link";
 import { FC, Fragment } from "react";
 
@@ -32,9 +31,7 @@ const MyProjectsPage: FC = () => {
   const hasProjects = projects != null && projects.length > 0;
   return (
     <>
-      <Head>
-        <title>{t("My Projects")}</title>
-      </Head>
+      <title>{t("My Projects")}</title>
       <PageHeader className="h-[203px]" title={t("My Projects")}>
         {hasProjects && (
           <Button as={Link} href="/project/reporting-framework-select">

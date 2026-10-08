@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo } from "react";
 
@@ -89,9 +88,7 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
   return (
     <>
       <ResponsiveTypography />
-      <Head>
-        <title>{getFormHeaderLabel(srpReport.projectName ?? "", taskTitle, true)}</title>
-      </Head>
+      <title>{getFormHeaderLabel(srpReport.projectName ?? "", taskTitle, true)}</title>
       <ReportBanner
         report={srpReport}
         title={headerReportTitle}

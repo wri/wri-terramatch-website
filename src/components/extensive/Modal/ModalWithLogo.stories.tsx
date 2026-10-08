@@ -21,8 +21,6 @@ export const Default: Story = {
   ),
   args: {
     title: "Are you sure?",
-    content:
-      "You have made progress on this form. If you close the form now, your progress will be saved for when you come back. You can access this form again on the 'My Applications' section.Would you like to close this form and continue later?",
     iconProps: {
       name: IconNames.INFO_CIRCLE,
       className: "fill-error"

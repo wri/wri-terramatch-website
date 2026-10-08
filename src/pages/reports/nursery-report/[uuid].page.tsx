@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo } from "react";
 
@@ -121,9 +120,7 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
   return (
     <>
       <ResponsiveTypography />
-      <Head>
-        <title>{reportTitle}</title>
-      </Head>
+      <title>{reportTitle}</title>
       <ReportBanner
         report={nurseryReport}
         title={headerReportTitle}

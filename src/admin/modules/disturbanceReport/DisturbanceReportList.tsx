@@ -59,9 +59,9 @@ const DisturbanceReportDataGrid: FC = () => {
         source="updateRequestStatus"
         label="Change Request Status"
         sortable={false}
-        render={(record?: DisturbanceReportLightDto) => {
+        render={(record: DisturbanceReportLightDto) => {
           const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
-            (option: any) => option.value === record?.updateRequestStatus
+            (option: any) => option.value === record.updateRequestStatus
           );
           return readableChangeRequestStatus?.title ? (
             <CustomChipField label={readableChangeRequestStatus.title} />

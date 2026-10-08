@@ -55,7 +55,7 @@ export type CameraResetProps = {
 export type GalleryProps = {
   dashboardMode?: "dashboard" | "modal";
   showViewGallery?: boolean;
-  imageGalleryRef?: RefObject<HTMLDivElement>;
+  imageGalleryRef?: RefObject<HTMLDivElement | null>;
 };
 
 export type DownloadProps = {

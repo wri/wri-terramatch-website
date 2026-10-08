@@ -1,5 +1,5 @@
 import { Box, Card, Divider, Stack, SxProps, Theme, Typography } from "@mui/material";
-import { ComponentType, FC } from "react";
+import { type JSX, ComponentType, FC } from "react";
 import { FunctionField, Labeled, NumberField, useShowContext } from "react-admin";
 
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";

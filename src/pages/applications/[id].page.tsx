@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 
@@ -30,9 +29,7 @@ const ApplicationPage = () => {
     <>
       <PageBody>
         <div className="min-h-screen bg-background">
-          <Head>
-            <title>{t("Application details")}</title>
-          </Head>
+          <title>{t("Application details")}</title>
           <LoadingContainer loading={!applicationLoaded}>
             <ApplicationHeader name={applicationName} uuid={uuid} />
 

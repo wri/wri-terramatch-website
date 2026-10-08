@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useEffect, useMemo } from "react";
 
@@ -96,9 +95,7 @@ const FinancialReportContent: FC<FinancialReportContentProps> = ({ financialRepo
   return (
     <>
       <ResponsiveTypography />
-      <Head>
-        <title>{headerReportTitle}</title>
-      </Head>
+      <title>{headerReportTitle}</title>
       <ReportBanner
         report={financialReport}
         title={headerReportTitle}

@@ -62,7 +62,7 @@ export const fundingProgrammeDataProvider: Partial<DataProvider> = {
     } as GetManyResult;
   },
 
-  async update<RecordType>(_: string, params: UpdateParams<RecordType>) {
+  async update<RecordType>(_: string, params: UpdateParams) {
     try {
       const attributes = omit(params.data, UPLOAD_KEYS) as unknown as StoreFundingProgrammeAttributes;
 

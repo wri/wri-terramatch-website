@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import Head from "next/head";
 
 import Text from "@/components/elements/Text/Text";
 import ActionTracker from "@/components/extensive/ActionTracker/ActionTracker";
@@ -28,9 +27,7 @@ const HomePage = () => {
   const fundingProgrammesProps = useFundingProgrammeToFundingCardProps(fundingProgrammes ?? []);
   return (
     <PageBody>
-      <Head>
-        <title>{t("Home")}</title>
-      </Head>
+      <title>{t("Home")}</title>
       <PageSection>
         <Text variant="text-36-bold" className="text-center">
           {t("What would you like to do?")}

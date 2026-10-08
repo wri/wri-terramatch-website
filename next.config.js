@@ -1,9 +1,8 @@
-const { withSentryConfig } = require("@sentry/nextjs");
+const { withSentryConfig } = require("@sentry/nextjs/config");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   i18n: {
     // These are all the locales you want to support in
     // your application
@@ -13,9 +12,9 @@ const nextConfig = {
     defaultLocale: "en-US",
     localeDetection: false
   },
-  //Added "page.tsx", "page.ts" to get middleware.page.ts working
-  // https://github.com/vercel/next.js/issues/38233#issuecomment-1172457237
-  pageExtensions: ["tsx", "page.tsx", "page.ts"],
+  // Only files with these extensions under src/pages are routes, so components can live next to the pages
+  // that use them. This also applies to the instrumentation hook (src/instrumentation.page.ts).
+  pageExtensions: ["page.tsx", "page.ts"],
   images: { domains: process.env.IMAGE_DOMAINS?.split(",") ?? ["s3-eu-west-1.amazonaws.com"] },
   // webpack5: true,
   webpack(config) {
@@ -43,10 +42,10 @@ const nextConfig = {
   }
 };
 
-/** @type {import('@sentry/nextjs').SentryWebpackPluginOptions} */
-const userSentryWebpackPluginOptions = {
+/** @type {import('@sentry/nextjs/config').SentryBuildOptions} */
+const sentryOptions = {
   // For all available options, see:
-  // https://github.com/getsentry/sentry-webpack-plugin#options
+  // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/build/
 
   // Suppresses source map uploading logs during build
   silent: true,
@@ -55,32 +54,24 @@ const userSentryWebpackPluginOptions = {
   project: process.env.SENTRY_PROJECT ?? "terramatch-frontend",
   authToken: process.env.SENTRY_AUTH_TOKEN,
 
-  widenClientFileUpload: true,
-
-  deploy: {
-    env: process.env.NEXT_PUBLIC_TARGET_ENV ?? "local"
-  }
-};
-
-/** @type {import('@sentry/nextjs').UserSentryOptions} */
-const userSentryOptions = {
-  // For all available options, see:
-  // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+  release: {
+    deploy: {
+      env: process.env.NEXT_PUBLIC_TARGET_ENV ?? "local"
+    }
+  },
 
   // Upload a larger set of source maps for prettier stack traces (increases build time)
   widenClientFileUpload: true,
 
-  // Transpiles SDK to be compatible with IE11 (increases bundle size)
-  transpileClientSDK: true,
-
   // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)
   tunnelRoute: "/monitoring",
 
-  // Hides source maps from generated client bundles
-  hideSourceMaps: true,
-
-  // Automatically tree-shake Sentry logger statements to reduce bundle size
-  disableLogger: true
+  webpack: {
+    // Automatically tree-shake Sentry logger statements to reduce bundle size
+    treeshake: {
+      removeDebugLogging: true
+    }
+  }
 };
 
-module.exports = withSentryConfig(nextConfig, userSentryWebpackPluginOptions, userSentryOptions);
+module.exports = withSentryConfig(nextConfig, sentryOptions);

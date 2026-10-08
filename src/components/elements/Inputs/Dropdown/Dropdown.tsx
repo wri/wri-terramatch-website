@@ -250,6 +250,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                 )}
               </Listbox.Button>
               <Transition
+                as="div"
                 className="relative z-50 !m-0"
                 show={open}
                 enter="transition duration-100 ease-out"

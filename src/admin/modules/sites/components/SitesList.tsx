@@ -78,8 +78,8 @@ const SiteDataGrid: FC = () => {
         source="status"
         label="Status"
         sortable={false}
-        render={(record?: SiteLightDto) => {
-          const { title } = getStatusOptions().find((option: any) => option.value === record?.status) ?? {};
+        render={(record: SiteLightDto) => {
+          const { title } = getStatusOptions().find((option: any) => option.value === record.status) ?? {};
           return <CustomChipField label={title} />;
         }}
       />

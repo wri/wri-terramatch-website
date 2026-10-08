@@ -10,7 +10,7 @@ import Icon, { IconProps } from "../Icon/Icon";
 
 export type ModalBaseProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
-export type ModalTranslatedProps = ModalBaseProps & {
+export type ModalTranslatedProps = Omit<ModalBaseProps, "content"> & {
   title: TranslatedText;
   iconProps?: IconProps;
   content?: ReactNode | TranslatedText;
@@ -18,7 +18,7 @@ export type ModalTranslatedProps = ModalBaseProps & {
   secondaryButtonProps?: IButtonProps;
 };
 
-export type ModalProps = ModalBaseProps & {
+export type ModalProps = Omit<ModalBaseProps, "content"> & {
   title: string;
   iconProps?: IconProps;
   content?: ReactNode;

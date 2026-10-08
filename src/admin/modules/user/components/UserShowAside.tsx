@@ -73,8 +73,8 @@ export const UserShowAside = () => {
             </Typography>
             <FunctionField
               source="roles"
-              render={(record?: UserDto) =>
-                isEmpty(record?.roles) ? "Not Provided" : record?.roles.map(roleName).join(", ")
+              render={(record: UserDto) =>
+                isEmpty(record.roles) ? "Not Provided" : record.roles.map(roleName).join(", ")
               }
               className="admin-text-16 !font-medium text-darkCustom"
             />
@@ -96,7 +96,7 @@ export const UserShowAside = () => {
             </Typography>
             <FunctionField
               source="emailAddressVerifiedAt"
-              render={(record?: UserDto) => (record?.emailAddressVerifiedAt != null ? "✓" : "x")}
+              render={(record: UserDto) => (record.emailAddressVerifiedAt != null ? "✓" : "x")}
               className="admin-text-16 !font-medium text-darkCustom"
             />
           </Grid>

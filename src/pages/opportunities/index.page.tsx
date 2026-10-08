@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import Head from "next/head";
 
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import Text from "@/components/elements/Text/Text";
@@ -27,9 +26,7 @@ const OpportunitiesPage = () => {
 
   return (
     <>
-      <Head>
-        <title>{t("Opportunities")}</title>
-      </Head>
+      <title>{t("Opportunities")}</title>
       <PageHeader className="h-[203px]" title={t("Opportunities")} />
       <PageBody>
         {organisation?.status === "approved" ? (

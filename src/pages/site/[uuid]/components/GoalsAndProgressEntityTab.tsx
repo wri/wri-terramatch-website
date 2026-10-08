@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import React from "react";
+import React, { type JSX } from "react";
 
 import ProgressGoalsDoughnutChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressGoalsDoughnutChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";

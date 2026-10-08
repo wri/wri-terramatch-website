@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
 
@@ -124,9 +123,7 @@ const ReportingTaskHeader = ({ project, taskUuid, reports }: ReportingTaskHeader
 
   return (
     <>
-      <Head>
-        <title>{title}</title>
-      </Head>
+      <title>{title}</title>
       <PageBreadcrumbs
         links={[
           { title: t("My Projects"), path: "/my-projects" },

@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useMemo } from "react";
 
@@ -115,9 +114,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
   return (
     <>
       <ResponsiveTypography />
-      <Head>
-        <title>{reportTitle}</title>
-      </Head>
+      <title>{reportTitle}</title>
       <ReportBanner
         report={projectReport}
         title={reportTitle}

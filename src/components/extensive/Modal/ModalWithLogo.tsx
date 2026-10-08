@@ -20,7 +20,7 @@ import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
 import { ModalBaseWithLogo } from "./ModalsBases";
 
-export type ModalWithLogoProps = ModalProps & {
+export type ModalWithLogoProps = Omit<ModalProps, "content"> & {
   uuid: string;
   primaryButtonText?: string;
   secondaryButtonText?: string;
