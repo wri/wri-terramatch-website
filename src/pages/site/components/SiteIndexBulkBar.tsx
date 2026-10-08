@@ -47,7 +47,6 @@ const SiteIndexBulkBar: FC<SiteIndexBulkBarProps> = ({ onSitesChanged }) => {
 
   return (
     <>
-      {selectedSites.length > 0 ? <div aria-hidden className="h-24" /> : null}
       <SiteIndexBulkActionToolbar
         selectedSites={selectedSites}
         isDownloading={isDownloading}

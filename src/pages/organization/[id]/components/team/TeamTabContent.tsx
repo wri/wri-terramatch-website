@@ -317,7 +317,7 @@ const TeamTabContent: FC = () => {
   );
 
   return (
-    <Box paddingX={6} paddingTop={3} paddingBottom={8} minHeight="644px" width="100%" overflow="auto">
+    <Box paddingX={6} paddingTop={3} paddingBottom={8} minHeight="644px" width="100%">
       <ToolbarTable
         className="mb-7 mt-3 !px-0"
         classNameContentLeft="min-w-0"

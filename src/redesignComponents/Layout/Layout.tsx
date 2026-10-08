@@ -32,7 +32,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
         <Navbar />
       </Box>
       {data.isLoggedIn ? (
-        <Flex className="min-h-0 overflow-hidden pt-[3rem]">
+        <Flex className="min-h-0 flex-1 overflow-hidden pt-[3rem]">
           <SideNavigation
             collapsed={true}
             isCollapsedDisabled={isSidebarCollapseDisabled}

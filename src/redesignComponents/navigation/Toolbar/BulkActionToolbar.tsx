@@ -1,4 +1,4 @@
-import { Flex } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import { memo } from "react";
 
 import Button, { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -26,41 +26,45 @@ const BulkActionToolbar = memo(function BulkActionToolbar({
   infoTooltip
 }: BulkActionToolbarProps) {
   return (
-    <Toolbar
-      className={TOOLBAR_CLASS}
-      contentLeft={<Button className="!text-theme-neutral-100" {...cancelAction} variant="borderless" />}
-      contentCenter={<SelectionCountLabel count={selectedCount} />}
-      classNameContentRight="max-w-full"
-      contentRight={
-        <Flex alignItems="center" gap={2} flexWrap="wrap">
-          <BulkActionToolbarActions deleteAction={deleteAction} actions={actions} />
-          {primaryAction != null &&
-            ("otherActions" in primaryAction && primaryAction.otherActions.length > 0 ? (
-              <MultiActionButton
-                {...(primaryAction as IMultiActionButtonProps)}
-                mainActionLabel={
-                  (primaryAction as IMultiActionButtonProps).mainActionLabel ??
-                  String((primaryAction as IButtonProps).children ?? "")
-                }
-                mainActionOnClick={(primaryAction as IMultiActionButtonProps).mainActionOnClick ?? (() => {})}
-                variant="primary"
-                className="disabled:!border-theme-neutral-400 disabled:!bg-theme-neutral-300 disabled:!text-theme-neutral-500 disabled:!opacity-100"
-              />
-            ) : (
-              <Button
-                {...(primaryAction as IButtonProps)}
-                variant="primary"
-                className="disabled:!border-theme-neutral-400 disabled:!bg-theme-neutral-300 disabled:!text-theme-neutral-500 disabled:!opacity-100"
-              />
-            ))}
-          {infoTooltip != null && (
-            <Tooltip content={wrapToolbarInfoTooltipContent(infoTooltip)} position="top">
-              <InfoIcon height="1rem" width="1rem" color="neutral.100" />
-            </Tooltip>
-          )}
-        </Flex>
-      }
-    />
+    // Sticks to the bottom of the nearest scroll container, so it spans the content column instead of the viewport.
+    // Render it as the last child of the page content.
+    <Box position="sticky" bottom={3} zIndex={100} marginTop="auto">
+      <Toolbar
+        className={TOOLBAR_CLASS}
+        contentLeft={<Button className="!text-theme-neutral-100" {...cancelAction} variant="borderless" />}
+        contentCenter={<SelectionCountLabel count={selectedCount} />}
+        classNameContentRight="max-w-full"
+        contentRight={
+          <Flex alignItems="center" gap={2} flexWrap="wrap">
+            <BulkActionToolbarActions deleteAction={deleteAction} actions={actions} />
+            {primaryAction != null &&
+              ("otherActions" in primaryAction && primaryAction.otherActions.length > 0 ? (
+                <MultiActionButton
+                  {...(primaryAction as IMultiActionButtonProps)}
+                  mainActionLabel={
+                    (primaryAction as IMultiActionButtonProps).mainActionLabel ??
+                    String((primaryAction as IButtonProps).children ?? "")
+                  }
+                  mainActionOnClick={(primaryAction as IMultiActionButtonProps).mainActionOnClick ?? (() => {})}
+                  variant="primary"
+                  className="disabled:!border-theme-neutral-400 disabled:!bg-theme-neutral-300 disabled:!text-theme-neutral-500 disabled:!opacity-100"
+                />
+              ) : (
+                <Button
+                  {...(primaryAction as IButtonProps)}
+                  variant="primary"
+                  className="disabled:!border-theme-neutral-400 disabled:!bg-theme-neutral-300 disabled:!text-theme-neutral-500 disabled:!opacity-100"
+                />
+              ))}
+            {infoTooltip != null && (
+              <Tooltip content={wrapToolbarInfoTooltipContent(infoTooltip)} position="top">
+                <InfoIcon height="1rem" width="1rem" color="neutral.100" />
+              </Tooltip>
+            )}
+          </Flex>
+        }
+      />
+    </Box>
   );
 });
 
