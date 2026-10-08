@@ -22,6 +22,8 @@ const ReportsIndexEditButton: FC<{ report: ReportIndexItem; indexHref?: string }
     useInformationRequiredModal: report.nothingToReport === true ? false : true
   });
 
+  if (report.status === "pending-approval") return null;
+
   return (
     <>
       {EditModals}
