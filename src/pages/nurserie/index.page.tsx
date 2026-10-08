@@ -43,11 +43,10 @@ const NurseriesIndexContent: FC = () => {
     if (!router.isReady) return;
     const projectFromQuery = router.query.project;
     if (typeof projectFromQuery === "string" && projectFromQuery !== "") {
-      void router.replace(`/project/${projectFromQuery}?tab=nurseries`);
-      return;
+      setViewValue(projectFromQuery);
     }
     setHasHydratedQuery(true);
-  }, [router.isReady, router.query.project, router]);
+  }, [router.isReady, router.query.project]);
 
   const { projects, sections, loading, loadingMore, hasMore, loadMore, onProjectOpened, nurseryTotal, error } =
     useNurseriesIndexData(reloadNonce, {

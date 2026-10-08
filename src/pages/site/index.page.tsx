@@ -40,11 +40,10 @@ const SiteIndexPageContent: FC = () => {
     if (!router.isReady) return;
     const projectFromQuery = router.query.project;
     if (typeof projectFromQuery === "string" && projectFromQuery !== "") {
-      void router.replace(`/project/${projectFromQuery}?tab=sites`);
-      return;
+      setSelectedProject(projectFromQuery);
     }
     setHasHydratedQuery(true);
-  }, [router.isReady, router.query.project, router]);
+  }, [router.isReady, router.query.project]);
 
   const hasActiveSearch = searchQuery.trim().length > 0;
   const hasAppliedFilters = statusFilters.length > 0 || updateFilter != null;
