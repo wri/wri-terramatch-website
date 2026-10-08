@@ -190,7 +190,6 @@ const SiteIndexPageContent: FC = () => {
                   defaultOpen={index === 0}
                   openResetKey={accordionOpenResetKey}
                   onProjectOpened={onProjectOpened}
-                  onSitesChanged={handleSitesChanged}
                 />
               ))}
               <InfiniteScrollSentinel

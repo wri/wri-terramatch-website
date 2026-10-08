@@ -1,16 +1,13 @@
 import { Box, Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { type FC, type MouseEvent, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { type FC, type MouseEvent, ReactNode, useCallback, useEffect, useMemo } from "react";
 
-import { deleteSite } from "@/connections/Entity";
 import { Framework, isTerrafund } from "@/context/framework.provider";
 import { getEntityEditPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import { useIndexAccordionOpen } from "@/hooks/useIndexAccordionOpen";
-import { getThemedColor } from "@/lib/theme";
 import { useKeyIndicatorsTooltipContent } from "@/pages/project/[uuid]/tabs/constants/keyIndicatorsTooltipContent";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
@@ -29,7 +26,6 @@ import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
 import {
   AreaHectaresIcon,
   CalendarIcon,
-  DeleteIcon,
   EditIcon,
   JobsIcon,
   LoadingIcon,
@@ -38,13 +34,11 @@ import {
   TreeIcon
 } from "@/redesignComponents/foundations/Icons";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
-import ApiSlice from "@/store/apiSlice";
 
-import DeleteSite from "./Modals/DeleteSite";
 import type { SiteIndexProject, SiteIndexSite, SiteIndexStatus, SiteIndexUpdate } from "./siteIndex.types";
 import { filterSiteIndexSites, getSiteDetailUrl, isSiteApproved } from "./siteIndex.utils";
-import { useSiteIndexSelectionActions, useSiteTableSelection } from "./SiteIndexSelection.provider";
-import { isSiteDeletable, isSiteEditable } from "./siteIndexSubmit";
+import { useSiteTableSelection } from "./SiteIndexSelection.provider";
+import { isSiteEditable } from "./siteIndexSubmit";
 
 const keyIndicatorTooltip = (title?: string, content?: string): ReactNode => {
   if (title == null || title === "" || content == null || content === "") return undefined;
@@ -69,7 +63,6 @@ interface SiteProjectSectionProps {
   defaultOpen?: boolean;
   openResetKey?: string;
   onProjectOpened: (projectId: string) => void;
-  onSitesChanged: () => void;
   embeddedInProject?: boolean;
 }
 
@@ -234,9 +227,8 @@ const SiteProjectMetrics: FC<{
 
 const SiteProjectTable: FC<{
   sites: SiteIndexSite[];
-  onDeleteSite: (site: SiteIndexSite) => void;
   embeddedInProject: boolean;
-}> = ({ sites, onDeleteSite, embeddedInProject }) => {
+}> = ({ sites, embeddedInProject }) => {
   const t = useT();
   const router = useRouter();
   const { format } = useDate();
@@ -334,37 +326,13 @@ const SiteProjectTable: FC<{
                       }
                     : undefined
                 }
-                buttonSecondary={
-                  isSiteDeletable(site)
-                    ? {
-                        children: t("Delete"),
-                        "aria-label": t("Delete {siteName}", { siteName: site.name }),
-                        variant: "secondary",
-                        size: "small",
-                        className: "!border-theme-error-300 !bg-theme-error-100 !text-theme-error-900",
-                        leftIcon: (
-                          <DeleteIcon
-                            boxSize={2.5}
-                            className="!text-theme-error-500"
-                            css={{
-                              "& svg path": {
-                                fill: getThemedColor("error", 500) + " !important",
-                                color: getThemedColor("error", 500) + " !important"
-                              }
-                            }}
-                          />
-                        ),
-                        onClick: () => onDeleteSite(site)
-                      }
-                    : undefined
-                }
               />
             </Box>
           </TableCell>
         </TableRow>
       );
     },
-    [embeddedInProject, format, handleRowSelected, isSiteSelected, onDeleteSite, router, t]
+    [embeddedInProject, format, handleRowSelected, isSiteSelected, router, t]
   );
 
   return (
@@ -399,13 +367,10 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
   defaultOpen = false,
   openResetKey,
   onProjectOpened,
-  onSitesChanged,
   embeddedInProject = false
 }) => {
   const t = useT();
   const [open, setOpen] = useIndexAccordionOpen({ defaultOpen, resetKey: openResetKey });
-  const [siteToDelete, setSiteToDelete] = useState<SiteIndexSite | null>(null);
-  const { setSiteSelected } = useSiteIndexSelectionActions();
   const showSitesLoading = (embeddedInProject || open) && (project.sitesLoading || !project.sitesLoaded);
   const visibleSites = useMemo(
     () =>
@@ -427,36 +392,6 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
     onProjectOpened(project.id);
   }, [embeddedInProject, onProjectOpened, open, project.id, project.sitesLoaded, project.sitesLoading]);
 
-  const handleConfirmRowDelete = useCallback(async () => {
-    if (siteToDelete == null) {
-      return;
-    }
-
-    try {
-      await deleteSite(siteToDelete.id);
-      setSiteSelected(siteToDelete, false);
-      ApiSlice.pruneCache("sites", [siteToDelete.id]);
-      ApiSlice.pruneIndex("sites", "");
-      ApiSlice.pruneIndex("projects", "");
-      onSitesChanged();
-      showToast({
-        label: t("Site Profile(s) deleted"),
-        type: "success",
-        placement: "bottom",
-        duration: 5000,
-        maxWidth: "auto"
-      });
-    } catch (error) {
-      showToast({
-        label: t("Something went wrong!"),
-        type: "error",
-        placement: "bottom",
-        maxWidth: "auto"
-      });
-      throw error;
-    }
-  }, [onSitesChanged, setSiteSelected, siteToDelete, t]);
-
   const sectionBody = (
     <Box className="bg-theme-neutral-100 p-4" minW={0}>
       {showSitesLoading ? (
@@ -474,62 +409,41 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
             totalSiteCount={totalSiteCount}
             isFiltered={isFiltered}
           />
-          <SiteProjectTable sites={visibleSites} onDeleteSite={setSiteToDelete} embeddedInProject={embeddedInProject} />
+          <SiteProjectTable sites={visibleSites} embeddedInProject={embeddedInProject} />
         </>
       )}
     </Box>
   );
 
-  const deleteSiteModal = (
-    <DeleteSite
-      open={siteToDelete != null}
-      onOpenChange={openState => {
-        if (!openState) {
-          setSiteToDelete(null);
-        }
-      }}
-      sites={siteToDelete == null ? [] : [siteToDelete]}
-      onDelete={handleConfirmRowDelete}
-    />
-  );
-
   if (embeddedInProject) {
-    return (
-      <Flex direction="column" gap="0.5rem">
-        <Box className="overflow-hidden rounded bg-theme-neutral-100">{sectionBody}</Box>
-        {deleteSiteModal}
-      </Flex>
-    );
+    return <Box className="overflow-hidden rounded bg-theme-neutral-100">{sectionBody}</Box>;
   }
 
   return (
-    <Flex direction="column" gap="0.5rem">
-      <Accordion
-        variant="tertiary"
-        open={open}
-        onOpenChange={setOpen}
-        isScrollable={false}
-        className="w-full overflow-hidden rounded bg-theme-neutral-100"
-        classNameHeader="!mb-0"
-        header={
-          <ListSectionHeader
-            level="top-level"
-            title={project.name}
-            open={open}
-            titleHref={`/project/${project.id}`}
-            caption={project.organisationName}
-            statusLabels={
-              project.attentionCount > 0 ? (
-                <TextBadge>{t("{count} Require Attention", { count: project.attentionCount })}</TextBadge>
-              ) : null
-            }
-          />
-        }
-      >
-        {sectionBody}
-      </Accordion>
-      {deleteSiteModal}
-    </Flex>
+    <Accordion
+      variant="tertiary"
+      open={open}
+      onOpenChange={setOpen}
+      isScrollable={false}
+      className="w-full overflow-hidden rounded bg-theme-neutral-100"
+      classNameHeader="!mb-0"
+      header={
+        <ListSectionHeader
+          level="top-level"
+          title={project.name}
+          open={open}
+          titleHref={`/project/${project.id}`}
+          caption={project.organisationName}
+          statusLabels={
+            project.attentionCount > 0 ? (
+              <TextBadge>{t("{count} Require Attention", { count: project.attentionCount })}</TextBadge>
+            ) : null
+          }
+        />
+      }
+    >
+      {sectionBody}
+    </Accordion>
   );
 };
 
