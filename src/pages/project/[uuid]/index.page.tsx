@@ -95,7 +95,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
       { key: "team-members", title: t("Team Members"), body: <TeamMembersTab project={project} /> },
       {
         key: "audit-log",
-        title: t("Audit Log"),
+        title: t("History"),
         body: <AuditLog project={project} refresh={refetch} />
       }
     ];

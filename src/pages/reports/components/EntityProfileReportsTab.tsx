@@ -58,7 +58,6 @@ const EntityProfileReportsContent: FC<EntityProfileReportsContentProps> = ({ sou
     () => filteredProgressSections.flatMap(section => section.periods),
     [filteredProgressSections]
   );
-  const showNoResults = !loading && (error || periods.length === 0);
   const periodOptions = useMemo(() => getReportPeriodOptions(getSectionReportingPeriods(sections), []), [sections]);
   const unfilteredReportsByPeriodId = useMemo(
     () => new Map(sections.flatMap(section => section.periods).map(period => [period.id, period.reports])),
@@ -82,7 +81,7 @@ const EntityProfileReportsContent: FC<EntityProfileReportsContentProps> = ({ sou
         indexHref=""
         entityProfile
       />
-      <PageContent className={twMerge("h-auto flex-1 px-2 pt-0 pb-8", showNoResults && "bg-theme-neutral-100")}>
+      <PageContent className={twMerge("bg-theme-neutral-100 h-auto flex-1 px-2 pt-0 pb-8")}>
         {loading ? (
           <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
             <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
@@ -105,7 +104,7 @@ const EntityProfileReportsContent: FC<EntityProfileReportsContentProps> = ({ sou
             }
           />
         ) : (
-          <div className="space-y-0.5 bg-theme-neutral-200 pt-0.5">
+          <div className="bg-theme-neutral-200 space-y-0.5 pt-0.5">
             {periods.map((period, index) => (
               <ReportingPeriodSection
                 key={period.id}
