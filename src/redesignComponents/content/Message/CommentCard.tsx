@@ -1,6 +1,5 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import NextImage from "next/image";
 import { FC, useCallback, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -170,13 +169,12 @@ const CommentCard: FC<CommentCardProps> = ({
           {hasAttachments && (
             <Flex className="flex-wrap gap-3">
               {attachments.map(file => (
-                <NextImage
+                <img
                   key={file.url}
                   src={file.url}
                   alt={file.name}
                   width={170}
                   height={140}
-                  unoptimized
                   className="h-[8.75rem] w-[10.625rem] rounded border border-theme-neutral-300 object-cover"
                 />
               ))}

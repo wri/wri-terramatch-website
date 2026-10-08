@@ -1,13 +1,12 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { StaticImageData } from "next/image";
 import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren } from "react";
 
 import ImageWithPlaceholder from "../ImageWithPlaceholder/ImageWithPlaceholder";
 
 export interface ImageWithChildrenProps
   extends PropsWithChildren<DetailedHTMLProps<HTMLAttributes<HTMLParagraphElement>, HTMLParagraphElement>> {
-  imageSrc: string | StaticImageData;
+  imageSrc: string;
   childrenContainerClassName?: string;
   isGeotagged?: boolean;
   isCover?: boolean;
@@ -36,7 +35,7 @@ const ImageWithChildren = ({
         {isCover && <div className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white">{t("Cover")}</div>}
       </div>
       <ImageWithPlaceholder
-        imageUrl={imageSrc as string}
+        imageUrl={imageSrc}
         placeholder={t("No Image Available")}
         alt={t("No Image Available")}
         role="presentation"
