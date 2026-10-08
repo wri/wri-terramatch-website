@@ -40,7 +40,6 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const [buttonToggle, setButtonToggle] = useState(entity);
   const basename = useBasename();
   const isProjectReport = entity == AuditLogButtonStates.PROJECT_REPORT;
-  const isNurseryToggle = buttonToggle == AuditLogButtonStates.NURSERY;
   // TM-3128: Only disturbance/SRP reports keep linked project vs report audit toggles.
   // Site/nursery report pages show audit for that report only (no project-report cross-links).
   const showOpenEntity = ["disturbance-reports", "srp-reports"].includes(ReverseButtonStates2[entity!]);
@@ -75,29 +74,6 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
     loadEntityList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [buttonToggle]);
-
-  const formatUrl = () => {
-    switch (ReverseButtonStates2[buttonToggle!]) {
-      case "project-reports":
-        return `/${modules.projectReport.ResourceName}/${selected?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.standardReport}`;
-      case "site-reports":
-        return `/${modules.siteReport.ResourceName}/${selected?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.standardReport}`;
-      case "nursery-reports":
-        return `/${modules.nurseryReport.ResourceName}/${selected?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.standardReport}`;
-      default:
-        return "";
-    }
-  };
-  const isSite = buttonToggle === AuditLogButtonStates.SITE;
-  const redirectTo = `${basename}${
-    isProjectReport
-      ? formatUrl()
-      : isNurseryToggle
-      ? `/${modules.nursery.ResourceName}/${selected?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.nursery}`
-      : `/${modules.site.ResourceName}/${selected?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.site}`
-  }`;
-
-  const title = () => selected?.title ?? selected?.name ?? record?.report_title;
 
   const verifyEntity = ["nursery"].some(word => ReverseButtonStates2[entity!].includes(word));
 
@@ -239,12 +215,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                 record?.project == null &&
                 buttonToggle === AuditLogButtonStates.PROJECT &&
                 record?.projectName == null ? (
-                  <SiteAuditLogProjectStatus
-                    record={record}
-                    auditLogData={auditLogData}
-                    auditData={auditData}
-                    refresh={refetch}
-                  />
+                  <SiteAuditLogProjectStatus auditLogData={auditLogData} auditData={auditData} refresh={refetch} />
                 ) : null}
                 {(buttonToggle !== AuditLogButtonStates.PROJECT || verifyEntity) && !reportsLevel ? (
                   <SiteAuditLogEntityStatus
@@ -252,10 +223,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                     record={selected}
                     auditLogData={auditLogData}
                     refresh={refetch}
-                    buttonToggle={buttonToggle!}
-                    verifyEntity={verifyEntity}
                     auditData={auditData}
-                    isProjectReport={isProjectReport}
                   />
                 ) : null}
               </Stack>
@@ -286,25 +254,16 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
             record?.projectName == null ? (
               <>
                 <Text variant="text-16-bold" className="mb-6">
-                  History and Discussion for {record && record?.name}
+                  History and Discussion
                 </Text>
                 {auditLogData && <AuditLogTable auditLogData={auditLogData} auditData={auditData} refresh={refetch} />}
               </>
             ) : null}
             {(buttonToggle !== AuditLogButtonStates.PROJECT || verifyEntity) && !reportsLevel ? (
               <>
-                <div className="mb-6">
-                  {!isSite && !verifyEntity && !isProjectReport && !isNurseryToggle ? (
-                    <Text variant="text-16-bold">History and Discussion for {title()}</Text>
-                  ) : (
-                    <Text variant="text-16-bold">
-                      History and Discussion for{" "}
-                      <Link className="text-16-bold !text-[#000000DD]" to={redirectTo}>
-                        {title()}
-                      </Link>
-                    </Text>
-                  )}
-                </div>
+                <Text variant="text-16-bold" className="mb-6">
+                  History and Discussion
+                </Text>
                 {auditLogData != null && (
                   <AuditLogTable auditLogData={auditLogData} auditData={auditData} refresh={refetch} />
                 )}

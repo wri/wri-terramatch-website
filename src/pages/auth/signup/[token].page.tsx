@@ -89,7 +89,7 @@ const InviteSignupPage = () => {
       phoneNumber: data.phone_number,
       jobRole: data.job_role,
       callbackUrl: window.location.origin + "/auth/login",
-      role,
+      roles: [role],
       token,
       country: "",
       program: ""

@@ -124,8 +124,21 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
           }
         ]}
         suffix={
-          <div className="flex items-center gap-1.5">
-            {srpReport.projectUuid != null && (
+          srpReport.projectUuid != null && (
+            <div className="flex items-center gap-1.5">
+              <Button
+                variant="borderless"
+                size="small"
+                className="underline underline-offset-2"
+                onClick={() =>
+                  router.push(
+                    `/reports/report-index?source=project&uuid=${srpReport.projectUuid}&reportType=project-report`
+                  )
+                }
+              >
+                {t("Project Report")}
+              </Button>
+              <span className="text-theme-neutral-300 text-sm">|</span>
               <Button
                 variant="borderless"
                 size="small"
@@ -134,21 +147,21 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
               >
                 {t("Project Profile")}
               </Button>
-            )}
-            <span className="text-theme-neutral-300 text-sm">|</span>
-            <Button
-              variant="borderless"
-              size="small"
-              className="underline underline-offset-2"
-              onClick={() => {
-                router.push(`/reports/project-report/${srpReport.projectReportUuid}`, undefined, {
-                  shallow: true
-                });
-              }}
-            >
-              {t("Project Report")}
-            </Button>
-          </div>
+              <span className="text-theme-neutral-300 text-sm">|</span>
+              <Button
+                variant="borderless"
+                size="small"
+                className="underline underline-offset-2"
+                onClick={() => {
+                  router.push(`/reports/project-report/${srpReport.projectReportUuid}`, undefined, {
+                    shallow: true
+                  });
+                }}
+              >
+                {t("Project Report")}
+              </Button>
+            </div>
+          )
         }
         toolbar={{
           tabBar: {

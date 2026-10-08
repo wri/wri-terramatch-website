@@ -94,7 +94,7 @@ const SignUpPage = ({
       phoneNumber: data.phone_number,
       jobRole: data.job_role,
       callbackUrl: window.location.origin + "/auth/verify/email/",
-      role: "project-developer",
+      roles: ["project-developer"],
       country: selectedTitleOption == "Select Country" ? (selectedOption as any) : null,
       program: selectedTitleOption == "Select Framework" ? (selectedOption?.toLowerCase() as any) : null
     });

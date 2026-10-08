@@ -261,7 +261,7 @@ const useAuditLogActions = ({
 
   const buttonStates = ReverseButtonStates2[entityLevel!];
   const getValuesStatusEntity = (() => {
-    if (buttonStates == "disturbance-reports" || buttonStates == "srp-reports") {
+    if (buttonStates == "disturbance-reports") {
       return {
         getValueForStatus: getValueForStatusDisturbanceReport,
         statusLabels: [
@@ -274,7 +274,8 @@ const useAuditLogActions = ({
     } else if (
       buttonStates?.includes("project-reports") ||
       buttonStates?.includes("site-reports") ||
-      buttonStates?.includes("nursery-reports")
+      buttonStates?.includes("nursery-reports") ||
+      buttonStates == "srp-reports"
     ) {
       return {
         getValueForStatus: getValueForStatusEntityReport,
