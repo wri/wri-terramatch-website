@@ -741,6 +741,41 @@ export type TaskUpdateBody = {
   data: TaskData;
 };
 
+export type MediaMapEntryDto = {
+  /**
+   * UUID of the media.
+   */
+  uuid: string;
+  name: string;
+  /**
+   * Latitude of the photo. Always present: only geotagged media are indexed.
+   */
+  lat: number;
+  /**
+   * Longitude of the photo. Always present: only geotagged media are indexed.
+   */
+  lng: number;
+  /**
+   * Null if the thumbnail conversion was not generated.
+   */
+  thumbUrl: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+};
+
+export type MediaMapIndexDto = {
+  /**
+   * Every geotagged media in scope for the requested entity.
+   */
+  media: MediaMapEntryDto[];
+  /**
+   * Number of media in the media array.
+   */
+  total: number;
+};
+
 export type MediaBulkErrorDto = {
   /**
    * The index of the media
