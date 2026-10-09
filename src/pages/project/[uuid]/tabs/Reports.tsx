@@ -95,13 +95,11 @@ const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
         ) : error ? (
           <NoResults
             title={t("Reports could not be loaded")}
-            className="py-4"
             description={t("Please refresh the page and try again.")}
           />
         ) : !hasResults ? (
           <NoResults
             title={t("No reports found")}
-            className="py-4"
             description={
               hasActiveSearch
                 ? t("We couldn’t find any reports matching your search. Try a different keyword.")

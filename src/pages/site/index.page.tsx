@@ -163,7 +163,6 @@ const SiteIndexPageContent: FC = () => {
           <NoResults title={t("Sites could not be loaded")} description={t("Please refresh the page and try again.")} />
         ) : visibleProjects.length === 0 ? (
           <NoResults
-            className="px-4"
             title={hasActiveFilters ? t("No sites found") : t("No sites found")}
             description={
               hasActiveSearch

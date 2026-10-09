@@ -124,11 +124,7 @@ const ProjectSitesTabContent: FC<ProjectSitesTabProps> = ({ project }) => {
             </Text>
           </Flex>
         ) : error ? (
-          <NoResults
-            className="py-4"
-            title={t("Sites could not be loaded")}
-            description={t("Please refresh the page and try again.")}
-          />
+          <NoResults title={t("Sites could not be loaded")} description={t("Please refresh the page and try again.")} />
         ) : siteProject == null || showEmptyProject ? (
           <NoResults
             title={t("No sites found")}
@@ -140,7 +136,6 @@ const ProjectSitesTabContent: FC<ProjectSitesTabProps> = ({ project }) => {
           />
         ) : showEmptyFiltered ? (
           <NoResults
-            className="py-4"
             title={t("No sites found")}
             description={
               hasActiveSearch
