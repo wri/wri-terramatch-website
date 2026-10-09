@@ -152,7 +152,7 @@ const SrpReportOverviewTab: FC<SrpReportOverviewTabProps> = ({ report, onViewDet
               <Flex direction="column" paddingTop={1.5} gap={2} alignItems="flex-start">
                 <Button
                   as="a"
-                  href="#checklists"
+                  href="https://terramatchsupport.zendesk.com/hc/en-us/articles/13322399098267-How-to-report-annually-on-PPC-Socioeconomic-Restoration-Partners"
                   variant="borderless"
                   size="small"
                   rightIcon={<ChevronRightIcon boxSize="0.625rem" />}
