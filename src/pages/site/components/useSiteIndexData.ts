@@ -16,6 +16,7 @@ type UseSiteIndexDataParams = {
   search?: string;
   projectUuid?: string;
   enabled?: boolean;
+  loadAllChildren?: boolean;
 };
 
 const asFullProject = (project: ProjectFullDto | null | undefined): ProjectFullDto | undefined =>
@@ -26,9 +27,17 @@ export const useSiteIndexData = ({
   childrenReloadNonce = 0,
   search = "",
   projectUuid,
-  enabled = true
+  enabled = true,
+  loadAllChildren = false
 }: UseSiteIndexDataParams = {}) => {
-  const index = useSiteProjectIndex({ reloadNonce, childrenReloadNonce, search, projectUuid, enabled });
+  const index = useSiteProjectIndex({
+    reloadNonce,
+    childrenReloadNonce,
+    search,
+    projectUuid,
+    enabled,
+    loadAllChildren
+  });
   const loadProjectChildren = index.onProjectOpened;
   const [fullProjectsById, setFullProjectsById] = useState<Map<string, ProjectFullDto>>(new Map());
   const fullProjectsRef = useRef(fullProjectsById);
@@ -93,6 +102,7 @@ export const useSiteIndexData = ({
     projects,
     totalSiteCount: index.childTotal,
     onProjectOpened,
-    error: index.error
+    error: index.error,
+    childrenPending: index.childrenPending
   };
 };

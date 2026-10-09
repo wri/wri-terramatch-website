@@ -49,14 +49,25 @@ const SiteIndexPageContent: FC = () => {
   const hasAppliedFilters = statusFilters.length > 0 || updateFilter != null;
   const hasActiveFilters = hasActiveSearch || hasAppliedFilters;
   const filtering = searchQuery.trim() !== debouncedSearch;
-  const { loading, loadingMore, hasMore, loadMore, viewProjects, projects, totalSiteCount, onProjectOpened, error } =
-    useSiteIndexData({
-      reloadNonce,
-      childrenReloadNonce,
-      search: debouncedSearch,
-      projectUuid: selectedProject === ALL_PROJECTS_VIEW ? undefined : selectedProject,
-      enabled: hasHydratedQuery
-    });
+  const {
+    loading,
+    loadingMore,
+    hasMore,
+    loadMore,
+    viewProjects,
+    projects,
+    totalSiteCount,
+    onProjectOpened,
+    error,
+    childrenPending
+  } = useSiteIndexData({
+    reloadNonce,
+    childrenReloadNonce,
+    search: debouncedSearch,
+    projectUuid: selectedProject === ALL_PROJECTS_VIEW ? undefined : selectedProject,
+    enabled: hasHydratedQuery,
+    loadAllChildren: debouncedSearch.trim() !== "" || hasAppliedFilters
+  });
   const accordionOpenResetKey = `${selectedProject}:${debouncedSearch}:${statusFilters.join(",")}:${
     updateFilter ?? ""
   }`;
@@ -68,9 +79,10 @@ const SiteIndexPageContent: FC = () => {
 
     if (!hasActiveFilters) return scopedProjects;
 
+    // A project only appears once its sites have loaded and been matched, so it doesn't vanish later.
     return scopedProjects.filter(
       project =>
-        !project.sitesLoaded ||
+        project.sitesLoaded &&
         filterSiteIndexSites(project.sites, {
           search: debouncedSearch,
           statusFilters,
@@ -161,7 +173,7 @@ const SiteIndexPageContent: FC = () => {
           </Flex>
         ) : error ? (
           <NoResults title={t("Sites could not be loaded")} description={t("Please refresh the page and try again.")} />
-        ) : visibleProjects.length === 0 ? (
+        ) : visibleProjects.length === 0 && !hasMore && !childrenPending ? (
           <NoResults
             className="px-4"
             title={hasActiveFilters ? t("No sites found") : t("No sites found")}
@@ -192,9 +204,9 @@ const SiteIndexPageContent: FC = () => {
                 />
               ))}
               <InfiniteScrollSentinel
-                hasMore={hasMore}
+                hasMore={hasMore || childrenPending}
                 loading={loading}
-                loadingMore={loadingMore}
+                loadingMore={loadingMore || childrenPending}
                 label={t("Loading...")}
                 resetKey={visibleProjects.length}
                 onLoadMore={loadMore}
