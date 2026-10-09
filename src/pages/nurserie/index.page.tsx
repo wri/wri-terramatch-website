@@ -48,12 +48,24 @@ const NurseriesIndexContent: FC = () => {
     setHasHydratedQuery(true);
   }, [router.isReady, router.query.project]);
 
-  const { projects, sections, loading, loadingMore, hasMore, loadMore, onProjectOpened, nurseryTotal, error } =
-    useNurseriesIndexData(reloadNonce, {
-      search: debouncedQuery,
-      projectUuid: selectedProjectUuid,
-      enabled: hasHydratedQuery
-    });
+  const hasChildFilter = debouncedQuery.trim() !== "" || statuses.length > 0 || updates.length > 0;
+  const {
+    projects,
+    sections,
+    loading,
+    loadingMore,
+    hasMore,
+    loadMore,
+    onProjectOpened,
+    nurseryTotal,
+    error,
+    childrenPending
+  } = useNurseriesIndexData(reloadNonce, {
+    search: debouncedQuery,
+    projectUuid: selectedProjectUuid,
+    enabled: hasHydratedQuery,
+    loadAllChildren: hasChildFilter
+  });
 
   const viewItems = useMemo(
     () => [
@@ -66,9 +78,14 @@ const NurseriesIndexContent: FC = () => {
   );
 
   const selectedProject = useMemo(() => projects.find(project => project.uuid === viewValue), [projects, viewValue]);
+  // While a filter is applied, a project only appears once its nurseries have loaded and been matched.
+  // Showing unloaded projects would make them vanish as soon as their nurseries arrive.
   const filteredSections = useMemo(
-    () => filterNurseryProjectSections(sections, "", undefined, statuses, updates),
-    [sections, statuses, updates]
+    () =>
+      filterNurseryProjectSections(sections, "", undefined, statuses, updates).filter(
+        section => !(hasChildFilter && section.nurseriesLoaded === false)
+      ),
+    [hasChildFilter, sections, statuses, updates]
   );
   const accordionOpenResetKey = `${viewValue}:${debouncedQuery.trim()}:${statuses.join(",")}:${updates.join(",")}`;
   const nurseryCount =
@@ -126,7 +143,7 @@ const NurseriesIndexContent: FC = () => {
             title={t("Nurseries could not be loaded")}
             description={t("Please refresh the page and try again.")}
           />
-        ) : filteredSections.length === 0 ? (
+        ) : filteredSections.length === 0 && !hasMore && !childrenPending ? (
           <NoResults
             title={t("No nurseries found")}
             description={
@@ -151,9 +168,9 @@ const NurseriesIndexContent: FC = () => {
               />
             ))}
             <InfiniteScrollSentinel
-              hasMore={hasMore}
+              hasMore={hasMore || childrenPending}
               loading={loading}
-              loadingMore={loadingMore}
+              loadingMore={loadingMore || childrenPending}
               label={t("Loading...")}
               resetKey={filteredSections.length}
               onLoadMore={loadMore}

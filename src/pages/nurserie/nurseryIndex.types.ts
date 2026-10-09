@@ -32,4 +32,6 @@ export type NurseryIndexData = {
   onProjectOpened: (projectId: string) => void;
   nurseryTotal: number;
   error: boolean;
+  /** True while a filter is waiting on child rows that have not loaded yet. */
+  childrenPending: boolean;
 };

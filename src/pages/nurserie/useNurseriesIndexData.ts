@@ -9,6 +9,7 @@ export type NurseriesIndexQuery = {
   search?: string;
   projectUuid?: string;
   enabled?: boolean;
+  loadAllChildren?: boolean;
 };
 
 export const useNurseriesIndexData = (reloadNonce = 0, query: NurseriesIndexQuery = {}): NurseryIndexData => {
@@ -17,6 +18,7 @@ export const useNurseriesIndexData = (reloadNonce = 0, query: NurseriesIndexQuer
     search: query.search,
     projectUuid: query.projectUuid,
     enabled: query.enabled,
+    loadAllChildren: query.loadAllChildren,
     includeProject: project => projectSupportsNurseries(project.frameworkKey)
   });
 
@@ -38,6 +40,7 @@ export const useNurseriesIndexData = (reloadNonce = 0, query: NurseriesIndexQuer
     loadMore: index.loadMore,
     onProjectOpened: index.onProjectOpened,
     nurseryTotal: index.childTotal,
-    error: index.error
+    error: index.error,
+    childrenPending: index.childrenPending
   };
 };
