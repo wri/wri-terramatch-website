@@ -12,7 +12,7 @@ import { MapAreaProvider } from "@/context/mapArea.provider";
 import { DisturbanceReportFullDto, DisturbanceReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportBreadcrumbs } from "@/hooks/useReportBreadcrumbs";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import { getReportsIndexUrl, withReportOrigin } from "@/pages/reports/reportIndex.utils";
+import { withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import DisturbanceReportBanner from "@/redesignComponents/content/Banner/DisturbanceReportBanner/DisturbanceReportBanner";
 import { showToast } from "@/redesignComponents/status/Toast/showToast";
@@ -131,10 +131,8 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
   const breadcrumbs = useReportBreadcrumbs(
     { label: t("Disturbance Report"), link: `/reports/disturbance-report/${disturbanceReportUUID}` },
-    disturbanceReport.projectUuid != null
-      ? getReportsIndexUrl("project", disturbanceReport.projectUuid, { tab: "additional-reports" })
-      : "/my-projects",
-    { project: disturbanceReport.projectName }
+    "project",
+    { project: { uuid: disturbanceReport.projectUuid, name: disturbanceReport.projectName } }
   );
 
   return (

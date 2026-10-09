@@ -16,7 +16,7 @@ import { useValueChanged } from "@/hooks/useValueChanged";
 import NurseryReportDetailsTab from "@/pages/reports/nursery-report/tabs/Details";
 import NurseryReportGoalsAndProgressTab from "@/pages/reports/nursery-report/tabs/GoalsAndProgress";
 import NurseryReportOverview from "@/pages/reports/nursery-report/tabs/Overview";
-import { getReportsIndexUrl, withReportOrigin } from "@/pages/reports/reportIndex.utils";
+import { withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
 import { showToast } from "@/redesignComponents/status/Toast/showToast";
@@ -131,8 +131,11 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
       }),
       link: `/reports/nursery-report/${nurseryReportUUID}`
     },
-    getReportsIndexUrl("nursery", nurseryReport.nurseryUuid!),
-    { project: nurseryReport.projectName, nursery: nurseryReport.nurseryName }
+    "nursery",
+    {
+      project: { uuid: nurseryReport.projectUuid, name: nurseryReport.projectName },
+      nursery: { uuid: nurseryReport.nurseryUuid, name: nurseryReport.nurseryName }
+    }
   );
 
   return (
