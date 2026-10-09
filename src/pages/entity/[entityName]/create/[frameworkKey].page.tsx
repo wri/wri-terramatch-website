@@ -112,7 +112,7 @@ const EntityIntroPage = () => {
   }, [createEntity, entityName, entityUUID, formUUID, from, parentUUID, router]);
 
   return (
-    <BackgroundLayout>
+    <BackgroundLayout className="overflow-auto">
       <ContentLayout>
         <LoadingContainer loading={!form}>
           {form == null ? null : (
