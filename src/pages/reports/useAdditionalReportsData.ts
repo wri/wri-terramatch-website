@@ -16,6 +16,7 @@ import {
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useAllPages } from "@/hooks/useConnection";
 
+import { disturbanceReportTitle } from "./disturbance-report/[uuid]/index.page";
 import {
   AdditionalDisturbanceReport,
   AdditionalFinancialReport,
@@ -88,6 +89,7 @@ const toSrpReport = (report: SrpReportLightDto): AdditionalSrpReport => ({
 const toDisturbanceReport = (report: DisturbanceReportLightDto): AdditionalDisturbanceReport => {
   const disturbanceType = getEntryValue(report.entries, "disturbance-type");
   const sitesAffected = getEntryValue(report.entries, "site-affected");
+  const reportTitle = disturbanceReportTitle(report);
   const typeLabel = typeof disturbanceType === "string" ? startCase(disturbanceType) : "";
 
   return {
@@ -102,6 +104,7 @@ const toDisturbanceReport = (report: DisturbanceReportLightDto): AdditionalDistu
     updatedAt: report.updatedAt,
     completion: null,
     sitesAffected: Array.isArray(sitesAffected) ? sitesAffected.length : 0,
+    disturbanceTitle: reportTitle,
     intensity: report.intensity ?? (getEntryValue(report.entries, "intensity") as string | null),
     organisationName: report.organisationName ?? null,
     organisationUuid: report.organisationUuid ?? null,

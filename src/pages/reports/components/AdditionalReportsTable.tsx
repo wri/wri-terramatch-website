@@ -143,7 +143,7 @@ const AdditionalReportsTable: FC<AdditionalReportsTableProps> = ({
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("name")}>
             <TitleCell
-              label={reportName}
+              label={report.type == "disturbance-report" ? report.disturbanceTitle : reportName}
               link={getReportViewHref(report, indexHref, profileOrigin)}
               linkTarget="_self"
               showChevron={false}

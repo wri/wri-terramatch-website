@@ -9,7 +9,7 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullDisturbanceReport } from "@/connections/Entity";
 import FrameworkProvider from "@/context/framework.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
-import { DisturbanceReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { DisturbanceReportFullDto, DisturbanceReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportBreadcrumbs } from "@/hooks/useReportBreadcrumbs";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { getReportsIndexUrl, withReportOrigin } from "@/pages/reports/reportIndex.utils";
@@ -33,11 +33,14 @@ type DisturbanceReportContentProps = {
   disturbanceReport: DisturbanceReportFullDto;
 };
 
-export const getDisturbanceEntry = (type: string, report: DisturbanceReportFullDto): string => {
+export const getDisturbanceEntry = (
+  type: string,
+  report: DisturbanceReportFullDto | DisturbanceReportLightDto
+): string => {
   return report?.entries?.find(entry => entry.name === type)?.value ?? "";
 };
 
-export const disturbanceReportTitle = (report: DisturbanceReportFullDto): string => {
+export const disturbanceReportTitle = (report: DisturbanceReportFullDto | DisturbanceReportLightDto): string => {
   const disturbanceType = getDisturbanceEntry("disturbance-type", report);
   const startDate = new Date(getDisturbanceEntry("disturbance-start-date", report));
   const dateSuffix = isValid(startDate) ? ` - ${format(startDate, "MM/yyyy")}` : "";
