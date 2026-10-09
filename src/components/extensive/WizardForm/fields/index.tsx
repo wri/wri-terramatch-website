@@ -26,6 +26,7 @@ import { RadioField } from "./radio.field";
 import { SeedingsField } from "./seedings.field";
 import { SelectField } from "./select.field";
 import { SelectImageField } from "./select-image.field";
+import { StakeholdersField } from "./stakeholders.field";
 import { StratasField } from "./stratas.field";
 import { StrategyAreaField } from "./strategy-area.field";
 import { TableInputField } from "./table-input.field";
@@ -48,6 +49,7 @@ export const FormFieldFactories: Record<FieldInputType, FormFieldFactory> = {
   tel: TelephoneField,
   leaderships: LeadershipsField,
   ownershipStake: OwnershipStakeField,
+  stakeholders: StakeholdersField,
   stratas: StratasField,
   disturbances: DisturbancesField,
   disturbanceReportEntries: DisturbanceReportEntriesField,
