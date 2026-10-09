@@ -47,10 +47,10 @@ const ExternalFinanceChart: FC<ExternalFinanceChartProps> = ({ data }) => {
         <>
           <Box height={`${CHART_PLOT_HEIGHT}rem`} textStyle="200">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data} barCategoryGap="8%" margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
+              <BarChart data={data} barCategoryGap="8%" margin={{ top: 8, right: 0, bottom: 0, left: 0 }}>
                 <CartesianGrid vertical={false} stroke={CHART_COLORS.grid} />
                 <XAxis dataKey="year" {...CHART_AXIS_PROPS} />
-                <YAxis {...CHART_AXIS_PROPS} width={48} tickFormatter={formatCompactUsd} />
+                <YAxis {...CHART_AXIS_PROPS} width={56} tickFormatter={formatCompactUsd} />
                 <Tooltip cursor={{ fill: CHART_COLORS.cursor }} content={<ExternalFinanceTooltip />} />
                 <Bar dataKey="amount" fill={CHART_COLORS.neutralActive} />
               </BarChart>
