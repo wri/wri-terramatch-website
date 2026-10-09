@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo } from "react";
@@ -39,12 +39,13 @@ export const getDisturbanceEntry = (type: string, report: DisturbanceReportFullD
 
 export const disturbanceReportTitle = (report: DisturbanceReportFullDto): string => {
   const disturbanceType = getDisturbanceEntry("disturbance-type", report);
-  const disturbanceDate = format(new Date(getDisturbanceEntry("disturbance-start-date", report)), "MM/yyyy");
+  const startDate = new Date(getDisturbanceEntry("disturbance-start-date", report));
+  const dateSuffix = isValid(startDate) ? ` - ${format(startDate, "MM/yyyy")}` : "";
   let generalTitle = "Disturbance Report";
-  if (["climatic", "ecological"].includes(disturbanceType)) return `Environmental ${generalTitle} - ${disturbanceDate}`;
-  if (disturbanceType == "manmade") return `Manmade ${generalTitle} - ${disturbanceDate}`;
+  if (["climatic", "ecological"].includes(disturbanceType)) return `Environmental ${generalTitle}${dateSuffix}`;
+  if (disturbanceType == "manmade") return `Manmade ${generalTitle}${dateSuffix}`;
 
-  return `${generalTitle} - ${disturbanceDate}`;
+  return `${generalTitle}${dateSuffix}`;
 };
 
 const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturbanceReport }) => {
