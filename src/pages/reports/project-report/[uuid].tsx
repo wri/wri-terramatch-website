@@ -46,8 +46,8 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
   const currentTab = (router.query.tab as string) ?? "overview";
   const breadcrumbs = useReportBreadcrumbs(
     { label: reportTitle, link: `/reports/project-report/${projectReport.uuid}` },
-    getReportsIndexUrl("project", projectReport.projectUuid!),
-    { project: projectReport.projectName }
+    "project",
+    { project: { uuid: projectReport.projectUuid, name: projectReport.projectName } }
   );
 
   const isRedirectingToReportsIndex = currentTab === "site-reports" || currentTab === "nursery-reports";

@@ -18,7 +18,7 @@ import { useReportBreadcrumbs } from "@/hooks/useReportBreadcrumbs";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { SuffixButtonConfig } from "@/pages/project/[uuid]/index.page";
-import { getReportsIndexUrl, withReportOrigin } from "@/pages/reports/reportIndex.utils";
+import { withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import Details from "@/pages/reports/site-report/tabs/Details";
 import Overview from "@/pages/reports/site-report/tabs/Overview";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -158,8 +158,11 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
       }),
       link: `/reports/site-report/${siteReportUUID}`
     },
-    getReportsIndexUrl("site", siteReport.siteUuid!),
-    { project: siteReport.projectName, site: siteReport.siteName }
+    "site",
+    {
+      project: { uuid: siteReport.projectUuid, name: siteReport.projectName },
+      site: { uuid: siteReport.siteUuid, name: siteReport.siteName }
+    }
   );
   const suffixButtons: SuffixButtonConfig[] = useMemo(
     () => [
