@@ -1,5 +1,6 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { useRouter } from "next/router";
 import { FC } from "react";
 
@@ -85,7 +86,7 @@ const ReportInfo: FC<ReportInfoProps> = ({ report, dueAt, entityName }) => {
         <Button
           variant="borderless"
           size="small"
-          className="-ml-2"
+          className={classNames(entityName !== "financial-report" && "projectUuid" in report && "-ml-2")}
           onClick={() => report.organisationUuid != null && router.push(`/organization/${report.organisationUuid}`)}
         >
           {report.organisationName ?? "—"}
