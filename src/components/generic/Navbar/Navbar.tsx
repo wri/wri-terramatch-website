@@ -9,19 +9,6 @@ import { useNavbarContext } from "@/context/navbar.provider";
 import Container from "../Layout/Container";
 import NavbarContent from "./NavbarContent";
 
-export const REDESIGN_BANNER_DISMISSED_SESSION_KEY = "terramatch-redesign-banner-dismissed";
-
-export const isRedesignBannerDismissed = (): boolean =>
-  typeof window !== "undefined" && sessionStorage.getItem(REDESIGN_BANNER_DISMISSED_SESSION_KEY) === "true";
-
-export const dismissRedesignBanner = (): void => {
-  sessionStorage.setItem(REDESIGN_BANNER_DISMISSED_SESSION_KEY, "true");
-};
-
-export const resetRedesignBannerDismissal = (): void => {
-  sessionStorage.removeItem(REDESIGN_BANNER_DISMISSED_SESSION_KEY);
-};
-
 const Navbar: FC = () => {
   const { isOpen, setIsOpen, linksDisabled } = useNavbarContext();
 
