@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo } from "react";
@@ -16,6 +15,7 @@ import { useValueChanged } from "@/hooks/useValueChanged";
 import { getReportsIndexUrl, withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import DisturbanceReportBanner from "@/redesignComponents/content/Banner/DisturbanceReportBanner/DisturbanceReportBanner";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
@@ -172,8 +172,7 @@ const DisturbanceReportDetailPage = () => {
         label: t("Disturbance report not found"),
         type: "error",
         placement: "bottom",
-        duration: 5000,
-        maxWidth: "auto"
+        duration: 5000
       });
     }
   });

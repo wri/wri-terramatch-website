@@ -1,6 +1,5 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import { useRouter } from "next/router";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
@@ -8,6 +7,7 @@ import PageContent from "@/components/extensive/PageElements/PageContent/PageCon
 import { InfiniteScrollSentinel } from "@/hooks/useInfiniteScrollSentinel";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 
 import { ALL_PROJECTS_VIEW, filterSiteIndexSites, getSiteCreateUrl } from "./components/siteIndex.utils";

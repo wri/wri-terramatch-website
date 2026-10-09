@@ -1,4 +1,6 @@
-import { closeToast, showToast } from "@worldresources/wri-design-systems";
+import { closeToast } from "@worldresources/wri-design-systems";
+
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 
 const DEFAULT_TOAST_ID = "downloadToast";
 const DEFAULT_PLACEMENT = "bottom" as const;
@@ -18,8 +20,7 @@ const showDownloadingToast = (id: string, label: string) => {
     label,
     type: "loading",
     placement: DEFAULT_PLACEMENT,
-    duration: PROGRESS_DURATION_MS,
-    maxWidth: "auto"
+    duration: PROGRESS_DURATION_MS
   });
 };
 
@@ -30,8 +31,7 @@ const showDownloadCompleteToast = (id: string, label: string) => {
     label,
     type: "success",
     placement: DEFAULT_PLACEMENT,
-    duration: DEFAULT_DURATION_MS,
-    maxWidth: "auto"
+    duration: DEFAULT_DURATION_MS
   });
 };
 
@@ -40,8 +40,7 @@ const showDownloadErrorToast = (label: string) => {
     label,
     type: "error",
     placement: DEFAULT_PLACEMENT,
-    duration: DEFAULT_DURATION_MS,
-    maxWidth: "auto"
+    duration: DEFAULT_DURATION_MS
   });
 };
 

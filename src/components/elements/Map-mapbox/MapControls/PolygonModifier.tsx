@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import { useState } from "react";
 
 import IconButton from "@/components/elements/IconButton/IconButton";
@@ -12,6 +11,7 @@ import { deleteProjectPolygon } from "@/connections/ProjectPolygons";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import Log from "@/utils/log";
 
 import Button from "../../Button/Button";

@@ -2,7 +2,6 @@ import type { DateValue } from "@ark-ui/react";
 import { Flex, Text } from "@chakra-ui/react";
 import { CalendarDate } from "@internationalized/date";
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import { format } from "date-fns";
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -45,6 +44,7 @@ import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { DownloadIcon, RefreshIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/FloatingActionToolbar";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 import { trackPolygonDownloaded, trackPolygonStatusChanged } from "@/utils/polygonAnalytics";
@@ -239,7 +239,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       showPolygonCompleteToast(label);
       return;
     }
-    showToast({ label, type: "warning", placement: "bottom", duration: 5000, maxWidth: "auto" });
+    showToast({ label, type: "warning", placement: "bottom", duration: 5000 });
   }, []);
   const {
     polygonGeometryEdit,

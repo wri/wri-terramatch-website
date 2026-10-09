@@ -1,11 +1,11 @@
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import { FC, useEffect, useMemo, useRef, useState } from "react";
 
 import { bulkDeleteUserAssociations, updateOrganisationUserStatuses } from "@/connections/UserAssociation";
 import { useLayoutShell } from "@/redesignComponents/Layout/LayoutShell.provider";
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 import type { BulkToolbarAction } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 
 import TeamMemberActionModal, { type TeamBulkMember, type TeamMemberAction } from "./TeamMemberActionModal";
 

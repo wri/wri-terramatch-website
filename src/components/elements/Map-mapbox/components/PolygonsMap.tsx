@@ -1,6 +1,5 @@
 import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import classNames from "classnames";
 import type { FC } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -16,6 +15,7 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 
 import { storePolygon } from "../utils";
 import LoadingMap from "./LoadingMap";

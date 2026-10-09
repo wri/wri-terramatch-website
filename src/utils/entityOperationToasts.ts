@@ -1,7 +1,8 @@
-import { closeToast, showToast } from "@worldresources/wri-design-systems";
+import { closeToast } from "@worldresources/wri-design-systems";
 import { createElement } from "react";
 
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 
 export const ENTITY_TOAST_PLACEMENT = "bottom" as const;
 export const ENTITY_TOAST_DURATION_MS = 5000;
@@ -31,8 +32,7 @@ export const showEntityProgressToast = (t: (key: string) => string, label: strin
       boxSize: 7,
       color: "primary.700",
       animation: "spin 1s linear infinite"
-    }),
-    maxWidth: "auto"
+    })
   });
 
 export const closeEntityProgressToast = (id: EntityToastId) => closeToast(id);
@@ -43,8 +43,7 @@ export const completeEntityProgressToast = (id: EntityToastId, label: string) =>
     label,
     type: "success",
     placement: ENTITY_TOAST_PLACEMENT,
-    duration: ENTITY_TOAST_DURATION_MS,
-    maxWidth: "auto"
+    duration: ENTITY_TOAST_DURATION_MS
   });
 
 export const showEntityCompleteToast = (label: string) =>
@@ -52,8 +51,7 @@ export const showEntityCompleteToast = (label: string) =>
     label,
     type: "success",
     placement: ENTITY_TOAST_PLACEMENT,
-    duration: ENTITY_TOAST_DURATION_MS,
-    maxWidth: "auto"
+    duration: ENTITY_TOAST_DURATION_MS
   });
 
 export const showEntityErrorToast = (label: string) =>
@@ -61,6 +59,5 @@ export const showEntityErrorToast = (label: string) =>
     label,
     type: "error",
     placement: ENTITY_TOAST_PLACEMENT,
-    duration: ENTITY_TOAST_DURATION_MS,
-    maxWidth: "auto"
+    duration: ENTITY_TOAST_DURATION_MS
   });

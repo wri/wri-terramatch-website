@@ -1,7 +1,6 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import { useCallback } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -12,6 +11,7 @@ import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/Button
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 interface InviteTeamMemberModalProps {
   organisationUUID: string;
   open: boolean;
@@ -58,8 +58,7 @@ const InviteTeamMemberModal = ({ organisationUUID, open, onClose, onSuccess }: I
             label: t("Invitation sent successfully"),
             type: "success",
             placement: "bottom",
-            duration: 5000,
-            maxWidth: "auto"
+            duration: 5000
           });
           hideModal();
         } else {

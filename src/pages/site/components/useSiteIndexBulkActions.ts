@@ -1,11 +1,11 @@
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import { useRouter } from "next/router";
 import { useCallback, useMemo, useState } from "react";
 
 import { deleteSite } from "@/connections/Entity";
 import { entityExportAll, entityUpdate } from "@/generated/v3/entityService/entityServiceComponents";
 import { getEntityEditPageLink } from "@/helpers/entity";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ApiSlice from "@/store/apiSlice";
 import {
   closeEntityProgressToast,
@@ -111,16 +111,14 @@ export const useSiteIndexBulkActions = ({ selectedSites, onSitesChanged }: UseSi
         label: t("Site Profile(s) deleted"),
         type: "success",
         placement: "bottom",
-        duration: 5000,
-        maxWidth: "auto"
+        duration: 5000
       });
     } catch (error) {
       Log.error("Failed to delete selected sites", error);
       showToast({
         label: t("Something went wrong!"),
         type: "error",
-        placement: "bottom",
-        maxWidth: "auto"
+        placement: "bottom"
       });
       throw error;
     } finally {
@@ -145,8 +143,7 @@ export const useSiteIndexBulkActions = ({ selectedSites, onSitesChanged }: UseSi
       showToast({
         label: t("Something went wrong!"),
         type: "error",
-        placement: "bottom",
-        maxWidth: "auto"
+        placement: "bottom"
       });
       throw error;
     } finally {
