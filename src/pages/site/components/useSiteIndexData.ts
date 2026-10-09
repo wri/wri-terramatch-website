@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { loadFullProject } from "@/connections/Entity";
 import { toFramework } from "@/context/framework.provider";
 import type { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useSiteProjectIndex } from "@/hooks/useProjectEntityIndex";
+import { useStableRows } from "@/hooks/useStableRows";
 
 import type { SiteIndexProject } from "./siteIndex.types";
 import { mapSiteToIndexSite, toSiteIndexProject } from "./siteIndex.utils";
@@ -83,14 +84,25 @@ export const useSiteIndexData = ({
     [fullProjectsById, index.childrenByProjectId, index.loadingProjectIds]
   );
 
-  const viewProjects = useMemo(
-    () => index.viewProjects.map(project => toProject(project.uuid, project, false)),
-    [index.viewProjects, toProject]
+  // Rows keep their identity until their own inputs change, so appending a batch of projects doesn't
+  // re-render every project section that is already on screen.
+  const viewProjects = useStableRows(
+    index.viewProjects,
+    project => project.uuid,
+    project => [project, fullProjectsById.get(project.uuid), index.loadingProjectIds.has(project.uuid)],
+    project => toProject(project.uuid, project, false)
   );
 
-  const projects = useMemo(
-    () => index.visibleProjects.map(project => toProject(project.uuid, project, true)),
-    [index.visibleProjects, toProject]
+  const projects = useStableRows(
+    index.visibleProjects,
+    project => project.uuid,
+    project => [
+      project,
+      index.childrenByProjectId.get(project.uuid),
+      fullProjectsById.get(project.uuid),
+      index.loadingProjectIds.has(project.uuid)
+    ],
+    project => toProject(project.uuid, project, true)
   );
 
   return {

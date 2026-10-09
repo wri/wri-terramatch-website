@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
-import { InfiniteScrollSentinel } from "@/hooks/useInfiniteScrollSentinel";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 import { showToast } from "@/redesignComponents/status/Toast/showToast";
@@ -49,25 +48,15 @@ const SiteIndexPageContent: FC = () => {
   const hasAppliedFilters = statusFilters.length > 0 || updateFilter != null;
   const hasActiveFilters = hasActiveSearch || hasAppliedFilters;
   const filtering = searchQuery.trim() !== debouncedSearch;
-  const {
-    loading,
-    loadingMore,
-    hasMore,
-    loadMore,
-    viewProjects,
-    projects,
-    totalSiteCount,
-    onProjectOpened,
-    error,
-    childrenPending
-  } = useSiteIndexData({
-    reloadNonce,
-    childrenReloadNonce,
-    search: debouncedSearch,
-    projectUuid: selectedProject === ALL_PROJECTS_VIEW ? undefined : selectedProject,
-    enabled: hasHydratedQuery,
-    loadAllChildren: debouncedSearch.trim() !== "" || hasAppliedFilters
-  });
+  const { loading, hasMore, viewProjects, projects, totalSiteCount, onProjectOpened, error, childrenPending } =
+    useSiteIndexData({
+      reloadNonce,
+      childrenReloadNonce,
+      search: debouncedSearch,
+      projectUuid: selectedProject === ALL_PROJECTS_VIEW ? undefined : selectedProject,
+      enabled: hasHydratedQuery,
+      loadAllChildren: debouncedSearch.trim() !== "" || hasAppliedFilters
+    });
   const accordionOpenResetKey = `${selectedProject}:${debouncedSearch}:${statusFilters.join(",")}:${
     updateFilter ?? ""
   }`;
@@ -203,14 +192,14 @@ const SiteIndexPageContent: FC = () => {
                   onProjectOpened={onProjectOpened}
                 />
               ))}
-              <InfiniteScrollSentinel
-                hasMore={hasMore || childrenPending}
-                loading={loading}
-                loadingMore={loadingMore || childrenPending}
-                label={t("Loading...")}
-                resetKey={visibleProjects.length}
-                onLoadMore={loadMore}
-              />
+              {hasMore || childrenPending ? (
+                <Flex minHeight="4rem" alignItems="center" justifyContent="center" gap={3}>
+                  <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
+                  <Text textStyle="400" color="neutral.800">
+                    {t("Loading...")}
+                  </Text>
+                </Flex>
+              ) : null}
             </div>
           </>
         )}

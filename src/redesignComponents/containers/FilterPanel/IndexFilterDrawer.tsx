@@ -1,6 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, startTransition } from "react";
 import { twMerge } from "tailwind-merge";
 
 import { SizeValue } from "@/lib/sizing";
@@ -99,8 +99,8 @@ const IndexFilterDrawer: FC<IndexFilterDrawerProps> = ({
                   children: t("Apply"),
                   variant: "primary",
                   onClick: () => {
-                    onApply();
                     onClose();
+                    startTransition(() => onApply());
                   }
                 }
               ]}
