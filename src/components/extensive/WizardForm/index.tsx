@@ -24,6 +24,7 @@ import WizardFormProvider, {
   ProjectFormDetails,
   useFieldsProvider
 } from "@/context/wizardForm.provider";
+import { DisturbanceReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { entityLinkHeaderMap, mapEntityTitle, mapStatusToTagState } from "@/helpers/entityFormLinkHeader";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useDownloadFormAnswers } from "@/hooks/useDownloadFormAnswers";
@@ -31,6 +32,7 @@ import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { SuffixButtonConfig } from "@/pages/project/[uuid]/index.page";
+import { disturbanceReportTitle } from "@/pages/reports/disturbance-report/[uuid]/index.page";
 import { getReportsIndexHrefFromQuery, getReportsIndexUrl } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
@@ -567,25 +569,13 @@ function WizardForm(props: WizardFormProps) {
     } else if (models[0]?.model === "nurseryReports") {
       return getFormHeaderLabel(entity?.nurseryName ?? "", taskTitle);
     } else if (models[0]?.model === "disturbanceReports") {
-      return entity?.projectName + " - " + entity?.title;
+      return disturbanceReportTitle(entity as DisturbanceReportFullDto);
     } else if (models[0]?.model === "financialReports") {
       return getFormHeaderLabel(entity?.organisationName ?? "", taskTitle);
     } else {
       return mapEntityTitle(entity?.title ?? entity?.name ?? null, models[0]?.model ?? "", t);
     }
-  }, [
-    isSubmissionModel,
-    models,
-    entity?.organisationName,
-    entity?.fundingProgrammeName,
-    entity?.projectName,
-    entity?.siteName,
-    entity?.nurseryName,
-    entity?.title,
-    entity?.name,
-    t,
-    taskTitle
-  ]);
+  }, [isSubmissionModel, models, t, taskTitle, entity]);
 
   const suffixButtons: SuffixButtonConfig[] = useMemo(() => {
     if (models[0]?.model === "siteReports") {

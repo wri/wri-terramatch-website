@@ -4,6 +4,8 @@ import type { ParsedUrlQuery } from "querystring";
 import { ReactNode } from "react";
 
 import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
+import { DisturbanceReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { disturbanceReportTitle } from "@/pages/reports/disturbance-report/[uuid]/index.page";
 import {
   getReportsIndexHrefFromQuery,
   getReportsIndexUrl,
@@ -271,7 +273,7 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
           ]),
     disturbanceReports:
       isFromIndex && indexLabel === t("Reports")
-        ? reportBreadcrumb(additionalReportsHref, entityTitle)
+        ? reportBreadcrumb(additionalReportsHref, disturbanceReportTitle(entity as DisturbanceReportFullDto))
         : withFirstIcon([
             {
               label: t("Projects"),
@@ -281,7 +283,7 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
               label: projectTitle,
               link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}`
             },
-            { label: entityTitle, link: entityPageLink },
+            { label: disturbanceReportTitle(entity as DisturbanceReportFullDto), link: entityPageLink },
             { label: t("Edit"), link: editLink }
           ]),
     srpReports:

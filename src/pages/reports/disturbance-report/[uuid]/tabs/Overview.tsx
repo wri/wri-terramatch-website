@@ -25,6 +25,8 @@ import { AreaHectaresIcon, ChevronRightIcon, PeopleAffectedIcon } from "@/redesi
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 import Log from "@/utils/log";
 
+import { getDisturbanceEntry } from "../index.page";
+
 type PolygonAffectedEntry = { polyUuid: string; polyName: string; siteUuid: string };
 
 const DISTURBANCE_REPORTING_GUIDE_URL =
@@ -44,7 +46,7 @@ const DisturbanceReportOverviewTab: FC<DisturbanceReportOverviewTabProps> = ({
   const t = useT();
   const [isReportSetupComplete, setIsReportSetupComplete] = useState(false);
   const editButtonLabel = getEntitySetupButtonLabel(t, report.status, isReportSetupComplete);
-  const polygonAffected = report.entries?.find(entry => entry.name === "polygon-affected")?.value ?? "";
+  const polygonAffected = getDisturbanceEntry("polygon-affected", report);
   const polygonUuidsBySite = useMemo(() => {
     if (polygonAffected === "") return {};
     const parsed = JSON.parse(polygonAffected) as (PolygonAffectedEntry | PolygonAffectedEntry[])[];

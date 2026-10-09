@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { format } from "date-fns";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo } from "react";
@@ -32,13 +33,25 @@ type DisturbanceReportContentProps = {
   disturbanceReport: DisturbanceReportFullDto;
 };
 
+export const getDisturbanceEntry = (type: string, report: DisturbanceReportFullDto): string => {
+  return report?.entries?.find(entry => entry.name === type)?.value ?? "";
+};
+
+export const disturbanceReportTitle = (report: DisturbanceReportFullDto): string => {
+  const disturbanceType = getDisturbanceEntry("disturbance-type", report);
+  const disturbanceDate = format(new Date(getDisturbanceEntry("disturbance-start-date", report)), "MM/yyyy");
+  let generalTitle = "Disturbance Report";
+  if (["climatic", "ecological"].includes(disturbanceType)) return `Environmental ${generalTitle} - ${disturbanceDate}`;
+  if (disturbanceType == "manmade") return `Manmade ${generalTitle} - ${disturbanceDate}`;
+
+  return `${generalTitle} - ${disturbanceDate}`;
+};
+
 const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturbanceReport }) => {
   const t = useT();
   const router = useRouter();
   const disturbanceReportUUID = disturbanceReport.uuid;
   const currentTab = (router.query.tab as string) ?? "overview";
-
-  const headerReportTitle = disturbanceReport.projectName + " - " + disturbanceReport.title;
 
   const navigateToTab = useCallback(
     (tab: string) => {
@@ -124,11 +137,11 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
     <>
       <ResponsiveTypography />
       <Head>
-        <title>{headerReportTitle}</title>
+        <title>{disturbanceReportTitle(disturbanceReport)}</title>
       </Head>
       <DisturbanceReportBanner
         report={disturbanceReport}
-        title={headerReportTitle}
+        title={disturbanceReportTitle(disturbanceReport)}
         breadcrumbs={breadcrumbs}
         suffix={
           disturbanceReport.projectUuid != null ? (
