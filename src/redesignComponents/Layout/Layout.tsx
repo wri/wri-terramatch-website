@@ -4,6 +4,7 @@ import { FC, PropsWithChildren, useState } from "react";
 
 import { useMyOrg } from "@/connections/Organisation";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import LayoutChromeScale from "@/styles/LayoutChromeScale";
 
 import { DashboardIcon } from "../foundations/Icons/NavigationSections/DashboardIcon";
 import { NurseryIcon } from "../foundations/Icons/NavigationSections/NurseryIcon";
@@ -28,58 +29,61 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <Flex height="100vh" width="100%" flexDirection="column">
-      <Box as="header" className="fixed inset-x-0 top-0 z-50 h-[3rem]">
+      <LayoutChromeScale />
+      <Box as="header" className="fixed inset-x-0 top-0 z-50 h-[3rem] [zoom:var(--layout-chrome-zoom,1)]">
         <Navbar />
       </Box>
       {data.isLoggedIn ? (
-        <Flex className="min-h-0 flex-1 overflow-hidden pt-[3rem]">
-          <SideNavigation
-            collapsed={true}
-            isCollapsedDisabled={isSidebarCollapseDisabled}
-            groups={[
-              {
-                id: "management",
-                links: [
-                  {
-                    href: "/dashboard",
-                    icon: <DashboardIcon boxSize={4} />,
-                    label: "Dashboard"
-                  },
-                  {
-                    href: isAdmin
-                      ? "/admin#/organisation"
-                      : myOrg?.organisationId
-                      ? `/organization/${myOrg?.organisationId}`
-                      : "/",
-                    icon: <OrganizationIcon boxSize={4} />,
-                    label: "Organizations"
-                  },
-                  {
-                    href: "/my-projects",
-                    activePaths: ["/my-projects", "/project"],
-                    icon: <ProjectIcon boxSize={4} />,
-                    label: "Projects"
-                  },
-                  {
-                    href: isAdmin ? "/admin#/site" : "/site",
-                    icon: <SiteIcon boxSize={4} />,
-                    label: "Sites"
-                  },
-                  {
-                    href: isAdmin ? "/admin#/nursery" : "/nurserie",
-                    icon: <NurseryIcon boxSize={4} />,
-                    label: "Nurseries"
-                  },
-                  {
-                    href: isAdmin ? "/admin#/projectReport" : "/reports",
-                    icon: <ReportsIcon boxSize={4} />,
-                    label: "Reports"
-                  }
-                ]
-              }
-            ]}
-            title="Management Panel"
-          />
+        <Flex className="min-h-0 flex-1 overflow-hidden pt-[calc(3rem*var(--layout-chrome-zoom,1))]">
+          <Flex className="[zoom:var(--layout-chrome-zoom,1)]">
+            <SideNavigation
+              collapsed={true}
+              isCollapsedDisabled={isSidebarCollapseDisabled}
+              groups={[
+                {
+                  id: "management",
+                  links: [
+                    {
+                      href: "/dashboard",
+                      icon: <DashboardIcon boxSize={4} />,
+                      label: "Dashboard"
+                    },
+                    {
+                      href: isAdmin
+                        ? "/admin#/organisation"
+                        : myOrg?.organisationId
+                        ? `/organization/${myOrg?.organisationId}`
+                        : "/",
+                      icon: <OrganizationIcon boxSize={4} />,
+                      label: "Organizations"
+                    },
+                    {
+                      href: "/my-projects",
+                      activePaths: ["/my-projects", "/project"],
+                      icon: <ProjectIcon boxSize={4} />,
+                      label: "Projects"
+                    },
+                    {
+                      href: isAdmin ? "/admin#/site" : "/site",
+                      icon: <SiteIcon boxSize={4} />,
+                      label: "Sites"
+                    },
+                    {
+                      href: isAdmin ? "/admin#/nursery" : "/nurserie",
+                      icon: <NurseryIcon boxSize={4} />,
+                      label: "Nurseries"
+                    },
+                    {
+                      href: isAdmin ? "/admin#/projectReport" : "/reports",
+                      icon: <ReportsIcon boxSize={4} />,
+                      label: "Reports"
+                    }
+                  ]
+                }
+              ]}
+              title="Management Panel"
+            />
+          </Flex>
           <Flex as="main" className="min-h-0 flex-[1_1_0] flex-col overflow-auto">
             {isWarningVisible && (
               <InlineMessage

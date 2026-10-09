@@ -57,7 +57,7 @@ const getSearchPlaceholder = (
 ) => {
   if (entityProfile && source === "site") return t("Search sites");
   if (entityProfile && source === "nursery") return t("Search nurseries");
-  return activeTab === "progress-reports" ? t("Search projects, sites, nurseries") : t("Search");
+  return activeTab === "progress-reports" ? t("Search projects, sites and nurseries") : t("Search");
 };
 
 const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
