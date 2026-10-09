@@ -56,10 +56,11 @@ export const useNavbarData = (): NavbarData => {
   const { private: privateNavItems, public: publicNavItems } = getNavbarItems(t, myOrg);
   const rawNavItems = (isLoggedIn ? privateNavItems : publicNavItems).filter(item => item.visibility);
 
+  const currentPath = router.asPath.split(/[?#]/)[0];
   const navLinks: NavbarLinkItem[] = rawNavItems.map(item => ({
     label: item.title,
     href: item.url,
-    isActive: router.asPath === item.url || router.asPath === `${item.url}#`,
+    isActive: currentPath === item.url,
     onClick: () => router.push(item.url)
   }));
 
