@@ -6,6 +6,7 @@ import LoadingTable from "@/redesignComponents/dataDisplay/Table/components/Load
 import PaginationTable from "@/redesignComponents/navigation/Pagination/PaginationTable";
 
 import { findHorizontalScrollContainer } from "./findHorizontalScrollContainer";
+import { scrollToTableTop } from "./scrollToTableTop";
 import { getTableWrapperStyles } from "./tableStyles";
 import { type BaseRow, type SortColumn, DEFAULT_CURRENT_PAGE } from "./tableUtils";
 import { useTablePagination, useTablePaginationState } from "./useTablePagination";
@@ -58,6 +59,7 @@ interface TableProps<T extends BaseRow> {
   onPageSizeChange?: (pageSize: number) => void;
   onSortChange?: (sortColumn: SortColumn) => void;
   currentPage?: number;
+  scrollToTopOnPageChange?: boolean;
 }
 
 const Table = <T extends BaseRow>({
@@ -88,9 +90,11 @@ const Table = <T extends BaseRow>({
   onSortChange,
   currentPage: controlledCurrentPage,
   restoreRowId,
-  onRowRestored
+  onRowRestored,
+  scrollToTopOnPageChange = false
 }: TableProps<T>) => {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const pendingPageScrollRef = useRef(false);
   const didScrollRestoreRef = useRef(false);
   const isServerPaginated = controlledOnPageChange != null && totalItems != null;
   const [paginationResetKey, setPaginationResetKey] = useState(0);
@@ -155,14 +159,21 @@ const Table = <T extends BaseRow>({
 
   const handlePageChange = useCallback(
     (page: number) => {
+      pendingPageScrollRef.current = scrollToTopOnPageChange;
       if (controlledOnPageChange != null) {
         controlledOnPageChange(page);
         return;
       }
       setCurrentPage(page);
     },
-    [controlledOnPageChange, setCurrentPage]
+    [controlledOnPageChange, scrollToTopOnPageChange, setCurrentPage]
   );
+
+  useLayoutEffect(() => {
+    if (!pendingPageScrollRef.current || wrapperRef.current == null) return;
+    pendingPageScrollRef.current = false;
+    scrollToTableTop(wrapperRef.current);
+  }, [currentPage]);
 
   const handlePageSizeChange = useCallback(
     (nextPageSize: number) => {

@@ -225,6 +225,7 @@ const AdditionalReportsTable: FC<AdditionalReportsTableProps> = ({
   return (
     <Box className="mobile:!w-full mobile:overflow-auto">
       <Table<AdditionalReport>
+        scrollToTopOnPageChange
         data={reports}
         columns={columns}
         selectable

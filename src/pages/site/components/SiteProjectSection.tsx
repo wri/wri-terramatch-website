@@ -337,6 +337,7 @@ const SiteProjectTable: FC<{
 
   return (
     <Table<SiteIndexSite>
+      scrollToTopOnPageChange
       data={sites}
       css={{
         "& table tbody tr:hover": {

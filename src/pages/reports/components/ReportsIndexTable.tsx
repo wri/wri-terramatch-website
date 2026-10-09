@@ -154,6 +154,7 @@ const ReportsIndexTable: FC<{
   return (
     <Box className="mobile:!w-full mobile:overflow-auto">
       <Table<ReportsIndexReport>
+        scrollToTopOnPageChange
         data={reports}
         columns={columns}
         selectable

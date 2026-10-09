@@ -140,6 +140,7 @@ const NurseryIndexTable: FC<{ nurseries: NurseryIndexRow[]; embeddedInProject: b
   return (
     <Box className="mobile:!w-full mobile:overflow-auto">
       <Table<NurseryIndexRow>
+        scrollToTopOnPageChange
         data={nurseries}
         columns={columns}
         selectable
