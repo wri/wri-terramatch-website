@@ -6,14 +6,16 @@ import { ReactNode } from "react";
 import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import { DisturbanceReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { disturbanceReportTitle } from "@/pages/reports/disturbance-report/[uuid]/index.page";
+import { buildReportTrail } from "@/pages/reports/reportBreadcrumbs.utils";
 import {
+  getReportProfileOriginFromQuery,
   getReportsIndexHrefFromQuery,
-  getReportsIndexUrl,
-  getReportsIndexUrlForEntity
+  ReportsIndexSource
 } from "@/pages/reports/reportIndex.utils";
 import { ProgressState } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
 import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { EntityName, SingularEntityName } from "@/types/common";
+import { appendQueryParams } from "@/utils/appendQueryParams";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import { singularEntityName } from "./entity";
@@ -45,6 +47,8 @@ export type EntityLinkHeaderParams = {
   t: typeof useT;
   from?: ParsedUrlQuery["from"];
   origin?: ParsedUrlQuery["origin"];
+  profile?: ParsedUrlQuery["profile"];
+  profileUuid?: ParsedUrlQuery["profileUuid"];
   taskTitle?: string;
 };
 
@@ -76,8 +80,21 @@ export const mapEntityTitle = (title: string | null, model: string, t: typeof us
 };
 
 export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkHeaderMap {
-  const { isAdmin, model, uuid, redirectEntityPage, adminListPath, entity, firstLinkIcon, t, from, origin, taskTitle } =
-    params;
+  const {
+    isAdmin,
+    model,
+    uuid,
+    redirectEntityPage,
+    adminListPath,
+    entity,
+    firstLinkIcon,
+    t,
+    from,
+    origin,
+    profile,
+    profileUuid,
+    taskTitle
+  } = params;
   const linkLabel = t(startCase(model));
 
   const originStr = typeof origin === "string" ? origin : undefined;
@@ -86,7 +103,6 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
     ? `/entity/${singularEntityName(model as EntityName | SingularEntityName)}/edit/${uuid}${originParam}`
     : "#";
   const entityTitle = mapEntityTitle(entity?.title ?? entity?.name ?? null, model, t);
-  const projectTitle = mapEntityTitle(entity?.projectName ?? null, "project", t);
   const withFirstIcon = (
     items: Array<{ label: string; link: string }>
   ): Array<{ label: string; link: string; icon?: ReactNode }> =>
@@ -97,32 +113,11 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
 
   const isFromIndex =
     originStr != null && (originStr === "sites" || originStr === "nurseries" || originStr === "reports");
-  const indexLabel =
-    originStr === "sites"
-      ? t("Sites")
-      : originStr === "nurseries"
-      ? t("Nurseries")
-      : originStr === "reports"
-      ? t("Reports")
-      : undefined;
 
+  // redirectEntityPage may already carry a query (report origin params), so merge instead of appending.
   const entityPageLinkWithOrigin =
-    isFromIndex && originStr ? `${entityPageLink}?origin=${encodeURIComponent(originStr)}` : entityPageLink;
+    isFromIndex && originStr ? appendQueryParams(entityPageLink, { origin: originStr }) : entityPageLink;
 
-  const progressReportsHref =
-    getReportsIndexHrefFromQuery(from, getReportsIndexUrlForEntity("progress-reports", entity ?? {}, "project")) ??
-    entityPageLink;
-  const siteReportsHref =
-    getReportsIndexHrefFromQuery(from, getReportsIndexUrlForEntity("progress-reports", entity ?? {}, "site")) ??
-    entityPageLink;
-  const nurseryReportsHref =
-    getReportsIndexHrefFromQuery(from, getReportsIndexUrlForEntity("progress-reports", entity ?? {}, "nursery")) ??
-    entityPageLink;
-  const additionalReportsHref =
-    getReportsIndexHrefFromQuery(from, getReportsIndexUrlForEntity("additional-reports", entity ?? {}, "project")) ??
-    (entity?.projectUuid != null
-      ? getReportsIndexUrl("project", entity.projectUuid, { tab: "additional-reports" })
-      : entityPageLink);
   const financialReportsHref =
     getReportsIndexHrefFromQuery(from, undefined) ??
     (entity?.organisationUuid != null ? `/organization/${entity.organisationUuid}` : entityPageLink);
@@ -136,6 +131,27 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
       { label, link: isFromIndex ? entityPageLinkWithOrigin : entityPageLink },
       { label: t("Edit"), link: editLink }
     ]);
+
+  // Report edit trails share the same builder as the report view page, so going back always matches the view.
+  const reportTrail = (reportLevel: ReportsIndexSource, reportCrumb: { label: string; link: string }) => {
+    const { crumbs } = buildReportTrail({
+      t,
+      reportLevel,
+      reportCrumb,
+      entities: {
+        project: { uuid: entity?.projectUuid, name: entity?.projectName },
+        site: { uuid: entity?.siteUuid, name: entity?.siteName },
+        nursery: { uuid: entity?.nurseryUuid, name: entity?.nurseryName }
+      },
+      from,
+      profile: getReportProfileOriginFromQuery(profile, profileUuid),
+      contextOrigin: originStr
+    });
+    const trail = crumbs.map((crumb, i) =>
+      isAdmin && i < crumbs.length - 1 ? { ...crumb, link: adminListPath! } : crumb
+    );
+    return withFirstIcon([...trail, { label: t("Edit"), link: editLink }]);
+  };
 
   const siteReportBreadcrumbLabel = t("Site Report {window}: {siteName}", {
     window: getShortPeriodLabel(taskTitle ?? "", true),
@@ -156,7 +172,7 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
       { label: t("Edit"), link: editLink }
     ]),
     sites:
-      isFromIndex && indexLabel === t("Sites")
+      isFromIndex && originStr === "sites"
         ? withFirstIcon([
             {
               label: t("Sites"),
@@ -178,7 +194,7 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
             { label: t("Edit"), link: editLink }
           ]),
     nurseries:
-      isFromIndex && indexLabel === t("Nurseries")
+      isFromIndex && originStr === "nurseries"
         ? withFirstIcon([
             {
               label: t("Nurseries"),
@@ -199,63 +215,11 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
             { label: entityTitle, link: entityPageLink },
             { label: t("Edit"), link: editLink }
           ]),
-    projectReports:
-      isFromIndex && indexLabel === t("Reports")
-        ? reportBreadcrumb(progressReportsHref, entity?.reportTitle ?? entityTitle)
-        : withFirstIcon([
-            {
-              label: "Projects",
-              link: isAdmin ? adminListPath! : "/my-projects"
-            },
-            {
-              label: projectTitle,
-              link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}`
-            },
-            {
-              label: entity?.reportTitle,
-              link: `${entityPageLink}?profile=project&profileUuid=${entity?.projectUuid}`
-            },
-            { label: t("Edit"), link: editLink }
-          ]),
-    siteReports:
-      isFromIndex && indexLabel === t("Reports")
-        ? reportBreadcrumb(siteReportsHref, siteReportBreadcrumbLabel)
-        : withFirstIcon([
-            {
-              label: "Projects",
-              link: isAdmin ? adminListPath! : "/my-projects"
-            },
-            {
-              label: projectTitle,
-              link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}`
-            },
-            { label: entity?.siteName, link: `/site/${entity?.siteUuid ?? ""}` },
-            {
-              label: siteReportBreadcrumbLabel,
-              link: `${entityPageLink}?profile=site&profileUuid=${entity?.siteUuid}`
-            },
-            { label: t("Edit"), link: editLink }
-          ]),
-    nurseryReports:
-      isFromIndex && indexLabel === t("Reports")
-        ? reportBreadcrumb(nurseryReportsHref, nurseryReportBreadcrumbLabel)
-        : withFirstIcon([
-            {
-              label: "Projects",
-              link: isAdmin ? adminListPath! : "/my-projects"
-            },
-            {
-              label: projectTitle,
-              link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}`
-            },
-            {
-              label: nurseryReportBreadcrumbLabel,
-              link: `${entityPageLink}?profile=nursery&profileUuid=${entity?.nurseryUuid}`
-            },
-            { label: t("Edit"), link: editLink }
-          ]),
+    projectReports: reportTrail("project", { label: entity?.reportTitle ?? entityTitle, link: entityPageLink }),
+    siteReports: reportTrail("site", { label: siteReportBreadcrumbLabel, link: entityPageLink }),
+    nurseryReports: reportTrail("nursery", { label: nurseryReportBreadcrumbLabel, link: entityPageLink }),
     financialReports:
-      isFromIndex && indexLabel === t("Reports")
+      isFromIndex && originStr === "reports"
         ? reportBreadcrumb(financialReportsHref, entityTitle + " - " + getShortPeriodLabel(taskTitle ?? "", true))
         : withFirstIcon([
             {
@@ -271,35 +235,10 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
             { label: entityTitle + " - " + getShortPeriodLabel(taskTitle ?? "", true), link: entityPageLink },
             { label: t("Edit"), link: editLink }
           ]),
-    disturbanceReports:
-      isFromIndex && indexLabel === t("Reports")
-        ? reportBreadcrumb(additionalReportsHref, disturbanceReportTitle(entity as DisturbanceReportFullDto))
-        : withFirstIcon([
-            {
-              label: t("Projects"),
-              link: isAdmin ? adminListPath! : "/my-projects"
-            },
-            {
-              label: projectTitle,
-              link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}`
-            },
-            { label: disturbanceReportTitle(entity as DisturbanceReportFullDto), link: entityPageLink },
-            { label: t("Edit"), link: editLink }
-          ]),
-    srpReports:
-      isFromIndex && indexLabel === t("Reports")
-        ? reportBreadcrumb(additionalReportsHref, entityTitle)
-        : withFirstIcon([
-            {
-              label: "Projects",
-              link: isAdmin ? adminListPath! : "/my-projects"
-            },
-            {
-              label: projectTitle,
-              link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}`
-            },
-            { label: entityTitle, link: entityPageLink },
-            { label: t("Edit"), link: editLink }
-          ])
+    disturbanceReports: reportTrail("project", {
+      label: disturbanceReportTitle(entity as DisturbanceReportFullDto),
+      link: entityPageLink
+    }),
+    srpReports: reportTrail("project", { label: entityTitle, link: entityPageLink })
   };
 }

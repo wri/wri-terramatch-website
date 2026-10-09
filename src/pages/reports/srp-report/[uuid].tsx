@@ -11,7 +11,7 @@ import { SrpReportFullDto } from "@/generated/v3/entityService/entityServiceSche
 import { useReportBreadcrumbs } from "@/hooks/useReportBreadcrumbs";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import { getReportsIndexUrl, withReportOrigin } from "@/pages/reports/reportIndex.utils";
+import { withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
 import { showToast } from "@/redesignComponents/status/Toast/showToast";
@@ -96,8 +96,8 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
   const srpReportTitle = t("Socioeconomic Restoration Partners Report") + " - " + headerReportTitle?.replace(/\D/g, "");
   const breadcrumbs = useReportBreadcrumbs(
     { label: t("SRP Report"), link: `/reports/srp-report/${srpReportUUID}` },
-    getReportsIndexUrl("project", srpReport.projectUuid!, { tab: "additional-reports" }),
-    { project: srpReport.projectName }
+    "project",
+    { project: { uuid: srpReport.projectUuid, name: srpReport.projectName } }
   );
 
   return (

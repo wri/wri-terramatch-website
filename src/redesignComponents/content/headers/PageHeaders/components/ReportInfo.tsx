@@ -95,7 +95,7 @@ const ReportInfo: FC<ReportInfoProps> = ({ report, dueAt, entityName }) => {
       <DateRange
         startDate={formatMonthYear(dueAt ?? report.dueAt)}
         endDate={formatMonthYear(report.updatedAt)}
-        startDateLabel={t("Due:")}
+        startDateLabel={t("Submitted:")}
         endDateLabel={t("Last updated:")}
       />
       <Flex gap={2} className="items-center" mb={2.5}>

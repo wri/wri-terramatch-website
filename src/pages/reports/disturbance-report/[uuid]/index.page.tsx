@@ -9,10 +9,10 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullDisturbanceReport } from "@/connections/Entity";
 import FrameworkProvider from "@/context/framework.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
-import { DisturbanceReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { DisturbanceReportFullDto, DisturbanceReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportBreadcrumbs } from "@/hooks/useReportBreadcrumbs";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import { getReportsIndexUrl, withReportOrigin } from "@/pages/reports/reportIndex.utils";
+import { withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import DisturbanceReportBanner from "@/redesignComponents/content/Banner/DisturbanceReportBanner/DisturbanceReportBanner";
 import { showToast } from "@/redesignComponents/status/Toast/showToast";
@@ -33,11 +33,14 @@ type DisturbanceReportContentProps = {
   disturbanceReport: DisturbanceReportFullDto;
 };
 
-export const getDisturbanceEntry = (type: string, report: DisturbanceReportFullDto): string => {
+export const getDisturbanceEntry = (
+  type: string,
+  report: DisturbanceReportFullDto | DisturbanceReportLightDto
+): string => {
   return report?.entries?.find(entry => entry.name === type)?.value ?? "";
 };
 
-export const disturbanceReportTitle = (report: DisturbanceReportFullDto): string => {
+export const disturbanceReportTitle = (report: DisturbanceReportFullDto | DisturbanceReportLightDto): string => {
   const disturbanceType = getDisturbanceEntry("disturbance-type", report);
   const startDate = new Date(getDisturbanceEntry("disturbance-start-date", report));
   const dateSuffix = isValid(startDate) ? ` - ${format(startDate, "MM/yyyy")}` : "";
@@ -127,11 +130,9 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
   const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "overview";
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
   const breadcrumbs = useReportBreadcrumbs(
-    { label: t("Disturbance Report"), link: `/reports/disturbance-report/${disturbanceReportUUID}` },
-    disturbanceReport.projectUuid != null
-      ? getReportsIndexUrl("project", disturbanceReport.projectUuid, { tab: "additional-reports" })
-      : "/my-projects",
-    { project: disturbanceReport.projectName }
+    { label: disturbanceReportTitle(disturbanceReport), link: `/reports/disturbance-report/${disturbanceReportUUID}` },
+    "project",
+    { project: { uuid: disturbanceReport.projectUuid, name: disturbanceReport.projectName } }
   );
 
   return (

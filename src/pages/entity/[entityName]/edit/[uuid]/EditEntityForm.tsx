@@ -26,6 +26,7 @@ import { useFormUpdate } from "@/hooks/useFormUpdate";
 import { useOnUnmount } from "@/hooks/useOnMount";
 import { useProjectOrgFormData } from "@/hooks/useProjectOrgFormData";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
+import { withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ApiSlice from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
@@ -53,6 +54,8 @@ const isTaskReport = (formEntityName: FormEntity, entity: EntityFullDto): entity
 const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
   const t = useT();
   const router = useRouter();
+  // Returning to the entity keeps the report origin (from / profile / origin), so its breadcrumbs stay correct.
+  const entityDetailHref = withReportOrigin(getEntityDetailPageLink(entityName, entityUUID), router.query);
   const { openToast } = useToastContext();
   const loadFailureHandled = useRef(false);
   const reportOpenTracked = useRef(false);
@@ -210,8 +213,8 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
     }
     pendingApprovalRedirected.current = true;
     openToast(t("This entity is under review and is closed for editing."), ToastType.ERROR);
-    router.replace(getEntityDetailPageLink(entityName, entityUUID));
-  }, [entity, entityLoaded, entityName, entityUUID, openToast, router, t]);
+    router.replace(entityDetailHref);
+  }, [entity, entityDetailHref, entityLoaded, entityName, entityUUID, openToast, router, t]);
 
   if (hasLoadFailure || (isClosedForEditing && !pendingApprovalRedirected.current)) return null;
 
@@ -248,12 +251,12 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
                   placement: "bottom",
                   duration: 5000
                 });
-                router.push(getEntityDetailPageLink(entityName, entityUUID));
+                router.push(entityDetailHref);
               }
             }}
             {...initialStepProps}
-            cancelEditForm={() => router.push(getEntityDetailPageLink(entityName, entityUUID))}
-            redirectEntityPage={getEntityDetailPageLink(entityName, entityUUID)}
+            cancelEditForm={() => router.push(entityDetailHref)}
+            redirectEntityPage={entityDetailHref}
             entity={entity}
             deferValidation={shouldDeferReportValidation(entityName, entity?.status)}
           />

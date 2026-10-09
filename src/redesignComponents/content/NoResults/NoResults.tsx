@@ -7,7 +7,7 @@ export interface NoResultsProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const NoResults: FC<NoResultsProps> = ({ title, description, className, ...props }) => (
-  <Flex flexDir="column" gap={1.5} h="full" px={4} className={className} {...props}>
+  <Flex flexDir="column" gap={1.5} h="full" p={4} className={className} {...props}>
     <Text textStyle="600-bold" color="neutral.900">
       {title}
     </Text>

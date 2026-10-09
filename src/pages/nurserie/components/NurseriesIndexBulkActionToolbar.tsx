@@ -100,13 +100,16 @@ const NurseriesIndexBulkActionToolbar: FC<NurseriesIndexBulkActionToolbarProps> 
           loading: isDownloading,
           disabled: isDownloading || isUpdating
         },
-        ...(canEdit
+        ...(selectedCount === 1
           ? [
               {
                 id: "edit",
                 children: t("Edit"),
                 onClick: onEdit,
-                disabled: isUpdating
+                disabled: !canEdit || isUpdating,
+                tooltip: canEdit
+                  ? undefined
+                  : t("This profile has already been submitted for review and can’t be edited")
               }
             ]
           : [])

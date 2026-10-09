@@ -139,7 +139,7 @@ export const getReportProfileOriginFromQuery = (
 export const getReportViewHref = (
   report: Pick<ReportIndexItem, "type" | "id">,
   indexHref?: string,
-  profileOrigin?: ReportProfileOrigin & { contextOrigin?: string; projectName?: string | null }
+  profileOrigin?: ReportProfileOrigin & { contextOrigin?: string }
 ) => {
   const href = `/reports/${report.type}/${report.id}`;
   if (profileOrigin == null) {
@@ -153,9 +153,6 @@ export const getReportViewHref = (
   };
   if (profileOrigin.contextOrigin) {
     params.origin = profileOrigin.contextOrigin;
-  }
-  if (profileOrigin.projectName) {
-    params.projectName = profileOrigin.projectName;
   }
   return appendQueryParams(href, params);
 };

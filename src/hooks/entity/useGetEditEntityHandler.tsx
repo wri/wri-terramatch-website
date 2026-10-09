@@ -1,6 +1,7 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
+import type { ParsedUrlQuery } from "querystring";
 import { useRef, useState } from "react";
 
 import EntityInformationRequiredModal from "@/components/extensive/EntityInformationRequiredModal";
@@ -11,10 +12,11 @@ import { FormEntity } from "@/connections/Form";
 import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
 import { getEntityEditPageLink, getEntityEditPathSegment, v3EntityName } from "@/helpers/entity";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
-import { withReportsIndexReturn } from "@/pages/reports/reportIndex.utils";
+import { withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
 import { WarningIcon } from "@/redesignComponents/foundations/Icons/Function/WarningIcon";
 import { EntityName, SingularEntityName } from "@/types/common";
+import { appendQueryParams } from "@/utils/appendQueryParams";
 
 interface GetEditEntityHandlerArgs {
   entityUUID: string;
@@ -26,6 +28,8 @@ interface GetEditEntityHandlerArgs {
   feedback?: string | null;
   useStatusModal?: boolean;
   useInformationRequiredModal?: boolean;
+  /** Report origin (from / profile / origin) to carry into the edit form; defaults to the current page query. */
+  originQuery?: ParsedUrlQuery;
 }
 
 /**
@@ -41,7 +45,8 @@ export const useGetEditEntityHandler = ({
   useStatusModal = false,
   entityTitle,
   reportTitle,
-  useInformationRequiredModal = false
+  useInformationRequiredModal = false,
+  originQuery
 }: GetEditEntityHandlerArgs) => {
   const t = useT();
   const router = useRouter();
@@ -92,19 +97,10 @@ export const useGetEditEntityHandler = ({
   );
 
   const goToEditForm = (targetStepId?: string | null) => {
-    const origin = typeof router.query.origin === "string" ? router.query.origin : undefined;
-    const originParam = origin ? `&origin=${encodeURIComponent(origin)}` : "";
-
-    if (targetStepId != null) {
-      router.push(
-        `/entity/${editEntityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(
-          targetStepId
-        )}${originParam}`
-      );
-      return;
-    }
-
-    router.push(`/entity/${editEntityName}/edit/${entityUUID}?mode=edit${originParam}`);
+    const editHref = `/entity/${editEntityName}/edit/${entityUUID}`;
+    const editParams = targetStepId != null ? { [STEP_QUERY_PARAM]: targetStepId } : { mode: "edit" };
+    // Keep the report's origin (from / profile / origin) so the edit form and its breadcrumbs can return to it.
+    router.push(withReportOrigin(appendQueryParams(editHref, editParams), originQuery ?? router.query));
   };
 
   const handleEdit = (stepId?: string | null) => {
@@ -207,25 +203,13 @@ export const useGetEditEntityHandler = ({
             onClick: () => {
               setOpenConfirmEditModal(false);
               const stepId = pendingStepId.current;
-              const from = typeof router.query.from === "string" ? router.query.from : undefined;
-              const origin = typeof router.query.origin === "string" ? router.query.origin : undefined;
-              const originParam = origin ? `&origin=${encodeURIComponent(origin)}` : "";
-              if (stepId != null) {
-                router.push(
-                  withReportsIndexReturn(
-                    `/entity/${editEntityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(
-                      stepId
-                    )}${originParam}`,
-                    from
-                  )
-                );
-              } else if (entityStatus === "approved") {
-                router.push(withReportsIndexReturn(getEntityEditPageLink(entityName, entityUUID) + originParam, from));
-              } else {
-                router.push(
-                  withReportsIndexReturn(`/entity/${editEntityName}/edit/${entityUUID}?mode=edit${originParam}`, from)
-                );
-              }
+              const editHref =
+                stepId != null
+                  ? appendQueryParams(`/entity/${editEntityName}/edit/${entityUUID}`, { [STEP_QUERY_PARAM]: stepId })
+                  : entityStatus === "approved"
+                  ? getEntityEditPageLink(entityName, entityUUID)
+                  : appendQueryParams(`/entity/${editEntityName}/edit/${entityUUID}`, { mode: "edit" });
+              router.push(withReportOrigin(editHref, originQuery ?? router.query));
             }
           }
         ]}

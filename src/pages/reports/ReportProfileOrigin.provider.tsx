@@ -4,7 +4,6 @@ import { ReportProfileOrigin, ReportsIndexSource } from "./reportIndex.utils";
 
 export type ReportProfileOriginWithContext = ReportProfileOrigin & {
   contextOrigin?: string;
-  projectName?: string | null;
 };
 
 const ReportProfileOriginContext = createContext<ReportProfileOriginWithContext | undefined>(undefined);
@@ -16,20 +15,15 @@ type ReportProfileOriginProviderProps = {
   source: ReportsIndexSource;
   uuid: string;
   origin?: string;
-  projectName?: string | null;
 };
 
 const ReportProfileOriginProvider: FC<PropsWithChildren<ReportProfileOriginProviderProps>> = ({
   source,
   uuid,
   origin,
-  projectName,
   children
 }) => {
-  const value = useMemo(
-    () => ({ source, uuid, contextOrigin: origin, projectName }),
-    [source, uuid, origin, projectName]
-  );
+  const value = useMemo(() => ({ source, uuid, contextOrigin: origin }), [source, uuid, origin]);
   return <ReportProfileOriginContext.Provider value={value}>{children}</ReportProfileOriginContext.Provider>;
 };
 

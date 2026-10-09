@@ -48,7 +48,7 @@ const ProjectNurseriesTabContent: FC<ProjectNurseriesTabProps> = ({ project }) =
   const hasAppliedFilters = statuses.length > 0 || updates.length > 0;
   const hasActiveSearch = query.trim().length > 0;
   const hasActiveFilters = hasActiveSearch || hasAppliedFilters;
-  const nurseryCount = hasActiveFilters && section != null ? section.nurseries.length : nurseryTotal;
+  const nurseryCount = hasActiveFilters ? section?.nurseries.length ?? 0 : nurseryTotal;
   const showEmptyProject =
     section == null || (section.nurseriesLoaded !== false && section.nurseries.length === 0 && !hasActiveFilters);
 

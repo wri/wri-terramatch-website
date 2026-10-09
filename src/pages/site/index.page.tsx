@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
-import { InfiniteScrollSentinel } from "@/hooks/useInfiniteScrollSentinel";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 import { showToast } from "@/redesignComponents/status/Toast/showToast";
@@ -49,13 +48,14 @@ const SiteIndexPageContent: FC = () => {
   const hasAppliedFilters = statusFilters.length > 0 || updateFilter != null;
   const hasActiveFilters = hasActiveSearch || hasAppliedFilters;
   const filtering = searchQuery.trim() !== debouncedSearch;
-  const { loading, loadingMore, hasMore, loadMore, viewProjects, projects, totalSiteCount, onProjectOpened, error } =
+  const { loading, hasMore, viewProjects, projects, totalSiteCount, onProjectOpened, error, childrenPending } =
     useSiteIndexData({
       reloadNonce,
       childrenReloadNonce,
       search: debouncedSearch,
       projectUuid: selectedProject === ALL_PROJECTS_VIEW ? undefined : selectedProject,
-      enabled: hasHydratedQuery
+      enabled: hasHydratedQuery,
+      loadAllChildren: debouncedSearch.trim() !== "" || hasAppliedFilters
     });
   const accordionOpenResetKey = `${selectedProject}:${debouncedSearch}:${statusFilters.join(",")}:${
     updateFilter ?? ""
@@ -68,9 +68,10 @@ const SiteIndexPageContent: FC = () => {
 
     if (!hasActiveFilters) return scopedProjects;
 
+    // A project only appears once its sites have loaded and been matched, so it doesn't vanish later.
     return scopedProjects.filter(
       project =>
-        !project.sitesLoaded ||
+        project.sitesLoaded &&
         filterSiteIndexSites(project.sites, {
           search: debouncedSearch,
           statusFilters,
@@ -161,9 +162,8 @@ const SiteIndexPageContent: FC = () => {
           </Flex>
         ) : error ? (
           <NoResults title={t("Sites could not be loaded")} description={t("Please refresh the page and try again.")} />
-        ) : visibleProjects.length === 0 ? (
+        ) : visibleProjects.length === 0 && !hasMore && !childrenPending ? (
           <NoResults
-            className="px-4"
             title={hasActiveFilters ? t("No sites found") : t("No sites found")}
             description={
               hasActiveSearch
@@ -191,14 +191,14 @@ const SiteIndexPageContent: FC = () => {
                   onProjectOpened={onProjectOpened}
                 />
               ))}
-              <InfiniteScrollSentinel
-                hasMore={hasMore}
-                loading={loading}
-                loadingMore={loadingMore}
-                label={t("Loading...")}
-                resetKey={visibleProjects.length}
-                onLoadMore={loadMore}
-              />
+              {hasMore || childrenPending ? (
+                <Flex minHeight="4rem" alignItems="center" justifyContent="center" gap={3}>
+                  <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
+                  <Text textStyle="400" color="neutral.800">
+                    {t("Loading...")}
+                  </Text>
+                </Flex>
+              ) : null}
             </div>
           </>
         )}

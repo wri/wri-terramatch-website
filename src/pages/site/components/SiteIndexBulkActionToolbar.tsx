@@ -81,13 +81,16 @@ const SiteIndexBulkActionToolbar: FC<SiteIndexBulkActionToolbarProps> = ({
           disabled: isDownloading || isUpdating,
           onClick: onDownload
         },
-        ...(canEdit
+        ...(selectedCount === 1
           ? [
               {
                 id: "edit",
                 children: t("Edit"),
                 onClick: onEdit,
-                disabled: isUpdating
+                disabled: !canEdit || isUpdating,
+                tooltip: canEdit
+                  ? undefined
+                  : t("This profile has already been submitted for review and can’t be edited")
               }
             ]
           : [])

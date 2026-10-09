@@ -15,6 +15,11 @@ type ProjectEntityIndexParams = {
   projectUuid?: string;
   enabled?: boolean;
   includeProject?: (project: ProjectLightDto) => boolean;
+  /**
+   * Load child rows for every listed project, not only the ones that are opened. Needed while a
+   * client-side filter is applied, so the filter is matched against every child row.
+   */
+  loadAllChildren?: boolean;
 };
 
 type ProjectEntityIndexData<T> = {
@@ -23,6 +28,8 @@ type ProjectEntityIndexData<T> = {
   visibleProjects: ProjectLightDto[];
   childrenByProjectId: Map<string, T[]>;
   loadingProjectIds: Set<string>;
+  /** True while `loadAllChildren` is on and some listed project's child rows have not arrived yet. */
+  childrenPending: boolean;
   loading: boolean;
   loadingMore: boolean;
   hasMore: boolean;
@@ -74,7 +81,14 @@ const useProjectEntityIndex = <T extends SiteLightDto | NurseryLightDto>(
   entity: ProjectEntityName,
   params: ProjectEntityIndexParams = {}
 ): ProjectEntityIndexData<T> => {
-  const { reloadNonce = 0, childrenReloadNonce = 0, search = "", projectUuid, enabled = true } = params;
+  const {
+    reloadNonce = 0,
+    childrenReloadNonce = 0,
+    search = "",
+    projectUuid,
+    enabled = true,
+    loadAllChildren = false
+  } = params;
   const trimmedSearch = search.trim();
   const includeProjectRef = useRef(params.includeProject);
   includeProjectRef.current = params.includeProject;
@@ -330,6 +344,13 @@ const useProjectEntityIndex = <T extends SiteLightDto | NurseryLightDto>(
     };
   }, [enabled, onProjectOpened, projectUuid]);
 
+  useEffect(() => {
+    if (!enabled || projectUuid != null || !loadAllChildren) return;
+    projects.forEach(project => {
+      void onProjectOpened(project.uuid);
+    });
+  }, [enabled, loadAllChildren, onProjectOpened, projectUuid, projects]);
+
   const visibleProjects = useMemo(() => {
     if (projectUuid == null) return projects;
     return projects.filter(project => project.uuid === projectUuid);
@@ -342,12 +363,23 @@ const useProjectEntityIndex = <T extends SiteLightDto | NurseryLightDto>(
     return selected == null ? listed : mergeProjects(listed, [selected]);
   }, [catalog, projectUuid, projects]);
 
+  const childrenPending =
+    loadAllChildren && projectUuid == null && projects.some(project => !childrenByProjectId.has(project.uuid));
+
+  // Keeps accumulating project batches once loading starts, instead of waiting for a scroll or click.
+  // With a filter, the next batch waits until the current batch's child rows have arrived.
+  useEffect(() => {
+    if (!enabled || projectUuid != null || loading || loadingMore || !hasMore || childrenPending) return;
+    void loadMore();
+  }, [childrenPending, enabled, hasMore, loadMore, loading, loadingMore, projectUuid]);
+
   return {
     projects,
     viewProjects,
     visibleProjects,
     childrenByProjectId,
     loadingProjectIds,
+    childrenPending,
     loading,
     loadingMore,
     hasMore: projectUuid == null && hasMore,

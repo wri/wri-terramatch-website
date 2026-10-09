@@ -539,6 +539,8 @@ function WizardForm(props: WizardFormProps) {
         t,
         from: router.query.from,
         origin: router.query.origin,
+        profile: router.query.profile,
+        profileUuid: router.query.profileUuid,
         taskTitle
       })[models[0].model];
     }
@@ -554,6 +556,8 @@ function WizardForm(props: WizardFormProps) {
     isAdmin,
     router.query.from,
     router.query.origin,
+    router.query.profile,
+    router.query.profileUuid,
     taskTitle
   ]);
 

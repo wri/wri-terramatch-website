@@ -89,7 +89,7 @@ const NurseryDetailPage = () => {
                         link: "/nurserie",
                         icon: <NurseryIcon className="!text-theme-primary-900" />
                       },
-                      { label: nursery.name ?? "-", link: getNurseryDetailUrl(nursery.uuid, true) }
+                      { label: nursery.name ?? "Nursery", link: getNurseryDetailUrl(nursery.uuid, true) }
                     ]
                   : [
                       {
@@ -98,7 +98,7 @@ const NurseryDetailPage = () => {
                         icon: <ProjectIcon className="!text-theme-primary-900" />
                       },
                       { label: nursery.projectName ?? "", link: `/project/${nursery.projectUuid}` },
-                      { label: nursery.name ?? "-", link: `/nurserie/${nursery.uuid}` }
+                      { label: nursery.name ?? "Nursery", link: `/nurserie/${nursery.uuid}` }
                     ]
               }
               suffix={

@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
-import { InfiniteScrollSentinel } from "@/hooks/useInfiniteScrollSentinel";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
@@ -48,11 +47,13 @@ const NurseriesIndexContent: FC = () => {
     setHasHydratedQuery(true);
   }, [router.isReady, router.query.project]);
 
-  const { projects, sections, loading, loadingMore, hasMore, loadMore, onProjectOpened, nurseryTotal, error } =
+  const hasChildFilter = debouncedQuery.trim() !== "" || statuses.length > 0 || updates.length > 0;
+  const { projects, sections, loading, hasMore, onProjectOpened, nurseryTotal, error, childrenPending } =
     useNurseriesIndexData(reloadNonce, {
       search: debouncedQuery,
       projectUuid: selectedProjectUuid,
-      enabled: hasHydratedQuery
+      enabled: hasHydratedQuery,
+      loadAllChildren: hasChildFilter
     });
 
   const viewItems = useMemo(
@@ -66,9 +67,14 @@ const NurseriesIndexContent: FC = () => {
   );
 
   const selectedProject = useMemo(() => projects.find(project => project.uuid === viewValue), [projects, viewValue]);
+  // While a filter is applied, a project only appears once its nurseries have loaded and been matched.
+  // Showing unloaded projects would make them vanish as soon as their nurseries arrive.
   const filteredSections = useMemo(
-    () => filterNurseryProjectSections(sections, "", undefined, statuses, updates),
-    [sections, statuses, updates]
+    () =>
+      filterNurseryProjectSections(sections, "", undefined, statuses, updates).filter(
+        section => !(hasChildFilter && section.nurseriesLoaded === false)
+      ),
+    [hasChildFilter, sections, statuses, updates]
   );
   const accordionOpenResetKey = `${viewValue}:${debouncedQuery.trim()}:${statuses.join(",")}:${updates.join(",")}`;
   const nurseryCount =
@@ -126,7 +132,7 @@ const NurseriesIndexContent: FC = () => {
             title={t("Nurseries could not be loaded")}
             description={t("Please refresh the page and try again.")}
           />
-        ) : filteredSections.length === 0 ? (
+        ) : filteredSections.length === 0 && !hasMore && !childrenPending ? (
           <NoResults
             title={t("No nurseries found")}
             description={
@@ -150,14 +156,14 @@ const NurseriesIndexContent: FC = () => {
                 onProjectOpened={onProjectOpened}
               />
             ))}
-            <InfiniteScrollSentinel
-              hasMore={hasMore}
-              loading={loading}
-              loadingMore={loadingMore}
-              label={t("Loading...")}
-              resetKey={filteredSections.length}
-              onLoadMore={loadMore}
-            />
+            {hasMore || childrenPending ? (
+              <Flex minHeight="4rem" alignItems="center" justifyContent="center" gap={3}>
+                <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
+                <Text textStyle="400" color="neutral.800">
+                  {t("Loading...")}
+                </Text>
+              </Flex>
+            ) : null}
           </Flex>
         )}
         <NurseriesIndexBulkBar onNurseriesChanged={handleNurseriesChanged} />

@@ -1,11 +1,20 @@
+import type { ParsedUrlQuery } from "querystring";
 import { useCallback } from "react";
 
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 
 import type { ReportIndexItem } from "./reportIndex.types";
 import { rememberReportsIndexPosition } from "./reportIndex.utils";
+import { useReportProfileOrigin } from "./ReportProfileOrigin.provider";
 
 export const useReportEditHandler = (report: ReportIndexItem, indexHref?: string) => {
+  const profileOrigin = useReportProfileOrigin();
+  const originQuery: ParsedUrlQuery = {
+    from: indexHref,
+    profile: profileOrigin?.source,
+    profileUuid: profileOrigin?.uuid,
+    origin: profileOrigin?.contextOrigin
+  };
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: `${report.type}s`,
     entityUUID: report.id,
@@ -13,7 +22,8 @@ export const useReportEditHandler = (report: ReportIndexItem, indexHref?: string
     updateRequestStatus: report.updateRequestStatus,
     entityTitle: report.name ?? "",
     useStatusModal: true,
-    useInformationRequiredModal: report.nothingToReport !== true
+    useInformationRequiredModal: report.nothingToReport !== true,
+    originQuery
   });
 
   const editReport = useCallback(() => {
