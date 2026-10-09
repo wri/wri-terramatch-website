@@ -96,7 +96,9 @@ const matchesAdditionalReport = (report: AdditionalReport, criteria: ReportFilte
     if (hasValidType && !criteria.reportTypes.includes(report.type)) return false;
   }
 
-  if (criteria.dueDateFrom !== "" || criteria.dueDateTo !== "") {
+  const hasPeriodFilter =
+    criteria.dueDateFrom !== "" || criteria.dueDateTo !== "" || criteria.dueMonth !== "" || criteria.dueYear !== "";
+  if (hasPeriodFilter) {
     const date = getAdditionalReportDate(report);
     return matchesReportPeriod(date, { month: getIsoMonth(date), year: getAdditionalReportYear(report) }, criteria);
   }
