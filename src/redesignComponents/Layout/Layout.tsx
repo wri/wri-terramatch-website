@@ -92,6 +92,9 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
           ]}
           title="Management Panel"
         />
+        <Flex as="main" className="min-h-0 flex-[1_1_0] flex-col overflow-auto">
+          {children}
+        </Flex>
       </Flex>
     </Flex>
   );
