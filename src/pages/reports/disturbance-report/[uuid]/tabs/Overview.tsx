@@ -3,6 +3,7 @@ import { useT } from "@transifex/react";
 import { FC, useEffect, useMemo, useState } from "react";
 
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
+import { OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
 import StatusTag from "@/components/elements/StatusTag/StatusTag";
 import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
 import MetricCardsRow from "@/components/extensive/PageElements/MetricCardsRow/MetricCardsRow";
@@ -55,11 +56,18 @@ const DisturbanceReportOverviewTab: FC<DisturbanceReportOverviewTabProps> = ({
       return acc;
     }, {});
   }, [polygonAffected]);
+  const affectedSitePolygonUuids = useMemo(() => Object.values(polygonUuidsBySite).flat(), [polygonUuidsBySite]);
   const [polygonsData, setPolygonsData] = useState<SitePolygonLightDto[]>([]);
   const totalAffectedArea = useMemo(
     () => polygonsData.reduce((total, polygon) => total + (polygon.calcArea ?? 0), 0),
     [polygonsData]
   );
+  const disturbanceMarkerPoints = useMemo(() => {
+    const tooltip = t("Disturbance reported");
+    return polygonsData.flatMap<OverlapPolygonPoint>(({ polygonUuid, lat, long }) =>
+      polygonUuid == null || lat == null || long == null ? [] : [{ polygonUuid, lat, lng: long, tooltip }]
+    );
+  }, [polygonsData, t]);
   useEffect(() => {
     const siteEntries = Object.entries(polygonUuidsBySite);
     if (siteEntries.length === 0) {
@@ -192,6 +200,8 @@ const DisturbanceReportOverviewTab: FC<DisturbanceReportOverviewTabProps> = ({
                 className="h-full min-h-0 rounded"
                 hideFullscreenControl={true}
                 overviewPolygonPopup={true}
+                sitePolygonUuids={affectedSitePolygonUuids}
+                alertPoints={disturbanceMarkerPoints}
               />
             </Box>
           </PageItem>
