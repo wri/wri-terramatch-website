@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import { useRouter } from "next/router";
 
 import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
@@ -13,6 +12,7 @@ import EntityProfileReportsTab from "@/pages/reports/components/EntityProfileRep
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import NurseryBanner from "@/redesignComponents/content/Banner/NurseryBanner/NurseryBanner";
 import { NurseryIcon, ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ProjectResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
@@ -33,8 +33,7 @@ const NurseryDetailPage = () => {
         label: "Nursery not found",
         type: "error",
         placement: "bottom",
-        duration: 5000,
-        maxWidth: "auto"
+        duration: 5000
       });
     }
   });

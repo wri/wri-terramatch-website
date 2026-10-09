@@ -1,6 +1,5 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import { Map as MapboxMap } from "mapbox-gl";
 import { MutableRefObject, useCallback, useEffect, useRef } from "react";
 
@@ -13,6 +12,7 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import { isProjectPitchesEntityName } from "@/helpers/entity";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ApiSlice from "@/store/apiSlice";
 import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";

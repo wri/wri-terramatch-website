@@ -1,7 +1,8 @@
-import { closeToast, showToast } from "@worldresources/wri-design-systems";
+import { closeToast } from "@worldresources/wri-design-systems";
 import { createElement } from "react";
 
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 
 export const POLYGON_TOAST_PLACEMENT = "bottom" as const;
 export const POLYGON_TOAST_DURATION_MS = 5000;
@@ -34,8 +35,7 @@ export const showPolygonProgressToast = (t: (key: string) => string, label: stri
       boxSize: 7,
       color: "primary.700",
       animation: "spin 1s linear infinite"
-    }),
-    maxWidth: "auto"
+    })
   });
 
 export const closePolygonProgressToast = (id: PolygonToastId) => closeToast(id);
@@ -46,8 +46,7 @@ export const completePolygonProgressToast = (id: PolygonToastId, label: string) 
     label,
     type: "success",
     placement: POLYGON_TOAST_PLACEMENT,
-    duration: POLYGON_TOAST_DURATION_MS,
-    maxWidth: "auto"
+    duration: POLYGON_TOAST_DURATION_MS
   });
 
 export const showPolygonCompleteToast = (label: string) =>
@@ -55,8 +54,7 @@ export const showPolygonCompleteToast = (label: string) =>
     label,
     type: "success",
     placement: POLYGON_TOAST_PLACEMENT,
-    duration: POLYGON_TOAST_DURATION_MS,
-    maxWidth: "auto"
+    duration: POLYGON_TOAST_DURATION_MS
   });
 
 export const showPolygonErrorToast = (label: string) =>
@@ -64,8 +62,7 @@ export const showPolygonErrorToast = (label: string) =>
     label,
     type: "error",
     placement: POLYGON_TOAST_PLACEMENT,
-    duration: POLYGON_TOAST_DURATION_MS,
-    maxWidth: "auto"
+    duration: POLYGON_TOAST_DURATION_MS
   });
 
 type TranslateFn = (key: string) => string;

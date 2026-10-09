@@ -1,11 +1,11 @@
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import { useRouter } from "next/router";
 import { useCallback, useMemo, useState } from "react";
 
 import { deleteNursery } from "@/connections/Entity";
 import { entityExportAll, entityUpdate } from "@/generated/v3/entityService/entityServiceComponents";
 import { getEntityEditPageLink } from "@/helpers/entity";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ApiSlice from "@/store/apiSlice";
 import {
   closeEntityProgressToast,

@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import { useCallback, useMemo, useState } from "react";
 
 import {
@@ -15,6 +14,7 @@ import {
 import { entityExportAll, entityUpdate } from "@/generated/v3/entityService/entityServiceComponents";
 import { EntityUpdateBody } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportsIndexAnalytics } from "@/hooks/useReportsIndexAnalytics";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ApiSlice from "@/store/apiSlice";
 import {
   closeEntityProgressToast,

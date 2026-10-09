@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { showToast, TextInput } from "@worldresources/wri-design-systems";
+import { TextInput } from "@worldresources/wri-design-systems";
 import { FC, useCallback, useRef, useState } from "react";
 
 import { deleteMedia, updateMedia } from "@/connections/Media";
@@ -12,6 +12,7 @@ import Modal from "@/redesignComponents/containers/Modal/Modal";
 import GalleryImage from "@/redesignComponents/content/Images/GalleryImage/GalleryImage";
 import Switch from "@/redesignComponents/Forms/Actions/Switch/Switch";
 import Textarea from "@/redesignComponents/Forms/Inputs/Textarea";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import Log from "@/utils/log";
 
 export interface EditPhotoDetailsProps {
@@ -55,8 +56,7 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ data, open, onClose }) =>
         label: t("No changes"),
         type: "warning",
         placement: "bottom",
-        duration: 5000,
-        maxWidth: "auto"
+        duration: 5000
       });
     }
 
@@ -107,8 +107,7 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ data, open, onClose }) =>
         label: t("Image updated successfully"),
         type: "success",
         placement: "bottom",
-        duration: 5000,
-        maxWidth: "auto"
+        duration: 5000
       });
       setShouldRefetchMediaData(true);
       onClose();
@@ -117,8 +116,7 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ data, open, onClose }) =>
         label: t("Failed to update image details"),
         type: "error",
         placement: "bottom",
-        duration: 5000,
-        maxWidth: "auto"
+        duration: 5000
       });
       Log.error("Failed to update image details:", error);
     } finally {
@@ -239,8 +237,7 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ data, open, onClose }) =>
                   label: t("Image deleted successfully"),
                   type: "success",
                   placement: "bottom",
-                  duration: 5000,
-                  maxWidth: "auto"
+                  duration: 5000
                 });
                 setShouldRefetchMediaData(true);
                 onClose();

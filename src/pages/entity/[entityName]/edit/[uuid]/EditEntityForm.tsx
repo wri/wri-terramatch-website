@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import { Dictionary } from "lodash";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useRef } from "react";
@@ -27,6 +26,7 @@ import { useFormUpdate } from "@/hooks/useFormUpdate";
 import { useOnUnmount } from "@/hooks/useOnMount";
 import { useProjectOrgFormData } from "@/hooks/useProjectOrgFormData";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ApiSlice from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import {
@@ -246,8 +246,7 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
                   label: t("Draft saved"),
                   type: "success",
                   placement: "bottom",
-                  duration: 5000,
-                  maxWidth: "auto"
+                  duration: 5000
                 });
                 router.push(getEntityDetailPageLink(entityName, entityUUID));
               }

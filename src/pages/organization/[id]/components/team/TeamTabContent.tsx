@@ -1,7 +1,7 @@
 import { Box, TableCell, TableRow } from "@chakra-ui/react";
 import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
-import { Checkbox, showToast } from "@worldresources/wri-design-systems";
+import { Checkbox } from "@worldresources/wri-design-systems";
 import { useRouter } from "next/router";
 import { FC, useCallback, useMemo, useRef, useState } from "react";
 
@@ -29,6 +29,7 @@ import {
   UserAddIcon
 } from "@/redesignComponents/foundations/Icons";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 
 import InviteTeamMemberModal from "../InviteTeamMemberModal";
 import TeamBulkActionToolbar from "./TeamBulkActionToolbar";
