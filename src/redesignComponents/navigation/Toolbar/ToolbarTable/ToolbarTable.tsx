@@ -1,6 +1,5 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { Search } from "@worldresources/wri-design-systems";
 import classNames from "classnames";
 import { isEmpty } from "lodash";
 import { FC, useCallback, useRef } from "react";
@@ -8,6 +7,7 @@ import { FC, useCallback, useRef } from "react";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
+import Search from "@/redesignComponents/Forms/Actions/Search/Search";
 import { CloseIcon, FilterIcon, InfoIcon } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
