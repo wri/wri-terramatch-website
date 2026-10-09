@@ -1,12 +1,10 @@
 import { useMediaQuery } from "@mui/material";
-import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 
 import IconButton from "@/components/elements/IconButton/IconButton";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useNavbarContext } from "@/context/navbar.provider";
-import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 
 import Container from "../Layout/Container";
 import NavbarContent from "./NavbarContent";
@@ -25,9 +23,7 @@ export const resetRedesignBannerDismissal = (): void => {
 };
 
 const Navbar: FC = () => {
-  const t = useT();
   const { isOpen, setIsOpen, linksDisabled } = useNavbarContext();
-  const [isOpenMessage, setIsOpenMessage] = useState(() => !isRedesignBannerDismissed());
 
   const isLg = useMediaQuery("(min-width:1024px)");
 
@@ -82,23 +78,6 @@ const Navbar: FC = () => {
           />
         )}
       </header>
-      {isOpenMessage && (
-        <InlineMessage
-          className="!w-full"
-          variant="warning"
-          label={t("We are improving TerraMatch")}
-          caption={t(
-            "You may notice some pages look different while we update the design to make your experience better. "
-          )}
-          size="full-width"
-          actionLabel={t("Close")}
-          onActionClick={() => {
-            dismissRedesignBanner();
-            setIsOpenMessage(false);
-          }}
-          isButtonRight={true}
-        />
-      )}
     </>
   );
 };
