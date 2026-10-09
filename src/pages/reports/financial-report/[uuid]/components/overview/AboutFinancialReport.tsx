@@ -41,7 +41,14 @@ const AboutFinancialReport: FC<AboutFinancialReportProps> = ({ layout, isEnterpr
       <Flex direction="column" gap={5} flex={layout === "split" ? 1.6 : undefined}>
         <Text color="neutral.900" textStyle="300">
           {t(
-            "Your financial report shows your organization's financial health and growth over time. TerraFund Team uses it to track progress across the TerraFund portfolio, demonstrate accountability, and identify further funding and support for champions."
+            "Your {financialReport} shows your organization's financial health and growth over time. TerraFund Team uses it to track progress across the TerraFund portfolio, demonstrate accountability, and identify further funding and support for champions.",
+            {
+              financialReport: (
+                <Text as="span" textStyle="300-bold">
+                  {t("Financial Report")}
+                </Text>
+              )
+            }
           )}
         </Text>
         <Text color="neutral.900" textStyle="300">
