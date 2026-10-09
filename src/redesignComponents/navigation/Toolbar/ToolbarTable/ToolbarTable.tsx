@@ -2,6 +2,7 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { Search } from "@worldresources/wri-design-systems";
 import classNames from "classnames";
+import { isEmpty } from "lodash";
 import { FC, useCallback, useRef } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -50,12 +51,18 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
     [onSearchSubmit]
   );
 
+  const hasContentRight = button != null || !isEmpty(tooltipContent);
+
   return (
     <Toolbar
-      className={classNames("mobile:mb-6 mobile:flex-col mobile:!items-start mobile:gap-4", className)}
-      classNameContentLeft={classNameContentLeft}
+      className={classNames("max-w-full gap-4 mobile:mb-6 mobile:flex-col mobile:!items-start", className)}
+      classNameContentLeft={classNames(
+        "!max-w-full",
+        { "min-w-0 flex-1 !shrink ": hasContentRight },
+        classNameContentLeft
+      )}
       contentLeft={
-        <Flex className="items-center gap-4 mobile:mb-5 mobile:flex-col mobile:items-start mobile:gap-0 mobile:gap-y-4">
+        <Flex className="min-w-0 max-w-full items-center gap-4 mobile:mb-5 mobile:flex-col mobile:items-start mobile:gap-0 mobile:gap-y-4">
           {search != null && (
             <Flex className="w-full min-w-max max-w-max items-center gap-4">
               <Box onKeyDown={handleKeyDown} className={classNameContentSearch}>
@@ -92,7 +99,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
 
           <Flex className="min-w-[0] items-center gap-4 mobile:w-full">
             {filters != null && filters.length > 0 ? (
-              <Flex className="text-14 flex-wrap items-center gap-3 text-theme-neutral-900">
+              <Flex className="text-14 text-theme-neutral-900 flex-wrap items-center gap-3">
                 {t("Filter by:")}
 
                 {filters.map((filter, index) => (
