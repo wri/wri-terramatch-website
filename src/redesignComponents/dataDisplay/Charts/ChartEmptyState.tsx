@@ -2,7 +2,7 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { FC } from "react";
 
 // Decorative placeholder bar heights, matching the design's empty-chart silhouette.
-const PLACEHOLDER_BAR_HEIGHTS = ["2.3125rem", "3.125rem", "1.6875rem", "2.625rem", "0.9375rem"];
+const PLACEHOLDER_BAR_HEIGHTS = ["74%", "100%", "54%", "84%", "30%"];
 
 export type ChartEmptyStateProps = {
   message?: string;
