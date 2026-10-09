@@ -130,7 +130,7 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
   const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "overview";
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
   const breadcrumbs = useReportBreadcrumbs(
-    { label: t("Disturbance Report"), link: `/reports/disturbance-report/${disturbanceReportUUID}` },
+    { label: disturbanceReportTitle(disturbanceReport), link: `/reports/disturbance-report/${disturbanceReportUUID}` },
     "project",
     { project: { uuid: disturbanceReport.projectUuid, name: disturbanceReport.projectName } }
   );
