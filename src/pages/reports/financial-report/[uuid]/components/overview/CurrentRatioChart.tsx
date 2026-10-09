@@ -1,12 +1,12 @@
 import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { range } from "lodash";
 import { FC, useMemo } from "react";
 import {
-  Bar,
   CartesianGrid,
-  ComposedChart,
   DotProps,
   Line,
+  LineChart,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -20,14 +20,16 @@ import ChartEmptyState from "@/redesignComponents/dataDisplay/Charts/ChartEmptyS
 import ChartLegend from "@/redesignComponents/dataDisplay/Charts/ChartLegend";
 import { CHART_AXIS_PROPS, CHART_COLORS, CHART_PLOT_HEIGHT } from "@/redesignComponents/dataDisplay/Charts/chartTheme";
 import ChartTooltip from "@/redesignComponents/dataDisplay/Charts/ChartTooltip";
-import {
-  FinancialYearSummary,
-  formatCompactUsd,
-  formatUsdAmount,
-  HEALTHY_CURRENT_RATIO
-} from "@/utils/financialReport";
+import { FinancialYearSummary, formatUsdAmount, HEALTHY_CURRENT_RATIO } from "@/utils/financialReport";
 
 const MIN_RATIO_AXIS_MAX = 3;
+
+// Space between the plot edges and the first / last year (36px at the default root font size).
+const X_AXIS_EDGE_PADDING_REM = 2.25;
+
+// Recharts only accepts pixel padding, so convert using the (responsive) root font size.
+const remToPx = (rem: number) =>
+  rem * (typeof document === "undefined" ? 16 : parseFloat(getComputedStyle(document.documentElement).fontSize));
 
 type CurrentRatioDatum = {
   year: number;
@@ -50,7 +52,7 @@ const renderRatioDot = (props: unknown) => {
   return cx == null || cy == null || payload?.ratio == null ? (
     <g key={key} />
   ) : (
-    <circle key={key} cx={cx} cy={cy} r={4} fill="white" stroke={ratioColor(payload.ratio)} strokeWidth={1.5} />
+    <circle key={key} cx={cx} cy={cy} r={3} fill="white" stroke={ratioColor(payload.ratio)} strokeWidth={2} />
   );
 };
 
@@ -87,6 +89,7 @@ type CurrentRatioChartProps = {
 
 const CurrentRatioChart: FC<CurrentRatioChartProps> = ({ summaries }) => {
   const t = useT();
+  const edgePadding = useMemo(() => remToPx(X_AXIS_EDGE_PADDING_REM), []);
 
   const { data, segments, ratioAxisMax, hasData } = useMemo(() => {
     const rows: CurrentRatioDatum[] = summaries.map(({ year, currentRatio, currentAssets, currentLiabilities }) => ({
@@ -120,38 +123,28 @@ const CurrentRatioChart: FC<CurrentRatioChartProps> = ({ summaries }) => {
       )
     };
   }, [summaries]);
+  const gridValues = useMemo(
+    () => range(0, ratioAxisMax + 1).filter(value => value !== HEALTHY_CURRENT_RATIO),
+    [ratioAxisMax]
+  );
 
   return (
     <ChartCard title={t("Current Ratio")} subtitle={t("Annual current ratio = current assets / current liabilities")}>
       {hasData ? (
         <>
-          <Box height={`${CHART_PLOT_HEIGHT}rem`}>
+          <Box height={`${CHART_PLOT_HEIGHT}rem`} textStyle="200">
             <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={data} barCategoryGap="20%" margin={{ top: 8, right: 0, bottom: 0, left: 0 }}>
-                <CartesianGrid vertical={false} stroke={CHART_COLORS.grid} />
-                <XAxis dataKey="year" {...CHART_AXIS_PROPS} />
-                <YAxis yAxisId="amount" {...CHART_AXIS_PROPS} width={48} tickFormatter={formatCompactUsd} />
-                <YAxis
-                  yAxisId="ratio"
-                  orientation="right"
-                  {...CHART_AXIS_PROPS}
-                  width={24}
-                  domain={[0, ratioAxisMax]}
-                  allowDecimals={false}
-                />
-                <ReferenceLine
-                  yAxisId="ratio"
-                  y={HEALTHY_CURRENT_RATIO}
-                  stroke={CHART_COLORS.neutralPassive}
-                  strokeDasharray="2 2"
-                />
-                <Tooltip cursor={{ fill: CHART_COLORS.cursor }} content={<CurrentRatioTooltip />} />
-                <Bar yAxisId="amount" dataKey="currentAssets" fill={CHART_COLORS.neutralActive} />
-                <Bar yAxisId="amount" dataKey="currentLiabilities" fill={CHART_COLORS.neutralPassive} />
+              <LineChart data={data} margin={{ top: 8, right: 0, bottom: 0, left: 0 }}>
+                {/* The healthy threshold gets its own dotted line, so the solid grid line is skipped there. */}
+                <CartesianGrid vertical={false} stroke={CHART_COLORS.grid} horizontalValues={gridValues} />
+                <XAxis dataKey="year" {...CHART_AXIS_PROPS} padding={{ left: edgePadding, right: edgePadding }} />
+                <YAxis {...CHART_AXIS_PROPS} width={24} domain={[0, ratioAxisMax]} allowDecimals={false} />
+                <ReferenceLine y={HEALTHY_CURRENT_RATIO} stroke={CHART_COLORS.neutralPassive} strokeDasharray="2 2" />
+                {/* Assets and liabilities are not plotted; they only appear in the tooltip as context for the ratio. */}
+                <Tooltip cursor={false} content={<CurrentRatioTooltip />} />
                 {segments.map(({ key, color }) => (
                   <Line
                     key={key}
-                    yAxisId="ratio"
                     dataKey={key}
                     type="linear"
                     stroke={color}
@@ -162,7 +155,6 @@ const CurrentRatioChart: FC<CurrentRatioChartProps> = ({ summaries }) => {
                   />
                 ))}
                 <Line
-                  yAxisId="ratio"
                   dataKey="ratio"
                   type="linear"
                   stroke="none"
@@ -170,13 +162,11 @@ const CurrentRatioChart: FC<CurrentRatioChartProps> = ({ summaries }) => {
                   activeDot={renderRatioDot}
                   isAnimationActive={false}
                 />
-              </ComposedChart>
+              </LineChart>
             </ResponsiveContainer>
           </Box>
           <ChartLegend
             items={[
-              { label: t("Current Assets"), color: CHART_COLORS.neutralActive },
-              { label: t("Current Liabilities"), color: CHART_COLORS.neutralPassive },
               { label: t("Healthy"), color: CHART_COLORS.positive },
               { label: t("Unhealthy/Critical"), color: CHART_COLORS.negative }
             ]}

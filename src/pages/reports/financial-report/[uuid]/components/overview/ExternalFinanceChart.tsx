@@ -45,7 +45,7 @@ const ExternalFinanceChart: FC<ExternalFinanceChartProps> = ({ data }) => {
     >
       {data.some(({ amount }) => amount != null) ? (
         <>
-          <Box height={`${CHART_PLOT_HEIGHT}rem`}>
+          <Box height={`${CHART_PLOT_HEIGHT}rem`} textStyle="200">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data} barCategoryGap="8%" margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
                 <CartesianGrid vertical={false} stroke={CHART_COLORS.grid} />
