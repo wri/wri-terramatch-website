@@ -129,13 +129,14 @@ const organisationUserAssociationConnection = v3Resource("associatedUsers", getU
 export const useOrganisationUserAssociations = connectionHook(organisationUserAssociationConnection);
 
 export const bulkDeleteUserAssociations = async (projectUuid: string, uuids: string[]): Promise<void> => {
-  const failureSelector = deleteUserAssociation.fetchFailedSelector({});
+  const variables = { pathParams: { uuid: projectUuid, model: "projects" as const }, queryParams: { uuids } };
+  const failureSelector = deleteUserAssociation.fetchFailedSelector(variables);
   const previousFailure = failureSelector(ApiSlice.currentState);
   if (previousFailure != null) {
-    ApiSlice.clearPending(resolveUrl(deleteUserAssociation.url, {}), deleteUserAssociation.method);
+    ApiSlice.clearPending(resolveUrl(deleteUserAssociation.url, variables), deleteUserAssociation.method);
   }
 
-  deleteUserAssociation.fetch({ pathParams: { uuid: projectUuid, model: "projects" }, queryParams: { uuids } });
+  deleteUserAssociation.fetch(variables);
 
   await new Promise<void>((resolve, reject) => {
     const unsubscribe = ApiSlice.redux.subscribe(() => {

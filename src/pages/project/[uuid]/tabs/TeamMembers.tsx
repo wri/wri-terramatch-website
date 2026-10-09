@@ -1,6 +1,7 @@
 import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { bulkDeleteUserAssociations, useUserAssociations } from "@/connections/UserAssociation";
@@ -14,6 +15,7 @@ import Table, { type TableRenderRowContext } from "@/redesignComponents/dataDisp
 import { RowData } from "@/redesignComponents/dataDisplay/Table/tableUtils";
 import { DeleteIcon, UserAddIcon } from "@/redesignComponents/foundations/Icons";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
+import { isPendingErrorState } from "@/store/apiSlice";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
 
@@ -67,12 +69,22 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
     setDeletePartnerData(null);
   }, []);
 
-  const handleConfirmDelete = useCallback(() => {
-    if (deletePartnerData) {
-      bulkDeleteUserAssociations(project.uuid, [deletePartnerData.uuid ?? ""]);
-    }
+  const handleConfirmDelete = useCallback(async () => {
+    if (deletePartnerData == null) return;
+    const uuid = deletePartnerData.uuid ?? "";
     setDeletePartnerData(null);
-  }, [deletePartnerData, project.uuid]);
+    try {
+      await bulkDeleteUserAssociations(project.uuid, [uuid]);
+    } catch (error) {
+      const message = isPendingErrorState(error) ? error.message : undefined;
+      showToast({
+        label: (Array.isArray(message) ? message[0] : message) ?? t("Failed to remove team member"),
+        type: "error",
+        placement: "bottom",
+        duration: 5000
+      });
+    }
+  }, [deletePartnerData, project.uuid, t]);
 
   const teamMembers = useMemo(() => {
     const all =
