@@ -2,27 +2,19 @@ import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC } from "react";
 
-import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { getThemedColor } from "@/lib/theme";
 import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
 import { EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import { ReportIndexItem } from "../reportIndex.types";
-import { rememberReportsIndexPosition } from "../reportIndex.utils";
+import { isReportEditable } from "../reportIndex.utils";
+import { useReportEditHandler } from "../useReportEditHandler";
 
 const ReportsIndexEditButton: FC<{ report: ReportIndexItem; indexHref?: string }> = ({ report, indexHref }) => {
   const t = useT();
-  const { handleEdit, EditModals } = useGetEditEntityHandler({
-    entityName: `${report.type}s`,
-    entityUUID: report.id,
-    entityStatus: report.status,
-    updateRequestStatus: report.updateRequestStatus,
-    entityTitle: report.name ?? "",
-    useStatusModal: true,
-    useInformationRequiredModal: report.nothingToReport === true ? false : true
-  });
+  const { editReport, EditModals } = useReportEditHandler(report, indexHref);
 
-  if (report.status === "pending-approval") return null;
+  if (!isReportEditable(report)) return null;
 
   return (
     <>
@@ -31,14 +23,7 @@ const ReportsIndexEditButton: FC<{ report: ReportIndexItem; indexHref?: string }
         <ActionCell
           button={{
             children: t("Edit"),
-            onClick: () => {
-              rememberReportsIndexPosition(
-                indexHref,
-                report.id,
-                "projectUuid" in report ? report.projectUuid : undefined
-              );
-              handleEdit();
-            },
+            onClick: editReport,
             leftIcon: (
               <EditIcon
                 css={{

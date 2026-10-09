@@ -9,7 +9,7 @@ type ReportsBulkActionToolbarProps = {
   visible: boolean;
   itemCount: number;
   canEdit: boolean;
-  editDisabled?: boolean;
+  editDisabledTooltip?: string;
   downloadDisabled?: boolean;
   isDownloading?: boolean;
   nothingToReportDisabled?: boolean;
@@ -20,7 +20,7 @@ type ReportsBulkActionToolbarProps = {
   onCancel: () => void;
   onDownload: () => void;
   onNothingToReport: () => void;
-  onEdit: () => void;
+  onEdit?: () => void;
   onSubmit: () => void;
 };
 
@@ -28,7 +28,7 @@ const ReportsBulkActionToolbar: FC<ReportsBulkActionToolbarProps> = ({
   visible,
   itemCount,
   canEdit,
-  editDisabled = false,
+  editDisabledTooltip,
   downloadDisabled = false,
   isDownloading = false,
   nothingToReportDisabled = false,
@@ -53,8 +53,8 @@ const ReportsBulkActionToolbar: FC<ReportsBulkActionToolbarProps> = ({
     onClick: onDownload
   };
 
-  const actions = useMemo<BulkToolbarAction[]>(() => {
-    const nextActions: BulkToolbarAction[] = [
+  const actions = useMemo<BulkToolbarAction[]>(
+    () => [
       {
         id: "nothing-to-report",
         children: t("Nothing to Report"),
@@ -62,25 +62,30 @@ const ReportsBulkActionToolbar: FC<ReportsBulkActionToolbarProps> = ({
         tooltip: nothingToReportDisabled ? nothingToReportDisabledTooltip : undefined,
         onClick: onNothingToReport
       },
-      {
-        id: "edit",
-        children: t("Edit"),
-        disabled: !canEdit || editDisabled || isUpdating,
-        onClick: onEdit
-      }
-    ];
-
-    return nextActions;
-  }, [
-    canEdit,
-    editDisabled,
-    isUpdating,
-    nothingToReportDisabled,
-    nothingToReportDisabledTooltip,
-    onEdit,
-    onNothingToReport,
-    t
-  ]);
+      ...(itemCount === 1
+        ? [
+            {
+              id: "edit",
+              children: t("Edit"),
+              disabled: !canEdit || isUpdating,
+              tooltip: canEdit ? undefined : editDisabledTooltip,
+              onClick: onEdit
+            }
+          ]
+        : [])
+    ],
+    [
+      canEdit,
+      editDisabledTooltip,
+      isUpdating,
+      itemCount,
+      nothingToReportDisabled,
+      nothingToReportDisabledTooltip,
+      onEdit,
+      onNothingToReport,
+      t
+    ]
+  );
 
   useEffect(() => {
     setSidebarCollapseDisabled(visible);

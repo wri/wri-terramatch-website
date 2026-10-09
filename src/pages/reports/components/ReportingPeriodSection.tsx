@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, ReactNode, useEffect, useMemo, useState } from "react";
+import { FC, ReactNode, useEffect, useMemo } from "react";
 
 import useCollectionsTotal from "@/components/extensive/TrackingCollapseGrid/hooks";
 import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
@@ -14,6 +14,7 @@ import { useLightProjectReport } from "@/connections/Entity";
 import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { useDate } from "@/hooks/useDate";
+import { useIndexAccordionOpen } from "@/hooks/useIndexAccordionOpen";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useReportsIndexAnalytics } from "@/hooks/useReportsIndexAnalytics";
@@ -41,6 +42,8 @@ type ReportingPeriodSectionProps = {
   period: ReportsIndexPeriod;
   allPeriodReports?: ReportsIndexReport[];
   defaultOpen?: boolean;
+  openResetKey?: string;
+  restoreOpen?: boolean;
   expandForPeriodFilter?: boolean;
   metricsReady?: boolean;
   hasReportSubset?: boolean;
@@ -160,6 +163,8 @@ const ReportingPeriodSection: FC<ReportingPeriodSectionProps> = ({
   period,
   allPeriodReports,
   defaultOpen = false,
+  openResetKey,
+  restoreOpen,
   expandForPeriodFilter = false,
   metricsReady = true,
   hasReportSubset = false,
@@ -171,14 +176,14 @@ const ReportingPeriodSection: FC<ReportingPeriodSectionProps> = ({
   const t = useT();
   const { format } = useDate();
   const isAdmin = useIsAdmin();
-  const [open, setOpen] = useState(defaultOpen);
+  const [open, setOpen] = useIndexAccordionOpen({ defaultOpen, resetKey: openResetKey, restoreOpen });
   const { trackAttentionDisplayed } = useReportsIndexAnalytics();
 
   useEffect(() => {
     if (expandForPeriodFilter) {
       setOpen(true);
     }
-  }, [expandForPeriodFilter]);
+  }, [expandForPeriodFilter, setOpen]);
 
   const attentionCount = useMemo(() => getReportsRequiringAttention(period.reports), [period.reports]);
   const periodStatus = getReportingPeriodAnalyticsStatus(period.dueAt, period.reports, isAdmin);
