@@ -255,10 +255,13 @@ const hasOpenChangeRequestDraft = (report: ReportIndexItem) => report.updateRequ
 
 export const isReportEditable = (report: ReportIndexItem) => report.status !== "pending-approval";
 
-export const getEditDisabledTooltip = (reports: ReportIndexItem[], t: Translate): string | undefined =>
-  reports.length !== 1 || isReportEditable(reports[0])
-    ? undefined
+export const getEditDisabledTooltip = (reports: ReportIndexItem[], t: Translate): string | undefined => {
+  if (reports.length !== 1 || isReportEditable(reports[0])) return undefined;
+
+  return reports[0].nothingToReport
+    ? t('This report has been marked as "Nothing to Report" and can’t be edited')
     : t("This report has already been submitted for review and can’t be edited");
+};
 
 export const isReportCompleteEnoughToSubmit = (report: ReportIndexItem) => {
   if (report.nothingToReport && NOTHING_TO_REPORT_TYPES.has(report.type)) return true;
@@ -296,7 +299,9 @@ export const getSubmitDisabledTooltip = (reports: ReportIndexItem[], t: Translat
       case "approved":
         return t("This report has already been approved");
       case "pending-approval":
-        return t("This report has already been submitted for review");
+        return reports[0].nothingToReport
+          ? t('This report has been marked as "Nothing to Report" and has already been submitted for review')
+          : t("This report has already been submitted for review");
       case "incomplete":
         return t("One or more selected reports are incomplete. Please complete the required fields before submitting");
       default:
@@ -317,12 +322,17 @@ export const isReportNothingToReportEligible = (report: ReportIndexItem) => {
   return NOTHING_TO_REPORT_STATUSES.has(report.status);
 };
 
-export type ReportNothingToReportBlockingReason = "approved" | "pending-approval" | "ineligible";
+export type ReportNothingToReportBlockingReason =
+  | "already-nothing-to-report"
+  | "approved"
+  | "pending-approval"
+  | "ineligible";
 
 export const getReportNothingToReportBlockingReason = (
   report: ReportIndexItem
 ): ReportNothingToReportBlockingReason | null => {
   if (isReportNothingToReportEligible(report)) return null;
+  if (report.nothingToReport) return "already-nothing-to-report";
   if (report.status === "approved") return "approved";
   if (report.status === "pending-approval") return "pending-approval";
   return "ineligible";
@@ -333,6 +343,8 @@ export const getNothingToReportDisabledTooltip = (reports: ReportIndexItem[], t:
 
   if (reports.length === 1) {
     switch (getReportNothingToReportBlockingReason(reports[0])) {
+      case "already-nothing-to-report":
+        return t('This report has already been marked as "Nothing to Report"');
       case "pending-approval":
         return t('This report has already been submitted for review and can\'t be marked as "Nothing to Report"');
       case "approved":
