@@ -27,6 +27,10 @@ const MIN_RATIO_AXIS_MAX = 3;
 // Space between the plot edges and the first / last year (36px at the default root font size).
 const X_AXIS_EDGE_PADDING_REM = 2.25;
 
+// Y axis width grows with the longest tick label (the axis max) so large ratios are not clipped.
+const Y_AXIS_BASE_WIDTH_REM = 1;
+const Y_AXIS_DIGIT_WIDTH_REM = 0.5;
+
 // Recharts only accepts pixel padding, so convert using the (responsive) root font size.
 const remToPx = (rem: number) =>
   rem * (typeof document === "undefined" ? 16 : parseFloat(getComputedStyle(document.documentElement).fontSize));
@@ -127,6 +131,10 @@ const CurrentRatioChart: FC<CurrentRatioChartProps> = ({ summaries }) => {
     () => range(0, ratioAxisMax + 1).filter(value => value !== HEALTHY_CURRENT_RATIO),
     [ratioAxisMax]
   );
+  const yAxisWidth = useMemo(
+    () => remToPx(Y_AXIS_BASE_WIDTH_REM + String(ratioAxisMax).length * Y_AXIS_DIGIT_WIDTH_REM),
+    [ratioAxisMax]
+  );
 
   return (
     <ChartCard title={t("Current Ratio")} subtitle={t("Annual current ratio = current assets / current liabilities")}>
@@ -138,7 +146,7 @@ const CurrentRatioChart: FC<CurrentRatioChartProps> = ({ summaries }) => {
                 {/* The healthy threshold gets its own dotted line, so the solid grid line is skipped there. */}
                 <CartesianGrid vertical={false} stroke={CHART_COLORS.grid} horizontalValues={gridValues} />
                 <XAxis dataKey="year" {...CHART_AXIS_PROPS} padding={{ left: edgePadding, right: edgePadding }} />
-                <YAxis {...CHART_AXIS_PROPS} width={24} domain={[0, ratioAxisMax]} allowDecimals={false} />
+                <YAxis {...CHART_AXIS_PROPS} width={yAxisWidth} domain={[0, ratioAxisMax]} allowDecimals={false} />
                 <ReferenceLine y={HEALTHY_CURRENT_RATIO} stroke={CHART_COLORS.neutralPassive} strokeDasharray="2 2" />
                 {/* Assets and liabilities are not plotted; they only appear in the tooltip as context for the ratio. */}
                 <Tooltip cursor={false} content={<CurrentRatioTooltip />} />
