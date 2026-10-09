@@ -1,5 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { capitalize } from "lodash";
 import { FC, ReactNode } from "react";
 
 import { DisturbanceReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -10,7 +11,9 @@ import {
   Extent41To60Icon,
   Extent61To80Icon,
   Extent81To100Icon,
+  ExtentEmptyIcon,
   InfoIcon,
+  IntensityEmptyIcon,
   IntensityHighIcon,
   IntensityLowIcon,
   IntensityMediumIcon
@@ -50,9 +53,17 @@ const DisturbanceSeverity: FC<{ report: DisturbanceReportFullDto }> = ({ report 
             </Tooltip>
           </Text>
           <Flex className="flex-col" alignItems="center" gap={1}>
-            {report.intensity != null && INTENSITY_ICON_MAP[report.intensity.toLowerCase()]}
-            <Text textStyle="400-bold" color="neutral.800" className="text-center leading-5">
-              {report.intensity ?? t("N/A")}
+            {report.intensity == null ? (
+              <IntensityEmptyIcon boxSize={8} />
+            ) : (
+              INTENSITY_ICON_MAP[report.intensity.toLowerCase()]
+            )}
+            <Text
+              textStyle="400-bold"
+              color={report.intensity == null ? "neutral.600" : "neutral.800"}
+              className="text-center leading-5"
+            >
+              {report.intensity == null ? t("N/A") : capitalize(report.intensity)}
             </Text>
           </Flex>
         </Flex>
@@ -71,8 +82,12 @@ const DisturbanceSeverity: FC<{ report: DisturbanceReportFullDto }> = ({ report 
             </Tooltip>
           </Text>
           <Flex className="flex-col" alignItems="center" gap={1}>
-            {extent != null && EXTENT_ICON_MAP[extent]}
-            <Text textStyle="400-bold" color="neutral.800" className="text-center leading-5">
+            {extent == null ? <ExtentEmptyIcon boxSize={8} /> : EXTENT_ICON_MAP[extent]}
+            <Text
+              textStyle="400-bold"
+              color={extent == null ? "neutral.600" : "neutral.800"}
+              className="text-center leading-5"
+            >
               {extent ?? t("N/A")}
             </Text>
           </Flex>
