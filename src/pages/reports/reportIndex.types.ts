@@ -80,6 +80,7 @@ export type AdditionalDisturbanceReport = AdditionalReportBase & {
   intensity: string | null;
   dateOfDisturbance: string | null;
   organisationName: string | null;
+  disturbanceTitle: string;
 };
 
 export type AdditionalReport = AdditionalFinancialReport | AdditionalSrpReport | AdditionalDisturbanceReport;
