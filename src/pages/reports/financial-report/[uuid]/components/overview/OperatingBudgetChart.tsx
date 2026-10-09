@@ -85,7 +85,7 @@ const OperatingBudgetChart: FC<OperatingBudgetChartProps> = ({ summaries }) => {
     <ChartCard title={t("Operating Budget")} subtitle={t("Annual operating budget (USD)")}>
       {data.some(({ budget }) => budget != null) ? (
         <>
-          <Box height={`${CHART_PLOT_HEIGHT}px`}>
+          <Box height={`${CHART_PLOT_HEIGHT}rem`}>
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={data} barCategoryGap="12%" margin={{ top: 20, right: 0, bottom: 0, left: 0 }}>
                 <CartesianGrid vertical={false} stroke={CHART_COLORS.grid} />

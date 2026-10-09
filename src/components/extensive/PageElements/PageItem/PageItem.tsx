@@ -41,6 +41,7 @@ const PageItem: FC<PageItemProps> = ({
       <Flex
         alignItems="center"
         justifyContent="space-between"
+        textStyle="200"
         className={classNames("mobile:!items-start mobile:gap-2", classNameHeader)}
       >
         <div className="flex items-center gap-2">

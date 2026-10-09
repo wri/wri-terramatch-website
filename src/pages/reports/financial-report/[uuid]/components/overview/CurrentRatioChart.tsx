@@ -125,7 +125,7 @@ const CurrentRatioChart: FC<CurrentRatioChartProps> = ({ summaries }) => {
     <ChartCard title={t("Current Ratio")} subtitle={t("Annual current ratio = current assets / current liabilities")}>
       {hasData ? (
         <>
-          <Box height={`${CHART_PLOT_HEIGHT}px`}>
+          <Box height={`${CHART_PLOT_HEIGHT}rem`}>
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={data} barCategoryGap="20%" margin={{ top: 8, right: 0, bottom: 0, left: 0 }}>
                 <CartesianGrid vertical={false} stroke={CHART_COLORS.grid} />
