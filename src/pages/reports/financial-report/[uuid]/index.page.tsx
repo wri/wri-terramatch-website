@@ -3,7 +3,6 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useEffect, useMemo } from "react";
 
-import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullFinancialReport } from "@/connections/Entity";
@@ -159,7 +158,6 @@ const FinancialReportContent: FC<FinancialReportContentProps> = ({ financialRepo
         }}
       />
       <div className="flex flex-1">{activeTabItem.renderBody()}</div>
-      <PageFooter />
     </>
   );
 };

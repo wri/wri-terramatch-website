@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 
 import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
-import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullNursery } from "@/connections/Entity";
 import FrameworkProvider from "@/context/framework.provider";
@@ -147,7 +146,6 @@ const NurseryDetailPage = () => {
             <div className="flex flex-1">{TabItems.find(item => item.key === activeTab)?.body}</div>
           </>
         )}
-        <PageFooter />
       </LoadingContainer>
     </FrameworkProvider>
   );

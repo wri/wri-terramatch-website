@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { FC } from "react";
 
 import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
-import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import EntityProfileReportsTab from "@/pages/reports/components/EntityProfileReportsTab";
 import SiteDetailTab from "@/pages/site/[uuid]/tabs/Details";
 import GoalsAndProgressTab from "@/pages/site/[uuid]/tabs/GoalsAndProgress";
@@ -138,7 +137,6 @@ const SiteDetailPage: FC = () => {
           <div className="flex flex-1">{TabItems.find(item => item.key === activeTab)?.body}</div>
         </>
       )}
-      <PageFooter />
     </SitePageProviders>
   );
 };
