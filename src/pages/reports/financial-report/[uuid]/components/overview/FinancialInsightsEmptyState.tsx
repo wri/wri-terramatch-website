@@ -9,7 +9,7 @@ const FinancialInsightsEmptyState: FC = () => {
   const t = useT();
 
   return (
-    <ChartCard title={t("Financial Insights unavailable")}>
+    <ChartCard title={t("Financial Insights unavailable")} className="!h-[9.75rem]">
       <ChartEmptyState message={t("Charts will appear after financial data is added for this reporting year.")} />
     </ChartCard>
   );
