@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo } from "react";
 
 import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
-import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullNursery, useFullNurseryReport } from "@/connections/Entity";
@@ -186,7 +185,6 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
         }}
       />
       <div className="flex flex-1">{activeTabItem.renderBody()}</div>
-      <PageFooter />
     </>
   );
 };

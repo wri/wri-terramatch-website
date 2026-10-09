@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { FC, ReactElement, useEffect, useMemo } from "react";
 
 import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
-import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullProject, useFullProjectReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
@@ -198,7 +197,6 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
         }}
       />
       <div className="flex flex-1">{isRedirectingToReportsIndex ? null : activeTabItem.renderBody()}</div>
-      <PageFooter />
     </>
   );
 };
