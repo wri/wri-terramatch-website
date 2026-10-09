@@ -2,7 +2,7 @@ import { Box, Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { type FC, type MouseEvent, ReactNode, useCallback, useEffect, useMemo } from "react";
+import { type FC, type MouseEvent, memo, ReactNode, useCallback, useEffect, useMemo } from "react";
 
 import { Framework, isTerrafund } from "@/context/framework.provider";
 import { getEntityEditPageLink } from "@/helpers/entity";
@@ -447,4 +447,4 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
   );
 };
 
-export default SiteProjectSection;
+export default memo(SiteProjectSection);

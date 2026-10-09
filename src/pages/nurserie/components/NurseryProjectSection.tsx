@@ -1,6 +1,6 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, memo, useEffect, useMemo, useState } from "react";
 
 import { loadFullProject } from "@/connections/Entity";
 import type { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -167,4 +167,4 @@ const NurseryProjectSection: FC<NurseryProjectSectionProps> = ({
   );
 };
 
-export default NurseryProjectSection;
+export default memo(NurseryProjectSection);

@@ -366,6 +366,13 @@ const useProjectEntityIndex = <T extends SiteLightDto | NurseryLightDto>(
   const childrenPending =
     loadAllChildren && projectUuid == null && projects.some(project => !childrenByProjectId.has(project.uuid));
 
+  // Keeps accumulating project batches once loading starts, instead of waiting for a scroll or click.
+  // With a filter, the next batch waits until the current batch's child rows have arrived.
+  useEffect(() => {
+    if (!enabled || projectUuid != null || loading || loadingMore || !hasMore || childrenPending) return;
+    void loadMore();
+  }, [childrenPending, enabled, hasMore, loadMore, loading, loadingMore, projectUuid]);
+
   return {
     projects,
     viewProjects,

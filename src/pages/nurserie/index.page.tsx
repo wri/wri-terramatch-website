@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
-import { InfiniteScrollSentinel } from "@/hooks/useInfiniteScrollSentinel";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
@@ -49,23 +48,13 @@ const NurseriesIndexContent: FC = () => {
   }, [router.isReady, router.query.project]);
 
   const hasChildFilter = debouncedQuery.trim() !== "" || statuses.length > 0 || updates.length > 0;
-  const {
-    projects,
-    sections,
-    loading,
-    loadingMore,
-    hasMore,
-    loadMore,
-    onProjectOpened,
-    nurseryTotal,
-    error,
-    childrenPending
-  } = useNurseriesIndexData(reloadNonce, {
-    search: debouncedQuery,
-    projectUuid: selectedProjectUuid,
-    enabled: hasHydratedQuery,
-    loadAllChildren: hasChildFilter
-  });
+  const { projects, sections, loading, hasMore, onProjectOpened, nurseryTotal, error, childrenPending } =
+    useNurseriesIndexData(reloadNonce, {
+      search: debouncedQuery,
+      projectUuid: selectedProjectUuid,
+      enabled: hasHydratedQuery,
+      loadAllChildren: hasChildFilter
+    });
 
   const viewItems = useMemo(
     () => [
@@ -167,14 +156,14 @@ const NurseriesIndexContent: FC = () => {
                 onProjectOpened={onProjectOpened}
               />
             ))}
-            <InfiniteScrollSentinel
-              hasMore={hasMore || childrenPending}
-              loading={loading}
-              loadingMore={loadingMore || childrenPending}
-              label={t("Loading...")}
-              resetKey={filteredSections.length}
-              onLoadMore={loadMore}
-            />
+            {hasMore || childrenPending ? (
+              <Flex minHeight="4rem" alignItems="center" justifyContent="center" gap={3}>
+                <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
+                <Text textStyle="400" color="neutral.800">
+                  {t("Loading...")}
+                </Text>
+              </Flex>
+            ) : null}
           </Flex>
         )}
         <NurseriesIndexBulkBar onNurseriesChanged={handleNurseriesChanged} />

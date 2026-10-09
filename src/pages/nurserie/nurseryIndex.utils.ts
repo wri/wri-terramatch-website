@@ -188,18 +188,18 @@ export const filterNurseryProjectSections = (
         normalize(value).includes(normalizedQuery)
       );
 
-      return {
-        ...section,
-        nurseries: section.nurseries.filter(nursery => {
-          const matchesStatus = statuses.length === 0 || (nursery.status != null && statuses.includes(nursery.status));
-          const matchesUpdate =
-            updates.length === 0 ||
-            (nursery.updateRequestStatus != null && updates.includes(nursery.updateRequestStatus));
-          const matchesQuery =
-            normalizedQuery === "" || projectMatches || normalize(nursery.name).includes(normalizedQuery);
-          return matchesStatus && matchesUpdate && matchesQuery;
-        })
-      };
+      const nurseries = section.nurseries.filter(nursery => {
+        const matchesStatus = statuses.length === 0 || (nursery.status != null && statuses.includes(nursery.status));
+        const matchesUpdate =
+          updates.length === 0 ||
+          (nursery.updateRequestStatus != null && updates.includes(nursery.updateRequestStatus));
+        const matchesQuery =
+          normalizedQuery === "" || projectMatches || normalize(nursery.name).includes(normalizedQuery);
+        return matchesStatus && matchesUpdate && matchesQuery;
+      });
+
+      // Returns the same section when nothing was filtered out, so memoized rows keep their identity.
+      return nurseries.length === section.nurseries.length ? section : { ...section, nurseries };
     })
     .filter(section => {
       if (section.nurseriesLoaded === false) return true;
