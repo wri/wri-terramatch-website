@@ -11,9 +11,9 @@ export const CHART_COLORS = {
   cursor: getThemedColor("neutral", 200)
 };
 
-export const CHART_PLOT_HEIGHT = 216;
+export const CHART_PLOT_HEIGHT = 13.5;
 
-export const CHART_AXIS_TICK = { fontSize: 12, fill: CHART_COLORS.axisText };
+export const CHART_AXIS_TICK = { fontSize: "0.75rem", fill: CHART_COLORS.axisText };
 
 /** Shared axis props: no axis lines or tick marks, design-system tick typography. */
 export const CHART_AXIS_PROPS = {

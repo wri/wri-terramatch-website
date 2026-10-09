@@ -247,7 +247,15 @@ export const formatProfitValue = (value: number, currencySymbol: string, isoCurr
   const sign = value < 0 ? "-" : "";
   const locale = getLocaleForIsoCurrency(isoCurrency);
 
-  if (absValue >= 1000000) {
+  if (absValue >= 1000000000000) {
+    const trillions = absValue / 1000000000000;
+    const formatted = trillions.toFixed(1).replace(/\.0$/, "");
+    return `${sign}${currencySymbol}${formatted}T`;
+  } else if (absValue >= 1000000000) {
+    const billions = absValue / 1000000000;
+    const formatted = billions.toFixed(1).replace(/\.0$/, "");
+    return `${sign}${currencySymbol}${formatted}B`;
+  } else if (absValue >= 1000000) {
     const millions = absValue / 1000000;
     const formatted = millions.toFixed(1).replace(/\.0$/, "");
     return `${sign}${currencySymbol}${formatted}M`;

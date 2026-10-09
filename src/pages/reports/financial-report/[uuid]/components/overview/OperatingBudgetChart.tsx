@@ -5,7 +5,6 @@ import {
   Bar,
   CartesianGrid,
   ComposedChart,
-  LabelList,
   Line,
   ResponsiveContainer,
   Tooltip,
@@ -17,14 +16,9 @@ import {
 import ChartCard from "@/redesignComponents/dataDisplay/Charts/ChartCard";
 import ChartEmptyState from "@/redesignComponents/dataDisplay/Charts/ChartEmptyState";
 import ChartLegend from "@/redesignComponents/dataDisplay/Charts/ChartLegend";
-import {
-  CHART_AXIS_PROPS,
-  CHART_AXIS_TICK,
-  CHART_COLORS,
-  CHART_PLOT_HEIGHT
-} from "@/redesignComponents/dataDisplay/Charts/chartTheme";
+import { CHART_AXIS_PROPS, CHART_COLORS, CHART_PLOT_HEIGHT } from "@/redesignComponents/dataDisplay/Charts/chartTheme";
 import ChartTooltip from "@/redesignComponents/dataDisplay/Charts/ChartTooltip";
-import { FinancialYearSummary, formatCompactUsd, formatUsdAmount } from "@/utils/financialReport";
+import { FinancialYearSummary, formatCompactUsd } from "@/utils/financialReport";
 
 type OperatingBudgetDatum = {
   year: number;
@@ -47,7 +41,7 @@ const OperatingBudgetTooltip: FC<TooltipProps<number, string>> = ({ active, payl
       rows={[
         {
           label: t("Operating Budget"),
-          value: datum.budget == null ? t("No data") : formatUsdAmount(datum.budget),
+          value: datum.budget == null ? t("No data") : formatCompactUsd(datum.budget),
           color: CHART_COLORS.positive
         },
         {
@@ -85,12 +79,12 @@ const OperatingBudgetChart: FC<OperatingBudgetChartProps> = ({ summaries }) => {
     <ChartCard title={t("Operating Budget")} subtitle={t("Annual operating budget (USD)")}>
       {data.some(({ budget }) => budget != null) ? (
         <>
-          <Box height={`${CHART_PLOT_HEIGHT}px`}>
+          <Box height={`${CHART_PLOT_HEIGHT}rem`} textStyle="200">
             <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={data} barCategoryGap="12%" margin={{ top: 20, right: 0, bottom: 0, left: 0 }}>
+              <ComposedChart data={data} barCategoryGap="12%" margin={{ top: 8, right: 0, bottom: 0, left: 0 }}>
                 <CartesianGrid vertical={false} stroke={CHART_COLORS.grid} />
                 <XAxis dataKey="year" {...CHART_AXIS_PROPS} />
-                <YAxis yAxisId="amount" {...CHART_AXIS_PROPS} width={48} tickFormatter={formatCompactUsd} />
+                <YAxis yAxisId="amount" {...CHART_AXIS_PROPS} width={56} tickFormatter={formatCompactUsd} />
                 <YAxis yAxisId="change" orientation="right" hide />
                 <Tooltip cursor={{ fill: CHART_COLORS.cursor }} content={<OperatingBudgetTooltip />} />
                 <Bar yAxisId="amount" dataKey="budget" fill={CHART_COLORS.positive} />
@@ -102,14 +96,7 @@ const OperatingBudgetChart: FC<OperatingBudgetChartProps> = ({ summaries }) => {
                   strokeWidth={1.5}
                   dot={CHANGE_DOT}
                   activeDot={CHANGE_DOT}
-                >
-                  <LabelList
-                    dataKey="yearOverYearChange"
-                    position="top"
-                    style={CHART_AXIS_TICK}
-                    formatter={(value: number | null) => (value == null ? "" : formatPercentChange(value))}
-                  />
-                </Line>
+                />
               </ComposedChart>
             </ResponsiveContainer>
           </Box>

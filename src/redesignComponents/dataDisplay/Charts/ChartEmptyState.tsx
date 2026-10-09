@@ -10,13 +10,13 @@ export type ChartEmptyStateProps = {
 
 /** Placeholder shown in place of a chart that has no data to plot. */
 export const ChartEmptyState: FC<ChartEmptyStateProps> = ({ message }) => (
-  <Flex direction="column" gap={6}>
+  <Flex direction="column" gap={3} height="100%">
     {message != null && (
       <Text textStyle="400" color="neutral.900">
         {message}
       </Text>
     )}
-    <Flex alignItems="flex-end" gap={4} height="3.125rem" aria-hidden="true">
+    <Flex alignItems="flex-end" gap={4} height="100%" aria-hidden="true">
       {PLACEHOLDER_BAR_HEIGHTS.map(height => (
         <Box key={height} flex={1} height={height} backgroundColor="neutral.200" />
       ))}
