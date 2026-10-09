@@ -7,8 +7,8 @@ import { useMyOrg } from "@/connections/Organisation";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import LayoutChromeScale from "@/styles/LayoutChromeScale";
 
-import { DashboardIcon } from "../foundations/Icons/NavigationSections/DashboardIcon";
 import { NurseryIcon } from "../foundations/Icons/NavigationSections/NurseryIcon";
+import { OpportunitiesIcon } from "../foundations/Icons/NavigationSections/OpportunitiesIcon";
 import { OrganizationIcon } from "../foundations/Icons/NavigationSections/OrganizationIcon";
 import { ProjectIcon } from "../foundations/Icons/NavigationSections/ProjectIcon";
 import { ReportsIcon } from "../foundations/Icons/NavigationSections/ReportsIcon";
@@ -36,11 +36,11 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
   return (
     <Flex height="100vh" width="100%" flexDirection="column">
       <LayoutChromeScale />
-      <Box as="header" className="fixed inset-x-0 top-0 z-50 h-[3rem] [zoom:var(--layout-chrome-zoom,1)]">
+      <Box className="shrink-0 [zoom:var(--layout-chrome-zoom,1)]">
         <Navbar />
       </Box>
       {data.isLoggedIn ? (
-        <Flex className="min-h-0 flex-1 overflow-hidden pt-[calc(3rem*var(--layout-chrome-zoom,1))]">
+        <Flex className="min-h-0 flex-1 overflow-hidden">
           <Flex className="[zoom:var(--layout-chrome-zoom,1)]">
             <SideNavigation
               collapsed={true}
@@ -49,11 +49,6 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
                 {
                   id: "management",
                   links: [
-                    {
-                      href: "/dashboard",
-                      icon: <DashboardIcon boxSize={4} />,
-                      label: "Dashboard"
-                    },
                     {
                       href: isAdmin
                         ? "/admin#/organisation"
@@ -90,6 +85,11 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
                       href: isAdmin ? "/admin#/projectReport" : "/reports",
                       icon: <ReportsIcon boxSize={4} />,
                       label: "Reports"
+                    },
+                    {
+                      href: "/opportunities",
+                      icon: <OpportunitiesIcon boxSize={4} />,
+                      label: "Opportunities"
                     }
                   ]
                 }
@@ -116,7 +116,9 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
           </Flex>
         </Flex>
       ) : (
-        <>{children}</>
+        <Flex as="main" className="min-h-0 flex-1 flex-col overflow-auto">
+          {children}
+        </Flex>
       )}
     </Flex>
   );
