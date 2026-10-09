@@ -45,14 +45,14 @@ export const buildReportTrail = ({
   const origin = typeof contextOrigin === "string" ? contextOrigin : undefined;
   const profileName = profile == null ? undefined : entities[profile.source]?.name;
 
-  if (profile != null && profileName != null) {
+  if (profile != null) {
     if (origin === "sites" && profile.source === "site") {
       return {
         root: "sites",
         crumbs: [
           { label: t("Sites"), link: "/site" },
           {
-            label: profileName,
+            label: profileName ?? t("Site"),
             link: appendQueryParams(getEntityDetailPageLink("sites", profile.uuid, "reports"), { origin: "sites" })
           },
           reportCrumb
@@ -66,7 +66,7 @@ export const buildReportTrail = ({
         crumbs: [
           { label: t("Nurseries"), link: "/nurserie" },
           {
-            label: profileName,
+            label: profileName ?? t("Nursery"),
             link: appendQueryParams(getEntityDetailPageLink("nurseries", profile.uuid, "reports"), {
               origin: "nurseries"
             })
