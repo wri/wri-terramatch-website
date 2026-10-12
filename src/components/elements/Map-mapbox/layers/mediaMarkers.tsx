@@ -26,6 +26,8 @@ type SelectionStore = {
 
 type CallbacksRef = MutableRefObject<MediaCallbacks>;
 
+type VisibleRef = MutableRefObject<boolean>;
+
 type MediaOverlayMount = {
   root: Root;
   update: (files: MapMedia[], callbacks: MediaCallbacks, visible: boolean, readOnly?: boolean) => void;
@@ -194,10 +196,10 @@ type MediaMarkerPortalProps = {
   store: SelectionStore;
   callbacksRef: CallbacksRef;
   readOnly: boolean;
-  visible: boolean;
+  visibleRef: VisibleRef;
 };
 
-const MediaMarkerPortal: FC<MediaMarkerPortalProps> = ({ map, file, store, callbacksRef, readOnly, visible }) => {
+const MediaMarkerPortal: FC<MediaMarkerPortalProps> = ({ map, file, store, callbacksRef, readOnly, visibleRef }) => {
   const [el] = useState<HTMLDivElement>(() => {
     const div = document.createElement("div");
     div.className = MARKER_CLASS;
@@ -214,7 +216,7 @@ const MediaMarkerPortal: FC<MediaMarkerPortalProps> = ({ map, file, store, callb
   const getSnapshot = useCallback(() => store.get() === file.uuid, [store, file.uuid]);
   const isOpen = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-  applyMarkerElementVisibility(el, visible);
+  applyMarkerElementVisibility(el, visibleRef.current);
 
   useEffect(() => {
     const marker = new MapboxMarker({ element: el }).setLngLat([file.lng, file.lat]).addTo(map);
@@ -228,13 +230,7 @@ const MediaMarkerPortal: FC<MediaMarkerPortalProps> = ({ map, file, store, callb
   }, [el, isOpen]);
 
   useEffect(() => {
-    if (!visible && store.get() === file.uuid) {
-      store.set(null);
-    }
-  }, [visible, store, file.uuid]);
-
-  useEffect(() => {
-    if (!isOpen || !visible) return;
+    if (!isOpen || !visibleRef.current) return;
 
     removePopups(map, "MEDIA");
 
@@ -270,7 +266,7 @@ const MediaMarkerPortal: FC<MediaMarkerPortalProps> = ({ map, file, store, callb
       popup.remove();
       scheduleUnmount(root);
     };
-  }, [isOpen, visible, map, file, store, callbacksRef, readOnly]);
+  }, [isOpen, visibleRef, map, file, store, callbacksRef, readOnly]);
 
   return createPortal(<MemoMediaMarkerView file={file} store={store} isOpen={isOpen} />, el);
 };
@@ -283,10 +279,17 @@ type MediaMarkersOverlayProps = {
   callbacksRef: CallbacksRef;
   store: SelectionStore;
   readOnly: boolean;
-  visible: boolean;
+  visibleRef: VisibleRef;
 };
 
-const MediaMarkersOverlay: FC<MediaMarkersOverlayProps> = ({ map, files, callbacksRef, store, readOnly, visible }) => (
+const MediaMarkersOverlay: FC<MediaMarkersOverlayProps> = ({
+  map,
+  files,
+  callbacksRef,
+  store,
+  readOnly,
+  visibleRef
+}) => (
   <>
     {files.map(file => (
       <MemoMediaMarkerPortal
@@ -296,7 +299,7 @@ const MediaMarkersOverlay: FC<MediaMarkersOverlayProps> = ({ map, files, callbac
         store={store}
         callbacksRef={callbacksRef}
         readOnly={readOnly}
-        visible={visible}
+        visibleRef={visibleRef}
       />
     ))}
   </>
@@ -308,9 +311,9 @@ const createOverlayMount = (map: MapboxMap): MediaOverlayMount => {
   const store = getSelectionStore(map);
 
   const callbacksRef: CallbacksRef = { current: null as unknown as MediaCallbacks };
+  const visibleRef: VisibleRef = { current: false };
 
   let lastFiles: MapMedia[] | null = null;
-  let lastVisible = false;
   let lastReadOnly = false;
 
   const render = (): void => {
@@ -323,7 +326,7 @@ const createOverlayMount = (map: MapboxMap): MediaOverlayMount => {
           callbacksRef={callbacksRef}
           store={store}
           readOnly={lastReadOnly}
-          visible={lastVisible}
+          visibleRef={visibleRef}
         />
       </PopupProviders>
     );
@@ -334,22 +337,23 @@ const createOverlayMount = (map: MapboxMap): MediaOverlayMount => {
     update: (files, callbacks, visible, readOnly = false) => {
       const sameFiles = files === lastFiles;
       const readOnlyChanged = lastReadOnly !== readOnly;
-      const visibilityChanged = lastVisible !== visible;
+      const visibilityChanged = visibleRef.current !== visible;
       const hadCallbacks = callbacksRef.current != null;
 
       lastFiles = files;
       lastReadOnly = readOnly;
-      lastVisible = visible;
+      visibleRef.current = visible;
       callbacksRef.current = callbacks;
 
       if (!visible) {
         store.set(null);
       }
 
-      if (hadCallbacks && sameFiles && !readOnlyChanged && visibilityChanged) {
+      if (visibilityChanged) {
         setMountedMarkerElementsVisible(map, visible);
-        return;
       }
+
+      if (hadCallbacks && sameFiles && !readOnlyChanged) return;
 
       render();
     }

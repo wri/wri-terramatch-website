@@ -600,8 +600,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     alwaysShowPhotosOnMap,
     hideMediaPopupActions,
     hideMediaOnMap,
-    isPolygonGeometryLoading,
-    overlapPolygons
+    isPolygonGeometryLoading
   });
 
   useMapOverlapIndicators({
