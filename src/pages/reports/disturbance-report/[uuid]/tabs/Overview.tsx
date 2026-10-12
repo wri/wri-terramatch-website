@@ -3,8 +3,10 @@ import { useT } from "@transifex/react";
 import { FC, useEffect, useMemo, useState } from "react";
 
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
+import { OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
 import StatusTag from "@/components/elements/StatusTag/StatusTag";
 import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
+import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import MetricCardsRow from "@/components/extensive/PageElements/MetricCardsRow/MetricCardsRow";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
@@ -55,11 +57,19 @@ const DisturbanceReportOverviewTab: FC<DisturbanceReportOverviewTabProps> = ({
       return acc;
     }, {});
   }, [polygonAffected]);
+  const hasAffectedPolygons = Object.keys(polygonUuidsBySite).length > 0;
+  const affectedSitePolygonUuids = useMemo(() => Object.values(polygonUuidsBySite).flat(), [polygonUuidsBySite]);
   const [polygonsData, setPolygonsData] = useState<SitePolygonLightDto[]>([]);
   const totalAffectedArea = useMemo(
     () => polygonsData.reduce((total, polygon) => total + (polygon.calcArea ?? 0), 0),
     [polygonsData]
   );
+  const disturbanceMarkerPoints = useMemo(() => {
+    const tooltip = t("Disturbance reported");
+    return polygonsData.flatMap<OverlapPolygonPoint>(({ polygonUuid, lat, long }) =>
+      polygonUuid == null || lat == null || long == null ? [] : [{ polygonUuid, lat, lng: long, tooltip }]
+    );
+  }, [polygonsData, t]);
   useEffect(() => {
     const siteEntries = Object.entries(polygonUuidsBySite);
     if (siteEntries.length === 0) {
@@ -186,13 +196,36 @@ const DisturbanceReportOverviewTab: FC<DisturbanceReportOverviewTabProps> = ({
         {report.projectUuid != null && (
           <PageItem title={t("Map")} flexProps={{ width: "100%" }} className="min-h-0">
             <Box className="relative overflow-hidden rounded" minH={SITE_POLYGON_MAP_INITIAL_HEIGHT}>
-              <OverviewMapArea
-                entityModel={{ uuid: report.projectUuid }}
-                type="projects"
-                className="h-full min-h-0 rounded"
-                hideFullscreenControl={true}
-                overviewPolygonPopup={true}
-              />
+              {hasAffectedPolygons ? (
+                <OverviewMapArea
+                  entityModel={{ uuid: report.projectUuid }}
+                  type="projects"
+                  className="h-full min-h-0 rounded"
+                  hideFullscreenControl={true}
+                  overviewPolygonPopup={true}
+                  sitePolygonUuids={affectedSitePolygonUuids}
+                  alertPoints={disturbanceMarkerPoints}
+                />
+              ) : (
+                <MapPlaceholder
+                  icon={<AreaHectaresIcon boxSize={6} color="neutral.100" />}
+                  title={t("Affected polygons not defined yet.")}
+                  buttonGroupProps={{
+                    buttons: [
+                      {
+                        id: "add-polygons",
+                        variant: "borderless",
+                        size: "small",
+                        rightIcon: <ChevronRightIcon boxSize={4} />,
+                        className: "!text-theme-neutral-100",
+                        children: t("Add Polygons"),
+                        onClick: () => handleEdit()
+                      }
+                    ]
+                  }}
+                  className="z-10"
+                />
+              )}
             </Box>
           </PageItem>
         )}
