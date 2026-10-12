@@ -192,7 +192,7 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
                     type="sites"
                     className="h-full min-h-0 rounded"
                     hideFullscreenControl={true}
-                    overviewPolygonPopup={true}
+                    overviewPolygonPopup="attributes"
                   />
                   {mapIndexLoaded && (mapIndex?.total ?? 0) === 0 && (
                     <MapPlaceholder
