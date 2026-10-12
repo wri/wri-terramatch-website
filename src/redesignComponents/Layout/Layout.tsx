@@ -1,7 +1,6 @@
 import { Box, Flex } from "@chakra-ui/react";
-import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC, PropsWithChildren, useState } from "react";
+import { FC, PropsWithChildren } from "react";
 
 import { useMyOrg } from "@/connections/Organisation";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
@@ -16,7 +15,6 @@ import { SiteIcon } from "../foundations/Icons/NavigationSections/SiteIcon";
 import Navbar from "../navigation/NavBar/Navbar";
 import SideNavigation from "../navigation/NavBar/SideNavigation/SideNavigation";
 import { useNavbarData } from "../navigation/NavBar/useNavbarData";
-import InlineMessage from "../status/InlineMessage/InlineMessage";
 import { LayoutShellProvider, useLayoutShell } from "./LayoutShell.provider";
 
 // Temporary admin-review shell: sidebar links, labels, and notification counts are design placeholders.
@@ -26,12 +24,10 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
   // so the side menu must highlight the same first level.
   const profileOpenedFromProject = router.pathname === "/site/[uuid]" && router.query.origin !== "sites";
   const nurseryOpenedFromProject = router.pathname === "/nurserie/[uuid]" && router.query.origin !== "nurseries";
-  const [isWarningVisible, setIsWarningVisible] = useState(true);
   const { isSidebarCollapseDisabled } = useLayoutShell();
   const [, myOrg] = useMyOrg();
   const data = useNavbarData();
   const isAdmin = useIsAdmin();
-  const t = useT();
 
   return (
     <Flex height="100vh" width="100%" flexDirection="column">
@@ -98,20 +94,6 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
             />
           </Flex>
           <Flex as="main" className="min-h-0 flex-[1_1_0] flex-col overflow-auto">
-            {isWarningVisible && (
-              <InlineMessage
-                className="!w-full"
-                variant="warning"
-                label={t("We are improving TerraMatch")}
-                caption={t(
-                  "You may notice some pages look different while we update the design to make your experience better."
-                )}
-                size="full-width"
-                actionLabel={t("Close")}
-                onActionClick={() => setIsWarningVisible(false)}
-                isButtonRight
-              />
-            )}
             {children}
           </Flex>
         </Flex>
