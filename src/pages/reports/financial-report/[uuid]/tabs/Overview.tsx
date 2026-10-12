@@ -5,6 +5,7 @@ import { FC, useMemo, useState } from "react";
 import StatusTag from "@/components/elements/StatusTag/StatusTag";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
+import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import { PENDING_APPROVAL } from "@/constants/statuses";
 import { FinancialReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntitySetupButtonLabel } from "@/helpers/entity";
@@ -30,19 +31,27 @@ type FinancialReportOverviewTabProps = {
   onViewDetails: () => void;
 };
 
+export const getFinancialReportTitle = (report: FinancialReportFullDto) => {
+  return report?.reportTitle != null && report?.reportTitle != "" ? report?.reportTitle?.match(/\d{4}/)?.[0] : "";
+};
+
 const FinancialReportOverviewTab: FC<FinancialReportOverviewTabProps> = ({ report, onViewDetails }) => {
   const t = useT();
   const [isReportSetupComplete, setIsReportSetupComplete] = useState(false);
   const editButtonLabel = getEntitySetupButtonLabel(t, report.status, isReportSetupComplete);
   const isEnterprise = report.organisationType !== NON_PROFIT_ORGANISATION_TYPE;
 
+  const headerReportTitle = t("Financial Report - {year}", {
+    year: report.yearOfReport ?? getShortPeriodLabel(report?.reportTitle!, true)
+  });
+
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "financial-reports",
     entityUUID: report.uuid,
     entityStatus: report.status,
     updateRequestStatus: report.updateRequestStatus,
-    entityTitle: report.organisationName ?? "",
-    reportTitle: report.reportTitle ?? "",
+    entityTitle: "",
+    reportTitle: headerReportTitle,
     feedback: report.feedback,
     useStatusModal: true,
     useInformationRequiredModal: true
