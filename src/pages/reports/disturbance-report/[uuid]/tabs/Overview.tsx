@@ -202,7 +202,7 @@ const DisturbanceReportOverviewTab: FC<DisturbanceReportOverviewTabProps> = ({
                   type="projects"
                   className="h-full min-h-0 rounded"
                   hideFullscreenControl={true}
-                  overviewPolygonPopup={true}
+                  overviewPolygonPopup="site-summary"
                   sitePolygonUuids={affectedSitePolygonUuids}
                   alertPoints={disturbanceMarkerPoints}
                 />

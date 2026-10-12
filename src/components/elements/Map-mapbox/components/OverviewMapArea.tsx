@@ -6,7 +6,7 @@ import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { useEntityMapMedia } from "@/components/elements/Map-mapbox/hooks/useEntityMapMedia";
 import type { OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
-import type { PolygonEntityScope } from "@/components/elements/Map-mapbox/Map.d";
+import type { OverviewPolygonPopup, PolygonEntityScope } from "@/components/elements/Map-mapbox/Map.d";
 import { resolveMapExtentBbox, useBoundingBox } from "@/connections/BoundingBox";
 import { useDelayedJobs } from "@/connections/DelayedJob";
 import { pruneSitePolygonsCache, useSitePolygonMapIndex } from "@/connections/SitePolygons";
@@ -24,7 +24,7 @@ type OverviewMapAreaProps = {
   type: string;
   className?: string;
   hideFullscreenControl?: boolean;
-  overviewPolygonPopup?: boolean;
+  overviewPolygonPopup?: OverviewPolygonPopup;
   sitePolygonUuids?: string[];
   alertPoints?: OverlapPolygonPoint[];
 };
@@ -36,7 +36,7 @@ const OverviewMapArea: FC<OverviewMapAreaProps> = ({
   type,
   className,
   hideFullscreenControl = false,
-  overviewPolygonPopup = false,
+  overviewPolygonPopup,
   sitePolygonUuids,
   alertPoints
 }) => {
