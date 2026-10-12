@@ -118,7 +118,7 @@ const FinancialReportContent: FC<FinancialReportContentProps> = ({ financialRepo
             icon: <ReportsIcon className="!text-theme-primary-900" />
           },
           {
-            label: t("Financial Report - {period}", { period: getShortPeriodLabel(taskTitle ?? "", true) }),
+            label: headerReportTitle,
             link: `/reports/financial-report/${financialReportUUID}`
           }
         ]}
