@@ -30,6 +30,7 @@ import {
   TERRAMATCH_SATELLITE_STYLE_ID,
   TERRAMATCH_STREET_STYLE_ID
 } from "../MapControls/types";
+import { isMediaPhotoAt } from "./mediaPhotoHitTest";
 import { CrossSiteOverlapPolygon, OverlapPolygonPoint } from "./overlapTypes";
 import { setFilterLandscape } from "./polygonLayers";
 
@@ -532,7 +533,7 @@ export function upsertAnrPlotGeometryOverlay(
 
     state.clickHandler = (e: MapMouseEvent) => {
       const feature = e.features?.[0];
-      if (feature == null) return;
+      if (feature == null || isMediaPhotoAt(map, e.point)) return;
 
       const props = feature.properties ?? {};
       const plotId = parseAnrPlotId(props.plotId ?? props.plot_id);

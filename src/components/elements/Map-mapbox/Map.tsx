@@ -585,6 +585,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
 
   useMapMedia({
     map,
+    draw,
     mediaFiles: props.mediaFiles,
     styleReady,
     styleVersion,
