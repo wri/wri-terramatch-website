@@ -144,7 +144,7 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
           await updateOrganisationUserStatuses(organisationUuid, approvedIds, "rejected");
         }
         if (rejectedIds.length > 0) {
-          await bulkDeleteUserAssociations(organisationUuid, rejectedIds, "organisations");
+          await bulkDeleteUserAssociations(organisationUuid, rejectedIds);
         }
         setModalAction(null);
         onCancel();

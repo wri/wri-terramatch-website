@@ -160,7 +160,7 @@ const TeamTabContent: FC = () => {
     isSubmittingRef.current = true;
     try {
       if (rowAction.action === "remove" && rowAction.member.associationStatus === "rejected") {
-        await bulkDeleteUserAssociations(organisationUuid, [rowAction.member.id], "organisations");
+        await bulkDeleteUserAssociations(organisationUuid, [rowAction.member.id]);
       } else if (rowAction.action === "remove") {
         await updateOrganisationUserStatuses(organisationUuid, [rowAction.member.id], "rejected");
       } else {

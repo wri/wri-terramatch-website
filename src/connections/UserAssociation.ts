@@ -129,15 +129,33 @@ const organisationUserAssociationConnection = v3Resource("associatedUsers", getU
 
 export const useOrganisationUserAssociations = connectionHook(organisationUserAssociationConnection);
 
-export const bulkDeleteUserAssociations = async (
-  resourceUuid: string,
-  uuids: string[],
-  model: "projects" | "organisations" = "projects"
-): Promise<void> => {
-  await deleteUserAssociation.fetchAwait({
-    pathParams: { uuid: resourceUuid, model },
-    queryParams: { uuids }
+export const bulkDeleteUserAssociations = async (projectUuid: string, uuids: string[]): Promise<void> => {
+  const variables = { pathParams: { uuid: projectUuid, model: "projects" as const }, queryParams: { uuids } };
+  const failureSelector = deleteUserAssociation.fetchFailedSelector(variables);
+  const previousFailure = failureSelector(ApiSlice.currentState);
+  if (previousFailure != null) {
+    ApiSlice.clearPending(resolveUrl(deleteUserAssociation.url, variables), deleteUserAssociation.method);
+  }
+
+  deleteUserAssociation.fetch(variables);
+
+  await new Promise<void>((resolve, reject) => {
+    const unsubscribe = ApiSlice.redux.subscribe(() => {
+      const currentState = ApiSlice.currentState;
+      const deleted = currentState.meta.deleted.associatedUsers ?? [];
+      const allDeleted = uuids.every(uuid => deleted.includes(uuid));
+      const failure = failureSelector(currentState);
+
+      if (allDeleted) {
+        unsubscribe();
+        resolve();
+      } else if (failure != null) {
+        unsubscribe();
+        reject(failure);
+      }
+    });
   });
+
   ApiSlice.pruneCache("associatedUsers");
   ApiSlice.pruneIndex("associatedUsers", "");
 };
