@@ -17,7 +17,6 @@ import MapMediaDetailsModal from "../components/MapMediaDetailsModal";
 import { addMediaMarkers, removeMediaMarkers } from "../layers/mediaMarkers";
 import { removeMediaSymbolLayer, upsertMediaSymbolLayer } from "../layers/mediaSymbolLayer";
 import { MapMedia, MediaCallbacks } from "../layers/mediaTypes";
-import { OverlapPolygonPoint } from "../layers/overlapTypes";
 import { useGeotaggedPhotosVisibility } from "./useGeotaggedPhotosVisibility";
 
 type UseMapMediaParams = {
@@ -38,7 +37,6 @@ type UseMapMediaParams = {
   hideMediaPopupActions?: boolean;
   hideMediaOnMap?: boolean;
   isPolygonGeometryLoading?: boolean;
-  overlapPolygons?: OverlapPolygonPoint[];
 };
 
 export function useMapMedia({
@@ -58,16 +56,14 @@ export function useMapMedia({
   alwaysShowPhotosOnMap = false,
   hideMediaPopupActions = false,
   hideMediaOnMap = false,
-  isPolygonGeometryLoading = false,
-  overlapPolygons
+  isPolygonGeometryLoading = false
 }: UseMapMediaParams) {
   const championsMap = useChampionsMap();
   const downloadToastMessages = useDownloadToastMessages();
   const photosVisible = useGeotaggedPhotosVisibility({
     alwaysShowPhotosOnMap,
     hideMediaOnMap,
-    isPolygonGeometryLoading,
-    overlapPolygons
+    isPolygonGeometryLoading
   });
   const [callbacks, setCallbacks] = useState<MediaCallbacks | null>(null);
 
