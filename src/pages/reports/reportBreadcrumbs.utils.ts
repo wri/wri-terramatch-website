@@ -7,7 +7,7 @@ import { getReportsIndexHrefFromQuery, ReportProfileOrigin, ReportsIndexSource }
 
 export type ReportTrailCrumb = { label: string; link: string };
 
-export type ReportTrailRoot = "reports" | "sites" | "nurseries" | "projects";
+export type ReportTrailRoot = "reports" | "sites" | "nurseries" | "projects" | "organisations";
 
 export type ReportTrailEntity = { uuid?: string | null; name?: string | null };
 
@@ -80,6 +80,15 @@ export const buildReportTrail = ({
   const reportsIndexHref = getReportsIndexHrefFromQuery(from);
   if (reportsIndexHref != null && profile == null) {
     return { root: "reports", crumbs: [{ label: t("Reports"), link: reportsIndexHref }, reportCrumb] };
+  }
+
+  if (reportLevel === "organisation") {
+    const organisation = entities.organisation;
+    const organisationLink = organisation?.uuid != null ? `/organization/${organisation.uuid}` : "/my-projects";
+    return {
+      root: "organisations",
+      crumbs: [{ label: organisation?.name ?? t("Organisation"), link: organisationLink }, reportCrumb]
+    };
   }
 
   const { project, site, nursery } = entities;

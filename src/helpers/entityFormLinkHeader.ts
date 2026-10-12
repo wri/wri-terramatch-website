@@ -225,12 +225,8 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
             {
               label: isAdmin
                 ? linkLabel
-                : t("Organisation - {organisationName}", { organisationName: entity?.organisationName ?? "" }),
+                : t("{organisationName}", { organisationName: entity?.organisationName ?? "" }),
               link: isAdmin ? adminListPath! : `/organization/${entity?.organisationUuid ?? ""}`
-            },
-            {
-              label: t("Financial Reports"),
-              link: isAdmin ? adminListPath! : financialReportsHref
             },
             { label: entityTitle + " - " + getShortPeriodLabel(taskTitle ?? "", true), link: entityPageLink },
             { label: t("Edit"), link: editLink }

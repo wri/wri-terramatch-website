@@ -9,16 +9,15 @@ import { useFullFinancialReport } from "@/connections/Entity";
 import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { FinancialReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useReportBreadcrumbs } from "@/hooks/useReportBreadcrumbs";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
-import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
 import ApiSlice from "@/store/apiSlice";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
-import { getReportsIndexHrefFromQuery } from "../../reportIndex.utils";
 import AuditLog from "./tabs/AuditLog";
 import FinancialReportDetailsTab from "./tabs/Details";
 import FinancialReportOverviewTab from "./tabs/Overview";
@@ -96,9 +95,19 @@ const FinancialReportContent: FC<FinancialReportContentProps> = ({ financialRepo
 
   const activeTab = tabItems.some(item => item.key === currentTab) ? currentTab : "overview";
   const activeTabItem = tabItems.find(item => item.key === activeTab) ?? tabItems[0];
-  const organisationHref =
-    financialReport.organisationUuid != null ? `/organization/${financialReport.organisationUuid}` : "/my-projects";
-  const reportsIndexHref = getReportsIndexHrefFromQuery(router.query.from) ?? organisationHref;
+
+  const breadcrumbs = useReportBreadcrumbs(
+    {
+      label: t("{title}", {
+        title: headerReportTitle ?? ""
+      }),
+      link: `/reports/financial-report/${financialReport?.uuid}`
+    },
+    "organisation",
+    {
+      organisation: { uuid: financialReport.organisationUuid, name: financialReport.organisationName }
+    }
+  );
 
   return (
     <>
@@ -111,17 +120,7 @@ const FinancialReportContent: FC<FinancialReportContentProps> = ({ financialRepo
         title={headerReportTitle}
         dueAt={taskDueAt ?? financialReport.dueAt}
         entityName="financial-report"
-        breadcrumbs={[
-          {
-            label: t("Reports"),
-            link: reportsIndexHref,
-            icon: <ReportsIcon className="!text-theme-primary-900" />
-          },
-          {
-            label: headerReportTitle,
-            link: `/reports/financial-report/${financialReportUUID}`
-          }
-        ]}
+        breadcrumbs={breadcrumbs}
         suffix={
           <div className="flex items-center gap-1.5">
             <Button
