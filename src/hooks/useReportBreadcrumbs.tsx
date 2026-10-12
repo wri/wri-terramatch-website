@@ -4,7 +4,13 @@ import { useRouter } from "next/router";
 import { buildReportTrail, ReportTrailEntities, ReportTrailRoot } from "@/pages/reports/reportBreadcrumbs.utils";
 import { getReportProfileOriginFromQuery, ReportsIndexSource } from "@/pages/reports/reportIndex.utils";
 import { BannerProps } from "@/redesignComponents/content/Banner/Banner";
-import { NurseryIcon, ProjectIcon, ReportsIcon, SiteIcon } from "@/redesignComponents/foundations/Icons";
+import {
+  NurseryIcon,
+  OrganizationIcon,
+  ProjectIcon,
+  ReportsIcon,
+  SiteIcon
+} from "@/redesignComponents/foundations/Icons";
 
 type Breadcrumbs = BannerProps["breadcrumbs"];
 
@@ -12,7 +18,8 @@ const ROOT_ICONS: Record<ReportTrailRoot, JSX.Element> = {
   reports: <ReportsIcon className="!text-theme-primary-900" />,
   sites: <SiteIcon className="!text-theme-primary-900" />,
   nurseries: <NurseryIcon className="!text-theme-primary-900" />,
-  projects: <ProjectIcon className="!text-theme-primary-900" />
+  projects: <ProjectIcon className="!text-theme-primary-900" />,
+  organisations: <OrganizationIcon className="!text-theme-primary-900" />
 };
 
 /**

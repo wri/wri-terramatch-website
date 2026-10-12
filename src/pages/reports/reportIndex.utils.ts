@@ -13,7 +13,7 @@ import type {
   ReportsIndexProjectSection
 } from "./reportIndex.types";
 
-export const REPORTS_INDEX_SOURCES = ["project", "site", "nursery"] as const;
+export const REPORTS_INDEX_SOURCES = ["project", "site", "nursery", "organisation"] as const;
 
 export type ReportsIndexSource = (typeof REPORTS_INDEX_SOURCES)[number];
 
