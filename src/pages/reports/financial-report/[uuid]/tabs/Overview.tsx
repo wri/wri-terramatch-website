@@ -40,6 +40,7 @@ const FinancialReportOverviewTab: FC<FinancialReportOverviewTabProps> = ({ repor
   const [isReportSetupComplete, setIsReportSetupComplete] = useState(false);
   const editButtonLabel = getEntitySetupButtonLabel(t, report.status, isReportSetupComplete);
   const isEnterprise = report.organisationType !== NON_PROFIT_ORGANISATION_TYPE;
+  const isReportDue = report.status === "due";
 
   const headerReportTitle = t("Financial Report - {year}", {
     year: report.yearOfReport ?? getShortPeriodLabel(report?.reportTitle!, true)
@@ -66,6 +67,9 @@ const FinancialReportOverviewTab: FC<FinancialReportOverviewTabProps> = ({ repor
   }, [report.status, report.updateRequestStatus]);
 
   const { summaries, externalFinance, hasInsights } = useMemo(() => {
+    // A due report has not been started, so any data it carries was prefilled from a previous period.
+    if (isReportDue) return { summaries: [], externalFinance: [], hasInsights: false };
+
     const yearSummaries = getFinancialYearSummaries(report.financialCollection ?? [], report.currency);
     const externalFinanceByYear = getExternalFinanceByYear(
       report.fundingTypes ?? [],
@@ -87,7 +91,7 @@ const FinancialReportOverviewTab: FC<FinancialReportOverviewTabProps> = ({ repor
       externalFinance: externalFinanceByYear,
       hasInsights: hasIndicatorData || externalFinanceByYear.some(({ amount }) => amount != null)
     };
-  }, [isEnterprise, report.currency, report.financialCollection, report.fundingTypes]);
+  }, [isEnterprise, isReportDue, report.currency, report.financialCollection, report.fundingTypes]);
 
   // Enterprise reports have a taller insights column, so the About section moves into the sidebar.
   const showAboutInSidebar = hasInsights && isEnterprise;
@@ -130,7 +134,7 @@ const FinancialReportOverviewTab: FC<FinancialReportOverviewTabProps> = ({ repor
                 )}
               </Grid>
             ) : (
-              <FinancialInsightsEmptyState />
+              <FinancialInsightsEmptyState isReportDue={isReportDue} />
             )}
           </PageItem>
           <Flex direction="column" gap={7} flex={1} minWidth={0} width="100%">
