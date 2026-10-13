@@ -34,8 +34,8 @@ const SrpReportOverviewTab: FC<SrpReportOverviewTabProps> = ({ report, onViewDet
     entityUUID: report.uuid,
     entityStatus: report.status,
     updateRequestStatus: report.updateRequestStatus,
-    entityTitle: report.projectName ?? "",
-    reportTitle: report.reportTitle ?? "",
+    entityTitle: "",
+    reportTitle: t("Socioeconomic Restoration Partners Report - {year}", { year: report?.year }),
     feedback: report.feedback,
     useStatusModal: true,
     useInformationRequiredModal: true
@@ -76,7 +76,7 @@ const SrpReportOverviewTab: FC<SrpReportOverviewTabProps> = ({ report, onViewDet
             <MetricCardsRow>
               <MetricCard
                 title={t("Total Unique Restoration Partners")}
-                progress={report.totalUniqueRestorationPartners ?? 0}
+                progress={report.status === "due" ? 0 : report.totalUniqueRestorationPartners ?? 0}
                 goal={0}
                 variant="large"
                 icon={<PartnersIcon />}
