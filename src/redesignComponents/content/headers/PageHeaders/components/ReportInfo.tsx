@@ -59,6 +59,10 @@ const ReportInfo: FC<ReportInfoProps> = ({ report, dueAt, entityName }) => {
     useStatusModal: true,
     entityTitle,
     reportTitle,
+    reportOwner:
+      entityName === "financial-report" && "organisationUuid" in report
+        ? { uuid: report.organisationUuid, name: report.organisationName }
+        : null,
     useInformationRequiredModal: true
   });
 

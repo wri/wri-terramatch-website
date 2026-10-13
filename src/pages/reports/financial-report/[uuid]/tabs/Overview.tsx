@@ -54,6 +54,7 @@ const FinancialReportOverviewTab: FC<FinancialReportOverviewTabProps> = ({ repor
     entityTitle: "",
     reportTitle: headerReportTitle,
     feedback: report.feedback,
+    reportOwner: { uuid: report.organisationUuid, name: report.organisationName },
     useStatusModal: true,
     useInformationRequiredModal: true
   });
@@ -102,7 +103,7 @@ const FinancialReportOverviewTab: FC<FinancialReportOverviewTabProps> = ({ repor
       <Flex gap={7} direction="column" width="100%">
         <Flex gap={7} direction={{ base: "column", lg: "row" }} alignItems={{ lg: "flex-start" }}>
           <PageItem
-            title={hasInsights ? t("Financial Insights") : t("Key Indicators & Insights")}
+            title={t("Financial Insights")}
             flexProps={{ flex: 2, minWidth: 0, width: "100%" }}
             buttonProps={
               hasInsights
