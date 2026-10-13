@@ -24,7 +24,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
       <Box as="header" className="fixed inset-x-0 top-0 z-50 h-[3rem]">
         <Navbar />
       </Box>
-      <Flex className="min-h-0 overflow-hidden pt-[3rem]">
+      <Flex className="min-h-0 flex-1 overflow-hidden pt-[3rem]">
         <SideNavigation
           collapsed={true}
           isCollapsedDisabled={isSidebarCollapseDisabled}
