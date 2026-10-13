@@ -12,6 +12,7 @@ import { FinancialReportFullDto } from "@/generated/v3/entityService/entityServi
 import { useReportBreadcrumbs } from "@/hooks/useReportBreadcrumbs";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import { REPORTS_INDEX_PATH } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
 import ApiSlice from "@/store/apiSlice";
@@ -127,23 +128,19 @@ const FinancialReportContent: FC<FinancialReportContentProps> = ({ financialRepo
               variant="borderless"
               size="small"
               className="underline underline-offset-2"
+              onClick={() => router.push(REPORTS_INDEX_PATH)}
+            >
+              {t("Reports")}
+            </Button>
+            <span className="text-theme-neutral-300 text-sm">|</span>
+            <Button
+              variant="borderless"
+              size="small"
+              className="underline underline-offset-2"
               onClick={() => router.push("/my-projects")}
             >
               {t("Projects")}
             </Button>
-            {financialReport.organisationUuid != null && (
-              <>
-                <span className="text-sm text-theme-neutral-300">|</span>
-                <Button
-                  variant="borderless"
-                  size="small"
-                  className="underline underline-offset-2"
-                  onClick={() => router.push(`/organization/${financialReport.organisationUuid}`)}
-                >
-                  {t("Organisation Profile")}
-                </Button>
-              </>
-            )}
           </div>
         }
         toolbar={{
