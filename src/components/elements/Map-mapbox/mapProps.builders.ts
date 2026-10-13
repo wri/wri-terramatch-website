@@ -1,7 +1,7 @@
-import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 import { BBox } from "./GeoJSON";
+import { MapMedia } from "./layers/mediaTypes";
 import { AdminMapExtras, BaseMapProps, DashboardMapExtras, ReadOnlyMapExtras } from "./Map";
 import type {
   DashboardGetProjectsData,
@@ -105,7 +105,7 @@ type AdminEntityMapBuilderOpts = {
   mapFunctions: MapFunctions;
   polygonsData?: Record<string, string[]>;
   bbox?: BBox;
-  mediaFiles?: MediaDto[];
+  mediaFiles?: MapMedia[];
   entityData?: EntityData;
   record?: AdminMapExtras["record"];
   sitePolygonData?: SitePolygonLightDto[];

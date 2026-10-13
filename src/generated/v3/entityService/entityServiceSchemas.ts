@@ -334,7 +334,6 @@ export type AboutSectionDto = {
         | "terrafund-3"
         | "ppc"
         | "hbf"
-        | "fundo-flora"
         | "fundo-flora-1"
         | "wcb"
         | "barka-fund"
@@ -368,7 +367,6 @@ export type StoreAboutSectionAttributes = {
         | "terrafund-3"
         | "ppc"
         | "hbf"
-        | "fundo-flora"
         | "fundo-flora-1"
         | "wcb"
         | "barka-fund"
@@ -741,6 +739,41 @@ export type TaskData = {
 
 export type TaskUpdateBody = {
   data: TaskData;
+};
+
+export type MediaMapEntryDto = {
+  /**
+   * UUID of the media.
+   */
+  uuid: string;
+  name: string;
+  /**
+   * Latitude of the photo. Always present: only geotagged media are indexed.
+   */
+  lat: number;
+  /**
+   * Longitude of the photo. Always present: only geotagged media are indexed.
+   */
+  lng: number;
+  /**
+   * Null if the thumbnail conversion was not generated.
+   */
+  thumbUrl: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+};
+
+export type MediaMapIndexDto = {
+  /**
+   * Every geotagged media in scope for the requested entity.
+   */
+  media: MediaMapEntryDto[];
+  /**
+   * Number of media in the media array.
+   */
+  total: number;
 };
 
 export type MediaBulkErrorDto = {
@@ -1249,6 +1282,38 @@ export type SupportedEntities = {
   ENTITY_TYPES: string[];
 };
 
+export type ReportMetaDto = {
+  name: string | null;
+  /**
+   * The number of reports for this entity with a status of "due", "draft" or "information-required"
+   */
+  reportsRequiringAttention: number;
+};
+
+export type ReportingPeriodDto = {
+  /**
+   * @example 2025
+   */
+  dueYear: number;
+  /**
+   * @minimum 1
+   * @maximum 12
+   * @example 6
+   */
+  dueMonth: number;
+};
+
+export type ReportCountsDto = {
+  /**
+   * The total number of reports matching the requested filters
+   */
+  totalReports: number;
+  /**
+   * The distinct due month / year of reports matching the requested filters, newest first. The due date filters (dueDateFrom, dueDateTo, dueMonth, dueYear) are not applied to this list.
+   */
+  reportingPeriods: ReportingPeriodDto[];
+};
+
 export type ProjectLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -1563,6 +1628,27 @@ export type DisturbanceReportLightDto = {
   disturbanceEndDate: string | null;
 };
 
+export type ProjectReportMetaDto = {
+  uuid: string;
+  organisationName: string | null;
+  /**
+   * Report meta for the project reports of this project
+   */
+  project: ReportMetaDto;
+  /**
+   * Report meta for each site in this project, keyed by site UUID
+   */
+  sites: {
+    [key: string]: ReportMetaDto;
+  };
+  /**
+   * Report meta for each nursery in this project, keyed by nursery UUID
+   */
+  nurseries: {
+    [key: string]: ReportMetaDto;
+  };
+};
+
 export type FileDownloadDto = {
   url: string;
 };
@@ -1796,6 +1882,7 @@ export type ProjectFullDto = {
   programmeSubmission: MediaDto[];
   proofOfLandTenureMou: MediaDto[];
   consortiumPartnershipAgreements: MediaDto[];
+  communityEngagementDocumentation: MediaDto[];
   detailedProjectBudget: MediaDto;
   /**
    * QA status for polygon dataset stage 1
@@ -3330,6 +3417,7 @@ export type LinkedFieldDto = {
     | "ownershipStake"
     | "restorationPartners"
     | "seedings"
+    | "stakeholders"
     | "stratas"
     | "trainingBeneficiaries"
     | "treesGoal"
@@ -3368,7 +3456,6 @@ export type SubmissionDto = {
     | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
     | "barka-fund"
@@ -3526,6 +3613,7 @@ export type FormQuestionDto = {
     | "ownershipStake"
     | "restorationPartners"
     | "seedings"
+    | "stakeholders"
     | "stratas"
     | "trainingBeneficiaries"
     | "treesGoal"
@@ -3621,7 +3709,6 @@ export type FormFullDto = {
     | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
     | "barka-fund"
@@ -3681,6 +3768,7 @@ export type StoreFormQuestionAttributes = {
     | "ownershipStake"
     | "restorationPartners"
     | "seedings"
+    | "stakeholders"
     | "stratas"
     | "trainingBeneficiaries"
     | "treesGoal"
@@ -3753,7 +3841,6 @@ export type StoreFormAttributes = {
     | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
     | "barka-fund"
@@ -3886,7 +3973,6 @@ export type FundingProgrammeDto = {
     | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
     | "barka-fund"
@@ -3920,7 +4006,6 @@ export type StoreFundingProgrammeAttributes = {
     | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
     | "barka-fund"

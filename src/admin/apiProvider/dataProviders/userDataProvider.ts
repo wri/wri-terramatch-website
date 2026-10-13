@@ -40,9 +40,8 @@ const USER_ADMIN_PATCH_KEYS = [
   "jobRole",
   "phoneNumber",
   "country",
-  "program",
   "locale",
-  "primaryRole",
+  "roles",
   "directFrameworks"
 ] as const;
 

@@ -11,10 +11,7 @@ export const GeotaggedPhotosControl: FC = () => {
   const t = useT();
   const { geotaggedPhotosMapVisible, setGeotaggedPhotosMapVisible, mediaFiles } = useMapAreaContext();
 
-  const geotaggedPhotosCount = useMemo(
-    (): number => mediaFiles.filter(file => file.lat != null && file.lng != null).length,
-    [mediaFiles]
-  );
+  const geotaggedPhotosCount = mediaFiles.length;
 
   const hasGeotaggedPhotos = geotaggedPhotosCount > 0;
   const isActive = hasGeotaggedPhotos && geotaggedPhotosMapVisible;

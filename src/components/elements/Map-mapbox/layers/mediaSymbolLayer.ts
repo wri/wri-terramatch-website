@@ -1,16 +1,15 @@
-import { Map as MapboxMap, MapMouseEvent, Popup } from "mapbox-gl";
+import type { FeatureCollection, Point } from "geojson";
+import { GeoJSONSource, Map as MapboxMap, MapMouseEvent, Popup } from "mapbox-gl";
 import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
 import { LAYERS_NAMES } from "@/constants/layers";
-import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import { MediaPopup } from "../components/MediaPopup";
-import { Feature, GeoJsonProperties, Geometry } from "../GeoJSON";
 import { clearActivePopup, setActivePopup } from "../interactions/popupCoordinator";
 import { registerPopup, removePopups } from "../interactions/popups";
 import { getPulsingDot } from "../pulsing.dot";
-import { MediaCallbacks } from "./mediaTypes";
+import { MapMedia, MediaCallbacks } from "./mediaTypes";
 
 const PULSING_DOT_IMAGE = "pulsing-dot";
 
@@ -18,7 +17,11 @@ function stringFromGeoJsonProperty(value: unknown): string {
   return typeof value === "string" ? value : "";
 }
 
+type MediaFeatureProperties = Pick<MapMedia, "uuid" | "name" | "createdAt" | "thumbUrl">;
+
 const mediaClickHandlers = new WeakMap<MapboxMap, (e: MapMouseEvent) => void>();
+// The click handler is registered once per map, so it reads the latest callbacks from here.
+const mediaCallbacks = new WeakMap<MapboxMap, MediaCallbacks>();
 
 const isStyleAlive = (map: MapboxMap): boolean => {
   try {
@@ -40,6 +43,7 @@ export const removeMediaSymbolLayer = (map: MapboxMap): void => {
     }
     mediaClickHandlers.delete(map);
   }
+  mediaCallbacks.delete(map);
 
   removePopups(map, "MEDIA");
   clearActivePopup(map, "MEDIA");
@@ -51,45 +55,22 @@ export const removeMediaSymbolLayer = (map: MapboxMap): void => {
   if (map.hasImage(PULSING_DOT_IMAGE)) map.removeImage(PULSING_DOT_IMAGE);
 };
 
-export const addMediaSymbolLayer = (map: MapboxMap, mediaFiles: MediaDto[], callbacks: MediaCallbacks): void => {
-  const layerName = LAYERS_NAMES.MEDIA_IMAGES;
-  removeMediaSymbolLayer(map);
-
-  if (!isStyleAlive(map)) return;
-
-  const geolocated = mediaFiles.filter(file => file.lat != null && file.lng != null);
-  if (geolocated.length === 0) return;
-
-  const features: Feature<Geometry, GeoJsonProperties>[] = geolocated.map(file => ({
+const toFeatureCollection = (mediaFiles: MapMedia[]): FeatureCollection<Point, MediaFeatureProperties> => ({
+  type: "FeatureCollection",
+  features: mediaFiles.map(({ uuid, name, createdAt, thumbUrl, lng, lat }) => ({
     type: "Feature",
-    geometry: { type: "Point", coordinates: [file.lng as number, file.lat as number] },
-    properties: {
-      uuid: file.uuid,
-      name: file.name,
-      created_date: file.createdAt,
-      thumbUrl: file.thumbUrl,
-      location: { lat: file.lat, lng: file.lng },
-      is_cover: file.isCover,
-      is_public: file.isPublic,
-      photographer: file.photographer,
-      description: file.description,
-      mime_type: file.mimeType,
-      file_name: file.fileName
-    }
-  }));
+    geometry: { type: "Point", coordinates: [lng, lat] },
+    properties: { uuid, name, createdAt, thumbUrl }
+  }))
+});
 
-  if (!map.hasImage(PULSING_DOT_IMAGE)) {
-    map.addImage(PULSING_DOT_IMAGE, getPulsingDot(map, 120), { pixelRatio: 4 });
-  }
-
-  map.addSource(layerName, { type: "geojson", data: { type: "FeatureCollection", features } });
-  map.addLayer({ id: layerName, type: "symbol", source: layerName, layout: { "icon-image": PULSING_DOT_IMAGE } });
-  map.moveLayer(layerName);
-
-  const clickHandler = (e: MapMouseEvent) => {
+const createClickHandler =
+  (map: MapboxMap) =>
+  (e: MapMouseEvent): void => {
     e.preventDefault();
     const feature = e.features?.[0];
-    if (feature == null) return;
+    const callbacks = mediaCallbacks.get(map);
+    if (feature == null || callbacks == null) return;
     removePopups(map, "MEDIA");
 
     const popupContent = document.createElement("div");
@@ -99,19 +80,17 @@ export const addMediaSymbolLayer = (map: MapboxMap, mediaFiles: MediaDto[], call
     const props = feature.properties ?? {};
     const uuid = stringFromGeoJsonProperty(props.uuid);
     const name = stringFromGeoJsonProperty(props.name);
-    const createdDate = stringFromGeoJsonProperty(props.created_date);
-    const thumbUrl = typeof props.thumbUrl === "string" ? props.thumbUrl : "";
     root.render(
       createElement(MediaPopup, {
         uuid,
         name,
-        created_date: createdDate,
-        thumbUrl,
+        created_date: stringFromGeoJsonProperty(props.createdAt),
+        thumbUrl: stringFromGeoJsonProperty(props.thumbUrl),
         onClose: () => removePopups(map, "MEDIA"),
         handleDownload: () => callbacks.handleDownload(uuid, name),
         coverImage: () => callbacks.setImageCover(uuid),
         handleDelete: () => callbacks.handleDelete(uuid),
-        openModalImageDetail: () => callbacks.openModalImageDetail(props as unknown as MediaDto),
+        openModalImageDetail: () => callbacks.openModalImageDetail(uuid),
         isProjectPath: callbacks.isProjectPath
       })
     );
@@ -130,6 +109,38 @@ export const addMediaSymbolLayer = (map: MapboxMap, mediaFiles: MediaDto[], call
     setActivePopup(map, "MEDIA", () => removePopups(map, "MEDIA"));
   };
 
-  map.on("click", layerName, clickHandler);
-  mediaClickHandlers.set(map, clickHandler);
+export const upsertMediaSymbolLayer = (
+  map: MapboxMap,
+  mediaFiles: MapMedia[],
+  callbacks: MediaCallbacks,
+  visible: boolean
+): void => {
+  const layerName = LAYERS_NAMES.MEDIA_IMAGES;
+  mediaCallbacks.set(map, callbacks);
+
+  if (!isStyleAlive(map)) return;
+
+  const data = toFeatureCollection(mediaFiles);
+  const source = map.getSource<GeoJSONSource>(layerName);
+  if (source != null) {
+    source.setData(data);
+  } else {
+    if (!map.hasImage(PULSING_DOT_IMAGE)) {
+      map.addImage(PULSING_DOT_IMAGE, getPulsingDot(map, 120), { pixelRatio: 4 });
+    }
+    map.addSource(layerName, { type: "geojson", data });
+  }
+
+  if (map.getLayer(layerName) == null) {
+    map.addLayer({ id: layerName, type: "symbol", source: layerName, layout: { "icon-image": PULSING_DOT_IMAGE } });
+  }
+  map.moveLayer(layerName);
+  map.setLayoutProperty(layerName, "visibility", visible ? "visible" : "none");
+  if (!visible) removePopups(map, "MEDIA");
+
+  if (!mediaClickHandlers.has(map)) {
+    const clickHandler = createClickHandler(map);
+    map.on("click", layerName, clickHandler);
+    mediaClickHandlers.set(map, clickHandler);
+  }
 };

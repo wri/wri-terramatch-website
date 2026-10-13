@@ -62,6 +62,23 @@ export const Default: Story = {
   }
 };
 
+export const Truncated: Story = {
+  args: {
+    breadcrumbs: {
+      links: [
+        {
+          label: "Page level 1 - Lorem ipsum dolor sit amet consectetur adipiscing elit. ",
+          link: "#",
+          icon: <PlaceholderIcon />
+        },
+        { label: "Page level 2 - Lorem ipsum dolor sit amet consectetur adipiscing elit.", link: "#" },
+        { label: "Page level 3 - Lorem ipsum dolor sit amet consectetur adipiscing elit.", link: "#" }
+      ],
+      linkRouter: Link
+    }
+  }
+};
+
 export const MultipleSlots: Story = {
   args: {
     breadcrumbs: {

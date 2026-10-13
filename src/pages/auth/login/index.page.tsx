@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import { resetRedesignBannerDismissal } from "@/components/generic/Navbar/Navbar";
 import { useLogin } from "@/connections/Login";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useSetInviteToken } from "@/hooks/useInviteToken";
@@ -41,8 +40,6 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (loginData == null || !router.isReady) return;
-
-    resetRedesignBannerDismissal();
 
     let redirectTarget: string | null = null;
 

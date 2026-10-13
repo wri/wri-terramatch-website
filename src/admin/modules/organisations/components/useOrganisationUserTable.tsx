@@ -19,7 +19,7 @@ export type OrganisationUserRow = UserAssociationDto & {
 };
 
 export const statusMap: { [key: string]: string } = {
-  requested: "pending",
+  pending: "pending",
   approved: "accepted",
   rejected: "rejected"
 };

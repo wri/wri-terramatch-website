@@ -1,12 +1,13 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import ImageGallery from "@/components/elements/ImageGallery/ImageGallery";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
+import { useEntityMapMedia } from "@/components/elements/Map-mapbox/hooks/useEntityMapMedia";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import type { PolygonEntityScope } from "@/components/elements/Map-mapbox/Map.d";
 import { IconNames } from "@/components/extensive/Icon/Icon";
@@ -145,6 +146,8 @@ const EntityGalleryCard = ({
     () => (mapIndexLoaded ? mapIndex?.polygons ?? [] : []),
     [mapIndexLoaded, mapIndex?.polygons]
   );
+  const mapMediaEntity = modelName === "projects" || modelName === "sites" ? modelName : undefined;
+  const mapMedia = useEntityMapMedia({ entity: mapMediaEntity, uuid: entityUUID });
   const polygonEntityScope = useMemo<PolygonEntityScope | undefined>(
     () =>
       (modelName === "projects" || modelName === "sites") && entityUUID
@@ -188,6 +191,14 @@ const EntityGalleryCard = ({
     }
   });
 
+  const refetchMedia = useCallback(() => {
+    if (mapMediaEntity == null) {
+      refetch?.();
+    } else {
+      setShouldRefetchMediaData(true);
+    }
+  }, [mapMediaEntity, refetch, setShouldRefetchMediaData]);
+
   const openFormModalHandlerUploadImages = () => {
     openModal(
       ModalId.UPLOAD_IMAGES,
@@ -206,7 +217,7 @@ const EntityGalleryCard = ({
           className: "px-8 py-3",
           variant: "primary",
           onClick: () => {
-            refetch?.();
+            refetchMedia();
             closeModal(ModalId.UPLOAD_IMAGES);
           }
         }}
@@ -247,7 +258,7 @@ const EntityGalleryCard = ({
             onDeleteImage={async uuid => {
               try {
                 await deleteMedia(uuid);
-                refetch?.();
+                refetchMedia();
               } catch (error) {
                 Log.error(error);
               }
@@ -256,7 +267,8 @@ const EntityGalleryCard = ({
             showLegend
             hasControls
             showPopups
-            mediaFiles={mediaList}
+            alwaysShowPhotosOnMap={mapMediaEntity != null}
+            mediaFiles={mapMedia}
             entityData={entityData}
             imageGalleryRef={imageGalleryRef}
           />
@@ -291,7 +303,7 @@ const EntityGalleryCard = ({
               onDeleteConfirm={async uuid => {
                 try {
                   await deleteMedia(uuid);
-                  refetch?.();
+                  refetchMedia();
                 } catch (error) {
                   Log.error(error);
                 }

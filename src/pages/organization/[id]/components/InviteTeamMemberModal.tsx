@@ -93,7 +93,9 @@ const InviteTeamMemberModal = ({ organisationUUID, open, onClose, onSuccess }: I
             )}
           </Text>
           <InlineMessage
-            label={t("This user will receive an email with a link to create a TerraMatch account and join your organization.")}
+            label={t(
+              "This user will receive an email with a link to create a TerraMatch account and join your organization."
+            )}
             variant="warning"
             size="small"
           />

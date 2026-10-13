@@ -24,7 +24,8 @@ const MonitoringPartnersTable: FC<{ project: any }> = ({ project }: { project: a
     return (
       associatedUsers?.map(user => ({
         ...user,
-        status: user.status === "active" ? "Accepted" : "Pending"
+        // Every listed user is already a project member; pending invites live in v2_project_invites.
+        status: "Accepted"
       })) ?? []
     );
   }, [associatedUsers]);

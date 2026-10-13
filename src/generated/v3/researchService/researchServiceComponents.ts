@@ -3524,7 +3524,6 @@ export type PolygonAttributeDefinitionsIndexQueryParams = {
     | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
     | "barka-fund";

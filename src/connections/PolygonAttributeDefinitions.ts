@@ -29,7 +29,6 @@ const FRAMEWORK_KEYS: readonly FrameworkKey[] = [
   "terrafund-3",
   "ppc",
   "hbf",
-  "fundo-flora",
   "fundo-flora-1",
   "wcb",
   "barka-fund"

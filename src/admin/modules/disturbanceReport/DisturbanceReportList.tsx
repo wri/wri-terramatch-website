@@ -1,5 +1,5 @@
 import { Stack } from "@mui/material";
-import { FC, useState } from "react";
+import { FC } from "react";
 import {
   AutocompleteInput,
   Datagrid,
@@ -13,11 +13,11 @@ import {
   TextField
 } from "react-admin";
 
-import { v3ErrorForRA } from "@/admin/apiProvider/utils/error";
 import ListActions, { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import { List } from "@/admin/components/AdminList";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
+import FrameworkSelectionDialog, { useFrameworkExport } from "@/admin/components/Dialogs/FrameworkSelectionDialog";
 import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
@@ -25,7 +25,6 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
-import { entityExportAll } from "@/generated/v3/entityService/entityServiceComponents";
 import { DisturbanceReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { optionToChoices } from "@/utils/options";
 
@@ -95,19 +94,7 @@ const DisturbanceReportDataGrid: FC = () => {
 };
 
 export const DisturbanceReportList: FC = () => {
-  const [exporting, setExporting] = useState<boolean>(false);
   const frameworkInputChoices = useUserFrameworkChoices();
-
-  const handleExport = async () => {
-    setExporting(true);
-    try {
-      await entityExportAll.downloadFile({ pathParams: { entity: "disturbanceReports" } });
-    } catch (e) {
-      throw v3ErrorForRA("Failed to fetch disturbance report exports", e);
-    } finally {
-      setExporting(false);
-    }
-  };
 
   const filters = [
     <SearchInput key="search" source="search" alwaysOn className="search-page-admin" />,
@@ -152,6 +139,11 @@ export const DisturbanceReportList: FC = () => {
     />
   ];
 
+  const { exporting, onClickExportButton, frameworkDialogProps } = useFrameworkExport(
+    "disturbanceReports",
+    frameworkInputChoices
+  );
+
   return (
     <>
       <Stack gap={1} className="pb-6">
@@ -160,10 +152,12 @@ export const DisturbanceReportList: FC = () => {
         </Text>
       </Stack>
 
-      <List actions={<ListActions onExport={handleExport} />} filters={filters}>
+      <List actions={<ListActions onExport={onClickExportButton} />} filters={filters}>
         <AutoResetSort />
         <DisturbanceReportDataGrid />
       </List>
+
+      <FrameworkSelectionDialog {...frameworkDialogProps} />
 
       <ExportProcessingAlert show={exporting} />
     </>

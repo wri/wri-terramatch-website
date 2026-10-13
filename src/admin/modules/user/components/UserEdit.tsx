@@ -14,8 +14,8 @@ import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import {
   directFrameworkChoices,
   frameworkAdminPrimaryRoleChoices,
-  frameworkChoices,
   localeChoices,
+  ROLES_SCHEMA,
   userPrimaryRoleChoices
 } from "@/admin/modules/user/const";
 import { validateForm } from "@/admin/utils/forms";
@@ -55,6 +55,10 @@ const UserEdit = () => {
     organisationUuid: yup.string().nullable().required()
   };
 
+  if (isFrameworkAdmin) {
+    schemaObject.roles = ROLES_SCHEMA;
+  }
+
   const roleChoices = useMemo(() => {
     if (isSuperAdmin) {
       return userPrimaryRoleChoices;
@@ -83,8 +87,7 @@ const UserEdit = () => {
           />
         </ReferenceInput>
 
-        {isFrameworkAdmin && <SelectInput source="primaryRole" label="Role" choices={roleChoices} fullWidth />}
-        <SelectInput source="program" label="Program" choices={frameworkChoices} fullWidth />
+        {isFrameworkAdmin && <SelectArrayInput source="roles" label="Roles" choices={roleChoices} fullWidth />}
         <SelectInput source="country" label="Country" choices={countryChoices} fullWidth />
         <SelectArrayInput
           source="directFrameworks"

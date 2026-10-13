@@ -1176,16 +1176,6 @@ React matches component state to keys. When an item is removed, index keys shift
 - Origin: team proposal (external reference), not from the review corpus
 - Applies to: website
 
-### Content images use next/image with explicit dimensions
-
-**Do:** Render uploaded media (S3 photos, thumbnails, covers) with `next/image`, giving `width` and `height`, or `fill` inside a sized container; mark only the above-the-fold hero as `priority`. **Don't:** Use a raw `<img>` without dimensions for remote photos.
-`next/image` lazy-loads, serves resized modern formats and reserves space so the layout doesn't jump (CLS). `next.config.js` already allows the S3 domain.
-
-- Source: Next.js — Image component (Pages Router) — https://nextjs.org/docs/pages/api-reference/components/image ; web.dev — Optimize Cumulative Layout Shift — https://web.dev/articles/optimize-cls
-- TerraMatch today: 28 raw `<img>` tags in non-story components, several rendering S3 media such as `coverImage?.thumbUrl` and `item.thumbnail`; `next/image` is used in 9 files.
-- Origin: team proposal (external reference), not from the review corpus
-- Applies to: website
-
 ### Parallelize independent async work with `Promise.all`; never drop an `await`, never `forEach(async ...)`
 
 **Do:** collect promises and `await Promise.all(...)` when loop iterations don't depend on each other. **Don't:** call `.forEach(async fn)` expecting it to wait (it doesn't — the outer function returns before the work finishes), and don't fire an async call without `await`ing it or explicitly handling it.

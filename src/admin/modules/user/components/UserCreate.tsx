@@ -14,7 +14,7 @@ import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import {
   directFrameworkChoices,
   frameworkAdminPrimaryRoleChoices,
-  frameworkChoices,
+  ROLES_SCHEMA,
   userPrimaryRoleChoices
 } from "@/admin/modules/user/const";
 import { validateForm } from "@/admin/utils/forms";
@@ -33,12 +33,11 @@ const UserCreate = () => {
     phoneNumber: yup.string().nullable(),
     jobRole: yup.string().nullable(),
     organisationUuid: yup.string().nullable(),
-    program: yup.string().nullable(),
     country: yup.string().nullable()
   };
 
   if (isFrameworkAdmin) {
-    schemaObject.role = yup.string().required("Role is required");
+    schemaObject.roles = ROLES_SCHEMA;
   }
 
   const roleChoices = useMemo(() => {
@@ -67,9 +66,9 @@ const UserCreate = () => {
           <AutocompleteInput label="Organisation" optionText="name" fullWidth />
         </ReferenceInput>
 
-        {isFrameworkAdmin && <SelectInput source="role" label="Role" choices={roleChoices} fullWidth />}
-
-        <SelectInput source="program" label="Program" choices={frameworkChoices} fullWidth />
+        {isFrameworkAdmin && (
+          <SelectArrayInput source="roles" label="Roles" choices={roleChoices} defaultValue={[]} fullWidth />
+        )}
 
         <SelectInput source="country" label="Country" choices={countryChoices} fullWidth />
 

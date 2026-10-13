@@ -1,7 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import NextImage from "next/image";
 import { CSSProperties, FC, HTMLAttributes, useEffect, useState } from "react";
 
 import { type SizeValue, resolveRemSizeValue } from "@/lib/sizing";
@@ -167,12 +166,11 @@ const BaseImage: FC<BaseImageProps> = ({
               borderRadius
             )}
           >
-            <NextImage
+            <img
               src={src}
               alt={alt ?? t(defaultAlt)}
               width={656}
               height={656}
-              unoptimized
               className="h-full w-full object-cover"
               style={style}
               onError={() => setLoadError(true)}
