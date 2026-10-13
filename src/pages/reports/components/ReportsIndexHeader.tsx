@@ -44,7 +44,8 @@ type ReportsIndexHeaderProps = {
   periodOptions: ReportPeriodOptions;
   onTabChange: (tab: string) => void;
   onViewChange: (value: string) => void;
-  onQueryChange: (query: string) => void;
+  /** Omit to hide the search box, e.g. on a single site / nursery profile where searching adds nothing. */
+  onQueryChange?: (query: string) => void;
   indexHref: string;
   entityProfile?: boolean;
 };
@@ -274,14 +275,18 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
       <ToolbarTable
         className={classNames("!px-6 !pb-6 !pt-5", entityProfile ? "!bg-theme-neutral-100" : "!bg-theme-neutral-200 ")}
         classNameContentLeft="flex-1"
-        search={{
-          placeholder: searchPlaceholder,
-          options: [],
-          displayResults: "none",
-          count: reportCount,
-          label: t("Reports"),
-          onQueryChange
-        }}
+        search={
+          onQueryChange == null
+            ? undefined
+            : {
+                placeholder: searchPlaceholder,
+                options: [],
+                displayResults: "none",
+                count: reportCount,
+                label: t("Reports"),
+                onQueryChange
+              }
+        }
         classNameContentSearch="w-[19rem]"
         selectedFilters={activeFilterLabels}
         showClearFilters={activeFilterLabels.length > 0}

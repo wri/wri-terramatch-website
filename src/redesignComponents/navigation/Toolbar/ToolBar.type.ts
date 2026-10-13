@@ -88,7 +88,7 @@ export type SelectedFilter =
   | { category?: string; label: string | string[]; onRemove?: () => void };
 
 export interface ToolbarTableProps {
-  search: SearchProps;
+  search?: SearchProps;
   filters?: IMultiActionButtonProps[];
   onClearFilters: () => void;
   button?: IButtonProps;

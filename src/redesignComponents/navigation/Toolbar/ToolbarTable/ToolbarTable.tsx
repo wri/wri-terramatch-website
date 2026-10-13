@@ -93,13 +93,13 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
             </Flex>
           )}
 
-          {((search != null && filters != null) || selectedFilters != null) && (
+          {search != null && (filters != null || selectedFilters != null) && (
             <SimpleDivider backgroundColor="neutral.500" className="!h-4 !w-[0.0625rem] mobile:hidden" />
           )}
 
           <Flex className="min-w-[0] items-center gap-4 mobile:w-full">
             {filters != null && filters.length > 0 ? (
-              <Flex className="text-14 text-theme-neutral-900 flex-wrap items-center gap-3">
+              <Flex className="text-14 flex-wrap items-center gap-3 text-theme-neutral-900">
                 {t("Filter by:")}
 
                 {filters.map((filter, index) => (
