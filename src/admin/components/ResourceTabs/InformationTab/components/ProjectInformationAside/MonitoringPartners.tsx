@@ -9,7 +9,9 @@ import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { bulkDeleteUserAssociations, useUserAssociations } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
+import { ToastType, useToastContext } from "@/context/toast.provider";
 import { EMPTY_I18N } from "@/i18n/util";
+import Log from "@/utils/log";
 
 const MonitoringPartnersTable: FC<{ project: any }> = ({ project }: { project: any }) => {
   const t = useT();
@@ -31,6 +33,7 @@ const MonitoringPartnersTable: FC<{ project: any }> = ({ project }: { project: a
   }, [associatedUsers]);
 
   const { openModal, closeModal } = useModalContext();
+  const { openToast } = useToastContext();
 
   const ModalConfirmDeletePartner = (uuid: string, emailAddress: string) => {
     openModal(
@@ -45,7 +48,10 @@ const MonitoringPartnersTable: FC<{ project: any }> = ({ project }: { project: a
         primaryButtonProps={{
           children: t("Confirm"),
           onClick: () => {
-            bulkDeleteUserAssociations(project.uuid, [uuid]);
+            bulkDeleteUserAssociations(project.uuid, [uuid]).catch(error => {
+              Log.error("Failed to remove monitoring partner", error);
+              openToast(t("Something went wrong!"), ToastType.ERROR);
+            });
             closeModal(ModalId.MODAL_CONFIRM_DELETE_PARTNER);
           }
         }}

@@ -59,6 +59,7 @@ const AdminStack = ({ children }: PropsWithChildren) => (
     <FloatNotificationProvider>
       <MonitoredDataProvider>
         <ModalRoot />
+        <Toast />
         {children}
       </MonitoredDataProvider>
     </FloatNotificationProvider>
