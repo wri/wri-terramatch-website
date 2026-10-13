@@ -1,6 +1,6 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useMemo, useState } from "react";
+import { FC, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
@@ -39,18 +39,16 @@ interface EntityProfileReportsContentProps extends Omit<EntityProfileReportsTabP
 const EntityProfileReportsContent: FC<EntityProfileReportsContentProps> = ({ source, entityUuid, project }) => {
   const t = useT();
   const { filters } = useReportsContext();
-  const [query, setQuery] = useState("");
   const { sections, loading, error } = useReportsIndexData(project, source, entityUuid);
   const { filteredProgressSections, progressReportCount } = useReportsIndexFilters({
     progressSections: sections,
     additionalSections: [],
-    query
+    query: ""
   });
 
-  const hasActiveSearch = query.trim().length > 0;
   const hasActivePeriodFilter =
     filters.dueDateFrom !== "" || filters.dueDateTo !== "" || filters.dueMonth !== "" || filters.dueYear !== "";
-  const hasReportSubset = hasActiveSearch || filters.statuses.length > 0 || hasActivePeriodFilter;
+  const hasReportSubset = filters.statuses.length > 0 || hasActivePeriodFilter;
 
   // A site / nursery's reports all belong to one project, so the project level accordion is skipped
   // and the reporting periods are listed directly.
@@ -77,7 +75,6 @@ const EntityProfileReportsContent: FC<EntityProfileReportsContentProps> = ({ sou
         periodOptions={periodOptions}
         onTabChange={() => {}}
         onViewChange={() => {}}
-        onQueryChange={setQuery}
         indexHref=""
         entityProfile
       />
@@ -95,14 +92,7 @@ const EntityProfileReportsContent: FC<EntityProfileReportsContentProps> = ({ sou
             description={t("Please refresh the page and try again.")}
           />
         ) : periods.length === 0 ? (
-          <NoResults
-            title={t("No reports found")}
-            description={
-              hasActiveSearch
-                ? t("We couldn’t find any reports matching your search. Try a different keyword.")
-                : t("Try changing your search or filters.")
-            }
-          />
+          <NoResults title={t("No reports found")} description={t("Try changing your filters.")} />
         ) : (
           <div className="space-y-0.5 bg-theme-neutral-200 pt-0.5">
             {periods.map((period, index) => (
