@@ -5,6 +5,7 @@ import type { FC, KeyboardEvent, MouseEvent, ReactNode } from "react";
 
 import MenuCustom from "@/redesignComponents/actions/Buttons/Menu/MenuCustom";
 import { MenuItemOption } from "@/redesignComponents/actions/Buttons/Menu/MenuCustom.types";
+import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import { ChevronDownIcon, MoreVertIcon, PlusIcon } from "@/redesignComponents/foundations/Icons";
 import Badge from "@/redesignComponents/status/Badge/Badge";
 import NumberBadge from "@/redesignComponents/status/Badge/NumberBadge";
@@ -157,7 +158,11 @@ const SideNavigationItem: FC<SideNavigationItemProps> = props => {
     return (
       <AccordionChakra.Root collapsible onKeyDown={handleAccordionRootKeyDown}>
         <AccordionChakra.Item value={label.length === 0 ? "side-navigation-item" : label}>
-          <AccordionChakra.ItemTrigger {...interactiveItemProps}>{itemRow}</AccordionChakra.ItemTrigger>
+          <Tooltip content={t(label)} position="right" disabled={!isCollapsed} preserveFocusOnChild>
+            <AccordionChakra.ItemTrigger {...interactiveItemProps} aria-label={t(label)}>
+              {itemRow}
+            </AccordionChakra.ItemTrigger>
+          </Tooltip>
           <AccordionChakra.ItemContent>
             <Flex>
               <Box className="ml-5 mr-1 w-[0.125rem] shrink-0 bg-theme-neutral-100" />

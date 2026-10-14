@@ -39,7 +39,6 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
         <Flex className="min-h-0 flex-1 overflow-hidden">
           <Flex className="[zoom:var(--layout-chrome-zoom,1)]">
             <SideNavigation
-              collapsed={true}
               isCollapsedDisabled={isSidebarCollapseDisabled}
               groups={[
                 {
