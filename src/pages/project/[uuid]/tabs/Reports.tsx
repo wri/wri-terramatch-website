@@ -1,5 +1,6 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { uniq } from "lodash";
 import { FC, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -8,9 +9,13 @@ import { ReportsProvider, useReportsContext } from "@/context/reports.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import AdditionalReportsContent from "@/pages/reports/components/AdditionalReportsContent";
 import ProjectReportsSection from "@/pages/reports/components/ProjectReportsSection";
-import { getDefaultProgressFiltersForSource } from "@/pages/reports/components/reportFilter.constants";
+import {
+  getDefaultProgressFiltersForSource,
+  ReportTypeOption
+} from "@/pages/reports/components/reportFilter.constants";
 import ReportsIndexBulkBar from "@/pages/reports/components/ReportsIndexBulkBar";
 import ReportsIndexHeader from "@/pages/reports/components/ReportsIndexHeader";
+import { AdditionalReportsEntitySection, ReportsIndexProjectSection } from "@/pages/reports/reportIndex.types";
 import { getReportsAccordionResetKey } from "@/pages/reports/reportIndex.utils";
 import { getReportPeriodOptions, getSectionReportingPeriods } from "@/pages/reports/reportPeriodFilter";
 import ReportProfileOriginProvider from "@/pages/reports/ReportProfileOrigin.provider";
@@ -22,6 +27,23 @@ import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 
 const noop = () => {};
+
+const getAdditionalSectionReportTypes = (sections: AdditionalReportsEntitySection[]): ReportTypeOption[] =>
+  sections.flatMap(section => [
+    ...section.groups.filter(group => group.reports.length > 0).map(group => group.type),
+    ...getAdditionalSectionReportTypes(section.children ?? [])
+  ]);
+
+const getAvailableReportTypes = (
+  progressSections: ReportsIndexProjectSection[],
+  additionalSections: AdditionalReportsEntitySection[]
+): ReportTypeOption[] =>
+  uniq([
+    ...progressSections.flatMap(section =>
+      section.periods.flatMap(period => period.reports.map(report => report.type))
+    ),
+    ...getAdditionalSectionReportTypes(additionalSections)
+  ]);
 
 interface ReportsTabProps {
   project: ProjectFullDto;
@@ -61,6 +83,10 @@ const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
     () => getReportPeriodOptions(getSectionReportingPeriods(progressSections), additionalSections),
     [additionalSections, progressSections]
   );
+  const availableReportTypes = useMemo(
+    () => getAvailableReportTypes(progressSections, additionalSections),
+    [additionalSections, progressSections]
+  );
   const accordionOpenResetKey = getReportsAccordionResetKey(query, filters);
   const unfilteredPeriodsByProjectId = useMemo(
     () => new Map(progressSections.map(section => [section.id, section.periods])),
@@ -83,8 +109,9 @@ const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
         onQueryChange={setQuery}
         indexHref=""
         entityProfile
+        availableReportTypes={availableReportTypes}
       />
-      <PageContent className={twMerge("h-auto flex-1 bg-theme-neutral-100 px-2 pt-0 pb-8")}>
+      <PageContent className={twMerge("bg-theme-neutral-100 h-auto flex-1 px-2 pt-0 pb-8")}>
         {loading ? (
           <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
             <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />

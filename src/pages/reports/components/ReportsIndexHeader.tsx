@@ -18,6 +18,7 @@ import Toolbar from "@/redesignComponents/navigation/Toolbar/Toolbar";
 import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
+import ApiSlice from "@/store/apiSlice";
 
 import { ALL_PROJECTS_VIEW_VALUE, getReportsIndexUrl } from "../reportIndex.utils";
 import { ReportPeriodOptions } from "../reportPeriodFilter";
@@ -29,7 +30,8 @@ import {
   getReportPeriodControl,
   hasReportTypeFilter,
   REPORT_TYPE_LABELS,
-  ReportFilterState
+  ReportFilterState,
+  ReportTypeOption
 } from "./reportFilter.constants";
 import ReportsFilterDrawer from "./ReportsFilterDrawer";
 
@@ -48,6 +50,8 @@ type ReportsIndexHeaderProps = {
   onQueryChange?: (query: string) => void;
   indexHref: string;
   entityProfile?: boolean;
+  /** Limits the report type filter to the types present in the table. */
+  availableReportTypes?: ReportTypeOption[];
 };
 
 const getSearchPlaceholder = (
@@ -74,7 +78,8 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
   onViewChange,
   onQueryChange,
   indexHref,
-  entityProfile = false
+  entityProfile = false,
+  availableReportTypes
 }) => {
   const t = useT();
   const router = useRouter();
@@ -115,10 +120,14 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
   const { create: createDisturbanceReport, isCreating: disturbanceReportCreating } = useCreateDisturbanceReport(
     {},
     useCallback(
-      ({ uuid }) =>
-        router.replace(
+      ({ uuid }) => {
+        // The cached disturbance report indices don't know about the new draft; drop them so the reports
+        // table refetches and shows it when the user comes back.
+        ApiSlice.pruneCache("disturbanceReports");
+        void router.replace(
           `/entity/disturbance-reports/create/framework?entity_uuid=${uuid}&from=${encodeURIComponent(indexHref)}`
-        ),
+        );
+      },
       [indexHref, router]
     ),
     "Failed to create disturbance report"
@@ -243,7 +252,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
       )}
       {!entityProfile && (
         <Toolbar
-          className="sticky top-11 z-10 items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-2 pt-5"
+          className="border-theme-neutral-200 bg-theme-neutral-100 sticky top-11 z-10 items-end border-b !px-2 pt-5"
           classNameContentLeft="min-w-0"
           classNameContentRight="mt-[-1.25rem]"
           contentLeft={
@@ -316,6 +325,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
         onOpenChange={setIsFilterDrawerOpen}
         source={source}
         entityProfile={entityProfile}
+        availableReportTypes={availableReportTypes}
       />
     </>
   );
