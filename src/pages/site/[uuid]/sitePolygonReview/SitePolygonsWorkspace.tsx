@@ -498,6 +498,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     validatingPolygonCount,
     approvePolygons,
     requestInformationForPolygons,
+    clearValidationUi,
     handleBulkDelete,
     handleBulkDownloadClick,
     handleBulkEditDetails,
@@ -746,6 +747,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
         onOverlapFixed={handleDrawerOverlapFixed}
         onRunValidation={runPolygonValidation}
         onRunValidationWithResultsModal={runValidationWithResultsModal}
+        onValidationCleared={clearValidationUi}
         onPolygonDeletingChange={handlePolygonDeletingChange}
         onPolygonSubmittingChange={handlePolygonSubmittingChange}
         onRequestApproveModal={isAdminReview ? handleDrawerRequestApproveModal : undefined}
