@@ -7,6 +7,7 @@ import type { FC, KeyboardEvent, MouseEvent, ReactNode } from "react";
 
 import MenuCustom from "@/redesignComponents/actions/Buttons/Menu/MenuCustom";
 import { MenuItemOption } from "@/redesignComponents/actions/Buttons/Menu/MenuCustom.types";
+import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import { MoreVertIcon, PlusIcon } from "@/redesignComponents/foundations/Icons";
 import Badge from "@/redesignComponents/status/Badge/Badge";
 import NumberBadge from "@/redesignComponents/status/Badge/NumberBadge";
@@ -79,19 +80,29 @@ const SideNavigationLinkItem: FC<SideNavigationLinkItemProps> = ({
         isActive ? "text-theme-primary-300" : "text-theme-neutral-100"
       )}
     >
-      <NextLink href={href} className="min-w-0 flex-1 focus:outline-none" onKeyDown={handleLinkKeyDown}>
-        <Flex alignItems="center" gap={2}>
-          <Badge size="small" notificationCount={isCollapsed && notificationValue > 0 ? notificationValue : undefined}>
-            {icon}
-          </Badge>
-          {isCollapsed ? null : (
-            <>
-              <Text textStyle="400">{t(label)}</Text>
-              <NumberBadge count={notificationValue} />
-            </>
-          )}
-        </Flex>
-      </NextLink>
+      <Tooltip content={t(label)} position="right" disabled={!isCollapsed} preserveFocusOnChild>
+        <NextLink
+          href={href}
+          aria-label={t(label)}
+          className="min-w-0 flex-1 focus:outline-none"
+          onKeyDown={handleLinkKeyDown}
+        >
+          <Flex alignItems="center" gap={2}>
+            <Badge
+              size="small"
+              notificationCount={isCollapsed && notificationValue > 0 ? notificationValue : undefined}
+            >
+              {icon}
+            </Badge>
+            {isCollapsed ? null : (
+              <>
+                <Text textStyle="400">{t(label)}</Text>
+                <NumberBadge count={notificationValue} />
+              </>
+            )}
+          </Flex>
+        </NextLink>
+      </Tooltip>
       {isCollapsed ? null : (
         <Flex alignItems="center" gap={2}>
           {onAddClick != null ? (
