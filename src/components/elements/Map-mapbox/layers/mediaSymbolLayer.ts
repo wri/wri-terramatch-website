@@ -10,6 +10,7 @@ import { clearActivePopup, setActivePopup } from "../interactions/popupCoordinat
 import { registerPopup, removePopups } from "../interactions/popups";
 import { getPulsingDot } from "../pulsing.dot";
 import { MapMedia, MediaCallbacks } from "./mediaTypes";
+import { isStyleAlive } from "./styleGuards";
 
 const PULSING_DOT_IMAGE = "pulsing-dot";
 
@@ -22,14 +23,6 @@ type MediaFeatureProperties = Pick<MapMedia, "uuid" | "name" | "createdAt" | "th
 const mediaClickHandlers = new WeakMap<MapboxMap, (e: MapMouseEvent) => void>();
 // The click handler is registered once per map, so it reads the latest callbacks from here.
 const mediaCallbacks = new WeakMap<MapboxMap, MediaCallbacks>();
-
-const isStyleAlive = (map: MapboxMap): boolean => {
-  try {
-    return map.getStyle() != null;
-  } catch {
-    return false;
-  }
-};
 
 export const removeMediaSymbolLayer = (map: MapboxMap): void => {
   const layerName = LAYERS_NAMES.MEDIA_IMAGES;

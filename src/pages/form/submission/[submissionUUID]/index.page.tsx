@@ -80,6 +80,7 @@ const SubmissionPage = () => {
       <LoadingContainer loading={isLoading || !orgDetailsLoaded || !providerLoaded || !applicationLoaded}>
         <WizardForm
           models={formModels}
+          submissionUuid={submission?.uuid}
           framework={framework}
           fieldsProvider={fieldsProvider}
           onBackFirstStep={router.back}
