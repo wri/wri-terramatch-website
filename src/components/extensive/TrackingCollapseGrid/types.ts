@@ -490,7 +490,6 @@ const getDemographicsEntryConfigs = (type: TrackingType, framework: Framework) =
     switch (framework) {
       case Framework.HBF:
         return HBF_JOBS_DEMOGRAPHICS_TYPE_MAP;
-      case Framework.FF:
       case Framework.FF_1:
         return type === "volunteers" ? FF_VOLUNTEERS_DEMOGRAPHICS_TYPE_MAP : FF_JOBS_DEMOGRAPHICS_TYPE_MAP;
       default:
@@ -501,7 +500,6 @@ const getDemographicsEntryConfigs = (type: TrackingType, framework: Framework) =
       switch (framework) {
         case Framework.HBF:
           return HBF_BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP;
-        case Framework.FF:
         case Framework.FF_1:
           return FF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP;
         default:
@@ -513,7 +511,6 @@ const getDemographicsEntryConfigs = (type: TrackingType, framework: Framework) =
       switch (framework) {
         case Framework.HBF:
           return HBF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP;
-        case Framework.FF:
         case Framework.FF_1:
           return FF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP;
         default:

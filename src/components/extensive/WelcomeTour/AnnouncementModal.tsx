@@ -1,4 +1,3 @@
-import Image, { StaticImageData } from "next/image";
 import { FC, ReactNode } from "react";
 
 import Button from "@/components/elements/Button/Button";
@@ -9,7 +8,7 @@ import { ModalBase } from "../Modal/ModalsBases";
 export interface AnnouncementModalProps {
   title: string;
   body: ReactNode;
-  bannerImage?: StaticImageData;
+  bannerImage?: string;
   primaryCtaLabel: string;
   secondaryCtaLabel: string;
   dontShowAgainLabel: string;
@@ -31,7 +30,7 @@ const AnnouncementModal: FC<AnnouncementModalProps> = ({
 }) => (
   <ModalBase className="pb-10">
     {bannerImage != null ? (
-      <Image
+      <img
         src={bannerImage}
         alt=""
         role="presentation"

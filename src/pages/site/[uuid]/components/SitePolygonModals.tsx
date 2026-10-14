@@ -1,7 +1,6 @@
 import type { FC } from "react";
 
 import type { BulkSitePolygonAttributeChanges } from "@/connections/SitePolygons";
-import type { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 import type { SubmittedPolygonComment } from "../hooks/useSitePolygonBulkActions";
@@ -11,7 +10,7 @@ import ApprovePolygonConfirmation from "./Modals/ApprovePolygon/ApprovePolygonCo
 import PolygonApproved from "./Modals/ApprovePolygon/PolygonApproved";
 import DeletePolygon from "./Modals/DeletePolygon";
 import ExistingPolygon from "./Modals/ExistingPolygon";
-import EditPhotoDetails from "./Modals/GeotaggedPhotos/EditPhotoDetails";
+import MapEditPhotoDetails from "./Modals/GeotaggedPhotos/MapEditPhotoDetails";
 import OverlapFix, { type OverlapFixPolygon } from "./Modals/OverlapFix";
 import PolygonSubmitted from "./Modals/PolygonSubmitted";
 import InformationRequested from "./Modals/RequestInformation/InformationRequested";
@@ -36,7 +35,7 @@ type SitePolygonModalsProps = {
     polygonsFixed: OverlapFixPolygon[];
     polygonsNotFixed: OverlapFixPolygon[];
   };
-  editPhotoDetailsMedia: MediaDto | null;
+  editPhotoDetailsMediaUuid: string | null;
   openBulkEditDrawer: boolean;
   openDeletePolygonModal: boolean;
   openOverlapFixModal: boolean;
@@ -109,7 +108,7 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   deletePayload,
   submitPayload,
   overlapFixResults,
-  editPhotoDetailsMedia,
+  editPhotoDetailsMediaUuid,
   openBulkEditDrawer,
   openDeletePolygonModal,
   openOverlapFixModal,
@@ -284,11 +283,10 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
         backendErrorMessage={uploadErrorMessage}
         onOpenChange={onUploadErrorModalOpenChange}
       />
-      {editPhotoDetailsMedia != null && (
-        <EditPhotoDetails
-          key={editPhotoDetailsMedia.uuid}
-          open
-          data={editPhotoDetailsMedia}
+      {editPhotoDetailsMediaUuid != null && (
+        <MapEditPhotoDetails
+          key={editPhotoDetailsMediaUuid}
+          uuid={editPhotoDetailsMediaUuid}
           onClose={onEditPhotoDetailsClose}
         />
       )}

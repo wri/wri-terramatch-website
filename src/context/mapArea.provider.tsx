@@ -3,8 +3,9 @@ import React, { createContext, ReactNode, useCallback, useContext, useEffect, us
 
 import { closeAllPopups } from "@/components/elements/Map-mapbox/interactions/popupCoordinator";
 import { removePopups } from "@/components/elements/Map-mapbox/interactions/popups";
+import { MapMedia } from "@/components/elements/Map-mapbox/layers/mediaTypes";
 import { EditPolygonState } from "@/components/elements/Map-mapbox/Map.d";
-import { MediaDto, SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { Entity } from "@/types/common";
 
@@ -78,12 +79,12 @@ type MapAreaType = {
   setPolygonApproveConfirmation: (value: string | null) => void;
   polygonRequestInformationConfirmation: string | null;
   setPolygonRequestInformationConfirmation: (value: string | null) => void;
-  editPhotoDetailsMedia: MediaDto | null;
-  setEditPhotoDetailsMedia: (value: MediaDto | null) => void;
+  editPhotoDetailsMediaUuid: string | null;
+  setEditPhotoDetailsMediaUuid: (value: string | null) => void;
   geotaggedPhotosMapVisible: boolean;
   setGeotaggedPhotosMapVisible: (value: boolean) => void;
-  mediaFiles: MediaDto[];
-  setMediaFiles: (value: MediaDto[]) => void;
+  mediaFiles: MapMedia[];
+  setMediaFiles: (value: MapMedia[]) => void;
   resetSiteMapInteractionState: () => void;
 };
 
@@ -134,8 +135,8 @@ const defaultValue: MapAreaType = {
   setPolygonApproveConfirmation: () => {},
   polygonRequestInformationConfirmation: null,
   setPolygonRequestInformationConfirmation: () => {},
-  editPhotoDetailsMedia: null,
-  setEditPhotoDetailsMedia: () => {},
+  editPhotoDetailsMediaUuid: null,
+  setEditPhotoDetailsMediaUuid: () => {},
   geotaggedPhotosMapVisible: true,
   setGeotaggedPhotosMapVisible: () => {},
   mediaFiles: [],
@@ -173,9 +174,9 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [polygonRequestInformationConfirmation, setPolygonRequestInformationConfirmation] = useState<string | null>(
     null
   );
-  const [editPhotoDetailsMedia, setEditPhotoDetailsMedia] = useState<MediaDto | null>(null);
+  const [editPhotoDetailsMediaUuid, setEditPhotoDetailsMediaUuid] = useState<string | null>(null);
   const [geotaggedPhotosMapVisible, setGeotaggedPhotosMapVisible] = useState(true);
-  const [mediaFiles, setMediaFiles] = useState<MediaDto[]>([]);
+  const [mediaFiles, setMediaFiles] = useState<MapMedia[]>([]);
 
   const setEditPolygon = useCallback((value: EditPolygonState) => {
     setEditPolygonInternal(value);
@@ -200,9 +201,9 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   }, []);
 
   const openEditPhotoDetails = useCallback(
-    (media: MediaDto) => {
+    (mediaUuid: string) => {
       closeMapPopups();
-      setEditPhotoDetailsMedia(media);
+      setEditPhotoDetailsMediaUuid(mediaUuid);
     },
     [closeMapPopups]
   );
@@ -233,7 +234,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setDraftPolygonGeometry(undefined);
     setPolygonMapTileNonce(0);
     setPolygonSubmitConfirmation(null);
-    setEditPhotoDetailsMedia(null);
+    setEditPhotoDetailsMediaUuid(null);
     setGeotaggedPhotosMapVisible(true);
     setMediaFiles([]);
   }, [closeMapPopups]);
@@ -285,8 +286,8 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setPolygonApproveConfirmation,
     polygonRequestInformationConfirmation,
     setPolygonRequestInformationConfirmation,
-    editPhotoDetailsMedia,
-    setEditPhotoDetailsMedia,
+    editPhotoDetailsMediaUuid,
+    setEditPhotoDetailsMediaUuid,
     geotaggedPhotosMapVisible,
     setGeotaggedPhotosMapVisible,
     mediaFiles,

@@ -48,7 +48,6 @@ const AuditLog: FC<AuditLogProps> = ({ disturbanceReport, refresh: refreshDistur
                     record={selected}
                     auditLogData={auditLogData}
                     refresh={refetch}
-                    buttonToggle={AuditLogButtonStates.DISTURBANCE_REPORT}
                     entityType="disturbanceReports"
                     viewPD={true}
                   />

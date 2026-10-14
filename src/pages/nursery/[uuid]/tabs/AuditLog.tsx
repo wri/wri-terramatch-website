@@ -48,7 +48,6 @@ const AuditLog = ({ label, nursery, refresh: refreshSite, enableChangeStatus, ..
                     record={selected}
                     auditLogData={auditLogData}
                     refresh={refetch}
-                    buttonToggle={AuditLogButtonStates.NURSERY}
                     entityType={entityType}
                     viewPD={true}
                   />

@@ -132,6 +132,7 @@ const StandardHighLevelSelector: FC<SelectorImplementationProps> = ({
         Item={SelectItem}
         ItemIndicator={SelectItemIndicator}
         Positioner={SelectPositioner}
+        contentProps={keyboardFocus.menuContentProps}
         emptyMessage={emptyMessage}
         items={items}
       />

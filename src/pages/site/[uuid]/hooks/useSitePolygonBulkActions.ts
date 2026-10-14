@@ -144,6 +144,7 @@ export const useSitePolygonBulkActions = ({
   const [bulkEditPayload, setBulkEditPayload] = useState<{
     polygons: PolygonTableRow[];
     sitePolygonUuids: string[];
+    geometryPolygonUuids: string[];
   } | null>(null);
   const [showSubmitPolygonsModal, setSubmitPolygonsModal] = useState(false);
   const [showSubmitPolygonConfirmationModal, setSubmitPolygonConfirmationModal] = useState(false);
@@ -458,12 +459,10 @@ export const useSitePolygonBulkActions = ({
     setSubmittingPolygonCount(count);
   }, []);
 
-  const clearValidationUiAfterOverlapFix = useCallback(
+  const clearValidationUi = useCallback(
     async (geometryPolygonUuids: string[]) => {
-      onValidationPendingClear?.();
-
       if (geometryPolygonUuids.length > 0) {
-        // Match backend clearValidationForPolygons: drop criteria + status from client caches only.
+        // Match backend criteria clearing: drop criteria + status from client caches only.
         prunePolygonValidationCache(...geometryPolygonUuids);
         onValidationUiCleared?.(geometryPolygonUuids);
       }
@@ -472,7 +471,15 @@ export const useSitePolygonBulkActions = ({
 
       return overlapValidations ?? [];
     },
-    [fetchAllValidationPages, fetchOverlapValidations, onValidationPendingClear, onValidationUiCleared]
+    [fetchAllValidationPages, fetchOverlapValidations, onValidationUiCleared]
+  );
+
+  const clearValidationUiAfterOverlapFix = useCallback(
+    (geometryPolygonUuids: string[]) => {
+      onValidationPendingClear?.();
+      return clearValidationUi(geometryPolygonUuids);
+    },
+    [clearValidationUi, onValidationPendingClear]
   );
 
   const handleDrawerOverlapFixed = useCallback(
@@ -998,11 +1005,18 @@ export const useSitePolygonBulkActions = ({
     }
     setBulkEditPayload({
       polygons: selectedRows,
-      sitePolygonUuids: selectedSitePolygonUuids
+      sitePolygonUuids: selectedSitePolygonUuids,
+      geometryPolygonUuids: selectedGeometryPolygonUuids
     });
     clearBulkTableSelection();
     setShowBulkEditDrawer(true);
-  }, [clearBulkTableSelection, openPolygonEditDrawerForRow, selectedRows, selectedSitePolygonUuids]);
+  }, [
+    clearBulkTableSelection,
+    openPolygonEditDrawerForRow,
+    selectedGeometryPolygonUuids,
+    selectedRows,
+    selectedSitePolygonUuids
+  ]);
 
   const handleBulkEditDrawerOpenChange = useCallback((open: boolean) => {
     setShowBulkEditDrawer(open);
@@ -1040,7 +1054,7 @@ export const useSitePolygonBulkActions = ({
         invalidatePolygonMapTiles();
         setShowBulkEditDrawer(false);
         setBulkEditPayload(null);
-        await refreshPolygonData();
+        await Promise.all([refreshPolygonData(), clearValidationUi(bulkEditPayload?.geometryPolygonUuids ?? [])]);
         completePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges, toastLabels.savingChangesComplete);
       } catch (error) {
         Log.error("Failed to update selected polygon details:", error);
@@ -1050,7 +1064,16 @@ export const useSitePolygonBulkActions = ({
         setIsBulkUpdatingPolygons(false);
       }
     },
-    [bulkEditPayload, closeMapPopups, invalidatePolygonMapTiles, refreshPolygonData, site.uuid, t, toastLabels]
+    [
+      bulkEditPayload,
+      clearValidationUi,
+      closeMapPopups,
+      invalidatePolygonMapTiles,
+      refreshPolygonData,
+      site.uuid,
+      t,
+      toastLabels
+    ]
   );
 
   return {
@@ -1083,6 +1106,7 @@ export const useSitePolygonBulkActions = ({
     validatingPolygonCount,
     approvePolygons,
     requestInformationForPolygons,
+    clearValidationUi,
     handleBulkDelete,
     handleBulkDownloadClick,
     handleBulkEditDetails,

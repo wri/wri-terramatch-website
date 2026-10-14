@@ -17,6 +17,7 @@ import Log from "@/utils/log";
 
 import { ANR_PLOT_FILL_LAYER_ID } from "../adapters/geoserver";
 import PopupProviders from "../components/PopupProviders";
+import { isMediaPhotoAt } from "../layers/mediaPhotoHitTest";
 import type {
   DashboardPopupContext,
   EditPolygonState,
@@ -214,6 +215,7 @@ const handleLayerClick = (
     Log.warn("No feature found in click event");
     return;
   }
+  if (isMediaPhotoAt(map, e.point)) return;
   e.preventDefault();
 
   const { dashboard, setLoader, setMobilePopupData } = options;

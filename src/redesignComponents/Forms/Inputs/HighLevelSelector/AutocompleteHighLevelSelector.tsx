@@ -1,7 +1,7 @@
 import { Combobox, useListCollection } from "@chakra-ui/react";
 import { FC, useEffect, useId } from "react";
 
-import { useAutocompleteMenuNavigation, useKeyboardFocusRing } from "./HighLevelSelector.keyboard";
+import { useKeyboardFocusRing } from "./HighLevelSelector.keyboard";
 import {
   ChakraSlot,
   DEFAULT_EMPTY_MESSAGE,
@@ -66,7 +66,6 @@ const AutocompleteHighLevelSelector: FC<SelectorImplementationProps> = ({
   const labelId = `${rootId}-label`;
   const { open, updateOpen } = useSelectorOpenState(defaultOpen, controlledOpen);
   const keyboardFocus = useKeyboardFocusRing();
-  const menuNavigation = useAutocompleteMenuNavigation(open);
   const { collection, filter, set } = useListCollection<HighLevelSelectorItem>({
     initialItems: items,
     filter: matchesSearch
@@ -80,8 +79,6 @@ const AutocompleteHighLevelSelector: FC<SelectorImplementationProps> = ({
   };
 
   const handleOpenChange = (details: SelectorOpenChangeDetails) => {
-    if (menuNavigation.shouldKeepMenuOpen(details.open)) return;
-
     updateOpen(details.open);
     if (details.open && (details.reason === "input-click" || details.reason === "trigger-click")) filter("");
     onOpenChange?.(details.open);
@@ -145,7 +142,6 @@ const AutocompleteHighLevelSelector: FC<SelectorImplementationProps> = ({
           width="100%"
           {...keyboardFocus.focusRingStyles}
           onBlur={onBlur}
-          onKeyDown={menuNavigation.handleInputKeyDown}
           _placeholder={{ color: "neutral.600", fontWeight: "normal" }}
         />
 
@@ -171,7 +167,7 @@ const AutocompleteHighLevelSelector: FC<SelectorImplementationProps> = ({
         Item={ComboboxItem}
         ItemIndicator={ComboboxItemIndicator}
         Positioner={ComboboxPositioner}
-        contentRef={menuNavigation.contentRef}
+        contentProps={keyboardFocus.menuContentProps}
         emptyMessage={emptyMessage}
         items={collection.items}
       />

@@ -1327,7 +1327,6 @@ export type PolygonAttributeDefinitionDto = {
     | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
     | "barka-fund";
@@ -1367,7 +1366,6 @@ export type CreatePolygonAttributeDefinitionAttributes = {
     | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
     | "barka-fund";
@@ -1427,7 +1425,7 @@ export type ResearchTreeCountDto = {
   projectUuid: string;
   verificationMethod: "field" | "remote";
   reportedCount: number;
-  treeCountAdj: number;
+  treeCountAdj: number | null;
   upperBounds: number;
   lowerBounds: number;
   /**
@@ -1449,7 +1447,7 @@ export type CreateResearchTreeCountAttributes = {
   projectUuid: string;
   verificationMethod: "field" | "remote";
   reportedCount: number;
-  treeCountAdj: number;
+  treeCountAdj?: number;
   upperBounds: number;
   lowerBounds: number;
 };
@@ -1466,7 +1464,10 @@ export type CreateResearchTreeCountBody = {
 export type UpdateResearchTreeCountAttributes = {
   verificationMethod?: "field" | "remote";
   reportedCount?: number;
-  treeCountAdj?: number;
+  /**
+   * Send null to clear the value
+   */
+  treeCountAdj?: number | null;
   upperBounds?: number;
   lowerBounds?: number;
 };

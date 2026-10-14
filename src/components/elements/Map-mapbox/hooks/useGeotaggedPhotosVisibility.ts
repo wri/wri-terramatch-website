@@ -2,20 +2,17 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { usePolygonTableHasSelection } from "@/context/polygonTableInteraction.store";
 
 import { useChampionsMap } from "../championsMap.context";
-import { OverlapPolygonPoint } from "../layers/overlapTypes";
 
 type UseGeotaggedPhotosVisibilityParams = {
   alwaysShowPhotosOnMap?: boolean;
   hideMediaOnMap?: boolean;
   isPolygonGeometryLoading?: boolean;
-  overlapPolygons?: OverlapPolygonPoint[];
 };
 
 export function useGeotaggedPhotosVisibility({
   alwaysShowPhotosOnMap = false,
   hideMediaOnMap = false,
-  isPolygonGeometryLoading = false,
-  overlapPolygons
+  isPolygonGeometryLoading = false
 }: UseGeotaggedPhotosVisibilityParams): boolean {
   const championsMap = useChampionsMap();
   const { selectedPolygonsInCheckbox, geotaggedPhotosMapVisible } = useMapAreaContext();
@@ -34,9 +31,7 @@ export function useGeotaggedPhotosVisibility({
   }
 
   const hasBulkSelection = selectedPolygonsInCheckbox.length > 0 || hasTableBulkSelection;
-  const hasOverlapIndicators = (overlapPolygons?.length ?? 0) > 0;
-
-  if (hasBulkSelection || hasOverlapIndicators) {
+  if (hasBulkSelection) {
     return false;
   }
 

@@ -1,6 +1,5 @@
 import { Text } from "@chakra-ui/react";
 import type { Meta, StoryObj } from "@storybook/react";
-import Image from "next/image";
 import React, { useState } from "react";
 
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
@@ -37,7 +36,7 @@ const ModalContent = ({ isLarge = false }: { isLarge?: boolean }) => {
           usage.
         </Text>
       </div>
-      <Image
+      <img
         src="./images/modal-story.png"
         alt="Modal Example"
         width={100}

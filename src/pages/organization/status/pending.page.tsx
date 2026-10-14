@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import Image from "next/image";
 import HandsPlantingImage from "public/images/hands-planting.webp";
 
 import Text from "@/components/elements/Text/Text";
@@ -15,7 +14,7 @@ const OrganizationPendingPage = () => {
     <BackgroundLayout>
       <ContentLayout>
         <div className="flex w-full flex-col items-center gap-8 bg-white py-15">
-          <Image src={HandsPlantingImage} alt="Hands Planting" width={550} height={379} placeholder="blur" />
+          <img src={HandsPlantingImage.src} alt="Hands Planting" width={550} height={379} />
           <Text variant="text-heading-700" className="text-center">
             {t("Your request to join this organization is being reviewed")}
           </Text>

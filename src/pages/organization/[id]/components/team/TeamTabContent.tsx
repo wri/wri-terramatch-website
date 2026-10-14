@@ -32,7 +32,7 @@ const TeamTabContent: FC = () => {
 
   const [, { data: pendingUsers, refetch: refetchPending }] = useOrganisationUserAssociations({
     organisationUuid: String(query.id),
-    status: "requested"
+    status: "pending"
   });
 
   const [, { create, isCreating, createFailure }] = useOrgUserAssociationUpdate({

@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import Image from "next/image";
 import Link from "next/link";
 import fondoHaritBharatImage from "public/images/_AJL2963.jpg";
 import pricelessPlanetCoalitionExplainerImage from "public/images/priceless-planet-coalition-explainer.webp";
@@ -71,7 +70,7 @@ const LandingPage = () => {
         )}
         buttonText={t("Learn more")}
         buttonLink="https://www.africa.terramatch.org/"
-        imageSrc={TerrafundAFR100ExplainerImage}
+        imageSrc={TerrafundAFR100ExplainerImage.src}
         imageCredit={{
           name: "Serrah Galos/WRI",
           position: "right"
@@ -84,7 +83,7 @@ const LandingPage = () => {
         )}
         buttonText={t("Learn more")}
         buttonLink="https://www.mastercard.us/en-us/vision/corp-responsibility/priceless-planet.html"
-        imageSrc={pricelessPlanetCoalitionExplainerImage}
+        imageSrc={pricelessPlanetCoalitionExplainerImage.src}
         className="flex-row-reverse"
         imageCredit={{
           name: "Peter Irungu/WRI",
@@ -98,7 +97,7 @@ const LandingPage = () => {
         )}
         buttonText={t("Learn more")}
         buttonLink="https://www.haritbharatfund.in/"
-        imageSrc={fondoHaritBharatImage}
+        imageSrc={fondoHaritBharatImage.src}
         imageCredit={{
           name: "FOLU India",
           position: "right"
@@ -111,7 +110,7 @@ const LandingPage = () => {
         )}
         buttonText={t("Sign up")}
         buttonLink="/auth/signup"
-        imageSrc={UpcomingOpportunitiesExplainerImage}
+        imageSrc={UpcomingOpportunitiesExplainerImage.src}
         className="flex-row-reverse"
         imageCredit={{
           name: "Sabin Ray/WRI",
@@ -121,11 +120,10 @@ const LandingPage = () => {
       <TwoByOneSection.Container className="bg-black">
         <TwoByOneSection.Top className="md:px-20 md:py-16">
           <div className="relative">
-            <Image
+            <img
               alt="support"
               className="m-auto aspect-[16/9] h-[278px] w-full bg-cover bg-no-repeat object-cover md:h-[292px]"
-              src={SupportImage}
-              placeholder="blur"
+              src={SupportImage.src}
             />
             <ImageCredit className="absolute bottom-0 right-5">Sabin Ray/WRI</ImageCredit>
           </div>

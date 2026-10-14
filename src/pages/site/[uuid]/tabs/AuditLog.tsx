@@ -64,7 +64,6 @@ const AuditLog: FC<AuditLogProps> = ({ site, refresh: refreshSite }) => {
                     record={selected}
                     auditLogData={auditLogData}
                     refresh={refetch}
-                    buttonToggle={buttonToggle}
                     entityType={entityType}
                     viewPD={true}
                   />

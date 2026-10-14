@@ -16,7 +16,7 @@ const WelcomeModal: FC<IModalProps> = ({ onSkip, onDontShowAgain, onConfirm }) =
 
   return (
     <AnnouncementModal
-      bannerImage={WelcomeBanner}
+      bannerImage={WelcomeBanner.src}
       title={t("Welcome to terramatch!")}
       body={t(
         `Take the guided tour to be shown the latest features of the TerraMatch platform and read more in the  <a href="{zendeskSupportLink}" target="_blank" rel="noopenner noreferrer">Help Center.</a>`,

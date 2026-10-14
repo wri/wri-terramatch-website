@@ -104,8 +104,8 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     setPolygonApproveConfirmation,
     polygonRequestInformationConfirmation,
     setPolygonRequestInformationConfirmation,
-    editPhotoDetailsMedia,
-    setEditPhotoDetailsMedia
+    editPhotoDetailsMediaUuid,
+    setEditPhotoDetailsMediaUuid
   } = useMapAreaContext();
 
   const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -498,6 +498,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     validatingPolygonCount,
     approvePolygons,
     requestInformationForPolygons,
+    clearValidationUi,
     handleBulkDelete,
     handleBulkDownloadClick,
     handleBulkEditDetails,
@@ -746,6 +747,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
         onOverlapFixed={handleDrawerOverlapFixed}
         onRunValidation={runPolygonValidation}
         onRunValidationWithResultsModal={runValidationWithResultsModal}
+        onValidationCleared={clearValidationUi}
         onPolygonDeletingChange={handlePolygonDeletingChange}
         onPolygonSubmittingChange={handlePolygonSubmittingChange}
         onRequestApproveModal={isAdminReview ? handleDrawerRequestApproveModal : undefined}
@@ -848,7 +850,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           deletePayload={deletePayload}
           submitPayload={submitPayload}
           overlapFixResults={overlapFixResults}
-          editPhotoDetailsMedia={editPhotoDetailsMedia}
+          editPhotoDetailsMediaUuid={editPhotoDetailsMediaUuid}
           openBulkEditDrawer={showBulkEditDrawer}
           openDeletePolygonModal={showDeletePolygonModal}
           openOverlapFixModal={showOverlapFixModal}
@@ -867,7 +869,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           onBulkEditSave={handleBulkEditSave}
           onDelete={handleBulkDelete}
           onDeletePolygonModalOpenChange={handleDeletePolygonModalChange}
-          onEditPhotoDetailsClose={() => setEditPhotoDetailsMedia(null)}
+          onEditPhotoDetailsClose={() => setEditPhotoDetailsMediaUuid(null)}
           onMapPopupSubmitConfirmationModalOpenChange={handleMapPopupSubmitConfirmationModalChange}
           onMapPopupSubmit={handleConfirmMapPopupSubmit}
           onOverlapFixClose={handleOverlapFixModalClose}

@@ -1,17 +1,12 @@
 import { useT } from "@transifex/react";
-import Link from "next/link";
 import { FC } from "react";
-import { Link as RaLink, useBasename } from "react-admin";
 
-import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
 import { AuditStatusEntityType } from "@/connections/AuditStatus";
 import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useAuditEntityTypeName } from "@/hooks/translation/useAuditEntityTypeName";
 
 import CommentarySection from "../../PolygonReviewTab/components/CommentarySection/CommentarySection";
-import { ADMIN_SHOW_AUDIT_LOG_TAB_INDEX } from "../constants/adminShowAuditLogTabIndex";
-import { AuditLogButtonStates } from "../constants/enum";
 import AuditLogTable from "./AuditLogTable";
 
 type SiteAuditLogEntityStatusProps = {
@@ -19,11 +14,8 @@ type SiteAuditLogEntityStatusProps = {
   record: SelectedItem | null;
   auditLogData?: { data: AuditStatusDto[] };
   refresh: () => void;
-  buttonToggle: number;
-  verifyEntity?: boolean;
   viewPD?: boolean;
   auditData?: { entity: string; entityUuid: string };
-  isProjectReport?: boolean;
 };
 
 type SelectedItem = {
@@ -35,58 +27,25 @@ type SelectedItem = {
   status?: string | undefined;
 };
 
-const REPORT_TYPES_MAPPING: { [key: number]: string } = {
-  4: "project-reports",
-  5: "site-reports",
-  6: "nursery-reports",
-  7: "disturbance-reports"
-};
+// Keeps acronyms such as "SRP" uppercase when the name is used mid-sentence.
+const toMidSentenceName = (name: string) =>
+  name
+    .split(" ")
+    .map(word => (word === word.toUpperCase() ? word : word.toLowerCase()))
+    .join(" ");
 
 const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
   entityType,
   record,
   auditLogData,
   refresh,
-  buttonToggle,
-  verifyEntity,
   viewPD = false,
-  auditData,
-  isProjectReport
+  auditData
 }) => {
-  const isSite = buttonToggle === AuditLogButtonStates.SITE;
-  const isNurseryToggle = buttonToggle === AuditLogButtonStates.NURSERY;
-  const basename = useBasename();
   const t = useT();
 
   const auditEntityTypeName = useAuditEntityTypeName();
   const displayEntityName = auditEntityTypeName[entityType];
-
-  const formatUrl = () => {
-    switch (REPORT_TYPES_MAPPING[buttonToggle]) {
-      case "project-reports":
-        return `/${modules.projectReport.ResourceName}/${record?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.standardReport}`;
-      case "site-reports":
-        return `/${modules.siteReport.ResourceName}/${record?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.standardReport}`;
-      case "nursery-reports":
-        return `/${modules.nurseryReport.ResourceName}/${record?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.standardReport}`;
-      default:
-        return "";
-    }
-  };
-  const title = record?.title ?? record?.name;
-  const redirectTo = viewPD
-    ? `/${
-        isProjectReport
-          ? "reports/" + REPORT_TYPES_MAPPING[buttonToggle].replace(/s$/, "")
-          : isNurseryToggle
-          ? "nursery"
-          : "site"
-      }/${record?.uuid}${isNurseryToggle ? "" : "?tab=audit-log"}`
-    : `${basename}${
-        isProjectReport
-          ? formatUrl()
-          : `/${modules.site.ResourceName}/${record?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.site}`
-      }`;
 
   return (
     <div className="flex flex-col gap-6">
@@ -96,32 +55,12 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
         </Text>
         <Text variant="text-14-light" className="mb-4">
           {t("Update the {displayEntityName} status, view updates, or add comments", {
-            displayEntityName: displayEntityName.toLowerCase()
+            displayEntityName: toMidSentenceName(displayEntityName)
           })}
         </Text>
         <CommentarySection record={record} entity={entityType} refresh={refresh} viewCommentsList={false} />
       </div>
-      {viewPD && (
-        <div>
-          {!isSite && !verifyEntity && !isNurseryToggle && (
-            <Text variant="text-16-bold">{t("History and Discussion for {title}", { title })}</Text>
-          )}
-          {(isSite || verifyEntity || isNurseryToggle) && (
-            <Text variant="text-16-bold">
-              {t("History and discussions for")}{" "}
-              {viewPD ? (
-                <Link className="text-16-bold !text-[#000000DD]" href={redirectTo}>
-                  {title}
-                </Link>
-              ) : (
-                <RaLink className="text-16-bold !text-[#000000DD]" to={redirectTo}>
-                  {title}
-                </RaLink>
-              )}
-            </Text>
-          )}
-        </div>
-      )}
+      {viewPD && <Text variant="text-16-bold">{t("History and Discussion")}</Text>}
       {auditLogData != null && viewPD && (
         <AuditLogTable auditLogData={auditLogData!} auditData={auditData} refresh={refresh} />
       )}

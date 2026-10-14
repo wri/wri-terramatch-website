@@ -683,7 +683,6 @@ export type AboutSectionIndexQueryParams = {
     | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
     | "barka-fund";
@@ -1784,6 +1783,90 @@ export type MediaDeleteResponse = {
 export const mediaDelete = new V3ApiEndpoint<MediaDeleteResponse, MediaDeleteError, {}, {}>(
   "/entities/v3/files/{uuid}",
   "DELETE"
+);
+
+export type MediaMapIndexPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * Entity type whose map photos are requested.
+   */
+  entity: "projects" | "sites";
+};
+
+export type MediaMapIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type MediaMapIndexResponse = {
+  meta?: {
+    /**
+     * @example mediaMapIndexes
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example mediaMapIndexes
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.MediaMapIndexDto;
+  };
+};
+
+export type MediaMapIndexVariables = {
+  pathParams: MediaMapIndexPathParams;
+};
+
+/**
+ * Covers the same media as the entity's media association index (a project includes its sites,
+ *       nurseries and reports). Not paginated by design: map markers need the complete set in one response, and
+ *       each entry only carries the few attributes the map needs. Use the media association index for galleries.
+ */
+export const mediaMapIndex = new V3ApiEndpoint<MediaMapIndexResponse, MediaMapIndexError, MediaMapIndexVariables, {}>(
+  "/entities/v3/files/{entity}/{uuid}/mediaMapIndex",
+  "GET"
 );
 
 export type SiteMediaBulkUploadPathParams = {
@@ -3086,6 +3169,84 @@ export const getAggregateReports = new V3ApiEndpoint<
   {}
 >("/entities/v3/{entity}/{uuid}/aggregateReports", "GET");
 
+export type ReportCountsGetQueryParams = {
+  /**
+   * Inclusive lower bound for due date
+   *
+   * @format date
+   */
+  dueDateFrom?: string;
+  /**
+   * Inclusive upper bound for due date
+   *
+   * @format date
+   */
+  dueDateTo?: string;
+  /**
+   * Due month (1-12)
+   *
+   * @minimum 1
+   * @maximum 12
+   */
+  dueMonth?: number;
+  /**
+   * Due year
+   */
+  dueYear?: number;
+  /**
+   * Report types to include. If omitted, all report types are included.
+   */
+  reportTypes?: ("disturbanceReports" | "nurseryReports" | "projectReports" | "siteReports" | "srpReports")[];
+  statuses?: ("due" | "draft" | "pending-approval" | "approved" | "information-required")[];
+  projectUuid?: string;
+  /**
+   * Search term matched against project, site and nursery names. A site or nursery report matches if its site / nursery or project name matches; project-level reports match on project name.
+   */
+  search?: string;
+};
+
+export type ReportCountsGetError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type ReportCountsGetResponse = {
+  meta?: {
+    /**
+     * @example reportCounts
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example reportCounts
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.ReportCountsDto;
+  };
+};
+
+export type ReportCountsGetVariables = {
+  queryParams?: ReportCountsGetQueryParams;
+};
+
+export const reportCountsGet = new V3ApiEndpoint<
+  ReportCountsGetResponse,
+  ReportCountsGetError,
+  ReportCountsGetVariables,
+  {}
+>("/entities/v3/reportCounts", "GET");
+
 export type EntityIndexPathParams = {
   /**
    * Entity type to retrieve
@@ -3768,6 +3929,141 @@ export const entityCreate = new V3ApiEndpoint<EntityCreateResponse, EntityCreate
   "POST"
 );
 
+export type EntityReportsMetaIndexPathParams = {
+  /**
+   * Entity type to retrieve report meta for
+   */
+  entity: "projects";
+};
+
+export type EntityReportsMetaIndexQueryParams = {
+  /**
+   * Inclusive lower bound for due date
+   *
+   * @format date
+   */
+  dueDateFrom?: string;
+  /**
+   * Inclusive upper bound for due date
+   *
+   * @format date
+   */
+  dueDateTo?: string;
+  /**
+   * Due month (1-12)
+   *
+   * @minimum 1
+   * @maximum 12
+   */
+  dueMonth?: number;
+  /**
+   * Due year
+   */
+  dueYear?: number;
+  /**
+   * Report types to include. If omitted, all report types are included.
+   */
+  reportTypes?: ("disturbanceReports" | "nurseryReports" | "projectReports" | "siteReports" | "srpReports")[];
+  statuses?: ("due" | "draft" | "pending-approval" | "approved" | "information-required")[];
+  projectUuid?: string;
+  /**
+   * Search term matched against project, site and nursery names. A site or nursery report matches if its site / nursery or project name matches; project-level reports match on project name.
+   */
+  search?: string;
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+};
+
+export type EntityReportsMetaIndexError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type EntityReportsMetaIndexResponse = {
+  meta?: {
+    /**
+     * @example projectReportsMetas
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The current page number.
+       */
+      pageNumber?: number;
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
+  };
+  data?: {
+    /**
+     * @example projectReportsMetas
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ProjectReportMetaDto;
+  }[];
+};
+
+export type EntityReportsMetaIndexVariables = {
+  pathParams: EntityReportsMetaIndexPathParams;
+  queryParams?: EntityReportsMetaIndexQueryParams;
+};
+
+export const entityReportsMetaIndex = new V3ApiEndpoint<
+  EntityReportsMetaIndexResponse,
+  EntityReportsMetaIndexError,
+  EntityReportsMetaIndexVariables,
+  {}
+>("/entities/v3/{entity}/reportsMeta", "GET");
+
 export type EntityExportAllPathParams = {
   /**
    * Entity type to retrieve
@@ -3796,7 +4092,6 @@ export type EntityExportAllQueryParams = {
     | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
     | "barka-fund";
@@ -7591,7 +7886,16 @@ export const operationsByTag = {
   },
   aboutSections: { aboutSectionIndex, aboutSectionCreate, aboutSectionGet, aboutSectionUpdate, aboutSectionDelete },
   tasks: { taskIndex, taskGet, taskUpdate },
-  files: { exportImage, getMedia, mediaUpdate, mediaDelete, siteMediaBulkUpload, uploadFile, mediaBulkDelete },
+  files: {
+    exportImage,
+    getMedia,
+    mediaUpdate,
+    mediaDelete,
+    mediaMapIndex,
+    siteMediaBulkUpload,
+    uploadFile,
+    mediaBulkDelete
+  },
   trees: {
     treeScientificNamesSearch,
     establishmentTreesFind,
@@ -7604,8 +7908,10 @@ export const operationsByTag = {
   auditStatus: { getAuditStatuses, createAuditStatus, updateAuditStatus, deleteAuditStatus },
   aggregateReports: { getAggregateReports },
   entities: {
+    reportCountsGet,
     entityIndex,
     entityCreate,
+    entityReportsMetaIndex,
     entityExportAll,
     entityPushTranslations,
     entityPullTranslations,

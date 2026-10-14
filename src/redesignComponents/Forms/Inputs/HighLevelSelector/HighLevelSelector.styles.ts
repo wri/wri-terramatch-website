@@ -48,7 +48,7 @@ export const contentMenuStyles = {
   bg: "neutral.100",
   border: "0.0625rem solid",
   borderColor: "neutral.400",
-  borderRadius: "0.5rem",
+  borderRadius: "0.25rem",
   borderTopLeftRadius: "0 !important",
   borderTopRightRadius: "0 !important",
   boxShadow: "0 0.25rem 0.375rem -0.25rem rgba(0, 0, 0, 0.1), 0 0.625rem 0.9375rem -0.1875rem rgba(0, 0, 0, 0.1)",
@@ -64,25 +64,13 @@ export const contentMenuStyles = {
   width: "100%"
 } as const;
 
-export const menuContentStyles = {
-  bg: "neutral.100",
-  color: "neutral.900",
-  display: "flex",
-  flexDirection: "column",
-  fontFamily: "Inter, sans-serif",
-  fontSize: "0.875rem",
-  maxHeight: "18rem",
-  outline: "none",
-  overflowY: "auto",
-  px: 1,
-  width: "100%"
-} as const;
-
 const menuItemFocusStyles = {
-  bg: "transparent",
-  borderRadius: "0.375rem",
-  boxShadow: "0 0 0 0.125rem var(--chakra-colors-neutral-100), 0 0 0 0.25rem var(--chakra-colors-primary-700)",
-  outline: "none",
+  bg: "primary.500/20",
+  boxShadow:
+    "0 0 0 0.125rem var(--chakra-colors-neutral-100), 0 0.125rem 0.125rem 0.25rem color-mix(in srgb, var(--chakra-colors-neutral-900) 5%, transparent)",
+  outline: "0.125rem solid",
+  outlineColor: "primary.700",
+  outlineOffset: "0.125rem",
   zIndex: 1
 } as const;
 
@@ -90,9 +78,9 @@ export const getMenuItemStyles = (disabled = false) =>
   ({
     alignItems: "baseline",
     bg: "transparent",
-    borderRadius: "0.25rem",
+    borderRadius: "0.125rem",
     color: "neutral.900",
-    cursor: disabled ? "not-allowed" : "default",
+    cursor: disabled ? "not-allowed" : "pointer",
     display: "flex",
     flexDirection: "row",
     gap: 2,
@@ -101,7 +89,7 @@ export const getMenuItemStyles = (disabled = false) =>
     outline: "none",
     position: "relative",
     px: 2,
-    py: 2,
+    py: 1.5,
     width: "100%",
     _disabled: {
       bg: "transparent",
@@ -114,7 +102,6 @@ export const getMenuItemStyles = (disabled = false) =>
     },
     _hover: { bg: disabled ? "transparent" : "primary.500/20" },
     _active: { bg: disabled ? "transparent" : "primary.500/40" },
-    _focusVisible: menuItemFocusStyles,
     _checked: {
       bg: "transparent",
       color: "neutral.900"
@@ -125,9 +112,7 @@ export const getMenuItemStyles = (disabled = false) =>
           "&:active, &[data-active]": {
             backgroundColor: "color-mix(in srgb, var(--chakra-colors-primary-500) 40%, transparent) !important"
           },
-          "&:focus-visible": {
-            backgroundColor: "transparent !important"
-          },
+          "[data-nav-source='keyboard'] &[data-highlighted]": menuItemFocusStyles,
           "&[aria-selected='true'] [data-selector-option-text], &[data-state='checked'] [data-selector-option-text]": {
             fontWeight: "700"
           }
