@@ -256,8 +256,8 @@ export const getEditDisabledTooltip = (reports: ReportIndexItem[], t: Translate)
   if (reports.length !== 1 || isReportEditable(reports[0])) return undefined;
 
   return reports[0].nothingToReport
-    ? t('This report has been marked as "Nothing to Report" and can’t be edited')
-    : t("This report has already been submitted for review and can’t be edited");
+    ? t("This report has already been marked as “Nothing to Report” and submitted for review.")
+    : t("This report has already been submitted for review.");
 };
 
 export const isReportCompleteEnoughToSubmit = (report: ReportIndexItem) => {
@@ -274,12 +274,18 @@ export const isReportSubmittable = (report: ReportIndexItem) => {
   return isReportCompleteEnoughToSubmit(report);
 };
 
-export type ReportSubmitBlockingReason = "approved" | "pending-approval" | "incomplete" | "ineligible";
+export type ReportSubmitBlockingReason =
+  | "approved"
+  | "pending-approval"
+  | "changes-unresolved"
+  | "incomplete"
+  | "ineligible";
 
 export const getReportSubmitBlockingReason = (report: ReportIndexItem): ReportSubmitBlockingReason | null => {
   if (isReportSubmittable(report)) return null;
   if (report.status === "approved") return "approved";
   if (report.status === "pending-approval") return "pending-approval";
+  if (report.status === "information-required" && hasOpenChangeRequestDraft(report)) return "changes-unresolved";
   if (SUBMITTABLE_STATUSES.has(report.status) && !isReportCompleteEnoughToSubmit(report)) {
     return "incomplete";
   }
@@ -294,22 +300,26 @@ export const getSubmitDisabledTooltip = (reports: ReportIndexItem[], t: Translat
   if (reports.length === 1) {
     switch (getReportSubmitBlockingReason(reports[0])) {
       case "approved":
-        return t("This report has already been approved");
+        return t("This report has already been approved.");
       case "pending-approval":
         return reports[0].nothingToReport
-          ? t('This report has been marked as "Nothing to Report" and has already been submitted for review')
-          : t("This report has already been submitted for review");
+          ? t("This report has already been submitted as “Nothing to Report”")
+          : t("This report has already been submitted for review.");
+      case "changes-unresolved":
+        return t(
+          "This report has been returned for more information. Please resolve the requested changes before submitting"
+        );
       case "incomplete":
-        return t("One or more selected reports are incomplete. Please complete the required fields before submitting");
+        return t("One or more selected reports are incomplete. Please complete the required fields before submitting.");
       default:
         return t(
-          "One or more selected reports can't be submitted because they are already approved, pending approval, or incomplete"
+          "One or more selected reports can’t be submitted because they are incomplete, already submitted for review or approved."
         );
     }
   }
 
   return t(
-    "One or more selected reports can't be submitted because they are already approved, pending approval, or incomplete"
+    "One or more selected reports can’t be submitted because they are incomplete, already submitted for review or approved."
   );
 };
 
@@ -323,6 +333,7 @@ export type ReportNothingToReportBlockingReason =
   | "already-nothing-to-report"
   | "approved"
   | "pending-approval"
+  | "information-required"
   | "ineligible";
 
 export const getReportNothingToReportBlockingReason = (
@@ -332,6 +343,7 @@ export const getReportNothingToReportBlockingReason = (
   if (report.nothingToReport) return "already-nothing-to-report";
   if (report.status === "approved") return "approved";
   if (report.status === "pending-approval") return "pending-approval";
+  if (report.status === "information-required") return "information-required";
   return "ineligible";
 };
 
@@ -341,19 +353,23 @@ export const getNothingToReportDisabledTooltip = (reports: ReportIndexItem[], t:
   if (reports.length === 1) {
     switch (getReportNothingToReportBlockingReason(reports[0])) {
       case "already-nothing-to-report":
-        return t('This report has already been marked as "Nothing to Report"');
+        return t("This report has already been marked as “Nothing to Report”");
       case "pending-approval":
-        return t('This report has already been submitted for review and can\'t be marked as "Nothing to Report"');
+        return t("This report has already been submitted for review.");
+      case "information-required":
+        return t("This report has been returned for more information");
       case "approved":
-        return t('This report has already been approved and can\'t be marked as "Nothing to Report"');
+        return t("This report has already been approved.");
       default:
         return t(
-          "One or more selected reports have already been submitted or approved. Deselect those reports to continue"
+          "One or more selected reports can’t be marked as “Nothing to Report” because they are already submitted for review or approved."
         );
     }
   }
 
-  return t("One or more selected reports have already been submitted or approved. Deselect those reports to continue");
+  return t(
+    "One or more selected reports can’t be marked as “Nothing to Report” because they are already submitted for review or approved."
+  );
 };
 
 export const groupReportUuidsByEntity = (reports: ReportIndexItem[]): Partial<Record<ReportsIndexEntity, string[]>> =>

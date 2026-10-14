@@ -4,9 +4,9 @@ import { type FC, useEffect, useMemo } from "react";
 import { useLayoutShell } from "@/redesignComponents/Layout/LayoutShell.provider";
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 import ToolbarInfoTooltipContent from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
+import { getProfileDeleteDisabledTooltip, getProfileSubmitDisabledTooltip } from "@/utils/profileActionTooltips";
 
 import type { NurseryIndexRow } from "../nurseryIndex.types";
-import { getSelectionApprovalLockReason } from "../nurseryIndex.utils";
 import { isNurserySubmittable } from "../nurseryIndexSubmit";
 
 interface NurseriesIndexBulkActionToolbarProps {
@@ -39,7 +39,7 @@ const NurseriesIndexBulkActionToolbar: FC<NurseriesIndexBulkActionToolbarProps> 
   const selectedCount = selectedNurseries.length;
   const visible = selectedCount > 0;
   const canSubmit = selectedCount > 0 && selectedNurseries.every(isNurserySubmittable);
-  const approvalLockReason = useMemo(() => getSelectionApprovalLockReason(selectedNurseries), [selectedNurseries]);
+  const selectedStatuses = useMemo(() => selectedNurseries.map(nursery => nursery.status), [selectedNurseries]);
 
   useEffect(() => {
     setSidebarCollapseDisabled(visible);
@@ -47,32 +47,14 @@ const NurseriesIndexBulkActionToolbar: FC<NurseriesIndexBulkActionToolbarProps> 
   }, [setSidebarCollapseDisabled, visible]);
 
   const infoTooltip = useMemo(() => {
-    const statusLine =
-      approvalLockReason === "pending-approval"
-        ? selectedCount === 1
-          ? t("This profile has already been submitted for review")
-          : t("One or more selected profiles have already been submitted for review")
-        : approvalLockReason === "approved"
-        ? selectedCount === 1
-          ? t("This profile has already been approved")
-          : t("One or more selected profiles have already been approved")
-        : approvalLockReason === "mixed"
-        ? t("One or more selected profile can't be submitted because they are already approved or awaiting approval")
-        : null;
+    const submitTooltip = canSubmit ? undefined : getProfileSubmitDisabledTooltip(selectedStatuses, t);
+    return submitTooltip == null ? undefined : <ToolbarInfoTooltipContent lines={[submitTooltip]} />;
+  }, [canSubmit, selectedStatuses, t]);
 
-    if (statusLine == null) return undefined;
-    return <ToolbarInfoTooltipContent lines={[statusLine]} />;
-  }, [approvalLockReason, selectedCount, t]);
-
-  const deleteTooltip = useMemo(() => {
-    if (canDelete) return undefined;
-    if (selectedCount === 1) {
-      return t("This profile can't be deleted because it's already submitted or approved");
-    }
-    return t(
-      "One or more selected profiles can't be deleted because only drafts can be deleted. Deselect those to continue"
-    );
-  }, [canDelete, selectedCount, t]);
+  const deleteTooltip = useMemo(
+    () => (canDelete ? undefined : getProfileDeleteDisabledTooltip(selectedStatuses, t)),
+    [canDelete, selectedStatuses, t]
+  );
 
   if (!visible) return null;
 
@@ -107,9 +89,7 @@ const NurseriesIndexBulkActionToolbar: FC<NurseriesIndexBulkActionToolbarProps> 
                 children: t("Edit"),
                 onClick: onEdit,
                 disabled: !canEdit || isUpdating,
-                tooltip: canEdit
-                  ? undefined
-                  : t("This profile has already been submitted for review and can’t be edited")
+                tooltip: canEdit ? undefined : t("This profile has already been submitted for review.")
               }
             ]
           : [])

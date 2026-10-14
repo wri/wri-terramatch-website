@@ -3,10 +3,10 @@ import { type FC, useEffect, useMemo } from "react";
 
 import { useLayoutShell } from "@/redesignComponents/Layout/LayoutShell.provider";
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
-import ToolbarInfoTooltipContent from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
+import { getProfileDeleteDisabledTooltip, getProfileSubmitDisabledTooltip } from "@/utils/profileActionTooltips";
 
 import type { SiteIndexSite } from "./siteIndex.types";
-import { getSiteIndexSubmitTooltip, isSiteSubmittable } from "./siteIndexSubmit";
+import { isSiteSubmittable } from "./siteIndexSubmit";
 
 interface SiteIndexBulkActionToolbarProps {
   selectedSites: SiteIndexSite[];
@@ -38,17 +38,15 @@ const SiteIndexBulkActionToolbar: FC<SiteIndexBulkActionToolbarProps> = ({
   const selectedCount = selectedSites.length;
   const visible = selectedCount > 0;
   const canSubmit = selectedCount > 0 && selectedSites.every(isSiteSubmittable);
-  const submitTooltip = useMemo(() => getSiteIndexSubmitTooltip(selectedSites, t), [selectedSites, t]);
-
-  const deleteTooltip = useMemo(() => {
-    if (canDelete) return undefined;
-    if (selectedCount === 1) {
-      return t("This profile can't be deleted because it's already submitted or approved");
-    }
-    return t(
-      "One or more selected profiles can't be deleted because only drafts can be deleted. Deselect those to continue"
-    );
-  }, [canDelete, selectedCount, t]);
+  const selectedStatuses = useMemo(() => selectedSites.map(site => site.status), [selectedSites]);
+  const submitTooltip = useMemo(
+    () => (canSubmit ? undefined : getProfileSubmitDisabledTooltip(selectedStatuses, t)),
+    [canSubmit, selectedStatuses, t]
+  );
+  const deleteTooltip = useMemo(
+    () => (canDelete ? undefined : getProfileDeleteDisabledTooltip(selectedStatuses, t)),
+    [canDelete, selectedStatuses, t]
+  );
 
   useEffect(() => {
     setSidebarCollapseDisabled(visible);
@@ -88,9 +86,7 @@ const SiteIndexBulkActionToolbar: FC<SiteIndexBulkActionToolbarProps> = ({
                 children: t("Edit"),
                 onClick: onEdit,
                 disabled: !canEdit || isUpdating,
-                tooltip: canEdit
-                  ? undefined
-                  : t("This profile has already been submitted for review and can’t be edited")
+                tooltip: canEdit ? undefined : t("This profile has already been submitted for review.")
               }
             ]
           : [])
@@ -100,13 +96,7 @@ const SiteIndexBulkActionToolbar: FC<SiteIndexBulkActionToolbarProps> = ({
         disabled: !canSubmit || isUpdating,
         onClick: onSubmit
       }}
-      infoTooltip={
-        submitTooltip == null ? undefined : Array.isArray(submitTooltip) ? (
-          <ToolbarInfoTooltipContent lines={submitTooltip} />
-        ) : (
-          submitTooltip
-        )
-      }
+      infoTooltip={submitTooltip}
     />
   );
 };
