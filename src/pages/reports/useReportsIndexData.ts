@@ -81,8 +81,10 @@ const useTasksReports = <LightDto>(
         .filter(isNotNull),
     [prop, tasks]
   );
-  const [, { data: reports = [] }] = useDtoList({ ids });
-  return reports;
+  const [, { data: reports }] = useDtoList({ ids });
+  // Reports are pruned from the cache while they're being refetched (e.g. after "Nothing to Report" is applied),
+  // so the list can briefly contain holes for those ids.
+  return useMemo(() => (reports ?? []).filter(isNotNull), [reports]);
 };
 
 export type ReportsIndexProject = Pick<ProjectLightDto, "uuid" | "name" | "organisationName" | "organisationUuid">;
