@@ -30,9 +30,9 @@ const UserCreate = () => {
     firstName: yup.string().nullable().required("First Name is required"),
     lastName: yup.string().nullable().required("Last Name is required"),
     emailAddress: yup.string().nullable().required("Email Address is required").email("Invalid email format"),
-    phoneNumber: yup.string().nullable(),
-    jobRole: yup.string().nullable(),
-    organisationUuid: yup.string().nullable(),
+    phoneNumber: yup.string().nullable().required("Professional Phone Number is required"),
+    jobRole: yup.string().nullable().required("Job Title is required"),
+    organisationUuid: yup.string().nullable().required("Organisation is required"),
     country: yup.string().nullable()
   };
 
