@@ -152,11 +152,16 @@ const SrpReportOverviewTab: FC<SrpReportOverviewTabProps> = ({ report, onViewDet
               <Flex direction="column" paddingTop={1.5} gap={2} alignItems="flex-start">
                 <Button
                   as="a"
-                  href="https://terramatchsupport.zendesk.com/hc/en-us/articles/13322399098267-How-to-report-annually-on-PPC-Socioeconomic-Restoration-Partners"
                   variant="borderless"
                   size="small"
                   rightIcon={<ChevronRightIcon boxSize="0.625rem" />}
                   className="justify-start truncate !whitespace-nowrap mobile:max-w-full mobile:[text-wrap:auto]"
+                  onClick={() =>
+                    window.open(
+                      "https://terramatchsupport.zendesk.com/hc/en-us/articles/13322399098267-How-to-report-annually-on-PPC-Socioeconomic-Restoration-Partners",
+                      "_blank"
+                    )
+                  }
                 >
                   {t("How to Report on PPC Socioeconomic Restoration Partners")}
                 </Button>
