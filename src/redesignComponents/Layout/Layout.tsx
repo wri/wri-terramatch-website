@@ -7,6 +7,7 @@ import { MessagesIcon } from "../foundations/Icons/NavigationSections/MessagesIc
 import { NotificationIcon } from "../foundations/Icons/NavigationSections/NotificationIcon";
 import { NurseryIcon } from "../foundations/Icons/NavigationSections/NurseryIcon";
 import { OrganizationIcon } from "../foundations/Icons/NavigationSections/OrganizationIcon";
+import { PolygonsIcon } from "../foundations/Icons/NavigationSections/PolygonsIcon";
 import { ProgrammeIcon } from "../foundations/Icons/NavigationSections/ProgrammeIcon";
 import { ProjectIcon } from "../foundations/Icons/NavigationSections/ProjectIcon";
 import { ReportsIcon } from "../foundations/Icons/NavigationSections/ReportsIcon";
@@ -71,6 +72,11 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
                   href: "#",
                   icon: <SiteIcon boxSize={4} />,
                   label: "Sites"
+                },
+                {
+                  href: "/polygon-review",
+                  icon: <PolygonsIcon boxSize={4} />,
+                  label: "Polygons"
                 },
                 {
                   href: "#",
