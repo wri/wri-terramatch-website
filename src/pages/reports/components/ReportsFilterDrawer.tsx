@@ -62,6 +62,7 @@ interface ReportsFilterDrawerProps {
   onOpenChange?: (open: boolean) => void;
   source?: "project" | "site" | "nursery";
   entityProfile?: boolean;
+  availableReportTypes?: ReportTypeOption[];
 }
 
 const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
@@ -72,17 +73,23 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
   onApplyFilters,
   onOpenChange,
   source = "project",
-  entityProfile = false
+  entityProfile = false,
+  availableReportTypes
 }) => {
   const t = useT();
   const { format } = useDate();
   const [draftFilters, setDraftFilters] = useState<ReportFilterState>(filters);
   const statusOptions = useMemo(() => getReportStatusOptions(t), [t]);
-  const reportTypeOptions = entityProfile
-    ? REPORTS_TYPE_OPTIONS_ENTITY_PROFILE
-    : activeTab === "additional-reports"
-    ? ADDITIONAL_REPORT_TYPE_OPTIONS
-    : PROGRESS_REPORT_TYPE_OPTIONS;
+  const reportTypeOptions = useMemo(() => {
+    const options = entityProfile
+      ? REPORTS_TYPE_OPTIONS_ENTITY_PROFILE
+      : activeTab === "additional-reports"
+      ? ADDITIONAL_REPORT_TYPE_OPTIONS
+      : PROGRESS_REPORT_TYPE_OPTIONS;
+    return availableReportTypes == null
+      ? options
+      : options.filter(option => availableReportTypes.includes(option.value));
+  }, [activeTab, availableReportTypes, entityProfile]);
   const periodControl = getReportPeriodControl(activeTab, draftFilters.reportTypes);
 
   useEffect(() => {
