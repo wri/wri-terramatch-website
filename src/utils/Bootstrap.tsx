@@ -48,10 +48,10 @@ const useRedirect = () => {
       // If they were already on dashboard, they were caught by the dashboard allow() at the top.
       matcher.when(isFunderOrGovernment)?.redirect("/dashboard/learn-more?tab=about-us");
 
-      // The standalone admin polygon review page lives outside of /admin while react-admin is
-      // being removed. Let admins reach it without being forced back to the RA panel;
-      // the page itself enforces admin access.
-      matcher.when(/^\/site\/[^/]+\/polygon-review(?:[/?#]|$)/.test(router.asPath))?.allow();
+      // The standalone admin polygon review pages (index and per site) live outside of /admin while
+      // react-admin is being removed. Let admins reach them without being forced back to the RA panel;
+      // the pages themselves enforce admin access.
+      matcher.when(/^(?:\/site\/[^/]+)?\/polygon-review(?:[/?#]|$)/.test(router.asPath))?.allow();
 
       matcher.when(isAdmin)?.ensure("/admin");
 
