@@ -62,7 +62,6 @@ interface ReportsFilterDrawerProps {
   onOpenChange?: (open: boolean) => void;
   source?: "project" | "site" | "nursery";
   entityProfile?: boolean;
-  /** When provided, only these report types are offered, so the filter matches the reports in the table. */
   availableReportTypes?: ReportTypeOption[];
 }
 
