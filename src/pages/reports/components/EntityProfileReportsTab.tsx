@@ -1,6 +1,6 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useMemo } from "react";
+import { FC, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
@@ -40,10 +40,11 @@ const EntityProfileReportsContent: FC<EntityProfileReportsContentProps> = ({ sou
   const t = useT();
   const { filters } = useReportsContext();
   const { sections, loading, error } = useReportsIndexData(project, source, entityUuid);
+  const [query, setQuery] = useState("");
   const { filteredProgressSections, progressReportCount } = useReportsIndexFilters({
     progressSections: sections,
     additionalSections: [],
-    query: ""
+    query: query
   });
 
   const hasActivePeriodFilter =
@@ -75,6 +76,7 @@ const EntityProfileReportsContent: FC<EntityProfileReportsContentProps> = ({ sou
         periodOptions={periodOptions}
         onTabChange={() => {}}
         onViewChange={() => {}}
+        onQueryChange={setQuery}
         indexHref=""
         entityProfile
       />
