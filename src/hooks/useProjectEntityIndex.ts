@@ -309,7 +309,6 @@ const useProjectEntityIndex = <T extends SiteLightDto | NurseryLightDto>(
 
   useEffect(() => {
     if (!enabled || projectUuid == null || reloadNonce === 0) return;
-    setChildrenByProjectId(new Map());
     void onProjectOpened(projectUuid);
   }, [enabled, onProjectOpened, projectUuid, reloadNonce]);
 
