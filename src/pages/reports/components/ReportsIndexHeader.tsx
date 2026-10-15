@@ -50,7 +50,6 @@ type ReportsIndexHeaderProps = {
   onQueryChange?: (query: string) => void;
   indexHref: string;
   entityProfile?: boolean;
-  /** Limits the report type filter to the types present in the table. */
   availableReportTypes?: ReportTypeOption[];
 };
 
@@ -121,8 +120,6 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
     {},
     useCallback(
       ({ uuid }) => {
-        // The cached disturbance report indices don't know about the new draft; drop them so the reports
-        // table refetches and shows it when the user comes back.
         ApiSlice.pruneCache("disturbanceReports");
         void router.replace(
           `/entity/disturbance-reports/create/framework?entity_uuid=${uuid}&from=${encodeURIComponent(indexHref)}`
@@ -252,7 +249,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
       )}
       {!entityProfile && (
         <Toolbar
-          className="sticky top-11 z-10 items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-2 pt-5"
+          className="border-theme-neutral-200 bg-theme-neutral-100 sticky top-11 z-10 items-end border-b !px-2 pt-5"
           classNameContentLeft="min-w-0"
           classNameContentRight="mt-[-1.25rem]"
           contentLeft={
