@@ -3656,6 +3656,10 @@ export type FormQuestionDto = {
   years?: number[] | null;
   tableHeaders?: string[] | null;
   additionalProps?: Record<string, any> | null;
+  /**
+   * Max upload size in bytes for file questions
+   */
+  maxFileSize?: number;
   children: FormQuestionDto[] | null;
 };
 
