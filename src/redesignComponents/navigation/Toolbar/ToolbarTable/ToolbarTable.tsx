@@ -26,7 +26,8 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
   onClickFilterButton,
   selectedFilters,
   classNameContentLeft,
-  classNameContentSearch
+  classNameContentSearch,
+  showSearchInput = false
 }) => {
   const t = useT();
   const queryRef = useRef("");
@@ -65,25 +66,27 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
         <Flex className="min-w-0 max-w-full items-center gap-4 mobile:mb-5 mobile:flex-col mobile:items-start mobile:gap-0 mobile:gap-y-4">
           {search != null && (
             <Flex className="w-full min-w-max max-w-max items-center gap-4">
-              <Box onKeyDown={handleKeyDown} className={classNameContentSearch}>
-                <Search
-                  key={search.resetKey ?? "search"}
-                  {...({
-                    placeholder: search.placeholder,
-                    disabled: search.disabled,
-                    options: search.options,
-                    resultsMaxHeight: search.resultsMaxHeight,
-                    isLoading: search.isLoading,
-                    displayResults: search.displayResults ?? "none",
-                    onQueryChange: handleQueryChange,
-                    size: "default"
-                  } as SearchProps)}
-                />
-              </Box>
+              {showSearchInput && (
+                <Box onKeyDown={handleKeyDown} className={classNameContentSearch}>
+                  <Search
+                    key={search.resetKey ?? "search"}
+                    {...({
+                      placeholder: search.placeholder,
+                      disabled: search.disabled,
+                      options: search.options,
+                      resultsMaxHeight: search.resultsMaxHeight,
+                      isLoading: search.isLoading,
+                      displayResults: search.displayResults ?? "none",
+                      onQueryChange: handleQueryChange,
+                      size: "default"
+                    } as SearchProps)}
+                  />
+                </Box>
+              )}
 
               <Flex className="items-center gap-1">
                 <Text textStyle="400-bold" color="primary.900">
-                  {search.count != null ? `${search.count}` : ""}
+                  {search.count != null ? `${search.count.toLocaleString()}` : ""}
                 </Text>
 
                 <Text textStyle="400" color="primary.900">

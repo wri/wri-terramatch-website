@@ -51,6 +51,7 @@ type ReportsIndexHeaderProps = {
   indexHref: string;
   entityProfile?: boolean;
   availableReportTypes?: ReportTypeOption[];
+  showSearchInput?: boolean;
 };
 
 const getSearchPlaceholder = (
@@ -78,7 +79,8 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
   onQueryChange,
   indexHref,
   entityProfile = false,
-  availableReportTypes
+  availableReportTypes,
+  showSearchInput = false
 }) => {
   const t = useT();
   const router = useRouter();
@@ -289,6 +291,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
                 onQueryChange
               }
         }
+        showSearchInput
         classNameContentSearch="w-[19rem]"
         selectedFilters={activeFilterLabels}
         showClearFilters={activeFilterLabels.length > 0}
