@@ -1,7 +1,7 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { uniq } from "lodash";
-import { FC, useMemo, useState } from "react";
+import { FC, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
@@ -26,8 +26,6 @@ import { useReportsIndexFilters } from "@/pages/reports/useReportsIndexFilters";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 
-const noop = () => {};
-
 const getAdditionalSectionReportTypes = (sections: AdditionalReportsEntitySection[]): ReportTypeOption[] =>
   sections.flatMap(section => [
     ...section.groups.filter(group => group.reports.length > 0).map(group => group.type),
@@ -51,8 +49,7 @@ interface ReportsTabProps {
 
 const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
   const t = useT();
-  const { filters } = useReportsContext();
-  const [query, setQuery] = useState("");
+  const { filters, searchTerm, setSearchTerm } = useReportsContext();
   const {
     sections: progressSections,
     loading: progressLoading,
@@ -64,12 +61,12 @@ const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
     error: additionalError
   } = useAdditionalReportsData(project, true, project.organisationUuid, "project");
   const { filteredProgressSections, filteredAdditionalSections, progressReportCount, additionalReportCount } =
-    useReportsIndexFilters({ progressSections, additionalSections, query });
+    useReportsIndexFilters({ progressSections, additionalSections, query: searchTerm });
 
   const loading = progressLoading || additionalLoading;
   const error = progressError || additionalError;
   const hasResults = filteredProgressSections.length > 0 || filteredAdditionalSections.length > 0;
-  const hasActiveSearch = query.trim().length > 0;
+  const hasActiveSearch = searchTerm.trim().length > 0;
   const hasActivePeriodFilter =
     filters.dueDateFrom !== "" || filters.dueDateTo !== "" || filters.dueMonth !== "" || filters.dueYear !== "";
   const defaultReportTypes = getDefaultProgressFiltersForSource("project").reportTypes;
@@ -87,7 +84,7 @@ const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
     () => getAvailableReportTypes(progressSections, additionalSections),
     [additionalSections, progressSections]
   );
-  const accordionOpenResetKey = getReportsAccordionResetKey(query, filters);
+  const accordionOpenResetKey = getReportsAccordionResetKey(searchTerm, filters);
   const unfilteredPeriodsByProjectId = useMemo(
     () => new Map(progressSections.map(section => [section.id, section.periods])),
     [progressSections]
@@ -104,9 +101,9 @@ const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
         viewValue="project"
         viewItems={[]}
         periodOptions={periodOptions}
-        onTabChange={noop}
-        onViewChange={noop}
-        onQueryChange={setQuery}
+        onTabChange={() => {}}
+        onViewChange={() => {}}
+        onQueryChange={setSearchTerm}
         indexHref=""
         entityProfile
         availableReportTypes={availableReportTypes}
