@@ -148,6 +148,11 @@ const useProjectEntityIndex = <T extends SiteLightDto | NurseryLightDto>(
     pageRef.current = 1;
     loadedProjectIdsRef.current = new Set();
 
+    if (reloadNonce > 0) {
+      ApiSlice.pruneIndex("projects", "");
+      ApiSlice.pruneCache(entity);
+    }
+
     if (projectUuid != null) {
       setHasMore(false);
       setLoadingMore(false);
@@ -164,11 +169,6 @@ const useProjectEntityIndex = <T extends SiteLightDto | NurseryLightDto>(
       setProjects([]);
       setChildrenByProjectId(new Map());
       setLoadingProjectIds(new Set());
-
-      if (reloadNonce > 0) {
-        ApiSlice.pruneIndex("projects", "");
-        ApiSlice.pruneIndex(entity, "");
-      }
 
       try {
         const page = await loadProjectPage(1);
@@ -306,6 +306,12 @@ const useProjectEntityIndex = <T extends SiteLightDto | NurseryLightDto>(
     },
     [entity]
   );
+
+  useEffect(() => {
+    if (!enabled || projectUuid == null || reloadNonce === 0) return;
+    setChildrenByProjectId(new Map());
+    void onProjectOpened(projectUuid);
+  }, [enabled, onProjectOpened, projectUuid, reloadNonce]);
 
   useEffect(() => {
     if (!enabled || projectUuid == null) return;
