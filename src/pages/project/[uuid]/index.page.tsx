@@ -162,7 +162,9 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
           }
         }}
       />
-      <div className="flex w-full min-w-0 flex-1 flex-col">{tabItems.find(item => item.key === activeTab)?.body}</div>
+      <div className="flex w-full min-w-0 flex-1 flex-col" data-table-scroll-anchor>
+        {tabItems.find(item => item.key === activeTab)?.body}
+      </div>
     </>
   );
 };

@@ -6,8 +6,10 @@ import LoadingTable from "@/redesignComponents/dataDisplay/Table/components/Load
 import PaginationTable from "@/redesignComponents/navigation/Pagination/PaginationTable";
 
 import { findHorizontalScrollContainer } from "./findHorizontalScrollContainer";
+import { scrollToElementTop, TABLE_SCROLL_ANCHOR_ATTRIBUTE } from "./scrollToElementTop";
 import { getTableWrapperStyles } from "./tableStyles";
 import { type BaseRow, type SortColumn, DEFAULT_CURRENT_PAGE } from "./tableUtils";
+import { useHeightTransition } from "./useHeightTransition";
 import { useTablePagination, useTablePaginationState } from "./useTablePagination";
 import { useTableSelection } from "./useTableSelection";
 import { useTableSorting } from "./useTableSorting";
@@ -92,6 +94,7 @@ const Table = <T extends BaseRow>({
 }: TableProps<T>) => {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const didScrollRestoreRef = useRef(false);
+  const scrollToHeaderPendingRef = useRef(false);
   const isServerPaginated = controlledOnPageChange != null && totalItems != null;
   const [paginationResetKey, setPaginationResetKey] = useState(0);
   const previousControlledPageRef = useRef(controlledCurrentPage);
@@ -151,18 +154,34 @@ const Table = <T extends BaseRow>({
     }
   }, [controlledCurrentPage, isServerPaginated]);
 
-  const dataByPage = isServerPaginated ? data : sortedData.slice(startRange, endRange);
+  const dataByPage = useMemo(
+    () => (isServerPaginated ? data : sortedData.slice(startRange, endRange)),
+    [data, endRange, isServerPaginated, sortedData, startRange]
+  );
 
   const handlePageChange = useCallback(
     (page: number) => {
+      // The last page usually has fewer rows, so the table shrinks; keep the header in view once it renders.
+      scrollToHeaderPendingRef.current = page === totalPages;
       if (controlledOnPageChange != null) {
         controlledOnPageChange(page);
         return;
       }
       setCurrentPage(page);
     },
-    [controlledOnPageChange, setCurrentPage]
+    [controlledOnPageChange, setCurrentPage, totalPages]
   );
+
+  // Skipped when the caller fixes the height, since it can't change.
+  useHeightTransition(wrapperRef, dataByPage, height == null);
+
+  useLayoutEffect(() => {
+    if (!scrollToHeaderPendingRef.current || loading === true) return;
+    scrollToHeaderPendingRef.current = false;
+    const wrapper = wrapperRef.current;
+    if (wrapper == null) return;
+    scrollToElementTop(wrapper.closest<HTMLElement>(`[${TABLE_SCROLL_ANCHOR_ATTRIBUTE}]`) ?? wrapper);
+  }, [dataByPage, loading]);
 
   const handlePageSizeChange = useCallback(
     (nextPageSize: number) => {

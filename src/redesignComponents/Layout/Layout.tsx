@@ -1,10 +1,13 @@
 import { Box, Flex } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { FC, PropsWithChildren } from "react";
+import { FC, PropsWithChildren, useEffect, useMemo } from "react";
 
 import { useMyOrg } from "@/connections/Organisation";
+import { useMyUser } from "@/connections/User";
+import { shouldHideNurseries, toFramework } from "@/context/framework.provider";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import LayoutChromeScale from "@/styles/LayoutChromeScale";
+import Log from "@/utils/log";
 
 import { NurseryIcon } from "../foundations/Icons/NavigationSections/NurseryIcon";
 import { OpportunitiesIcon } from "../foundations/Icons/NavigationSections/OpportunitiesIcon";
@@ -28,6 +31,17 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
   const [, myOrg] = useMyOrg();
   const data = useNavbarData();
   const isAdmin = useIsAdmin();
+  const [, { user }] = useMyUser();
+  const userFrameworkSlugs = useMemo(() => user?.frameworks?.map(({ slug }) => slug) ?? [], [user?.frameworks]);
+  // Nurseries are hidden only when every framework the user belongs to is one that has no nurseries.
+  const hideNurseries =
+    !isAdmin &&
+    userFrameworkSlugs.length > 0 &&
+    userFrameworkSlugs.every(slug => shouldHideNurseries(toFramework(slug)));
+
+  useEffect(() => {
+    if (user != null) Log.info("Logged user frameworks", { uuid: user.uuid, frameworks: userFrameworkSlugs });
+  }, [user, userFrameworkSlugs]);
 
   return (
     <Flex height="100vh" width="100%" flexDirection="column">
@@ -70,12 +84,16 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
                       icon: <SiteIcon boxSize={4} />,
                       label: "Sites"
                     },
-                    {
-                      href: isAdmin ? "/admin#/nursery" : "/nurserie",
-                      activePaths: nurseryOpenedFromProject ? [] : undefined,
-                      icon: <NurseryIcon boxSize={4} />,
-                      label: "Nurseries"
-                    },
+                    ...(hideNurseries
+                      ? []
+                      : [
+                          {
+                            href: isAdmin ? "/admin#/nursery" : "/nurserie",
+                            activePaths: nurseryOpenedFromProject ? [] : undefined,
+                            icon: <NurseryIcon boxSize={4} />,
+                            label: "Nurseries"
+                          }
+                        ]),
                     {
                       href: isAdmin ? "/admin#/projectReport" : "/reports",
                       icon: <ReportsIcon boxSize={4} />,
