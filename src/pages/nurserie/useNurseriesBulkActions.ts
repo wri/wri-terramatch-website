@@ -1,10 +1,8 @@
 import { useT } from "@transifex/react";
-import { useRouter } from "next/router";
 import { useCallback, useMemo, useState } from "react";
 
 import { deleteNursery } from "@/connections/Entity";
 import { entityExportAll, entityUpdate } from "@/generated/v3/entityService/entityServiceComponents";
-import { getEntityEditPageLink } from "@/helpers/entity";
 import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ApiSlice from "@/store/apiSlice";
 import {
@@ -41,7 +39,6 @@ const updateNurseryStatus = async (nurseryUuid: string, status: "pending-approva
 
 export const useNurseriesBulkActions = ({ selectedNurseries, onNurseriesChanged }: UseNurseriesBulkActionsProps) => {
   const t = useT();
-  const router = useRouter();
   const { clearSelection } = useNurseriesSelectionActions();
   const [isDownloading, setIsDownloading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -87,13 +84,6 @@ export const useNurseriesBulkActions = ({ selectedNurseries, onNurseriesChanged 
       setIsDownloading(false);
     }
   }, [clearSelection, isDownloading, selectedNurseries, t]);
-
-  const handleEdit = useCallback(() => {
-    if (!canEdit) {
-      return;
-    }
-    void router.push(getEntityEditPageLink("nurseries", selectedNurseries[0].uuid));
-  }, [canEdit, router, selectedNurseries]);
 
   const handleDelete = useCallback(async () => {
     if (!canDelete || isUpdating) {
@@ -156,7 +146,6 @@ export const useNurseriesBulkActions = ({ selectedNurseries, onNurseriesChanged 
     canSubmit,
     canDelete,
     handleDownload,
-    handleEdit,
     handleDelete,
     handleSubmit
   };

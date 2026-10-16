@@ -1,5 +1,7 @@
 import { FC, useCallback, useState } from "react";
 
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+
 import { useNurseriesSelectionActions, useNurseriesSelectionState } from "../NurseriesSelection.provider";
 import { useNurseriesBulkActions } from "../useNurseriesBulkActions";
 import NurseriesIndexModals from "./Modals/NurseriesIndexModals";
@@ -17,20 +19,29 @@ const NurseriesIndexBulkBar: FC<NurseriesIndexBulkBarProps> = ({ onNurseriesChan
   const [openSubmittedModal, setOpenSubmittedModal] = useState(false);
   const [submittedNurseryNames, setSubmittedNurseryNames] = useState<string[]>([]);
 
-  const {
-    isDownloading,
-    isUpdating,
-    canEdit,
-    canDelete,
-    canSubmit,
-    handleDownload,
-    handleEdit,
-    handleDelete,
-    handleSubmit
-  } = useNurseriesBulkActions({
-    selectedNurseries,
-    onNurseriesChanged
+  const { isDownloading, isUpdating, canEdit, canDelete, canSubmit, handleDownload, handleDelete, handleSubmit } =
+    useNurseriesBulkActions({
+      selectedNurseries,
+      onNurseriesChanged
+    });
+
+  // Edit is only available for a single selection; route it through the shared handler so approved nurseries
+  // get the same "resubmit for approval" confirmation as the nursery page.
+  const editNursery = canEdit ? selectedNurseries[0] : undefined;
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
+    entityName: "nurseries",
+    entityUUID: editNursery?.uuid ?? "",
+    entityStatus: editNursery?.status ?? "draft",
+    updateRequestStatus: editNursery?.updateRequestStatus ?? null,
+    useInformationRequiredModal: true
   });
+
+  const handleEditClick = useCallback(() => {
+    if (editNursery == null) {
+      return;
+    }
+    handleEdit();
+  }, [editNursery, handleEdit]);
 
   const handleConfirmDelete = useCallback(async () => {
     await handleDelete();
@@ -47,6 +58,7 @@ const NurseriesIndexBulkBar: FC<NurseriesIndexBulkBarProps> = ({ onNurseriesChan
 
   return (
     <>
+      {EditModals}
       <NurseriesIndexBulkActionToolbar
         selectedNurseries={selectedNurseries}
         isDownloading={isDownloading}
@@ -61,7 +73,7 @@ const NurseriesIndexBulkBar: FC<NurseriesIndexBulkBarProps> = ({ onNurseriesChan
           setOpenDeleteModal(true);
         }}
         onDownload={() => void handleDownload()}
-        onEdit={handleEdit}
+        onEdit={handleEditClick}
         onSubmit={() => {
           if (!canSubmit) {
             return;
