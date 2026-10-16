@@ -882,7 +882,7 @@ export type Frameworks = {
 
 export type UserUpdateAttributes = {
   /**
-   * Organisation UUID
+   * Organisation UUID if set to null (instead of simply being absent from the payload), the existing organisation association will be removed.
    *
    * @format uuid
    */
@@ -922,7 +922,7 @@ export type UserUpdateAttributes = {
    */
   locale?: "en-US" | "es-MX" | "fr-FR" | "pt-BR" | null;
   /**
-   * Replaces the user's full set of roles
+   * Replaces the user's full set of roles. Only framework admin roles (admin-barka-fund, admin-epa-ghana-pilot, admin-fundo-flora, admin-hbf, admin-ppc, admin-terrafund, admin-wcb) may be combined; any other role must be the user's only role.
    */
   roles?: (
     | "admin-super"
@@ -1033,6 +1033,18 @@ export type UserAssociationCreateAttributes = {
    */
   emailAddress: string;
   /**
+   * First name of the invited user.
+   *
+   * @maxLength 255
+   */
+  firstName?: string;
+  /**
+   * Last name of the invited user.
+   *
+   * @maxLength 255
+   */
+  lastName?: string;
+  /**
    * Flag to createa a manager or not
    */
   isManager: boolean;
@@ -1093,6 +1105,18 @@ export type OrganisationInviteRequestDto = {
    * @maxLength 255
    */
   emailAddress: string;
+  /**
+   * First name of the invited user.
+   *
+   * @maxLength 255
+   */
+  firstName?: string;
+  /**
+   * Last name of the invited user.
+   *
+   * @maxLength 255
+   */
+  lastName?: string;
   /**
    * Optional callback URL base for the signup link in the email.
    */
