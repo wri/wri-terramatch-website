@@ -353,11 +353,11 @@ export const getNothingToReportDisabledTooltip = (reports: ReportIndexItem[], t:
   if (reports.length === 1) {
     switch (getReportNothingToReportBlockingReason(reports[0])) {
       case "already-nothing-to-report":
-        return t("This report has already been marked as “Nothing to Report”");
+        return t("This report has already been submitted as “Nothing to Report”");
       case "pending-approval":
         return t("This report has already been submitted for review.");
       case "information-required":
-        return t("This report has been returned for more information");
+        return t("This report has already been returned for more information");
       case "approved":
         return t("This report has already been approved.");
       default:

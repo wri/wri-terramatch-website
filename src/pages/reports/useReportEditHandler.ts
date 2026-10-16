@@ -29,6 +29,10 @@ export const useReportEditHandler = (report: ReportIndexItem, indexHref?: string
     entityStatus: report.status,
     updateRequestStatus: report.updateRequestStatus,
     entityTitle: report.name ?? "",
+    ...{
+      reportTitle:
+        report.type === "nursery-report" && "reportTitle" in report ? report.reportTitle ?? undefined : undefined
+    },
     useStatusModal: true,
     useInformationRequiredModal: report.nothingToReport !== true,
     originQuery

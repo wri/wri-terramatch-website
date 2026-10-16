@@ -18,6 +18,7 @@ export type ReportsIndexReport = {
   updateRequestStatus: string | null;
   completion: number | null;
   updatedAt: string;
+  reportTitle: string | null;
 };
 
 /**
