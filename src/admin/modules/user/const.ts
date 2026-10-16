@@ -16,7 +16,7 @@ const COMBINABLE_ROLES: readonly string[] = Roles.COMBINABLE_ROLES;
 
 export const isCombinableRole = (role: string) => COMBINABLE_ROLES.includes(role);
 
-const roleName = (role: string) => Roles.ROLE_NAMES[role as keyof typeof Roles.ROLE_NAMES] ?? role;
+export const roleName = (role: string) => Roles.ROLE_NAMES[role as keyof typeof Roles.ROLE_NAMES] ?? role;
 
 export const ROLES_SCHEMA = yup
   .array()

@@ -56,7 +56,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
 
   const monitoringPartners = useMemo(() => {
     return associatedUsers
-      ?.filter(user => user.roleName === "project-developer")
+      ?.filter(user => user.roles.includes("project-developer"))
       ?.slice(0, 3)
       .map(user => ({
         id: user.uuid,
@@ -66,7 +66,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   }, [associatedUsers]);
   const projectManagers = useMemo(() => {
     return associatedUsers
-      ?.filter(user => user.roleName === "project-manager")
+      ?.filter(user => user.roles.includes("project-manager"))
       .map(user => ({
         id: user.uuid,
         name: user.fullName

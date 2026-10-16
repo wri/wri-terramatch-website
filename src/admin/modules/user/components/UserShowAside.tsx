@@ -10,12 +10,9 @@ import { sendLoginDetailsToUser, useAdminUserVerify } from "@/connections/AdminU
 import { sendRequestPasswordReset } from "@/connections/ResetPassword";
 import { useResendVerification } from "@/connections/VerificationUser";
 import { DECLARED_ENV } from "@/constants/environment";
-import { Roles } from "@/generated/v3/userService/userServiceConstants";
 import { UserDto } from "@/generated/v3/userService/userServiceSchemas";
 
-import { localeChoices } from "../const";
-
-const roleName = (role: string) => Roles.ROLE_NAMES[role as keyof typeof Roles.ROLE_NAMES] ?? role;
+import { localeChoices, roleName } from "../const";
 
 export const UserShowAside = () => {
   const notify = useNotify();
