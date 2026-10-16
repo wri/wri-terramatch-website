@@ -1,10 +1,10 @@
 import { Box, Button, Divider, Grid, Stack, Typography } from "@mui/material";
-import isEmpty from "lodash/isEmpty";
 import { useCallback, useState } from "react";
 import { FunctionField, RaRecord, SelectField, TextField, useNotify, useRefresh, useShowContext } from "react-admin";
 
 import Aside from "@/admin/components/Aside/Aside";
 import { ConfirmationDialog } from "@/admin/components/Dialogs/ConfirmationDialog";
+import SimpleChipFieldArray from "@/admin/components/Fields/SimpleChipFieldArray";
 import ResetPasswordDialog from "@/admin/modules/user/components/ResetPasswordDialog";
 import { sendLoginDetailsToUser, useAdminUserVerify } from "@/connections/AdminUsers";
 import { sendRequestPasswordReset } from "@/connections/ResetPassword";
@@ -12,7 +12,7 @@ import { useResendVerification } from "@/connections/VerificationUser";
 import { DECLARED_ENV } from "@/constants/environment";
 import { UserDto } from "@/generated/v3/userService/userServiceSchemas";
 
-import { localeChoices, roleName } from "../const";
+import { localeChoices, userPrimaryRoleChoices } from "../const";
 
 export const UserShowAside = () => {
   const notify = useNotify();
@@ -66,15 +66,9 @@ export const UserShowAside = () => {
           </Grid>
           <Grid item xs={6}>
             <Typography variant="h6" className="admin-text-16 text-darkCustom/60">
-              Type
+              Role
             </Typography>
-            <FunctionField
-              source="roles"
-              render={(record?: UserDto) =>
-                isEmpty(record?.roles) ? "Not Provided" : record?.roles.map(roleName).join(", ")
-              }
-              className="admin-text-16 !font-medium text-darkCustom"
-            />
+            <SimpleChipFieldArray source="roles" choices={userPrimaryRoleChoices} />
           </Grid>
           <Grid item xs={6}>
             <Typography variant="h6" className="admin-text-16 text-darkCustom/60">
