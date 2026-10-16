@@ -86,7 +86,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
 
               <Flex className="items-center gap-1">
                 <Text textStyle="400-bold" color="primary.900">
-                  {search.count != null ? `${search.count.toLocaleString()}` : ""}
+                  {search.count != null ? `${search.count.toLocaleString("en-US")}` : ""}
                 </Text>
 
                 <Text textStyle="400" color="primary.900">
