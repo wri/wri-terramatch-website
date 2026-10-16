@@ -868,6 +868,18 @@ export type Roles = {
    * @example {"admin-super":"Super Admin","admin-ppc":"PPC Admin","admin-terrafund":"TerraFund Admin","admin-hbf":"HBF Admin","admin-epa-ghana-pilot":"EPA Ghana Pilot Admin","admin-fundo-flora":"Fundo Flora Admin","admin-wcb":"WCB Admin","admin-barka-fund":"Barka Fund Admin","project-developer":"Project Developer","project-manager":"Project Manager","greenhouse-service-account":"Greenhouse Service Account","research-service-account":"Research Service Account","government":"Government","funder":"Funder"}
    */
   ROLE_NAMES: Record<string, any>;
+  /**
+   * The only roles that may be combined with other roles; all other roles must be held alone.
+   *
+   * @example admin-barka-fund
+   * @example admin-epa-ghana-pilot
+   * @example admin-fundo-flora
+   * @example admin-hbf
+   * @example admin-ppc
+   * @example admin-terrafund
+   * @example admin-wcb
+   */
+  COMBINABLE_ROLES: string[];
 };
 
 /**
