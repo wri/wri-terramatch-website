@@ -99,6 +99,7 @@ export interface ToolbarTableProps {
   selectedFilters?: SelectedFilter[];
   classNameContentLeft?: string;
   classNameContentSearch?: string;
+  showSearchInput?: boolean;
 }
 
 export interface ViewToolbarProps {
