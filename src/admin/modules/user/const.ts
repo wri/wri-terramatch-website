@@ -13,6 +13,16 @@ export const frameworkAdminPrimaryRoleChoices = userPrimaryRoleChoices.filter(({
 
 export const ROLES_SCHEMA = yup.array().of(yup.string()).required().min(1, "At least one role is required");
 
+export const isProjectDeveloper = (roles: string[] | null | undefined) => roles?.includes("project-developer") ?? false;
+
+export const ORGANISATION_UUID_SCHEMA = yup
+  .string()
+  .nullable()
+  .when("roles", {
+    is: isProjectDeveloper,
+    then: schema => schema.required("Organisation is required for project developers")
+  });
+
 export const localeChoices = [
   { id: "en-US", name: "English" },
   { id: "es-MX", name: "Spanish" },
