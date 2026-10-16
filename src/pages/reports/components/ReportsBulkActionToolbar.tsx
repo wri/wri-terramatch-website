@@ -12,6 +12,7 @@ type ReportsBulkActionToolbarProps = {
   editDisabledTooltip?: string;
   downloadDisabled?: boolean;
   isDownloading?: boolean;
+  showNothingToReport?: boolean;
   nothingToReportDisabled?: boolean;
   submitDisabled?: boolean;
   isUpdating?: boolean;
@@ -31,6 +32,7 @@ const ReportsBulkActionToolbar: FC<ReportsBulkActionToolbarProps> = ({
   editDisabledTooltip,
   downloadDisabled = false,
   isDownloading = false,
+  showNothingToReport = true,
   nothingToReportDisabled = false,
   submitDisabled = false,
   isUpdating = false,
@@ -55,13 +57,17 @@ const ReportsBulkActionToolbar: FC<ReportsBulkActionToolbarProps> = ({
 
   const actions = useMemo<BulkToolbarAction[]>(
     () => [
-      {
-        id: "nothing-to-report",
-        children: t("Nothing to Report"),
-        disabled: nothingToReportDisabled || isUpdating,
-        tooltip: nothingToReportDisabled ? nothingToReportDisabledTooltip : undefined,
-        onClick: onNothingToReport
-      },
+      ...(showNothingToReport
+        ? [
+            {
+              id: "nothing-to-report",
+              children: t("Nothing to Report"),
+              disabled: nothingToReportDisabled || isUpdating,
+              tooltip: nothingToReportDisabled ? nothingToReportDisabledTooltip : undefined,
+              onClick: onNothingToReport
+            }
+          ]
+        : []),
       ...(itemCount === 1
         ? [
             {
@@ -82,6 +88,7 @@ const ReportsBulkActionToolbar: FC<ReportsBulkActionToolbarProps> = ({
       nothingToReportDisabled,
       nothingToReportDisabledTooltip,
       onEdit,
+      showNothingToReport,
       onNothingToReport,
       t
     ]
