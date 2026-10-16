@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { type FC, type MouseEvent, memo, ReactNode, useCallback, useEffect, useMemo } from "react";
 
 import { Framework, isTerrafund } from "@/context/framework.provider";
-import { getEntityEditPageLink } from "@/helpers/entity";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useDate } from "@/hooks/useDate";
 import { useIndexAccordionOpen } from "@/hooks/useIndexAccordionOpen";
 import { useKeyIndicatorsTooltipContent } from "@/pages/project/[uuid]/tabs/constants/keyIndicatorsTooltipContent";
@@ -249,6 +249,13 @@ const SiteProjectTable: FC<{
   const renderRow = useCallback(
     (site: SiteIndexSite, context?: TableRenderRowContext) => {
       const isSelected = isSiteSelected(site);
+      const { handleEdit, EditModals } = useGetEditEntityHandler({
+        entityName: "sites",
+        entityUUID: site.id,
+        entityStatus: site.status ?? "draft",
+        updateRequestStatus: site.updateRequestStatus,
+        useInformationRequiredModal: true
+      });
 
       return (
         <TableRow
@@ -256,6 +263,7 @@ const SiteProjectTable: FC<{
           aria-selected={isSelected}
           onClick={() => void router.push(getSiteDetailUrl(site.id, !embeddedInProject))}
         >
+          {EditModals}
           <TableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)} onClick={stopRowClick}>
             <Checkbox
               name={`site-${site.id}`}
@@ -322,7 +330,7 @@ const SiteProjectTable: FC<{
                         children: t("Edit"),
                         leftIcon: <EditIcon boxSize={2.5} />,
                         "aria-label": t("Edit {siteName}", { siteName: site.name }),
-                        onClick: () => void router.push(getEntityEditPageLink("sites", site.id))
+                        onClick: () => handleEdit()
                       }
                     : undefined
                 }
