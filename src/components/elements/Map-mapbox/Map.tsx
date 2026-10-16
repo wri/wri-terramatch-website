@@ -49,6 +49,7 @@ import { useMapMedia } from "./hooks/useMapMedia";
 import { useMapOverlapIndicators } from "./hooks/useMapOverlapIndicators";
 import { useMapOverlays } from "./hooks/useMapOverlays";
 import { useMapPopups } from "./hooks/useMapPopups";
+import { useMapProjectMarkers } from "./hooks/useMapProjectMarkers";
 import { useMapStyle } from "./hooks/useMapStyle";
 import { usePolygonEditFocusStyle } from "./hooks/usePolygonEditFocusStyle";
 import {
@@ -61,7 +62,7 @@ import { MapMedia } from "./layers/mediaTypes";
 import { CrossSiteOverlapPolygon, OverlapPolygonPoint } from "./layers/overlapTypes";
 import { buildCrossSiteOverlapFeatureCollection, buildCrossSiteOverlapMarkerPoints } from "./layers/overlayLayers";
 import { EMPTY_STATUS_POLYGON_MAP, parsePolygonDataV3 } from "./layers/polygonLayers";
-import { MemoProjectMarkersOverlay, ProjectMarkerPoint } from "./layers/projectMarkers";
+import type { ProjectMarkerPoint } from "./layers/projectMarkerLayer";
 import type {
   DashboardGetProjectsData,
   DashboardPopupContext,
@@ -614,6 +615,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     overlapPolygons: overlapPolygonsWithExternal
   });
 
+  useMapProjectMarkers({ map, styleReady, styleVersion, projectMarkers });
+
   const { handleEditPolygon, onSaveEdit, onCancelEdit } = useMapDraw({
     map,
     draw,
@@ -738,10 +741,6 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
           >
             <FilterControl />
           </ControlGroup>
-        ) : null}
-
-        {styleReady && map.current != null && projectMarkers != null ? (
-          <MemoProjectMarkersOverlay map={map.current} points={projectMarkers} />
         ) : null}
 
         {polygonChecks ? (

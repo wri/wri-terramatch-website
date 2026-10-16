@@ -44,7 +44,13 @@ const PolygonReviewIndexPage: FC = () => {
           <Flex direction="column" gap={4}>
             <PolygonReviewToolbar />
             <PolygonReviewMap />
-            <Flex direction="column" borderWidth="1px" borderColor="neutral.300" borderRadius="0.25rem" bg="white">
+            <Flex
+              direction="column"
+              borderWidth="1px"
+              borderColor="neutral.300"
+              borderRadius="0.25rem"
+              bg="neutral.100"
+            >
               <Table data={[]} columns={columns} selectable showPagination={false} />
               {/* TM-3989: open the Level 1 project picker. */}
               <PolygonReviewEmptyState onSelectProject={noop} />
