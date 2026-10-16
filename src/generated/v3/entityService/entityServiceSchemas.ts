@@ -1830,6 +1830,10 @@ export type ProjectFullDto = {
   restorationStrategy: string[] | null;
   incomeGeneratingActivities: string[] | null;
   seedsPlantedCount: number;
+  /**
+   * Sum of tree species amounts for collection 'nursery-seedling' across approved nursery reports for this project
+   */
+  treesSeedlingsGrownCount: number;
   regeneratedTreesCount: number;
   /**
    * Sum of tree species amounts for collection 'anr' across approved site reports for this project
@@ -3656,6 +3660,10 @@ export type FormQuestionDto = {
   years?: number[] | null;
   tableHeaders?: string[] | null;
   additionalProps?: Record<string, any> | null;
+  /**
+   * Max upload size in bytes for file questions
+   */
+  maxFileSize?: number;
   children: FormQuestionDto[] | null;
 };
 

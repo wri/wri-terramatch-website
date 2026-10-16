@@ -1,6 +1,7 @@
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { useT } from "@transifex/react";
 import { Map as MapboxMap } from "mapbox-gl";
-import React, { MutableRefObject, useEffect, useState } from "react";
+import React, { MutableRefObject, useCallback, useEffect, useState } from "react";
 
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { deleteMedia, updateMedia } from "@/connections/Media";
@@ -14,13 +15,15 @@ import Log from "@/utils/log";
 
 import { useChampionsMap } from "../championsMap.context";
 import MapMediaDetailsModal from "../components/MapMediaDetailsModal";
-import { addMediaMarkers, removeMediaMarkers } from "../layers/mediaMarkers";
+import { isDrawingGeometry } from "../interactions/draw";
+import { removeMediaPhotoLayer, upsertMediaPhotoLayer } from "../layers/mediaPhotoLayer";
 import { removeMediaSymbolLayer, upsertMediaSymbolLayer } from "../layers/mediaSymbolLayer";
 import { MapMedia, MediaCallbacks } from "../layers/mediaTypes";
 import { useGeotaggedPhotosVisibility } from "./useGeotaggedPhotosVisibility";
 
 type UseMapMediaParams = {
   map: MutableRefObject<MapboxMap | null>;
+  draw: MutableRefObject<MapboxDraw | null>;
   mediaFiles?: MapMedia[];
   styleReady: boolean;
   styleVersion: number;
@@ -41,6 +44,7 @@ type UseMapMediaParams = {
 
 export function useMapMedia({
   map,
+  draw,
   mediaFiles,
   styleReady,
   styleVersion,
@@ -66,6 +70,7 @@ export function useMapMedia({
     isPolygonGeometryLoading
   });
   const [callbacks, setCallbacks] = useState<MediaCallbacks | null>(null);
+  const isDrawing = useCallback(() => isDrawingGeometry(draw.current), [draw]);
 
   useEffect(() => {
     const isProjectPath = router.isReady && router.asPath.includes("project");
@@ -162,7 +167,7 @@ export function useMapMedia({
       const mapInstance = map.current;
       if (mapInstance == null) return;
       if (championsMap) {
-        removeMediaMarkers(mapInstance);
+        removeMediaPhotoLayer(mapInstance);
       } else {
         removeMediaSymbolLayer(mapInstance);
       }
@@ -176,7 +181,7 @@ export function useMapMedia({
 
     if (hideMediaOnMap) {
       if (championsMap) {
-        removeMediaMarkers(mapInstance);
+        removeMediaPhotoLayer(mapInstance);
       } else {
         removeMediaSymbolLayer(mapInstance);
       }
@@ -186,7 +191,12 @@ export function useMapMedia({
     if (mediaFiles == null || callbacks == null) return;
 
     if (championsMap) {
-      addMediaMarkers(mapInstance, mediaFiles, callbacks, photosVisible, hideMediaPopupActions);
+      upsertMediaPhotoLayer(mapInstance, mediaFiles, {
+        callbacks,
+        visible: photosVisible,
+        readOnly: hideMediaPopupActions,
+        isDrawing
+      });
     } else {
       upsertMediaSymbolLayer(mapInstance, mediaFiles, callbacks, photosVisible);
     }
@@ -199,6 +209,7 @@ export function useMapMedia({
     championsMap,
     photosVisible,
     hideMediaPopupActions,
-    hideMediaOnMap
+    hideMediaOnMap,
+    isDrawing
   ]);
 }

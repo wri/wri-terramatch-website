@@ -64,7 +64,11 @@ import {
   showPolygonProgressToast
 } from "../utils/polygonOperationToasts";
 import DisturbanceReportedBanner from "./DisturbanceReportedBanner";
-import type { PolygonRunValidationWithResultsCallback, PolygonSaveCallback } from "./polygonEdit.types";
+import type {
+  PolygonRunValidationWithResultsCallback,
+  PolygonSaveCallback,
+  PolygonValidationClearedCallback
+} from "./polygonEdit.types";
 import {
   type PolygonEditFormValues,
   type SavePolygonFlowOptions,
@@ -111,6 +115,7 @@ type PolygonEditContentProps = {
   onRequestInformationModal?: () => void;
   onSaved?: PolygonSaveCallback;
   onRunValidationWithResultsModal?: PolygonRunValidationWithResultsCallback;
+  onValidationCleared?: PolygonValidationClearedCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onUnsavedChangesInvalidatingValidationChange?: (value: boolean) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
@@ -212,6 +217,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   onRequestInformationModal,
   onSaved,
   onRunValidationWithResultsModal,
+  onValidationCleared,
   onPolygonUpdated,
   onUnsavedChangesInvalidatingValidationChange,
   onSuppressMapSelectionHighlightChange,
@@ -368,6 +374,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const onSavedRef = useLatestRef(onSaved);
   const onCloseRef = useLatestRef(onClose);
   const onPolygonUpdatedRef = useLatestRef(onPolygonUpdated);
+  const onValidationClearedRef = useLatestRef(onValidationCleared);
   const refetchVersionsRef = useLatestRef(refetchVersions);
 
   const getFormValues = useCallback(
@@ -417,6 +424,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       options: {
         geometryChanged: boolean;
         refetchVersionsList: boolean;
+        clearsValidation: boolean;
         previousPolygonUuid?: string | null;
         closeOnSave?: boolean;
       }
@@ -437,6 +445,9 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         await refetchVersionsRef.current?.();
       }
       await onSavedRef.current?.();
+      if (options.clearsValidation && savedPolygon.polygonUuid != null && savedPolygon.polygonUuid !== "") {
+        await onValidationClearedRef.current?.([savedPolygon.polygonUuid]);
+      }
       updateFormBaseline();
       if (options.closeOnSave !== false) {
         onCloseRef.current?.();
@@ -448,6 +459,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       onCloseRef,
       onPolygonUpdatedRef,
       onSavedRef,
+      onValidationClearedRef,
       refetchVersionsRef,
       setDraftPolygonGeometry,
       setIsUserDrawingEnabled,
@@ -509,6 +521,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         const savedPolygon = await finalizeSuccessfulSave(createdPolygon, {
           geometryChanged: true,
           refetchVersionsList: false,
+          clearsValidation: false,
           closeOnSave: options?.closeOnSave
         });
         if (options?.deferSuccessToast) {
@@ -579,6 +592,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         const savedPolygon = await finalizeSuccessfulSave(updatedPolygon, {
           geometryChanged,
           refetchVersionsList: true,
+          clearsValidation: true,
           previousPolygonUuid,
           closeOnSave: options?.closeOnSave
         });
