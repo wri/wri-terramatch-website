@@ -713,7 +713,6 @@ export type UserDto = {
    * Currently just calculated by appending lastName to firstName.
    */
   fullName: string | null;
-  primaryRole: string;
   roles: string[];
   /**
    * @example person@foocorp.net
@@ -1032,7 +1031,7 @@ export type UserAssociationDto = {
   status: "pending" | "approved" | "rejected" | null;
   isManager: boolean;
   organisationName: string;
-  roleName: string | null;
+  roles: string[];
   phoneNumber: string | null;
   jobRole: string | null;
   lastLoggedInAt: string | null;
