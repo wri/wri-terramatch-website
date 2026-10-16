@@ -5,20 +5,22 @@ import { getRoleData, useGetUserRole } from "./useGetUserRole";
 export const userCanEdit = (
   record: any,
   resource: string,
-  { role, isSuperAdmin, isFrameworkAdmin }: ReturnType<typeof getRoleData>
+  { roles, isSuperAdmin, isFrameworkAdmin }: ReturnType<typeof getRoleData>
 ) => {
   if (resource === "user") {
     if (isSuperAdmin) {
       return true;
     }
-    if (record?.primaryRole === "admin-super") {
+    const recordRoles: string[] = record?.roles ?? [];
+    if (recordRoles.includes("admin-super")) {
       return false;
     }
-    if (record?.primaryRole === "project-developer" || record?.primaryRole === "project-manager") {
+    if (recordRoles.includes("project-developer") || recordRoles.includes("project-manager")) {
       return true;
     }
     if (isFrameworkAdmin) {
-      return record?.primaryRole === role;
+      // A framework admin may only edit users whose roles they also hold.
+      return recordRoles.every(role => roles.includes(role));
     }
   }
   return record != null;
