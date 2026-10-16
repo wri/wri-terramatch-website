@@ -20,12 +20,15 @@ import {
 type ReportFilterCriteria = {
   query: string;
   reportTypes: string[];
+  reportTypesSpanSections: boolean;
   statuses: string[];
   dueDateFrom: string;
   dueDateTo: string;
   dueMonth: string;
   dueYear: string;
 };
+
+const ADDITIONAL_REPORT_TYPES: string[] = ["financial-report", "srp-report", "disturbance-report"];
 
 const matchesSearchQuery = (values: Array<string | null | undefined>, query: string) => {
   if (query === "") return true;
@@ -62,9 +65,14 @@ const matchesReportPeriod = (
   return true;
 };
 
-const toFilterCriteria = (query: string, filters: ReportsFilterValues): ReportFilterCriteria => ({
+const toFilterCriteria = (
+  query: string,
+  filters: ReportsFilterValues,
+  reportTypesSpanSections: boolean
+): ReportFilterCriteria => ({
   query: query.trim().toLocaleLowerCase(),
   reportTypes: filters.reportTypes,
+  reportTypesSpanSections,
   statuses: filters.statuses,
   dueDateFrom: filters.dueDateFrom,
   dueDateTo: filters.dueDateTo,
@@ -90,10 +98,9 @@ const matchesAdditionalReport = (report: AdditionalReport, criteria: ReportFilte
   }
   if (criteria.statuses.length > 0 && !criteria.statuses.includes(report.status)) return false;
 
-  const additionalReportTypes = ["financial-report", "srp-report", "disturbance-report"];
-  if (criteria.reportTypes.length > 0) {
-    const hasValidType = criteria.reportTypes.some(type => additionalReportTypes.includes(type));
-    if (hasValidType && !criteria.reportTypes.includes(report.type)) return false;
+  if (criteria.reportTypes.length > 0 && !criteria.reportTypes.includes(report.type)) {
+    const hasAdditionalType = criteria.reportTypes.some(type => ADDITIONAL_REPORT_TYPES.includes(type));
+    if (criteria.reportTypesSpanSections || hasAdditionalType) return false;
   }
 
   const hasPeriodFilter =
@@ -144,11 +151,20 @@ type UseReportsIndexFiltersArgs = {
   progressSections: ReportsIndexProjectSection[];
   additionalSections: AdditionalReportsEntitySection[];
   query: string;
+  reportTypesSpanSections?: boolean;
 };
 
-export const useReportsIndexFilters = ({ progressSections, additionalSections, query }: UseReportsIndexFiltersArgs) => {
+export const useReportsIndexFilters = ({
+  progressSections,
+  additionalSections,
+  query,
+  reportTypesSpanSections = false
+}: UseReportsIndexFiltersArgs) => {
   const { filters } = useReportsContext();
-  const criteria = useMemo(() => toFilterCriteria(query, filters), [query, filters]);
+  const criteria = useMemo(
+    () => toFilterCriteria(query, filters, reportTypesSpanSections),
+    [query, filters, reportTypesSpanSections]
+  );
 
   const filteredProgressSections = useMemo(
     () => filterProgressSections(progressSections, criteria),

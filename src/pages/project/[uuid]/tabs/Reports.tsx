@@ -61,7 +61,7 @@ const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
     error: additionalError
   } = useAdditionalReportsData(project, true, project.organisationUuid, "project");
   const { filteredProgressSections, filteredAdditionalSections, progressReportCount, additionalReportCount } =
-    useReportsIndexFilters({ progressSections, additionalSections, query: searchTerm });
+    useReportsIndexFilters({ progressSections, additionalSections, query: searchTerm, reportTypesSpanSections: true });
 
   const loading = progressLoading || additionalLoading;
   const error = progressError || additionalError;
