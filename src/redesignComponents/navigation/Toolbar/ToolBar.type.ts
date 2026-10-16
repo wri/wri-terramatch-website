@@ -92,6 +92,10 @@ export interface ToolbarTableProps {
   filters?: IMultiActionButtonProps[];
   onClearFilters: () => void;
   button?: IButtonProps;
+  /** Extra controls rendered on the right side, before `button`. */
+  actions?: ReactNode;
+  /** When set, search and filters are disabled and this message is shown next to a lock icon. */
+  lockedMessage?: string;
   className?: string;
   tooltipContent?: string;
   showClearFilters?: boolean;

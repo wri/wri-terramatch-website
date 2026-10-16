@@ -7,7 +7,7 @@ import { FC, useCallback, useRef } from "react";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
-import { CloseIcon, FilterIcon, InfoIcon } from "@/redesignComponents/foundations/Icons";
+import { CloseIcon, FilterIcon, InfoIcon, LockIcon } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
 import Toolbar from "../Toolbar";
@@ -18,6 +18,8 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
   search,
   filters,
   button,
+  actions,
+  lockedMessage,
   className,
   onClearFilters,
   tooltipContent,
@@ -29,6 +31,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
 }) => {
   const t = useT();
   const queryRef = useRef("");
+  const isLocked = lockedMessage != null;
 
   const onQueryChange = search?.onQueryChange;
   const onSearchSubmit = search?.onSearchSubmit;
@@ -63,7 +66,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
                   key={search.resetKey ?? "search"}
                   {...({
                     placeholder: search.placeholder,
-                    disabled: search.disabled,
+                    disabled: search.disabled === true || isLocked,
                     options: search.options,
                     resultsMaxHeight: search.resultsMaxHeight,
                     isLoading: search.isLoading,
@@ -74,15 +77,17 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
                 />
               </Box>
 
-              <Flex className="items-center gap-1">
-                <Text textStyle="400-bold" color="primary.900">
-                  {search.count != null ? `${search.count}` : ""}
-                </Text>
+              {(search.count != null || search.label != null) && (
+                <Flex className="items-center gap-1">
+                  <Text textStyle="400-bold" color="primary.900">
+                    {search.count != null ? `${search.count}` : ""}
+                  </Text>
 
-                <Text textStyle="400" color="primary.900">
-                  {search.label}
-                </Text>
-              </Flex>
+                  <Text textStyle="400" color="primary.900">
+                    {search.label}
+                  </Text>
+                </Flex>
+              )}
             </Flex>
           )}
 
@@ -100,11 +105,25 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
                 ))}
               </Flex>
             ) : (
-              <Button variant="secondary" size="small" onClick={onClickFilterButton} leftIcon={<FilterIcon />}>
+              <Button
+                variant="secondary"
+                size="small"
+                onClick={onClickFilterButton}
+                leftIcon={<FilterIcon />}
+                disabled={isLocked}
+              >
                 {selectedFilters && selectedFilters.length > 0
                   ? t("Filter" + " (" + selectedFilters.length + ")")
                   : t("Add Filter")}
               </Button>
+            )}
+            {isLocked && (
+              <Flex className="items-center gap-1">
+                <LockIcon boxSize="0.875rem" color="neutral.700" />
+                <Text textStyle="200" color="neutral.700">
+                  {lockedMessage}
+                </Text>
+              </Flex>
             )}
             <FilterTag selectedFilters={selectedFilters} />
 
@@ -118,6 +137,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
       }
       contentRight={
         <Flex gap={2} alignItems="center" justifyContent="right">
+          {actions}
           {button != null && <Button {...button} size="small" />}
 
           {tooltipContent && (
