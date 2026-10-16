@@ -11,8 +11,10 @@ import {
   pruneReportsMeta,
   SupportedEntity
 } from "@/connections/Entity";
+import { useMyOrg } from "@/connections/Organisation";
 import { entityExportAll, entityUpdate } from "@/generated/v3/entityService/entityServiceComponents";
 import { EntityUpdateBody } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useReportsIndexAnalytics } from "@/hooks/useReportsIndexAnalytics";
 import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ApiSlice from "@/store/apiSlice";
@@ -24,6 +26,7 @@ import {
   showEntityProgressToast
 } from "@/utils/entityOperationToasts";
 import Log from "@/utils/log";
+import { isReportOwnedByOtherOrg } from "@/utils/reportOwnership";
 
 import type { ReportIndexItem } from "./reportIndex.types";
 import {
@@ -89,6 +92,8 @@ const refreshSelectedReports = async (reports: ReportIndexItem[]) => {
 export const useReportsBulkActions = ({ selectedReports, clearSelection }: UseReportsBulkActionsProps) => {
   const t = useT();
   const { trackBulkActionSubmitted } = useReportsIndexAnalytics();
+  const [, myOrg] = useMyOrg();
+  const isAdmin = useIsAdmin();
   const [isDownloading, setIsDownloading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -98,15 +103,44 @@ export const useReportsBulkActions = ({ selectedReports, clearSelection }: UseRe
     [selectedReports]
   );
 
-  const canEdit = selectedReports.length === 1 && isReportEditable(selectedReports[0]);
-  const canSubmit = selectedReports.length > 0 && submittableReports.length === selectedReports.length;
-  const canMarkNothingToReport = selectedReports.length > 0 && nothingToReportReports.length === selectedReports.length;
+  // Financial reports belong to an organisation; members of other organisations can't edit or submit them.
+  const ownedByOtherOrgName = useMemo(() => {
+    for (const report of selectedReports) {
+      if (report.type !== "financial-report") continue;
+      const owner = { uuid: report.organisationUuid, name: report.organisationName };
+      if (isReportOwnedByOtherOrg(owner, myOrg?.organisationId, isAdmin)) return report.organisationName ?? "";
+    }
+    return null;
+  }, [isAdmin, myOrg?.organisationId, selectedReports]);
+  const ownershipTooltip = useMemo(
+    () =>
+      ownedByOtherOrgName == null
+        ? undefined
+        : t("This report belongs to {organizationName}. Only its members can edit or submit it.", {
+            organizationName: ownedByOtherOrgName
+          }),
+    [ownedByOtherOrgName, t]
+  );
 
-  const editDisabledTooltip = useMemo(() => getEditDisabledTooltip(selectedReports, t), [selectedReports, t]);
-  const submitDisabledTooltip = useMemo(() => getSubmitDisabledTooltip(selectedReports, t), [selectedReports, t]);
+  const canEdit = selectedReports.length === 1 && isReportEditable(selectedReports[0]) && ownedByOtherOrgName == null;
+  const canSubmit =
+    selectedReports.length > 0 && submittableReports.length === selectedReports.length && ownedByOtherOrgName == null;
+  const canMarkNothingToReport =
+    selectedReports.length > 0 &&
+    nothingToReportReports.length === selectedReports.length &&
+    ownedByOtherOrgName == null;
+
+  const editDisabledTooltip = useMemo(
+    () => ownershipTooltip ?? getEditDisabledTooltip(selectedReports, t),
+    [ownershipTooltip, selectedReports, t]
+  );
+  const submitDisabledTooltip = useMemo(
+    () => ownershipTooltip ?? getSubmitDisabledTooltip(selectedReports, t),
+    [ownershipTooltip, selectedReports, t]
+  );
   const nothingToReportDisabledTooltip = useMemo(
-    () => getNothingToReportDisabledTooltip(selectedReports, t),
-    [selectedReports, t]
+    () => ownershipTooltip ?? getNothingToReportDisabledTooltip(selectedReports, t),
+    [ownershipTooltip, selectedReports, t]
   );
 
   const handleDownload = useCallback(async () => {

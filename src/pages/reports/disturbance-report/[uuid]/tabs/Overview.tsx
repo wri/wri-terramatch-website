@@ -275,7 +275,6 @@ const DisturbanceReportOverviewTab: FC<DisturbanceReportOverviewTabProps> = ({
                 <Flex alignItems="flex-start">
                   <Button
                     as="a"
-                    href={DISTURBANCE_REPORTING_GUIDE_URL}
                     variant="borderless"
                     size="small"
                     rightIcon={<ChevronRightIcon boxSize="0.625rem" />}
