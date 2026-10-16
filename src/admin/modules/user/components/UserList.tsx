@@ -13,6 +13,7 @@ import {
 import { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import ListActionsCreateFilter from "@/admin/components/Actions/ListActionsCreateFilter";
 import { List } from "@/admin/components/AdminList";
+import SimpleChipFieldArray from "@/admin/components/Fields/SimpleChipFieldArray";
 import { userCanEdit } from "@/admin/hooks/useCanUserEdit";
 import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import Menu from "@/components/elements/Menu/Menu";
@@ -21,7 +22,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { UserDto } from "@/generated/v3/userService/userServiceSchemas";
 
-import { roleName, userPrimaryRoleChoices } from "../const";
+import { userPrimaryRoleChoices } from "../const";
 
 const filters = [
   <SearchInput key="s" source="search" alwaysOn className="search-page-admin" />,
@@ -41,7 +42,7 @@ const filters = [
       }
     ]}
   />,
-  <SelectInput key="t" label="User Type" source="role" className="select-page-admin" choices={userPrimaryRoleChoices} />
+  <SelectInput key="t" label="Role" source="role" className="select-page-admin" choices={userPrimaryRoleChoices} />
 ];
 
 const EditItem = {
@@ -72,12 +73,7 @@ const UserDataGrid = () => {
         render={(record?: UserDto) => (record?.emailAddressVerifiedAt != null ? "✓" : "x")}
         sortBy="emailAddressVerifiedAt"
       />
-      <FunctionField
-        source="roles"
-        label="Type"
-        render={(record?: UserDto) => record?.roles.map(roleName).join(", ")}
-        sortable={false}
-      />
+      <SimpleChipFieldArray source="roles" label="Roles" choices={userPrimaryRoleChoices} sortable={false} />
       <DateField source="lastLoggedInAt" label="Last Login" locales="en-GB" />
       <DateField source="createdAt" label="Date Added" locales="en-GB" />
       <FunctionField
