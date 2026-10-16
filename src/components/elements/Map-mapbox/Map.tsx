@@ -61,6 +61,7 @@ import { MapMedia } from "./layers/mediaTypes";
 import { CrossSiteOverlapPolygon, OverlapPolygonPoint } from "./layers/overlapTypes";
 import { buildCrossSiteOverlapFeatureCollection, buildCrossSiteOverlapMarkerPoints } from "./layers/overlayLayers";
 import { EMPTY_STATUS_POLYGON_MAP, parsePolygonDataV3 } from "./layers/polygonLayers";
+import { MemoProjectMarkersOverlay, ProjectMarkerPoint } from "./layers/projectMarkers";
 import type {
   DashboardGetProjectsData,
   DashboardPopupContext,
@@ -121,6 +122,7 @@ export interface BaseMapProps {
   };
   overlapPolygons?: OverlapPolygonPoint[];
   crossSiteOverlapPolygons?: CrossSiteOverlapPolygon[];
+  projectMarkers?: ProjectMarkerPoint[];
   autoEditPolygon?: boolean;
   onPolygonTilesLoadingChange?: (value: boolean) => void;
   alwaysShowPhotosOnMap?: boolean;
@@ -261,6 +263,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     polygonTableHighlight,
     overlapPolygons,
     crossSiteOverlapPolygons,
+    projectMarkers,
     onPolygonTilesLoadingChange,
     alwaysShowPhotosOnMap,
     hideMediaPopupActions,
@@ -735,6 +738,10 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
           >
             <FilterControl />
           </ControlGroup>
+        ) : null}
+
+        {styleReady && map.current != null && projectMarkers != null ? (
+          <MemoProjectMarkersOverlay map={map.current} points={projectMarkers} />
         ) : null}
 
         {polygonChecks ? (
