@@ -1,21 +1,19 @@
-import { useMemo } from "react";
 import { Edit, SelectArrayInput, SelectInput, SimpleForm, TextInput } from "react-admin";
 import * as yup from "yup";
 
 import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import {
   directFrameworkChoices,
-  frameworkAdminPrimaryRoleChoices,
   localeChoices,
   ORGANISATION_UUID_SCHEMA,
-  ROLES_SCHEMA,
-  userPrimaryRoleChoices
+  ROLES_SCHEMA
 } from "@/admin/modules/user/const";
 import { validateForm } from "@/admin/utils/forms";
 import { useGadmChoices } from "@/connections/Gadm";
 import { UserFramework } from "@/generated/v3/userService/userServiceSchemas";
 
 import UserOrganisationInput from "./UserOrganisationInput";
+import UserRolesInput from "./UserRolesInput";
 import UserTitle from "./UserTitle";
 
 function directFrameworksToSlugs(value: unknown): string[] {
@@ -36,7 +34,7 @@ const transformUserSave = (data: Record<string, unknown>) => ({
 });
 
 const UserEdit = () => {
-  const { isFrameworkAdmin, isSuperAdmin, role } = useGetUserRole();
+  const { isFrameworkAdmin } = useGetUserRole();
   const countryChoices = useGadmChoices({ level: 0 });
 
   const schemaObject: any = {
@@ -52,14 +50,6 @@ const UserEdit = () => {
     schemaObject.roles = ROLES_SCHEMA;
   }
 
-  const roleChoices = useMemo(() => {
-    if (isSuperAdmin) {
-      return userPrimaryRoleChoices;
-    }
-
-    return [...frameworkAdminPrimaryRoleChoices, userPrimaryRoleChoices.find(choice => choice.id === role)];
-  }, [isSuperAdmin, role]);
-
   return (
     <Edit title={<UserTitle />} mutationMode="pessimistic" actions={false} transform={transformUserSave}>
       <SimpleForm validate={validateForm(yup.object(schemaObject))}>
@@ -70,7 +60,7 @@ const UserEdit = () => {
         <TextInput source="jobRole" label="Job Title" fullWidth />
         <SelectInput source="locale" label="Locale" choices={localeChoices} fullWidth />
 
-        {isFrameworkAdmin && <SelectArrayInput source="roles" label="Roles" choices={roleChoices} fullWidth />}
+        {isFrameworkAdmin && <UserRolesInput />}
         <UserOrganisationInput />
         <SelectInput source="country" label="Country" choices={countryChoices} fullWidth />
         <SelectArrayInput
