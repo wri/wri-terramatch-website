@@ -77,15 +77,17 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
                 />
               </Box>
 
-              <Flex className="items-center gap-1">
-                <Text textStyle="400-bold" color="primary.900">
-                  {search.count != null ? `${search.count}` : ""}
-                </Text>
+              {(search.count != null || search.label != null) && (
+                <Flex className="items-center gap-1">
+                  <Text textStyle="400-bold" color="primary.900">
+                    {search.count != null ? `${search.count}` : ""}
+                  </Text>
 
-                <Text textStyle="400" color="primary.900">
-                  {search.label}
-                </Text>
-              </Flex>
+                  <Text textStyle="400" color="primary.900">
+                    {search.label}
+                  </Text>
+                </Flex>
+              )}
             </Flex>
           )}
 

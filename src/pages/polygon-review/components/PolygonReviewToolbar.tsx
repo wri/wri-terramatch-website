@@ -20,7 +20,6 @@ const PolygonReviewToolbar: FC = () => {
   return (
     <ToolbarTable
       className="!px-0"
-      classNameContentLeft="w-full"
       search={{ placeholder: t("Search polygons"), options: [] }}
       selectedFilters={[]}
       lockedMessage={t("Select a project to search and filter polygons")}

@@ -2,7 +2,6 @@ import type { FeatureCollection, Point as GeoJsonPoint } from "geojson";
 import type { Map as MapboxMap, SymbolLayerSpecification } from "mapbox-gl";
 
 import { LAYERS_NAMES } from "@/constants/layers";
-import { getThemedColor } from "@/lib/theme";
 import {
   TREE_PLANTING_ICON_PATHS,
   TREE_PLANTING_ICON_SIZE
@@ -38,7 +37,8 @@ const getProjectMarkerImage = (): ImageData => {
   projectMarkerImage ??= renderCircleIconMarker(
     {
       radiusPx: 20,
-      fillColor: getThemedColor("secondary", 600),
+      // Theme secondary.600. Canvas can't resolve the CSS variable that getThemedColor returns.
+      fillColor: "#8ECA3F",
       iconPaths: TREE_PLANTING_ICON_PATHS,
       iconWidth: TREE_PLANTING_ICON_SIZE,
       iconHeight: TREE_PLANTING_ICON_SIZE,
