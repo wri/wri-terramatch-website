@@ -54,7 +54,8 @@ const toReport = (
     nothingToReport: "nothingToReport" in report && report.nothingToReport === true,
     updateRequestStatus: report.updateRequestStatus ?? null,
     completion: report.completion,
-    updatedAt: report.updatedAt
+    updatedAt: report.updatedAt,
+    reportTitle: type === "nursery-report" ? (report as NurseryReportLightDto).reportTitle ?? null : null
   };
 };
 
