@@ -291,7 +291,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
                 onQueryChange
               }
         }
-        showSearchInput
+        showSearchInput={showSearchInput}
         classNameContentSearch="w-[19rem]"
         selectedFilters={activeFilterLabels}
         showClearFilters={activeFilterLabels.length > 0}

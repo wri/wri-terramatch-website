@@ -66,7 +66,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
         <Flex className="min-w-0 max-w-full items-center gap-4 mobile:mb-5 mobile:flex-col mobile:items-start mobile:gap-0 mobile:gap-y-4">
           {search != null && (
             <Flex className="w-full min-w-max max-w-max items-center gap-4">
-              {showSearchInput && (
+              {!showSearchInput && (
                 <Box onKeyDown={handleKeyDown} className={classNameContentSearch}>
                   <Search
                     key={search.resetKey ?? "search"}
