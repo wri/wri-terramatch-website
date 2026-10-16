@@ -3,8 +3,10 @@ import { useRouter } from "next/router";
 import { FC, PropsWithChildren } from "react";
 
 import { useMyOrg } from "@/connections/Organisation";
+import { useMyUser } from "@/connections/User";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import LayoutChromeScale from "@/styles/LayoutChromeScale";
+import { userHasNurseries } from "@/utils/userAccessUtils";
 
 import { NurseryIcon } from "../foundations/Icons/NavigationSections/NurseryIcon";
 import { OpportunitiesIcon } from "../foundations/Icons/NavigationSections/OpportunitiesIcon";
@@ -26,8 +28,10 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
   const nurseryOpenedFromProject = router.pathname === "/nurserie/[uuid]" && router.query.origin !== "nurseries";
   const { isSidebarCollapseDisabled } = useLayoutShell();
   const [, myOrg] = useMyOrg();
+  const [, { user: myUser }] = useMyUser();
   const data = useNavbarData();
   const isAdmin = useIsAdmin();
+  const showNurseries = userHasNurseries(myUser);
 
   return (
     <Flex height="100vh" width="100%" flexDirection="column">
@@ -70,12 +74,16 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
                       icon: <SiteIcon boxSize={4} />,
                       label: "Sites"
                     },
-                    {
-                      href: isAdmin ? "/admin#/nursery" : "/nurserie",
-                      activePaths: nurseryOpenedFromProject ? [] : undefined,
-                      icon: <NurseryIcon boxSize={4} />,
-                      label: "Nurseries"
-                    },
+                    ...(showNurseries
+                      ? [
+                          {
+                            href: isAdmin ? "/admin#/nursery" : "/nurserie",
+                            activePaths: nurseryOpenedFromProject ? [] : undefined,
+                            icon: <NurseryIcon boxSize={4} />,
+                            label: "Nurseries"
+                          }
+                        ]
+                      : []),
                     {
                       href: isAdmin ? "/admin#/projectReport" : "/reports",
                       icon: <ReportsIcon boxSize={4} />,
