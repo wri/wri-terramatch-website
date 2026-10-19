@@ -42,13 +42,11 @@ export type ReportsIndexEntity = (typeof REPORT_INDEX_TYPE_TO_ENTITY)[ReportInde
 const SUBMITTABLE_STATUSES: ReadonlySet<TagSubmissionState> = new Set(["draft", "information-required"]);
 const SUBMITTED_UPDATE_REQUEST_STATUSES: ReadonlySet<string> = new Set(["pending-approval", "information-required"]);
 
-const NOTHING_TO_REPORT_TYPES: ReadonlySet<ReportIndexItem["type"]> = new Set([
-  "site-report",
-  "nursery-report",
-  "srp-report",
-  "disturbance-report",
-  "financial-report"
-]);
+const NOTHING_TO_REPORT_TYPES: ReadonlySet<ReportIndexItem["type"]> = new Set(["site-report", "nursery-report"]);
+
+/** "Nothing to Report" is only offered when every selected report is a Site or Nursery report. */
+export const isNothingToReportAllowedFor = (reports: ReportIndexItem[]) =>
+  reports.length > 0 && reports.every(report => NOTHING_TO_REPORT_TYPES.has(report.type));
 
 const NOTHING_TO_REPORT_STATUSES: ReadonlySet<TagSubmissionState> = new Set(["draft", "due"]);
 
