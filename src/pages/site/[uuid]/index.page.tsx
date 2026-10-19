@@ -134,7 +134,9 @@ const SiteDetailPage: FC = () => {
               }
             }}
           />
-          <div className="flex flex-1">{TabItems.find(item => item.key === activeTab)?.body}</div>
+          <div className="flex flex-1" data-table-scroll-anchor>
+            {TabItems.find(item => item.key === activeTab)?.body}
+          </div>
         </>
       )}
     </SitePageProviders>
