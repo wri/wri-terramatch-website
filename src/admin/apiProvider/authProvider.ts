@@ -5,7 +5,7 @@ import { loadMyUser } from "@/connections/User";
 import { logout } from "@/generated/v3/utils";
 import Log from "@/utils/log";
 
-export type TMUserIdentity = UserIdentity & { primaryRole: string };
+export type TMUserIdentity = UserIdentity & { roles: string[] };
 
 export const authProvider: AuthProvider = {
   login: async () => {
@@ -32,7 +32,7 @@ export const authProvider: AuthProvider = {
     const { user } = await loadMyUser();
     if (user == null) throw "No user logged in.";
 
-    return { id: user.uuid, fullName: user.fullName ?? undefined, primaryRole: user.primaryRole } as TMUserIdentity;
+    return { id: user.uuid, fullName: user.fullName ?? undefined, roles: user.roles } as TMUserIdentity;
   },
 
   // get the user permissions (optional)

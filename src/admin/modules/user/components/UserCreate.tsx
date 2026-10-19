@@ -1,22 +1,16 @@
-import { useMemo } from "react";
 import { Create, SelectArrayInput, SelectInput, SimpleForm, TextInput } from "react-admin";
 import * as yup from "yup";
 
 import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
-import {
-  directFrameworkChoices,
-  frameworkAdminPrimaryRoleChoices,
-  ORGANISATION_UUID_SCHEMA,
-  ROLES_SCHEMA,
-  userPrimaryRoleChoices
-} from "@/admin/modules/user/const";
+import { directFrameworkChoices, ORGANISATION_UUID_SCHEMA, ROLES_SCHEMA } from "@/admin/modules/user/const";
 import { validateForm } from "@/admin/utils/forms";
 import { useGadmChoices } from "@/connections/Gadm";
 
 import UserOrganisationInput from "./UserOrganisationInput";
+import UserRolesInput from "./UserRolesInput";
 
 const UserCreate = () => {
-  const { isFrameworkAdmin, isSuperAdmin, role } = useGetUserRole();
+  const { isFrameworkAdmin } = useGetUserRole();
   const countryChoices = useGadmChoices({ level: 0 });
 
   const schemaObject: any = {
@@ -33,14 +27,6 @@ const UserCreate = () => {
     schemaObject.roles = ROLES_SCHEMA;
   }
 
-  const roleChoices = useMemo(() => {
-    if (isSuperAdmin) {
-      return userPrimaryRoleChoices;
-    }
-
-    return [...frameworkAdminPrimaryRoleChoices, userPrimaryRoleChoices.find(choice => choice.id === role)];
-  }, [isSuperAdmin, role]);
-
   return (
     <Create title="Create User">
       <SimpleForm validate={validateForm(yup.object(schemaObject))}>
@@ -50,9 +36,7 @@ const UserCreate = () => {
         <TextInput source="phoneNumber" label="Professional Phone Number" fullWidth type="tel" />
         <TextInput source="jobRole" label="Job Title" fullWidth />
 
-        {isFrameworkAdmin && (
-          <SelectArrayInput source="roles" label="Roles" choices={roleChoices} defaultValue={[]} fullWidth />
-        )}
+        {isFrameworkAdmin && <UserRolesInput defaultValue={[]} />}
         <UserOrganisationInput />
 
         <SelectInput source="country" label="Country" choices={countryChoices} fullWidth />
