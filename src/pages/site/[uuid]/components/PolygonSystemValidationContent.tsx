@@ -15,9 +15,11 @@ import { usePolygonValidationCriteria } from "../hooks/usePolygonValidationCrite
 import {
   closePolygonProgressToast,
   completePolygonProgressToast,
+  getFixingOverlapsProgressLabel,
   getPolygonOperationToastLabels,
   POLYGON_TOAST_IDS,
-  showPolygonErrorToast
+  showPolygonErrorToast,
+  showPolygonProgressToast
 } from "../utils/polygonOperationToasts";
 import type { PolygonOverlapFixCallback } from "./polygonEdit.types";
 import SubmissionValidationTags from "./SubmissionValidationTags";
@@ -91,6 +93,7 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
     });
 
     const relatedPartnerUuids = collectRelatedPartnerUuidsFromFixability([fixabilityResult]);
+    showPolygonProgressToast(t, getFixingOverlapsProgressLabel(t, 1), POLYGON_TOAST_IDS.fixingOverlaps);
 
     try {
       const response = await clipPolygonListAsync([polygonUuid]);
@@ -106,6 +109,7 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
       Log.error("Failed to fix polygon overlaps:", error);
       showPolygonErrorToast(t("Failed to Fix Polygon Overlaps"));
     } finally {
+      closePolygonProgressToast(POLYGON_TOAST_IDS.fixingOverlaps);
       setPendingClipping(false);
     }
   }, [

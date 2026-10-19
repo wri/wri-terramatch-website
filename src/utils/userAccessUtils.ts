@@ -5,7 +5,7 @@ export interface UserFramework {
 
 export interface User {
   uuid?: string;
-  primaryRole?: string;
+  roles?: string[];
   frameworks?: UserFramework[];
 }
 
@@ -31,15 +31,15 @@ export const checkUserAccess = (
     return false;
   }
 
-  const role = user.primaryRole;
+  const roles = user.roles ?? [];
 
-  if (role != null && role.startsWith("admin")) return true;
+  if (roles.some(role => role.startsWith("admin"))) return true;
 
-  if (role === "government") {
+  if (roles.includes("government")) {
     return false;
   }
 
-  if (role === "funder") {
+  if (roles.includes("funder")) {
     if (projectFrameworkKey == null) {
       return false;
     }
