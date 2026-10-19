@@ -26,6 +26,11 @@ export interface SideNavigationLinkItemProps {
 
 const actionButtonClassName = "min-h-0 min-w-0 h-fit";
 
+export const SIDE_NAVIGATION_ROW_CLASS_NAME = classNames(
+  "relative w-full items-center justify-between gap-2 rounded-md border-2",
+  "h-9 border-theme-primary-800 px-3 py-2 hover:bg-theme-primary-500/20 active:bg-theme-primary-500/40"
+);
+
 const SideNavigationLinkItem: FC<SideNavigationLinkItemProps> = ({
   icon,
   label,
@@ -64,8 +69,7 @@ const SideNavigationLinkItem: FC<SideNavigationLinkItemProps> = ({
         }
       }}
       className={classNames(
-        "relative w-full items-center justify-between gap-2 rounded-md border-2",
-        "h-9 border-theme-primary-800 px-3 py-2 hover:bg-theme-primary-500/20 active:bg-theme-primary-500/40",
+        SIDE_NAVIGATION_ROW_CLASS_NAME,
         isActive ? "text-theme-primary-300" : "text-theme-neutral-100"
       )}
     >
