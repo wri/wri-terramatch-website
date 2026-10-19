@@ -71,8 +71,7 @@ export const useNavbarData = (): NavbarData => {
 
   const handleSwitchView = () => {
     if (!loaded) return;
-    router.push(isAdmin ? "/admin" : "/home");
-    setTimeout(() => router.reload(), 1000);
+    window.location.assign(isAdmin ? "/admin" : "/home");
   };
 
   const accountActions = isLoggedIn
