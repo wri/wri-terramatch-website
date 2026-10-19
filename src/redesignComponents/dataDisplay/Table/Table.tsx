@@ -171,7 +171,7 @@ const Table = <T extends BaseRow>({
     [controlledOnPageChange, setCurrentPage, totalPages]
   );
 
-  useHeightTransition(wrapperRef, dataByPage, height == null);
+  useHeightTransition(wrapperRef, dataByPage, height == null, findHorizontalScrollContainer);
 
   useLayoutEffect(() => {
     if (!scrollToHeaderPendingRef.current || loading === true) return;
