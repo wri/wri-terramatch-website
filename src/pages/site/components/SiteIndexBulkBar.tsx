@@ -1,5 +1,7 @@
 import { FC, useCallback, useState } from "react";
 
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+
 import SiteIndexBulkActionToolbar from "./SiteIndexBulkActionToolbar";
 import SiteIndexModals from "./SiteIndexModals";
 import { useSiteIndexSelectionActions, useSiteIndexSelectionState } from "./SiteIndexSelection.provider";
@@ -17,19 +19,19 @@ const SiteIndexBulkBar: FC<SiteIndexBulkBarProps> = ({ onSitesChanged }) => {
   const [openSubmittedModal, setOpenSubmittedModal] = useState(false);
   const [submittedSiteNames, setSubmittedSiteNames] = useState<string[]>([]);
 
-  const {
-    isDownloading,
-    isUpdating,
-    canEdit,
-    canDelete,
-    canSubmit,
-    handleDownload,
-    handleEdit,
-    handleDelete,
-    handleSubmit
-  } = useSiteIndexBulkActions({
-    selectedSites,
-    onSitesChanged
+  const { isDownloading, isUpdating, canEdit, canDelete, canSubmit, handleDownload, handleDelete, handleSubmit } =
+    useSiteIndexBulkActions({
+      selectedSites,
+      onSitesChanged
+    });
+
+  const editSite = canEdit ? selectedSites[0] : undefined;
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
+    entityName: "sites",
+    entityUUID: editSite?.id ?? "",
+    entityStatus: editSite?.status ?? "draft",
+    updateRequestStatus: editSite?.updateRequestStatus ?? null,
+    useInformationRequiredModal: true
   });
 
   const handleConfirmDelete = useCallback(async () => {
@@ -47,6 +49,7 @@ const SiteIndexBulkBar: FC<SiteIndexBulkBarProps> = ({ onSitesChanged }) => {
 
   return (
     <>
+      {EditModals}
       <SiteIndexBulkActionToolbar
         selectedSites={selectedSites}
         isDownloading={isDownloading}
