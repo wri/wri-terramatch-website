@@ -24,7 +24,7 @@ export interface TaskListItem {
 
 const TaskList = (props: TaskListProps) => {
   return (
-    <div className="w-[82vw] max-w-[82vw] overflow-hidden">
+    <div className="w-[82vw] max-w-[calc(100%-35px)] overflow-hidden">
       <div className="bg-white p-8">
         <Text variant="text-36-bold" className="text-center" containHtml={true}>
           {props.title}

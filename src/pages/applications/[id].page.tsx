@@ -36,7 +36,7 @@ const ApplicationPage = () => {
           <LoadingContainer loading={!applicationLoaded}>
             <ApplicationHeader name={applicationName} uuid={uuid} />
 
-            <div className="m-auto flex max-w-[82vw] flex-col gap-15 py-15">
+            <div className="m-auto flex max-w-[calc(100%-35px)] flex-col gap-15 py-15">
               <ApplicationStatus application={application} />
               <ApplicationTimeline applicationUuid={application?.uuid} />
               <ApplicationOverview
