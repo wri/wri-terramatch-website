@@ -1,13 +1,5 @@
 import { useMemo } from "react";
-import {
-  AutocompleteInput,
-  Edit,
-  ReferenceInput,
-  SelectArrayInput,
-  SelectInput,
-  SimpleForm,
-  TextInput
-} from "react-admin";
+import { Edit, SelectArrayInput, SelectInput, SimpleForm, TextInput } from "react-admin";
 import * as yup from "yup";
 
 import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
@@ -15,6 +7,7 @@ import {
   directFrameworkChoices,
   frameworkAdminPrimaryRoleChoices,
   localeChoices,
+  ORGANISATION_UUID_SCHEMA,
   ROLES_SCHEMA,
   userPrimaryRoleChoices
 } from "@/admin/modules/user/const";
@@ -22,7 +15,7 @@ import { validateForm } from "@/admin/utils/forms";
 import { useGadmChoices } from "@/connections/Gadm";
 import { UserFramework } from "@/generated/v3/userService/userServiceSchemas";
 
-import modules from "../..";
+import UserOrganisationInput from "./UserOrganisationInput";
 import UserTitle from "./UserTitle";
 
 function directFrameworksToSlugs(value: unknown): string[] {
@@ -52,7 +45,7 @@ const UserEdit = () => {
     emailAddress: yup.string().nullable().required(),
     phoneNumber: yup.string().nullable().required(),
     jobRole: yup.string().nullable().required(),
-    organisationUuid: yup.string().nullable().required()
+    organisationUuid: ORGANISATION_UUID_SCHEMA
   };
 
   if (isFrameworkAdmin) {
@@ -76,18 +69,9 @@ const UserEdit = () => {
         <TextInput source="phoneNumber" label="Professional Phone Number" fullWidth type="tel" />
         <TextInput source="jobRole" label="Job Title" fullWidth />
         <SelectInput source="locale" label="Locale" choices={localeChoices} fullWidth />
-        <ReferenceInput label="Organisation" source="organisationUuid" reference={modules.organisation.ResourceName}>
-          <AutocompleteInput
-            source="organisationUuid"
-            label="Organisation"
-            optionText="name"
-            optionValue="uuid"
-            fullWidth
-            filterToQuery={searchText => ({ search: searchText })}
-          />
-        </ReferenceInput>
 
         {isFrameworkAdmin && <SelectArrayInput source="roles" label="Roles" choices={roleChoices} fullWidth />}
+        <UserOrganisationInput />
         <SelectInput source="country" label="Country" choices={countryChoices} fullWidth />
         <SelectArrayInput
           source="directFrameworks"
