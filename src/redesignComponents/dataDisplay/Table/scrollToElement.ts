@@ -32,16 +32,37 @@ const getStickyOffset = (element: HTMLElement, scrollContainer: HTMLElement) => 
   return offset;
 };
 
-/** Scrolls the element's top to the top of its nearest scroll container, just below any sticky elements. */
-export const scrollToElementTop = (element: HTMLElement) => {
+export type ScrollAlignment = "start" | "center";
+
+/**
+ * The element's natural height, measured from its children. `scrollHeight` can't be used: it never reports less
+ * than the element's own box, which a height transition is still holding at the previous (taller) height.
+ */
+const getContentHeight = (element: HTMLElement) => {
+  const { top, height } = element.getBoundingClientRect();
+  const children = Array.from(element.children);
+  if (children.length === 0) return height;
+  return Math.max(...children.map(child => child.getBoundingClientRect().bottom)) - top;
+};
+
+/**
+ * Scrolls the element within its nearest scroll container, below any sticky elements: `start` puts its top at the
+ * top of the visible area, `center` puts it in the middle (falling back to `start` when it's taller than that area).
+ * The height used for centering is the element's content height, so it's already the final one while a height
+ * transition still holds the element at its previous height (see `getContentHeight`).
+ */
+export const scrollToElement = (element: HTMLElement, alignment: ScrollAlignment) => {
   const scrollContainer = findVerticalScrollContainer(element);
   const isDocument = scrollContainer === document.scrollingElement;
   const containerTop = isDocument ? 0 : scrollContainer.getBoundingClientRect().top;
+  const stickyOffset = getStickyOffset(element, scrollContainer);
+  const visibleHeight = scrollContainer.clientHeight - stickyOffset;
+  const centerOffset = alignment === "center" ? Math.max(0, (visibleHeight - getContentHeight(element)) / 2) : 0;
   const start = scrollContainer.scrollTop;
   const maxScrollTop = scrollContainer.scrollHeight - scrollContainer.clientHeight;
   const target = Math.min(
     maxScrollTop,
-    Math.max(0, start + element.getBoundingClientRect().top - containerTop - getStickyOffset(element, scrollContainer))
+    Math.max(0, start + element.getBoundingClientRect().top - containerTop - stickyOffset - centerOffset)
   );
   const distance = target - start;
   if (Math.abs(distance) < 1) return;

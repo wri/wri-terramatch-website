@@ -1,9 +1,14 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useMemo } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import {
+  setTablePageChangeStrategy,
+  TABLE_PAGE_CHANGE_STRATEGIES,
+  useTablePageChangeStrategy
+} from "@/redesignComponents/dataDisplay/Table/tablePageChangeStrategy.store";
 import { LanguageIcon } from "@/redesignComponents/foundations/Icons";
 import { TMLogo } from "@/redesignComponents/foundations/Logos/TMLogo";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
@@ -62,6 +67,17 @@ const Navbar: FC<NavbarProps> = ({
     data.onAccountSelect(index);
   };
 
+  const tablePageChangeStrategy = useTablePageChangeStrategy();
+  const tablePageChangeItems = useMemo<NavigationMenuItem[]>(
+    () => [
+      { label: t("Center table"), caption: t("Scroll the table into the middle of the viewport") },
+      { label: t("Container top"), caption: t("Scroll to the top of the table's container") },
+      { label: t("Fixed height"), caption: t("Keep the table height fixed on every page") }
+    ],
+    [t]
+  );
+  const tablePageChangeIndex = TABLE_PAGE_CHANGE_STRATEGIES.indexOf(tablePageChangeStrategy);
+
   const accountPrefix = (
     <Avatar name={`${data.user?.firstName ?? ""} ${data.user?.lastName ?? ""}`.trim()} size="small" />
   );
@@ -117,6 +133,14 @@ const Navbar: FC<NavbarProps> = ({
               </Button>
             </>
           )}
+          <SimpleDivider backgroundColor="neutral.500" className="!h-12 !w-px" />
+          <NavbarMenu
+            items={tablePageChangeItems}
+            label={tablePageChangeItems[tablePageChangeIndex].label}
+            variant="list"
+            selectedIndex={tablePageChangeIndex}
+            onSelect={index => setTablePageChangeStrategy(TABLE_PAGE_CHANGE_STRATEGIES[index])}
+          />
           <SimpleDivider backgroundColor="neutral.500" className="!h-12 !w-px" />
           <NavbarMenu
             items={languageItems}
