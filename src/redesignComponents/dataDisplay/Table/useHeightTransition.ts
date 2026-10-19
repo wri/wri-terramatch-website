@@ -2,11 +2,6 @@ import { RefObject, useEffect, useLayoutEffect, useRef } from "react";
 
 import { EASE_IN_OUT_CUBIC_CSS, prefersReducedMotion, TABLE_TRANSITION_MS } from "./tableTransition";
 
-/**
- * Animates the element from its previous height to its new one whenever `trigger` changes. The last rendered height
- * is tracked with a ResizeObserver, whose callbacks run after layout effects, so it still holds the pre-change value
- * when the layout effect below measures the new height.
- */
 export const useHeightTransition = (ref: RefObject<HTMLElement>, trigger: unknown, enabled = true) => {
   const lastHeightRef = useRef<number | null>(null);
 

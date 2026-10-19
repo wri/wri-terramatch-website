@@ -6,12 +6,10 @@ import LoadingTable from "@/redesignComponents/dataDisplay/Table/components/Load
 import PaginationTable from "@/redesignComponents/navigation/Pagination/PaginationTable";
 
 import { findHorizontalScrollContainer } from "./findHorizontalScrollContainer";
-import { scrollToElement, TABLE_SCROLL_ANCHOR_ATTRIBUTE } from "./scrollToElement";
-import { useTablePageChangeStrategy } from "./tablePageChangeStrategy.store";
+import { scrollToElementTop, TABLE_SCROLL_ANCHOR_ATTRIBUTE } from "./scrollToElementTop";
 import { getTableWrapperStyles } from "./tableStyles";
 import { type BaseRow, type SortColumn, DEFAULT_CURRENT_PAGE } from "./tableUtils";
 import { useHeightTransition } from "./useHeightTransition";
-import { useReservedPageHeight } from "./useReservedPageHeight";
 import { useTablePagination, useTablePaginationState } from "./useTablePagination";
 import { useTableSelection } from "./useTableSelection";
 import { useTableSorting } from "./useTableSorting";
@@ -161,44 +159,27 @@ const Table = <T extends BaseRow>({
     [data, endRange, isServerPaginated, sortedData, startRange]
   );
 
-  const pageChangeStrategy = useTablePageChangeStrategy();
-  const isFixedHeight = pageChangeStrategy === "fixedHeight";
-
   const handlePageChange = useCallback(
     (page: number) => {
-      // The last page usually has fewer rows, so the table shrinks; keep it in view once it renders.
-      scrollToHeaderPendingRef.current = !isFixedHeight && page === totalPages;
+      scrollToHeaderPendingRef.current = page === totalPages;
       if (controlledOnPageChange != null) {
         controlledOnPageChange(page);
         return;
       }
       setCurrentPage(page);
     },
-    [controlledOnPageChange, isFixedHeight, setCurrentPage, totalPages]
+    [controlledOnPageChange, setCurrentPage, totalPages]
   );
 
-  // Skipped when the height can't change: fixed by the caller, or reserved by the fixed-height strategy.
-  useHeightTransition(wrapperRef, dataByPage, height == null && !isFixedHeight);
-  const reservedPageHeight = useReservedPageHeight(wrapperRef, dataByPage, pageSize, height == null && isFixedHeight);
-  const wrapperCss = useMemo<SystemStyleObject | undefined>(
-    () =>
-      reservedPageHeight == null
-        ? css
-        : { ...css, "& > div > div:first-of-type": { minHeight: `${reservedPageHeight}px` } },
-    [css, reservedPageHeight]
-  );
+  useHeightTransition(wrapperRef, dataByPage, height == null);
 
   useLayoutEffect(() => {
     if (!scrollToHeaderPendingRef.current || loading === true) return;
     scrollToHeaderPendingRef.current = false;
     const wrapper = wrapperRef.current;
     if (wrapper == null) return;
-    if (pageChangeStrategy === "center") {
-      scrollToElement(wrapper, "center");
-    } else {
-      scrollToElement(wrapper.closest<HTMLElement>(`[${TABLE_SCROLL_ANCHOR_ATTRIBUTE}]`) ?? wrapper, "start");
-    }
-  }, [dataByPage, loading, pageChangeStrategy]);
+    scrollToElementTop(wrapper.closest<HTMLElement>(`[${TABLE_SCROLL_ANCHOR_ATTRIBUTE}]`) ?? wrapper);
+  }, [dataByPage, loading]);
 
   const handlePageSizeChange = useCallback(
     (nextPageSize: number) => {
@@ -331,7 +312,7 @@ const Table = <T extends BaseRow>({
   return (
     <Box
       ref={setWrapperRef}
-      css={getTableWrapperStyles(selectable, dataByPage, pageSize, actualTotalItems, wrapperCss)}
+      css={getTableWrapperStyles(selectable, dataByPage, pageSize, actualTotalItems, css)}
       className={className}
       {...(height != null ? { height } : {})}
     >

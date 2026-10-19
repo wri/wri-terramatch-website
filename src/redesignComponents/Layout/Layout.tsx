@@ -19,8 +19,11 @@ import SideNavigation, { SideNavigationGroup } from "../navigation/NavBar/SideNa
 import { useNavbarData } from "../navigation/NavBar/useNavbarData";
 import { LayoutShellProvider, useLayoutShell } from "./LayoutShell.provider";
 
+// Temporary admin-review shell: sidebar links, labels, and notification counts are design placeholders.
 const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
   const router = useRouter();
+  // Breadcrumbs of a site / nursery profile start at Projects unless the profile was opened from its own list,
+  // so the side menu must highlight the same first level.
   const profileOpenedFromProject = router.pathname === "/site/[uuid]" && router.query.origin !== "sites";
   const nurseryOpenedFromProject = router.pathname === "/nurserie/[uuid]" && router.query.origin !== "nurseries";
   const { isSidebarCollapseDisabled } = useLayoutShell();
