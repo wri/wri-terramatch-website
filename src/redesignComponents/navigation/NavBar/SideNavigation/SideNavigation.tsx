@@ -12,7 +12,7 @@ import SideNavigationItem from "./SideNavigationItem";
 const EXPANDED_WIDTH_CLASS = "w-56";
 const COLLAPSED_WIDTH_CLASS = "w-12";
 
-interface SideNavigationLink {
+export interface SideNavigationLink {
   icon: React.ReactNode;
   label: string;
   href?: string;
@@ -30,7 +30,7 @@ interface SideNavigationLink {
   }[];
 }
 
-interface SideNavigationGroup {
+export interface SideNavigationGroup {
   id: string;
   links: SideNavigationLink[];
 }

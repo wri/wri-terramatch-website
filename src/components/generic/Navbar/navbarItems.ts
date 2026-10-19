@@ -15,7 +15,7 @@ interface INavbarItems {
   private: INavbarItem[];
 }
 
-export const getNavbarItems = (t: typeof useT, myOrg?: MyOrganisationConnection): INavbarItems => {
+export const getNavbarItems = (t: typeof useT, myOrg?: MyOrganisationConnection, isAdmin = false): INavbarItems => {
   const { userStatus, organisation } = myOrg ?? {};
   const { status } = organisation ?? {};
   const visibility = Boolean(organisation && status !== "rejected" && status !== "draft" && userStatus !== "pending");
@@ -45,7 +45,12 @@ export const getNavbarItems = (t: typeof useT, myOrg?: MyOrganisationConnection)
         visibility
       },
       {
-        title: t("Help"),
+        title: t("Dashboard"),
+        url: isAdmin ? "/dashboard" : "/dashboard/learn-more",
+        visibility: true
+      },
+      {
+        title: t("Support"),
         url: zendeskSupportLink,
         visibility: true,
         tourTarget: tourSelectors.HELP
