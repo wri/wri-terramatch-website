@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useMemo } from "react";
 
 import { removeAccessToken } from "@/admin/apiProvider/utils/token";
 import { getNavbarItems } from "@/components/generic/Navbar/navbarItems";
@@ -12,6 +11,7 @@ import { UserDto } from "@/generated/v3/userService/userServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
 
 import { NavigationMenuItem } from "./NavigationMenu/NavigationMenu";
+import { isRouteActive } from "./SideNavigation/useIsRouteActive";
 
 export interface NavbarLinkItem {
   label: string;
@@ -53,36 +53,40 @@ export const useNavbarData = (): NavbarData => {
   const isLoggedIn = login != null;
   const isOnDashboard = router.asPath.split("?")[0].split("/")[1] === "dashboard";
 
-  const { private: privateNavItems, public: publicNavItems } = getNavbarItems(t, myOrg);
+  const { private: privateNavItems, public: publicNavItems } = getNavbarItems(t, myOrg, isAdmin);
   const rawNavItems = (isLoggedIn ? privateNavItems : publicNavItems).filter(item => item.visibility);
 
   const currentPath = router.asPath.split(/[?#]/)[0];
   const navLinks: NavbarLinkItem[] = rawNavItems.map(item => ({
     label: item.title,
     href: item.url,
-    isActive: currentPath === item.url,
+    isActive: isRouteActive(currentPath, item.url),
     onClick: () => router.push(item.url)
   }));
 
-  const accountItems: NavigationMenuItem[] = useMemo(() => {
-    if (!isLoggedIn) return [];
-    const switchLabel = isOnDashboard ? (isAdmin ? t("Admin view") : t("Project Developer view")) : t("Dashboard");
-    return [{ label: switchLabel }, { label: t("Logout") }];
-  }, [isLoggedIn, isOnDashboard, isAdmin, t]);
+  const handleLogout = () => {
+    removeAccessToken();
+    router.push("/auth/login").then(() => ApiSlice.clearApiCache());
+  };
+
+  const handleSwitchView = () => {
+    if (!loaded) return;
+    router.push(isAdmin ? "/admin" : "/home");
+    setTimeout(() => router.reload(), 1000);
+  };
+
+  const accountActions = isLoggedIn
+    ? [
+        ...(isOnDashboard
+          ? [{ label: isAdmin ? t("Admin view") : t("Project Developer view"), onSelect: handleSwitchView }]
+          : []),
+        { label: t("Logout"), onSelect: handleLogout }
+      ]
+    : [];
+  const accountItems: NavigationMenuItem[] = accountActions.map(({ label }) => ({ label }));
 
   const handleAccountSelect = (index: number) => {
-    if (index === 1) {
-      removeAccessToken();
-      router.push("/auth/login").then(() => ApiSlice.clearApiCache());
-    } else {
-      if (!loaded) return;
-      if (isOnDashboard) {
-        router.push(isAdmin ? "/admin" : "/home");
-      } else {
-        router.push(isAdmin ? "/dashboard" : "/dashboard/learn-more");
-      }
-      setTimeout(() => router.reload(), 1000);
-    }
+    accountActions[index]?.onSelect();
   };
 
   const languageItems: NavigationMenuItem[] = LANGUAGES.map(lang => ({ label: t(lang.label) }));

@@ -1,6 +1,6 @@
 import { usePathname } from "next/navigation";
 
-const isRouteActive = (currentPath: string, route: string) =>
+export const isRouteActive = (currentPath: string, route: string) =>
   currentPath === route || currentPath.startsWith(`${route}/`);
 
 const useCurrentPath = () => {
