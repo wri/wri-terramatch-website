@@ -1,6 +1,7 @@
 import { ComponentProps, FC } from "react";
 
 import type { ReportIndexItem } from "../reportIndex.types";
+import { isNothingToReportAllowedFor } from "../reportIndex.utils";
 import { useReportsSelectionActions, useReportsSelectionState } from "../ReportsSelection.provider";
 import { useReportEditHandler } from "../useReportEditHandler";
 import { useReportsBulkActions } from "../useReportsBulkActions";
@@ -45,6 +46,7 @@ const ReportsIndexBulkBar: FC<{ indexHref?: string }> = ({ indexHref }) => {
     canEdit,
     editDisabledTooltip,
     isDownloading,
+    showNothingToReport: isNothingToReportAllowedFor(selectedReports),
     nothingToReportDisabled: !canMarkNothingToReport,
     submitDisabled: !canSubmit,
     isUpdating,

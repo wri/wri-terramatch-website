@@ -275,11 +275,11 @@ const DisturbanceReportOverviewTab: FC<DisturbanceReportOverviewTabProps> = ({
                 <Flex alignItems="flex-start">
                   <Button
                     as="a"
-                    href={DISTURBANCE_REPORTING_GUIDE_URL}
                     variant="borderless"
                     size="small"
                     rightIcon={<ChevronRightIcon boxSize="0.625rem" />}
                     className="justify-start truncate !whitespace-nowrap underline mobile:max-w-full mobile:[text-wrap:auto]"
+                    onClick={() => window.open(DISTURBANCE_REPORTING_GUIDE_URL, "_blank")}
                   >
                     {t("Learn How and When to Report Disturbances")}
                   </Button>

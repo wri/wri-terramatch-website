@@ -123,6 +123,8 @@ export interface WizardFormProps {
 
   adminListPath?: string;
   entity?: WizardFormEntity;
+  /** UUID of the submission being edited, for flows (e.g. applications) that save answers to a submission. */
+  submissionUuid?: string;
 
   /** When true, step errors and field validation messages are hidden until the user submits a step or reopens the form. */
   deferValidation?: boolean;
@@ -672,6 +674,7 @@ function WizardForm(props: WizardFormProps) {
           orgDetails={orgDetails}
           projectDetails={props.projectDetails}
           showValidationErrors={showValidationErrors}
+          submissionUuid={props.submissionUuid}
         >
           <div className={twMerge("flex h-full w-full flex-col", props.className)}>
             {entity != null && (

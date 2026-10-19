@@ -119,6 +119,33 @@ export type SitePolygonsIndexQueryParams = {
    */
   ["page[number]"]?: number;
   /**
+   * Filter results by project framework key(s)
+   */
+  ["frameworkKey[]"]?: (
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "terrafund-3"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora-1"
+    | "wcb"
+    | "barka-fund"
+  )[];
+  /**
+   * Filter results by project country code(s)
+   */
+  ["country[]"]?: string[];
+  /**
+   * Filter results by project organisation UUID(s)
+   */
+  ["organisationUuid[]"]?: string[];
+  /**
+   * Filter results by the planting status of the project's latest approved project report
+   */
+  plantingStatus?: "no-restoration-expected" | "not-started" | "in-progress" | "replacement-planting" | "completed";
+  /**
    * Filter results by polygon status
    */
   ["polygonStatus[]"]?: ("draft" | "pending-approval" | "information-required" | "approved")[];
@@ -127,7 +154,7 @@ export type SitePolygonsIndexQueryParams = {
    */
   ["validationStatus[]"]?: string[];
   /**
-   * Filter results by project UUID(s). May not be used with siteId[], projectCohort or landscape
+   * Filter results by project UUID(s). May not be used with projectCohort or landscape
    */
   ["projectId[]"]?: string[];
   /**
@@ -135,7 +162,7 @@ export type SitePolygonsIndexQueryParams = {
    */
   ["projectShortNames[]"]?: string[];
   /**
-   * Filter results by site UUID(s). May not be used with projectId[], projectCohort or landscape
+   * Filter results by site UUID(s). May not be used with projectCohort or landscape
    */
   ["siteId[]"]?: string[];
   /**
@@ -662,11 +689,38 @@ export const getSitePolygonsGeoJson = new V3ApiEndpoint<
 
 export type SitePolygonsMapIndexQueryParams = {
   /**
-   * Scope results to site UUID(s). Exactly one of siteId[] or projectId[] is required.
+   * Filter results by project framework key(s)
+   */
+  ["frameworkKey[]"]?: (
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "terrafund-3"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora-1"
+    | "wcb"
+    | "barka-fund"
+  )[];
+  /**
+   * Filter results by project country code(s)
+   */
+  ["country[]"]?: string[];
+  /**
+   * Filter results by project organisation UUID(s)
+   */
+  ["organisationUuid[]"]?: string[];
+  /**
+   * Filter results by the planting status of the project's latest approved project report
+   */
+  plantingStatus?: "no-restoration-expected" | "not-started" | "in-progress" | "replacement-planting" | "completed";
+  /**
+   * Scope results to site UUID(s). mapIndex requires siteId[] and / or projectId[].
    */
   ["siteId[]"]?: string[];
   /**
-   * Scope results to project UUID(s). Exactly one of siteId[] or projectId[] is required.
+   * Scope results to project UUID(s). mapIndex requires siteId[] and / or projectId[].
    */
   ["projectId[]"]?: string[];
   /**
@@ -845,8 +899,9 @@ export type SitePolygonsMapIndexVariables = {
  *     There is no pagination: the payload stays small because each row carries only the fields needed
  *     to style GeoServer tiles and render map popups.
  *
- *     Provide exactly one of siteId[] or projectId[]. The remaining workspace filters match the polygon
- *     table and map, including deletedOnly.
+ *     Provide siteId[] and / or projectId[]; project context filters (frameworkKey[], country[],
+ *     organisationUuid[], plantingStatus) further narrow that scope. The remaining workspace filters match
+ *     the polygon table and map, including deletedOnly.
  */
 export const sitePolygonsMapIndex = new V3ApiEndpoint<
   SitePolygonsMapIndexResponse,
@@ -857,11 +912,38 @@ export const sitePolygonsMapIndex = new V3ApiEndpoint<
 
 export type SitePolygonsSummaryQueryParams = {
   /**
-   * Scope results to site UUID(s). Exactly one of siteId[] or projectId[] is required.
+   * Filter results by project framework key(s)
+   */
+  ["frameworkKey[]"]?: (
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "terrafund-3"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora-1"
+    | "wcb"
+    | "barka-fund"
+  )[];
+  /**
+   * Filter results by project country code(s)
+   */
+  ["country[]"]?: string[];
+  /**
+   * Filter results by project organisation UUID(s)
+   */
+  ["organisationUuid[]"]?: string[];
+  /**
+   * Filter results by the planting status of the project's latest approved project report
+   */
+  plantingStatus?: "no-restoration-expected" | "not-started" | "in-progress" | "replacement-planting" | "completed";
+  /**
+   * Scope results to site UUID(s). mapIndex requires siteId[] and / or projectId[].
    */
   ["siteId[]"]?: string[];
   /**
-   * Scope results to project UUID(s). Exactly one of siteId[] or projectId[] is required.
+   * Scope results to project UUID(s). mapIndex requires siteId[] and / or projectId[].
    */
   ["projectId[]"]?: string[];
   /**
@@ -1043,8 +1125,9 @@ export type SitePolygonsSummaryVariables = {
 
 /**
  * Returns workspace totals and optional indicator aggregates without loading polygon rows.
- *     Provide exactly one of siteId[] or projectId[]. Workspace filters match mapIndex / index.
- *     Pass indicatorSlug[] to include Monitored chart and run-analysis aggregates.
+ *     Provide at least one of siteId[], projectId[], frameworkKey[], country[], organisationUuid[] or
+ *     plantingStatus; all of them combine. Workspace filters match mapIndex / index. Pass indicatorSlug[]
+ *     to include Monitored chart and run-analysis aggregates (requires siteId[] and / or projectId[]).
  */
 export const sitePolygonsSummary = new V3ApiEndpoint<
   SitePolygonsSummaryResponse,
@@ -4319,6 +4402,104 @@ export const researchTreeCountDelete = new V3ApiEndpoint<
   {}
 >("/research/v3/treeCounts/{projectUuid}", "DELETE");
 
+export type ProjectsMapIndexQueryParams = {
+  /**
+   * Filter results by project framework key(s)
+   */
+  ["frameworkKey[]"]?: (
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "terrafund-3"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora-1"
+    | "wcb"
+    | "barka-fund"
+  )[];
+  /**
+   * Filter results by project country code(s)
+   */
+  ["country[]"]?: string[];
+  /**
+   * Filter results by project organisation UUID(s)
+   */
+  ["organisationUuid[]"]?: string[];
+  /**
+   * Filter results by the planting status of the project's latest approved project report
+   */
+  plantingStatus?: "no-restoration-expected" | "not-started" | "in-progress" | "replacement-planting" | "completed";
+};
+
+export type ProjectsMapIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ProjectsMapIndexResponse = {
+  meta?: {
+    /**
+     * @example projectMapIndexes
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example projectMapIndexes
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ProjectMapIndexDto;
+  };
+};
+
+export type ProjectsMapIndexVariables = {
+  queryParams?: ProjectsMapIndexQueryParams;
+};
+
+/**
+ * Returns one resource whose attributes hold every project centroid as
+ *     `{ uuid, name, lat, long }`, plus a `total`. There is no pagination: the payload stays small because
+ *     each row carries only the fields needed to place a project marker.
+ *
+ *     frameworkKey[], country[], organisationUuid[] and plantingStatus are optional and combine. Test projects
+ *     are excluded. Projects without polygons are included with a null lat / long, so they can still be selected.
+ */
+export const projectsMapIndex = new V3ApiEndpoint<
+  ProjectsMapIndexResponse,
+  ProjectsMapIndexError,
+  ProjectsMapIndexVariables,
+  {}
+>("/research/v3/projects/mapIndex", "GET");
+
 export const operationsByTag = {
   sitePolygons: {
     createSitePolygons,
@@ -4371,5 +4552,6 @@ export const operationsByTag = {
     researchTreeCountGet,
     researchTreeCountUpdate,
     researchTreeCountDelete
-  }
+  },
+  projects: { projectsMapIndex }
 };

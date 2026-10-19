@@ -77,11 +77,11 @@ const AboutFinancialReport: FC<AboutFinancialReportProps> = ({ layout, isEnterpr
             <Button
               key={href}
               as="a"
-              href={href}
               variant="borderless"
               size="small"
               rightIcon={<ChevronRightIcon boxSize="0.625rem" />}
               className="justify-start truncate !whitespace-nowrap mobile:max-w-full mobile:[text-wrap:auto]"
+              onClick={() => window.open(href, "_blank")}
             >
               {label}
             </Button>

@@ -38,12 +38,12 @@ interface EntityProfileReportsContentProps extends Omit<EntityProfileReportsTabP
 
 const EntityProfileReportsContent: FC<EntityProfileReportsContentProps> = ({ source, entityUuid, project }) => {
   const t = useT();
-  const { filters } = useReportsContext();
+  const { filters, searchTerm, setSearchTerm } = useReportsContext();
   const { sections, loading, error } = useReportsIndexData(project, source, entityUuid);
   const { filteredProgressSections, progressReportCount } = useReportsIndexFilters({
     progressSections: sections,
     additionalSections: [],
-    query: ""
+    query: searchTerm
   });
 
   const hasActivePeriodFilter =
@@ -75,8 +75,10 @@ const EntityProfileReportsContent: FC<EntityProfileReportsContentProps> = ({ sou
         periodOptions={periodOptions}
         onTabChange={() => {}}
         onViewChange={() => {}}
+        onQueryChange={setSearchTerm}
         indexHref=""
         entityProfile
+        showSearchInput
       />
       <PageContent className={twMerge("h-auto flex-1 bg-theme-neutral-100 px-2 pt-0 pb-8")}>
         {loading ? (

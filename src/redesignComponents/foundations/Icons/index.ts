@@ -56,6 +56,7 @@ export { LandscapeIcon } from "./DataVisualisation/LandscapeIcon";
 export { LanguageIcon } from "./NavigationSections/LanguageIcon";
 export { LoadingIcon } from "./Function/LoadingIcon";
 export { MapViewIcon } from "./Function/MapViewIcon";
+export { MenuIcon } from "./Function/MenuIcon";
 export { MessagesIcon } from "./NavigationSections/MessagesIcon";
 export { MoreVertIcon } from "./Function/MoreVertIcon";
 export { MangroveIcon } from "./RestorationAndLand/MangroveIcon";

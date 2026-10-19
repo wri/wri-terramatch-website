@@ -1,6 +1,6 @@
 export const KEY_INDICATORS_TOOLTIP_CONTENT = [
   {
-    frameworks: ["terrafund", "terrafund-landscapes", "enterprises", "epa-ghana-pilot", "terrafund-3"],
+    frameworks: ["terrafund", "terrafund-landscapes", "enterprises", "epa-ghana-pilot", "terrafund-3", "fundo-flora-1"],
     treesRestored: {
       title: "Trees Planted",
       content: "This is the sum of trees planted, as reported across all areas of this site.",

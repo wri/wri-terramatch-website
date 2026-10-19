@@ -51,6 +51,7 @@ type ReportsIndexHeaderProps = {
   indexHref: string;
   entityProfile?: boolean;
   availableReportTypes?: ReportTypeOption[];
+  showSearchInput?: boolean;
 };
 
 const getSearchPlaceholder = (
@@ -78,7 +79,8 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
   onQueryChange,
   indexHref,
   entityProfile = false,
-  availableReportTypes
+  availableReportTypes,
+  showSearchInput = false
 }) => {
   const t = useT();
   const router = useRouter();
@@ -111,10 +113,6 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
       "additional-reports": EMPTY_REPORT_FILTERS
     });
   }, [reportTypeFromQuery, source, sourceUuid]);
-
-  useEffect(() => {
-    setFilters(selectedFilters);
-  }, [activeTab, selectedFilters, setFilters]);
 
   const { create: createDisturbanceReport, isCreating: disturbanceReportCreating } = useCreateDisturbanceReport(
     {},
@@ -249,7 +247,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
       )}
       {!entityProfile && (
         <Toolbar
-          className="border-theme-neutral-200 bg-theme-neutral-100 sticky top-11 z-10 items-end border-b !px-2 pt-5"
+          className="sticky top-11 z-10 items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-2 pt-5"
           classNameContentLeft="min-w-0"
           classNameContentRight="mt-[-1.25rem]"
           contentLeft={
@@ -293,6 +291,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
                 onQueryChange
               }
         }
+        showSearchInput={showSearchInput}
         classNameContentSearch="w-[19rem]"
         selectedFilters={activeFilterLabels}
         showClearFilters={activeFilterLabels.length > 0}

@@ -22,6 +22,11 @@ export type PolygonVersion = {
   status?: string;
 };
 
+export const isDrawingGeometry = (draw: MapboxDraw | null): boolean => {
+  const mode = draw?.getMode();
+  return mode === "draw_polygon" || mode === "draw_line_string";
+};
+
 export const startDrawing = (draw: MapboxDraw, map: MapboxMap): void => {
   applyMapDrawingCursor(map);
   draw.changeMode("draw_polygon");

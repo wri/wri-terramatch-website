@@ -1484,3 +1484,33 @@ export type UpdateResearchTreeCountData = {
 export type UpdateResearchTreeCountBody = {
   data: UpdateResearchTreeCountData;
 };
+
+export type ProjectMapEntryDto = {
+  /**
+   * UUID of the project.
+   */
+  uuid: string;
+  /**
+   * Project name.
+   */
+  name: string | null;
+  /**
+   * Latitude of the project centroid (average of its polygon centroids). Null when the project has no polygons.
+   */
+  lat: number | null;
+  /**
+   * Longitude of the project centroid (average of its polygon centroids). Null when the project has no polygons.
+   */
+  long: number | null;
+};
+
+export type ProjectMapIndexDto = {
+  /**
+   * Every project that matches the requested filters, including projects without a centroid.
+   */
+  projects: ProjectMapEntryDto[];
+  /**
+   * Number of projects in the projects array.
+   */
+  total: number;
+};
