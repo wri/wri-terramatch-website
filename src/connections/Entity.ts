@@ -191,7 +191,6 @@ export const projectSitesMetaIndexConnection = v3Resource("projectSitesMetas", e
   .pagination()
   .filter<Filter<EntitySitesMetaIndexQueryParams>>()
   .enabledProp()
-  .refetch(() => ApiSlice.pruneIndex("projectSitesMetas", ""))
   .buildConnection();
 export const loadSiteIndex = connectionLoader(indexSiteConnection);
 export const useSiteIndex = connectionHook(indexSiteConnection);
@@ -212,7 +211,6 @@ export const projectNurseriesMetaIndexConnection = v3Resource("projectNurseriesM
   .pagination()
   .filter<Filter<EntityNurseriesMetaIndexQueryParams>>()
   .enabledProp()
-  .refetch(() => ApiSlice.pruneIndex("projectNurseriesMetas", ""))
   .buildConnection();
 export const loadNurseryIndex = connectionLoader(indexNurseryConnection);
 export const useNurseryIndex = connectionHook(indexNurseryConnection);
