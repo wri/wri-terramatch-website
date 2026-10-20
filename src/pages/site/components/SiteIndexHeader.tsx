@@ -146,7 +146,7 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
       <ToolbarTable
         className={classNames(
           "!px-6 !pb-6 !pt-5",
-          embeddedInProject ? "border-theme-neutral-300 !bg-theme-neutral-100 border-b" : "!bg-theme-neutral-200 "
+          embeddedInProject ? "border-b border-theme-neutral-300 !bg-theme-neutral-100" : "!bg-theme-neutral-200 "
         )}
         classNameContentLeft={embeddedInProject ? "min-w-0 flex-1 !shrink" : "w-full"}
         classNameContentSearch="w-[19rem] max-w-full"
