@@ -45,10 +45,9 @@ const keyIndicatorTooltip = (title?: string, content?: string): ReactNode => {
   if (title == null || title === "" || content == null || content === "") return undefined;
 
   return (
-    <Box fontSize="14px" lineHeight="20px">
-      <b>{title}</b>
-      <br />
-      {content}
+    <Box>
+      <Text textStyle="300-bold">{title}</Text>
+      <Text textStyle="300">{content}</Text>
     </Box>
   );
 };
@@ -404,7 +403,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
   );
 
   if (embeddedInProject) {
-    return <Box className="overflow-hidden rounded bg-theme-neutral-100">{sectionBody}</Box>;
+    return <Box className="bg-theme-neutral-100 overflow-hidden rounded">{sectionBody}</Box>;
   }
 
   return (
@@ -413,7 +412,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
       open={open}
       onOpenChange={setOpen}
       isScrollable={false}
-      className="w-full overflow-hidden rounded bg-theme-neutral-100"
+      className="bg-theme-neutral-100 w-full overflow-hidden rounded"
       classNameHeader="!mb-0"
       header={
         <ListSectionHeader

@@ -28,8 +28,8 @@ import {
   formatReportPeriodLabel,
   getInitialProgressFilters,
   getReportPeriodControl,
+  getReportTypeLabels,
   hasReportTypeFilter,
-  REPORT_TYPE_LABELS,
   ReportFilterState,
   ReportTypeOption
 } from "./reportFilter.constants";
@@ -133,7 +133,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
 
     if (hasReportTypeFilter(source, entityProfile) && selectedFilters.reportTypes.length > 0) {
       labels.push({
-        label: selectedFilters.reportTypes.map(type => t(REPORT_TYPE_LABELS[type])),
+        label: selectedFilters.reportTypes.map(type => getReportTypeLabels(t)[type]),
         category: t("Report Type"),
         onRemove: () => {
           updateActiveFilters({ ...selectedFilters, reportTypes: [] });
@@ -247,7 +247,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
       )}
       {!entityProfile && (
         <Toolbar
-          className="sticky top-11 z-10 items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-2 pt-5"
+          className="border-theme-neutral-200 bg-theme-neutral-100 sticky top-11 z-10 items-end border-b !px-2 pt-5"
           classNameContentLeft="min-w-0"
           classNameContentRight="mt-[-1.25rem]"
           contentLeft={

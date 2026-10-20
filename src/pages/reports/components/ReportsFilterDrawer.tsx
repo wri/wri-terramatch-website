@@ -14,17 +14,17 @@ import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 
 import { ReportPeriodOptions } from "../reportPeriodFilter";
 import {
-  ADDITIONAL_REPORT_TYPE_OPTIONS,
   clearReportPeriodFilters,
   EMPTY_REPORT_FILTERS,
   formatMonthLabel,
   formatReportPeriodLabel,
+  getAdditionalReportTypeOptions,
+  getEntityProfileReportTypeOptions,
+  getProgressReportTypeOptions,
   getReportPeriodControl,
+  getReportTypeLabels,
   hasReportTypeFilter,
-  PROGRESS_REPORT_TYPE_OPTIONS,
-  REPORT_TYPE_LABELS,
   ReportFilterState,
-  REPORTS_TYPE_OPTIONS_ENTITY_PROFILE,
   ReportTypeOption
 } from "./reportFilter.constants";
 
@@ -82,14 +82,15 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
   const statusOptions = useMemo(() => getReportStatusOptions(t), [t]);
   const reportTypeOptions = useMemo(() => {
     const options = entityProfile
-      ? REPORTS_TYPE_OPTIONS_ENTITY_PROFILE
+      ? getEntityProfileReportTypeOptions(t)
       : activeTab === "additional-reports"
-      ? ADDITIONAL_REPORT_TYPE_OPTIONS
-      : PROGRESS_REPORT_TYPE_OPTIONS;
+      ? getAdditionalReportTypeOptions(t)
+      : getProgressReportTypeOptions(t);
     return availableReportTypes == null
       ? options
       : options.filter(option => availableReportTypes.includes(option.value));
-  }, [activeTab, availableReportTypes, entityProfile]);
+  }, [activeTab, availableReportTypes, entityProfile, t]);
+  const reportTypeLabels = useMemo(() => getReportTypeLabels(t), [t]);
   const periodControl = getReportPeriodControl(activeTab, draftFilters.reportTypes);
 
   useEffect(() => {
@@ -103,7 +104,7 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
 
     if (hasReportTypeFilter(source, entityProfile)) {
       draftFilters.reportTypes.forEach(type => {
-        tags.push({ id: `type-${type}`, label: t(REPORT_TYPE_LABELS[type]) });
+        tags.push({ id: `type-${type}`, label: reportTypeLabels[type] });
       });
     }
     draftFilters.statuses.forEach(status => {
@@ -117,7 +118,7 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
     }
 
     return tags;
-  }, [draftFilters, entityProfile, format, source, statusOptions, t]);
+  }, [draftFilters, entityProfile, format, reportTypeLabels, source, statusOptions]);
 
   const dueDateValue = useMemo<DateValue[]>(() => {
     const from = isoStringToDateValue(draftFilters.dueDateFrom);
@@ -218,7 +219,7 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
               checked={draftFilters.reportTypes.includes(option.value)}
               onCheckedChange={(change: CheckboxChange) => handleReportTypeChange(option.value, change)}
             >
-              {t(option.label)}
+              {option.label}
             </Checkbox>
           ))}
         </FilterCard>

@@ -36,7 +36,7 @@ export const ReportModelNameToBaseModel = (reportModelName: ReportsModelNames, s
 export const getEntityDetailPageLink = (entityName: EntityName, uuid: string, tab?: string) =>
   `${entityName.includes("report") ? "/reports" : ""}/${
     entityName === "nurseries" ? "nurserie" : singularEntityName(entityName)
-  }/${uuid}${tab != null ? `?tab=${tab}` : ""}`;
+  }/${uuid}${tab == null || tab === "" ? "" : `?tab=${tab}`}`;
 
 export const getEntityEditPageLink = (entityName: EntityName | SingularEntityName | string, uuid: string) =>
   `/entity/${getEntityEditPathSegment(entityName)}/edit/${uuid}?mode=edit&formStepId=summary`;
