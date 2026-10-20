@@ -48,6 +48,7 @@ const ReportInfo: FC<ReportInfoProps> = ({ report, dueAt, entityName }) => {
       ? report.projectName ?? ""
       : report.organisationName ?? "";
   const reportTitle = "reportTitle" in report ? report.reportTitle ?? "" : "";
+  const isNothingToReport = "nothingToReport" in report && report.nothingToReport === true;
 
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler(entityName, report.uuid);
   const { handleEdit, EditModals } = useGetEditEntityHandler({
@@ -133,6 +134,7 @@ const ReportInfo: FC<ReportInfoProps> = ({ report, dueAt, entityName }) => {
           leftIcon={<DownloadIcon />}
           onClick={() => void handleExport()}
           loading={exportLoader}
+          disabled={isNothingToReport}
         >
           {t("Download")}
         </Button>
