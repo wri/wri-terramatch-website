@@ -13,7 +13,6 @@ import { getControlStyles } from "@/redesignComponents/Forms/Inputs/HighLevelSel
 
 import { useProjectFacetLabels } from "../hooks/useProjectFacetLabels";
 import {
-  filterProjects,
   getFacetOptions,
   getProjectFacetFilters,
   ProjectContextFacet,
@@ -27,27 +26,30 @@ const PopoverTrigger = Popover.Trigger as ChakraSlot;
 const PopoverPositioner = Popover.Positioner as ChakraSlot;
 const PopoverContent = Popover.Content as ChakraSlot;
 
-type ProjectContextPickerProps = {
-  open: boolean;
+type ProjectContextPickerContentProps = {
   projects: ProjectMapEntryDto[];
+  filteredProjects: ProjectMapEntryDto[];
   filters: ProjectContextFilters;
   selectedProject: ProjectMapEntryDto | null;
-  onOpenChange: (open: boolean) => void;
   onFiltersChange: (filters: ProjectContextFilters) => void;
   onSelectProject: (uuid: string) => void;
   onClear: () => void;
 };
 
+type ProjectContextPickerProps = ProjectContextPickerContentProps & {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+};
+
 /**
- * Level 1 of the Polygon Review filters: framework, country and cohort narrow the project list, and picking a
- * project scopes the page. Once a project is picked, the facets lock to that project's own values.
+ * Popover body. It only mounts while the popover is open, so the project rows, facet counts and the label
+ * lookups (frameworks / countries) cost nothing until an admin opens the picker.
  */
-const ProjectContextPicker: FC<ProjectContextPickerProps> = ({
-  open,
+const ProjectContextPickerContent: FC<ProjectContextPickerContentProps> = ({
   projects,
+  filteredProjects,
   filters,
   selectedProject,
-  onOpenChange,
   onFiltersChange,
   onSelectProject,
   onClear
@@ -55,21 +57,88 @@ const ProjectContextPicker: FC<ProjectContextPickerProps> = ({
   const t = useT();
   const getLabel = useProjectFacetLabels();
   const isLocked = selectedProject != null;
-  const facetFilters = isLocked ? getProjectFacetFilters(selectedProject) : filters;
 
-  const facetGroups = useMemo(
-    (): { facet: ProjectContextFacet; label: string }[] => [
-      { facet: "frameworkKey", label: t("Framework (optional)") },
-      { facet: "country", label: t("Country (optional)") },
-      { facet: "cohort", label: t("Cohort (optional)") }
-    ],
-    [t]
+  const facetFilters = useMemo(
+    () => (selectedProject != null ? getProjectFacetFilters(selectedProject) : filters),
+    [filters, selectedProject]
   );
 
+  const facetGroups = useMemo(
+    () =>
+      (
+        [
+          { facet: "frameworkKey", label: t("Framework (optional)") },
+          { facet: "country", label: t("Country (optional)") },
+          { facet: "cohort", label: t("Cohort (optional)") }
+        ] as const
+      ).map(({ facet, label }) => ({ facet, label, options: getFacetOptions(projects, facetFilters, facet) })),
+    [facetFilters, projects, t]
+  );
+
+  const toggleFacet = useCallback(
+    (facet: ProjectContextFacet, value: string, checked: boolean) =>
+      onFiltersChange(toggleFacetValue(filters, facet, value, checked)),
+    [filters, onFiltersChange]
+  );
+
+  return (
+    <>
+      <Flex gap={4} padding={4} bg="neutral.200" alignItems="flex-start">
+        <Flex direction="column" gap={3} width="16rem" flexShrink={0} maxHeight="30rem" overflowY="auto">
+          {facetGroups.map(({ facet, label, options }) => (
+            <ProjectFacetGroup
+              key={facet}
+              label={label}
+              options={options}
+              selected={facetFilters[facet]}
+              disabled={isLocked}
+              getLabel={value => getLabel(facet, value)}
+              onToggle={(value, checked) => toggleFacet(facet, value, checked)}
+            />
+          ))}
+        </Flex>
+        <Flex flex={1} minWidth={0} padding={3} bg="neutral.100" borderRadius="0.25rem">
+          <ProjectPickerList
+            projects={filteredProjects}
+            selectedUuid={selectedProject?.uuid ?? null}
+            onSelect={onSelectProject}
+          />
+        </Flex>
+      </Flex>
+      <Flex
+        justify="space-between"
+        align="center"
+        gap={4}
+        paddingX={4}
+        paddingY={2}
+        borderTopWidth="0.0625rem"
+        borderColor="neutral.300"
+      >
+        <Text textStyle="200" color="neutral.700">
+          {isLocked
+            ? t("Clear filters to pick a project with a different framework, country or cohort.")
+            : t("Choose a framework, country or cohort to narrow your list of projects.")}
+        </Text>
+        <Button variant="borderless" size="small" onClick={onClear}>
+          {t("Clear filters")}
+        </Button>
+      </Flex>
+    </>
+  );
+};
+
+const ProjectContextPicker: FC<ProjectContextPickerProps> = ({ open, onOpenChange, ...contentProps }) => {
+  const t = useT();
   const handleOpenChange = useCallback(({ open }: { open: boolean }) => onOpenChange(open), [onOpenChange]);
 
   return (
-    <Popover.Root open={open} onOpenChange={handleOpenChange} positioning={{ placement: "bottom-end", gutter: 4 }}>
+    <Popover.Root
+      open={open}
+      onOpenChange={handleOpenChange}
+      positioning={{ placement: "bottom-end", gutter: 4 }}
+      lazyMount
+      unmountOnExit
+    >
       <PopoverTrigger
         {...getControlStyles(false)}
         display="flex"
@@ -82,7 +151,7 @@ const ProjectContextPicker: FC<ProjectContextPickerProps> = ({
       >
         <SelectorFolderIcon disabled={false} />
         <Text as="span" textStyle="400-bold" color="neutral.900" truncate flex={1} textAlign="left">
-          {selectedProject?.name ?? t("Select a project")}
+          {contentProps.selectedProject?.name ?? t("Select a project")}
         </Text>
         <Box as="span" color="primary.900">
           <SelectorChevron open={open} />
@@ -99,46 +168,7 @@ const ProjectContextPicker: FC<ProjectContextPickerProps> = ({
             borderRadius="0.25rem"
             boxShadow="lg"
           >
-            <Flex gap={4} padding={4} bg="neutral.200" alignItems="flex-start">
-              <Flex direction="column" gap={3} width="16rem" flexShrink={0} maxHeight="30rem" overflowY="auto">
-                {facetGroups.map(({ facet, label }) => (
-                  <ProjectFacetGroup
-                    key={facet}
-                    label={label}
-                    options={getFacetOptions(projects, facetFilters, facet)}
-                    selected={facetFilters[facet]}
-                    disabled={isLocked}
-                    getLabel={value => getLabel(facet, value)}
-                    onToggle={(value, checked) => onFiltersChange(toggleFacetValue(filters, facet, value, checked))}
-                  />
-                ))}
-              </Flex>
-              <Flex flex={1} minWidth={0} padding={3} bg="neutral.100" borderRadius="0.25rem">
-                <ProjectPickerList
-                  projects={filterProjects(projects, filters)}
-                  selectedUuid={selectedProject?.uuid ?? null}
-                  onSelect={onSelectProject}
-                />
-              </Flex>
-            </Flex>
-            <Flex
-              justify="space-between"
-              align="center"
-              gap={4}
-              paddingX={4}
-              paddingY={2}
-              borderTopWidth="0.0625rem"
-              borderColor="neutral.300"
-            >
-              <Text textStyle="200" color="neutral.700">
-                {isLocked
-                  ? t("Clear filters to pick a project with a different framework, country or cohort.")
-                  : t("Choose a framework, country or cohort to narrow your list of projects.")}
-              </Text>
-              <Button variant="borderless" size="small" onClick={onClear}>
-                {t("Clear filters")}
-              </Button>
-            </Flex>
+            <ProjectContextPickerContent {...contentProps} />
           </PopoverContent>
         </PopoverPositioner>
       </Portal>

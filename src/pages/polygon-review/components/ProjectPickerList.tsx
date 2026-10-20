@@ -6,8 +6,11 @@ import { ProjectMapEntryDto } from "@/generated/v3/researchService/researchServi
 import Search from "@/redesignComponents/Forms/Actions/Search/Search";
 import { SearchProps } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 
+import ProjectPickerRow from "./ProjectPickerRow";
+
 const ROW_HEIGHT_REM = 2.25;
 const VISIBLE_ROWS = 10;
+const ROW_HEIGHT = `${ROW_HEIGHT_REM}rem`;
 
 type ProjectPickerListProps = {
   projects: ProjectMapEntryDto[];
@@ -75,45 +78,17 @@ const ProjectPickerList: FC<ProjectPickerListProps> = ({ projects, selectedUuid,
               {t("No projects match these filters")}
             </Text>
           ) : (
-            visibleProjects.map(({ uuid, name, polygonCount }) => {
-              const isSelected = uuid === selectedUuid;
-              return (
-                <Flex
-                  as="li"
-                  key={uuid}
-                  role="option"
-                  aria-selected={isSelected}
-                  tabIndex={0}
-                  justify="space-between"
-                  align="center"
-                  gap={2}
-                  height={`${ROW_HEIGHT_REM}rem`}
-                  paddingX={3}
-                  cursor="pointer"
-                  bg={isSelected ? "primary.100" : undefined}
-                  _hover={{ bg: "primary.100" }}
-                  onClick={() => onSelect(uuid)}
-                  onKeyDown={event => {
-                    if (event.key === "Enter" || event.key === " ") {
-                      event.preventDefault();
-                      onSelect(uuid);
-                    }
-                  }}
-                >
-                  <Text
-                    textStyle={isSelected ? "300-bold" : "300"}
-                    color="primary.900"
-                    textDecoration="underline"
-                    truncate
-                  >
-                    {name ?? t("Unnamed project")}
-                  </Text>
-                  <Text textStyle="300" color="neutral.900" flexShrink={0}>
-                    {polygonCount.toLocaleString()}
-                  </Text>
-                </Flex>
-              );
-            })
+            visibleProjects.map(({ uuid, name, polygonCount }) => (
+              <ProjectPickerRow
+                key={uuid}
+                uuid={uuid}
+                name={name}
+                polygonCount={polygonCount}
+                height={ROW_HEIGHT}
+                isSelected={uuid === selectedUuid}
+                onSelect={onSelect}
+              />
+            ))
           )}
         </Box>
       </Flex>

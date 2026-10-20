@@ -16,7 +16,12 @@ import PolygonReviewEmptyState from "./components/PolygonReviewEmptyState";
 import PolygonReviewMap from "./components/PolygonReviewMap";
 import PolygonReviewToolbar from "./components/PolygonReviewToolbar";
 import ProjectContextPicker from "./components/ProjectContextPicker";
-import { EMPTY_PROJECT_CONTEXT_FILTERS, filterProjects, ProjectContextFilters } from "./utils/projectContextFilter";
+import {
+  EMPTY_PROJECT_CONTEXT_FILTERS,
+  filterProjects,
+  ProjectContextFilters,
+  sortProjectsByName
+} from "./utils/projectContextFilter";
 
 /**
  * Polygon Review index. No polygon data loads until a project is picked in the Level 1 project context filter;
@@ -34,14 +39,15 @@ const PolygonReviewIndexPage: FC = () => {
 
   const columns = useMemo(() => buildPolygonTableColumns(t, { showEntityColumns: true }), [t]);
 
-  const projects = useMemo(() => mapIndex?.projects ?? [], [mapIndex]);
+  const projects = useMemo(() => sortProjectsByName(mapIndex?.projects ?? []), [mapIndex]);
+  const filteredProjects = useMemo(() => filterProjects(projects, filters), [filters, projects]);
   const selectedProject = useMemo(
     () => projects.find(({ uuid }) => uuid === selectedProjectUuid) ?? null,
     [projects, selectedProjectUuid]
   );
   const mapProjects = useMemo(
-    () => (selectedProject != null ? [selectedProject] : filterProjects(projects, filters)),
-    [filters, projects, selectedProject]
+    () => (selectedProject != null ? [selectedProject] : filteredProjects),
+    [filteredProjects, selectedProject]
   );
 
   const openPicker = useCallback(() => setIsPickerOpen(true), []);
@@ -73,6 +79,7 @@ const PolygonReviewIndexPage: FC = () => {
           <ProjectContextPicker
             open={isPickerOpen}
             projects={projects}
+            filteredProjects={filteredProjects}
             filters={filters}
             selectedProject={selectedProject}
             onOpenChange={setIsPickerOpen}

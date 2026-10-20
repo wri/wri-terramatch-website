@@ -1518,9 +1518,9 @@ export type ProjectMapEntryDto = {
     | "barka-fund"
     | null;
   /**
-   * Country code of the project.
+   * Project country codes (GADM level 0).
    */
-  country: string | null;
+  level0Project: string[] | null;
   /**
    * Cohort of the project.
    */
