@@ -6,12 +6,12 @@ import { twMerge } from "tailwind-merge";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import type { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { INDEX_SEARCH_DEBOUNCE_MS } from "@/hooks/useIndexViewState";
-import NurseriesIndexBulkBar from "@/pages/nurserie/components/NurseriesIndexBulkBar";
-import NurseriesIndexHeader from "@/pages/nurserie/components/NurseriesIndexHeader";
-import NurseryProjectIndexBody from "@/pages/nurserie/components/NurseryProjectIndexBody";
-import NurseriesSelectionProvider, { useNurseriesSelectionActions } from "@/pages/nurserie/NurseriesSelection.provider";
-import { filterNurseryProjectSections } from "@/pages/nurserie/nurseryIndex.utils";
-import { useNurseriesIndexData } from "@/pages/nurserie/useNurseriesIndexData";
+import NurseriesIndexBulkBar from "@/pages/nursery/components/NurseriesIndexBulkBar";
+import NurseriesIndexHeader from "@/pages/nursery/components/NurseriesIndexHeader";
+import NurseryProjectIndexBody from "@/pages/nursery/components/NurseryProjectIndexBody";
+import NurseriesSelectionProvider, { useNurseriesSelectionActions } from "@/pages/nursery/NurseriesSelection.provider";
+import { filterNurseryProjectSections } from "@/pages/nursery/nurseryIndex.utils";
+import { useNurseriesIndexData } from "@/pages/nursery/useNurseriesIndexData";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 
