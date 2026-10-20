@@ -65,7 +65,7 @@ const createMockProject = (overrides: Partial<ProjectFullDto> = {}): ProjectFull
     name: "Project Name",
     shortName: "PN",
     plantingStartDate: "2024-01-01T00:00:00Z",
-    country: "Ghana",
+    level0Project: ["GHA"],
     lat: 9.145,
     long: 38.7667,
     totalHectaresRestoredSum: 1000,
@@ -206,7 +206,7 @@ export const Default: Story = {
     project: createMockProject({
       name: "Project Name",
       plantingStatus: "in-progress",
-      country: "Ghana",
+      level0Project: ["GHA"],
       projectSummary:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
     })
@@ -221,7 +221,7 @@ export const NotStarted: Story = {
     project: createMockProject({
       name: "Project Name",
       plantingStatus: "not-started",
-      country: "Ghana",
+      level0Project: ["GHA"],
       projectSummary:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
     })
@@ -236,7 +236,7 @@ export const InProgress: Story = {
     project: createMockProject({
       name: "Project Name",
       plantingStatus: "in-progress",
-      country: "Ghana",
+      level0Project: ["GHA"],
       projectSummary:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
     })
@@ -251,7 +251,7 @@ export const Complete: Story = {
     project: createMockProject({
       name: "Project Name",
       plantingStatus: "completed",
-      country: "Ghana",
+      level0Project: ["GHA"],
       projectSummary:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
     })
@@ -266,7 +266,7 @@ export const WithoutProjectSummary: Story = {
     project: createMockProject({
       name: "Project Name",
       plantingStatus: "in-progress",
-      country: "Ghana",
+      level0Project: ["GHA"],
       projectSummary: null
     })
   }
@@ -280,7 +280,7 @@ export const WithoutTeam: Story = {
     project: createMockProject({
       name: "Project Name",
       plantingStatus: "in-progress",
-      country: "Ghana",
+      level0Project: ["GHA"],
       projectSummary:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
       plantingStartDate: "2024-04-01T00:00:00Z",
@@ -301,7 +301,7 @@ export const AllProgressStates: Story = {
         project={createMockProject({
           name: "Project Name",
           plantingStatus: "not-started",
-          country: "Ghana",
+          level0Project: ["GHA"],
           plantingStartDate: "2025-01-01T00:00:00Z",
           plantingEndDate: "2026-12-31T00:00:00Z",
           projectSummary:
@@ -314,7 +314,7 @@ export const AllProgressStates: Story = {
         project={createMockProject({
           name: "Project Name",
           plantingStatus: "in-progress",
-          country: "Ghana",
+          level0Project: ["GHA"],
           plantingStartDate: "2024-01-01T00:00:00Z",
           plantingEndDate: "2025-12-31T00:00:00Z",
           projectSummary:
@@ -327,7 +327,7 @@ export const AllProgressStates: Story = {
         project={createMockProject({
           name: "Project Name",
           plantingStatus: "completed",
-          country: "Ghana",
+          level0Project: ["GHA"],
           plantingStartDate: "2022-01-01T00:00:00Z",
           plantingEndDate: "2023-12-31T00:00:00Z",
           projectSummary:

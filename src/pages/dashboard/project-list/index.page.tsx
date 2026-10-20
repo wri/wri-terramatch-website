@@ -159,15 +159,16 @@ const ProjectList = () => {
   const DATA_TABLE_PROJECT_LIST: ProjectListTableRow[] = activeProjects
     ? activeProjects
         .map((item: any) => {
+          const country = item.level0Project?.[0];
           return {
             uuid: item.uuid,
             project: item.name,
             organization: item.organisationName,
             programme: getFrameworkName(item.frameworkKey),
             country: {
-              country_slug: item.country,
-              label: countryChoices.find(country => country.id === item.country)?.name,
-              image: `/flags/${item.country?.toLowerCase()}.svg`
+              country_slug: country ?? "",
+              label: countryChoices.find(choice => choice.id === country)?.name,
+              image: `/flags/${country?.toLowerCase()}.svg`
             },
             treesPlanted: item.treesPlantedCount ?? 0,
             restorationHectares: item.totalHectaresRestoredSum ?? 0,
