@@ -2,6 +2,7 @@ import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/re
 import { useT } from "@transifex/react";
 import { FC, useCallback, useMemo } from "react";
 
+import EntityUpdateStatus from "@/components/extensive/EntityIndex/EntityUpdateStatus";
 import { useDate } from "@/hooks/useDate";
 import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
@@ -13,47 +14,12 @@ import Table, {
   TableRenderRowContext
 } from "@/redesignComponents/dataDisplay/Table/Table";
 import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
-import { CalendarIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
-import { isAbsentChangeRequestStatus } from "@/utils/changeRequestStatusDisplay";
+import { CalendarIcon } from "@/redesignComponents/foundations/Icons";
 
 import { useNurseryTableSelection } from "../NurseriesSelection.provider";
 import type { NurseryIndexRow } from "../nurseryIndex.types";
 import { getNurseryDetailUrl } from "../nurseryIndex.utils";
 import NurseryIndexEditButton from "./NurseryIndexEditButton";
-
-const NurseryUpdate: FC<{ status: NurseryIndexRow["updateRequestStatus"] }> = ({ status }) => {
-  const t = useT();
-
-  if (status == null || isAbsentChangeRequestStatus(status)) {
-    return (
-      <Text textStyle="300" color="neutral.800">
-        –
-      </Text>
-    );
-  }
-
-  const complete = status === "approved";
-  const updateLabel = {
-    draft: t("Draft"),
-    "pending-approval": t("Pending Approval"),
-    "information-required": t("Information Required"),
-    approved: t("Complete")
-  }[status];
-
-  return (
-    <Box className="flex items-center gap-1 text-theme-neutral-800">
-      <EditIcon boxSize={2.5} />
-      {!complete ? (
-        <Text as="span" textStyle="200">
-          {t("Editing:")}
-        </Text>
-      ) : null}
-      <Text as="span" textStyle="200-bold">
-        {updateLabel}
-      </Text>
-    </Box>
-  );
-};
 
 const NurseryIndexTable: FC<{ nurseries: NurseryIndexRow[]; embeddedInProject: boolean }> = ({
   nurseries,
@@ -101,7 +67,7 @@ const NurseryIndexTable: FC<{ nurseries: NurseryIndexRow[]; embeddedInProject: b
             {nursery.status == null ? <Text>—</Text> : <TagSubmission state={nursery.status} size="small" />}
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("updateRequestStatus")}>
-            <NurseryUpdate status={nursery.updateRequestStatus} />
+            <EntityUpdateStatus status={nursery.updateRequestStatus} />
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("updatedAt")}>
             {nursery.updatedAt !== "" ? (

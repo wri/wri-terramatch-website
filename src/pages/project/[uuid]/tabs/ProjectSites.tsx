@@ -7,6 +7,7 @@ import { twMerge } from "tailwind-merge";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { toFramework } from "@/context/framework.provider";
 import type { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { INDEX_SEARCH_DEBOUNCE_MS } from "@/hooks/useIndexViewState";
 import { filterSiteIndexSites, getSiteCreateUrl } from "@/pages/site/components/siteIndex.utils";
 import SiteIndexBulkBar from "@/pages/site/components/SiteIndexBulkBar";
 import { type SiteIndexFilterStatus, type SiteIndexFilterUpdate } from "@/pages/site/components/SiteIndexFilterDrawer";
@@ -15,7 +16,7 @@ import SiteIndexSelectionProvider, {
   useSiteIndexSelectionActions
 } from "@/pages/site/components/SiteIndexSelection.provider";
 import SiteProjectSection from "@/pages/site/components/SiteProjectSection";
-import { SEARCH_DEBOUNCE_MS, useSiteIndexData } from "@/pages/site/components/useSiteIndexData";
+import { useSiteIndexData } from "@/pages/site/components/useSiteIndexData";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 
@@ -35,7 +36,7 @@ const ProjectSitesTabContent: FC<ProjectSitesTabProps> = ({ project }) => {
   const [updateFilter, setUpdateFilter] = useState<SiteIndexFilterUpdate | null>(null);
 
   useEffect(() => {
-    const timeoutId = window.setTimeout(() => setDebouncedSearch(searchQuery.trim()), SEARCH_DEBOUNCE_MS);
+    const timeoutId = window.setTimeout(() => setDebouncedSearch(searchQuery.trim()), INDEX_SEARCH_DEBOUNCE_MS);
     return () => window.clearTimeout(timeoutId);
   }, [searchQuery]);
 
