@@ -105,7 +105,7 @@ const Navbar: FC<NavbarProps> = ({
               onSelect={handleAccountSelect}
               prefix={accountPrefix}
               suffix={accountSuffix}
-              variant="mega"
+              variant="simple"
               disabled={linksDisabled}
             />
           ) : (
