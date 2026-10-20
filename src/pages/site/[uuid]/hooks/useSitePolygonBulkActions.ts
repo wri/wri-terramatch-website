@@ -10,7 +10,7 @@ import {
   bulkUpdateSitePolygonAttributes,
   bulkUpdateSitePolygonStatus,
   getStatusUpdateCommentCreatedAt,
-  loadSitePolygonByUuid,
+  loadActiveSitePolygonVersion,
   loadSitePolygonMapIndex,
   pruneSitePolygonsCache
 } from "@/connections/SitePolygons";
@@ -495,13 +495,14 @@ export const useSitePolygonBulkActions = ({
       });
       const refreshedMapPolygons = mapIndexResponse.data?.polygons ?? [];
 
-      const activePolygonId = params.sitePolygonUuid ?? params.previousPolygonUuid;
-      const updatedPolygon =
-        activePolygonId != null && activePolygonId !== ""
-          ? await loadSitePolygonByUuid({ entityUuid: siteUuid, polygonId: activePolygonId })
-          : undefined;
-
       const clippedGeometryUuids = resolveClippedGeometryUuids(params.clippedVersions ?? [], refreshedMapPolygons);
+      const updatedPolygon = await loadActiveSitePolygonVersion({
+        entityUuid: siteUuid,
+        primaryUuid: params.primaryUuid,
+        versionPolygonUuids: clippedGeometryUuids,
+        polygonId: params.sitePolygonUuid ?? params.previousPolygonUuid
+      });
+
       const currentSiteGeometryUuids = refreshedMapPolygons
         .map(polygon => polygon.polygonUuid ?? polygon.uuid)
         .filter((uuid): uuid is string => uuid != null && uuid !== "");
