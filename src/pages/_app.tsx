@@ -27,7 +27,7 @@ import ToastProvider from "@/context/toast.provider";
 import { system } from "@/lib/theme";
 import { LayoutShellProvider } from "@/redesignComponents/Layout/LayoutShell.provider";
 import { WrappedReduxProvider } from "@/store/store";
-import Bootstrap from "@/utils/Bootstrap";
+import Bootstrap, { isPolygonReviewPath } from "@/utils/Bootstrap";
 import setupYup from "@/yup.locale";
 
 import DashboardAnalyticsWrapper from "./dashboard/DashboardAnalyticsWrapper";
@@ -103,7 +103,7 @@ const SiteRouteStack = ({ children, withMainLayout = true }: PropsWithChildren<{
 const SiteStack = ({ children }: PropsWithChildren) => <SiteRouteStack>{children}</SiteRouteStack>;
 
 // Polygon review owns its layout shell, so skip MainLayout here.
-const SitePolygonReviewStack = ({ children }: PropsWithChildren) => (
+const PolygonReviewStack = ({ children }: PropsWithChildren) => (
   <SiteRouteStack withMainLayout={false}>{children}</SiteRouteStack>
 );
 
@@ -112,7 +112,7 @@ const _App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
   const isAdmin = router.asPath.includes("/admin");
   const isOnDashboards = router.asPath.includes("/dashboard");
-  const isOnSitePolygonReview = /^\/site\/[^/]+\/polygon-review(?:[/?#]|$)/.test(router.asPath);
+  const isOnPolygonReview = isPolygonReviewPath(router.asPath);
   const isOnSite = router.asPath.includes("/site");
 
   setupYup(t);
@@ -135,10 +135,10 @@ const _App = ({ Component, pageProps }: AppProps) => {
                         <AdminStack>
                           <Component {...pageProps} />
                         </AdminStack>
-                      ) : isOnSitePolygonReview ? (
-                        <SitePolygonReviewStack>
+                      ) : isOnPolygonReview ? (
+                        <PolygonReviewStack>
                           <Component {...pageProps} />
-                        </SitePolygonReviewStack>
+                        </PolygonReviewStack>
                       ) : isOnSite ? (
                         <SiteStack>
                           <Component {...pageProps} />
