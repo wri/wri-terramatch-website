@@ -46,7 +46,7 @@ const DisturbanceSeverity: FC<{ report: DisturbanceReportFullDto }> = ({ report 
           <Text color="primary.900" textStyle="300" textWrap="nowrap">
             {t("Intensity:")}{" "}
             <Tooltip content={t("This is an indication of the severity of the disturbance event.")}>
-              <InfoIcon className="h-3 w-3 text-theme-neutral-800" />
+              <InfoIcon className="text-theme-neutral-800 h-3 w-3" />
             </Tooltip>
           </Text>
           <Flex className="flex-col" alignItems="center" gap={1}>
@@ -57,7 +57,7 @@ const DisturbanceSeverity: FC<{ report: DisturbanceReportFullDto }> = ({ report 
           </Flex>
         </Flex>
         <Flex height="100%" width="fit-content" alignItems="center">
-          <Box height="3.25rem" width="1px" backgroundColor="neutral.300" />
+          <Box height="3.25rem" width="0.0625rem" backgroundColor="neutral.300" />
         </Flex>
         <Flex width="fit-content" flexDirection="column" alignItems="center" gap={2}>
           <Text color="primary.900" textStyle="300" textWrap="nowrap">
@@ -67,7 +67,7 @@ const DisturbanceSeverity: FC<{ report: DisturbanceReportFullDto }> = ({ report 
                 "This is an estimated percentage of the project area or planted trees affected, or saplings grown in the nurseries affected by the disturbance event."
               )}
             >
-              <InfoIcon className="h-3 w-3 text-theme-neutral-800" />
+              <InfoIcon className="text-theme-neutral-800 h-3 w-3" />
             </Tooltip>
           </Text>
           <Flex className="flex-col" alignItems="center" gap={1}>

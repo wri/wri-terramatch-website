@@ -114,7 +114,7 @@ const SiteIndexFilterDrawer: FC<SiteIndexFilterDrawerProps> = ({
       drawerPaddingTop={0}
       drawerPaddingLeft={0}
       drawerMaxH="100vh"
-      panelClassName="h-screen max-h-screen shadow-[0_10px_7.5px_rgba(0,0,0,0.1),0_4px_3px_rgba(0,0,0,0.1)]"
+      panelClassName="h-screen max-h-screen shadow-[0_0.625rem_0.46875rem_rgba(0,0,0,0.1),0_0.25rem_0.1875rem_rgba(0,0,0,0.1)]"
     >
       <FilterCard label={t("Status")}>
         {statusOptions.map(option => (

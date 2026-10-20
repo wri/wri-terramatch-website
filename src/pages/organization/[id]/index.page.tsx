@@ -47,7 +47,7 @@ const OrganizationPage = () => {
       <HeroBanner bgImage={coverUrl ?? "/images/bg-hero-banner-2.webp"} className="h-[200px]" />
       <OrganizationHeader organization={organisation ?? undefined} />
       <SecondaryTabs
-        containerClassName="max-w-[calc(100%-35px)] px-10 xl:px-0 w-full"
+        containerClassName="max-w-[calc(100%-2.1875rem)] px-10 xl:px-0 w-full"
         tabItems={[
           {
             key: "overview",
