@@ -1,11 +1,11 @@
-import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
+import IndexLoadingRow from "@/components/extensive/EntityIndex/IndexLoadingRow";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
+import { useIndexViewState } from "@/hooks/useIndexViewState";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
-import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 
@@ -15,7 +15,7 @@ import { type SiteIndexFilterStatus, type SiteIndexFilterUpdate } from "./compon
 import SiteIndexHeader from "./components/SiteIndexHeader";
 import SiteIndexSelectionProvider, { useSiteIndexSelectionActions } from "./components/SiteIndexSelection.provider";
 import SiteProjectSection from "./components/SiteProjectSection";
-import { SEARCH_DEBOUNCE_MS, useSiteIndexData } from "./components/useSiteIndexData";
+import { useSiteIndexData } from "./components/useSiteIndexData";
 
 const SiteIndexPageContent: FC = () => {
   const t = useT();
@@ -23,28 +23,18 @@ const SiteIndexPageContent: FC = () => {
   const { clearSelection } = useSiteIndexSelectionActions();
   const [reloadNonce, setReloadNonce] = useState(0);
   const [childrenReloadNonce, setChildrenReloadNonce] = useState(0);
-  const [selectedProject, setSelectedProject] = useState(ALL_PROJECTS_VIEW);
-  const [hasHydratedQuery, setHasHydratedQuery] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilters, setStatusFilters] = useState<SiteIndexFilterStatus[]>([]);
   const [updateFilter, setUpdateFilter] = useState<SiteIndexFilterUpdate | null>(null);
+  const {
+    view: selectedProject,
+    query: searchQuery,
+    setQuery: setSearchQuery,
+    debouncedQuery: debouncedSearch,
+    hasHydratedQuery,
+    handleViewChange
+  } = useIndexViewState({ basePath: "/site", allProjectsValue: ALL_PROJECTS_VIEW, onViewChange: clearSelection });
 
-  useEffect(() => {
-    const timeoutId = window.setTimeout(() => setDebouncedSearch(searchQuery.trim()), SEARCH_DEBOUNCE_MS);
-    return () => window.clearTimeout(timeoutId);
-  }, [searchQuery]);
-
-  useEffect(() => {
-    if (!router.isReady) return;
-    const projectFromQuery = router.query.project;
-    if (typeof projectFromQuery === "string" && projectFromQuery !== "") {
-      setSelectedProject(projectFromQuery);
-    }
-    setHasHydratedQuery(true);
-  }, [router.isReady, router.query.project]);
-
-  const hasActiveSearch = searchQuery.trim().length > 0;
+  const hasActiveSearch = searchQuery.trim() !== "";
   const hasAppliedFilters = statusFilters.length > 0 || updateFilter != null;
   const hasActiveFilters = hasActiveSearch || hasAppliedFilters;
   const filtering = searchQuery.trim() !== debouncedSearch;
@@ -55,7 +45,7 @@ const SiteIndexPageContent: FC = () => {
       search: debouncedSearch,
       projectUuid: selectedProject === ALL_PROJECTS_VIEW ? undefined : selectedProject,
       enabled: hasHydratedQuery,
-      loadAllChildren: debouncedSearch.trim() !== "" || hasAppliedFilters
+      loadAllChildren: debouncedSearch !== "" || hasAppliedFilters
     });
   const accordionOpenResetKey = `${selectedProject}:${debouncedSearch}:${statusFilters.join(",")}:${
     updateFilter ?? ""
@@ -96,19 +86,6 @@ const SiteIndexPageContent: FC = () => {
   }, [debouncedSearch, hasAppliedFilters, statusFilters, totalSiteCount, updateFilter, visibleProjects]);
 
   const handleSitesChanged = useCallback(() => setReloadNonce(current => current + 1), []);
-
-  const handleViewChange = useCallback(
-    (nextView: string) => {
-      clearSelection();
-      setSelectedProject(nextView);
-      if (nextView === ALL_PROJECTS_VIEW) {
-        void router.replace("/site", undefined, { shallow: true });
-        return;
-      }
-      void router.replace(`/site?project=${nextView}`, undefined, { shallow: true });
-    },
-    [clearSelection, router]
-  );
 
   const handleAddSite = useCallback(() => {
     const targetProject = viewProjects.find(project => project.id === selectedProject);
@@ -154,17 +131,12 @@ const SiteIndexPageContent: FC = () => {
 
       <PageContent className="h-auto flex-1 px-2 py-0">
         {loading ? (
-          <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
-            <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
-            <Text textStyle="400" color="neutral.800">
-              {t("Loading sites...")}
-            </Text>
-          </Flex>
+          <IndexLoadingRow label={t("Loading sites...")} minHeight="15rem" />
         ) : error ? (
           <NoResults title={t("Sites could not be loaded")} description={t("Please refresh the page and try again.")} />
         ) : visibleProjects.length === 0 && !hasMore && !childrenPending ? (
           <NoResults
-            title={hasActiveFilters ? t("No sites found") : t("No sites found")}
+            title={t("No sites found")}
             description={
               hasActiveSearch
                 ? t("We couldn’t find any sites matching your search. Try a different keyword.")
@@ -174,33 +146,24 @@ const SiteIndexPageContent: FC = () => {
             }
           />
         ) : (
-          <>
-            <div className="space-y-4">
-              {visibleProjects.map((project, index) => (
-                <SiteProjectSection
-                  key={project.id}
-                  project={project}
-                  sites={project.sites}
-                  totalSiteCount={project.sites.length}
-                  isFiltered={hasActiveFilters}
-                  searchQuery={debouncedSearch}
-                  statusFilters={statusFilters}
-                  updateFilter={updateFilter}
-                  defaultOpen={index === 0}
-                  openResetKey={accordionOpenResetKey}
-                  onProjectOpened={onProjectOpened}
-                />
-              ))}
-              {hasMore || childrenPending ? (
-                <Flex minHeight="4rem" alignItems="center" justifyContent="center" gap={3}>
-                  <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
-                  <Text textStyle="400" color="neutral.800">
-                    {t("Loading...")}
-                  </Text>
-                </Flex>
-              ) : null}
-            </div>
-          </>
+          <div className="space-y-4">
+            {visibleProjects.map((project, index) => (
+              <SiteProjectSection
+                key={project.id}
+                project={project}
+                sites={project.sites}
+                totalSiteCount={project.sites.length}
+                isFiltered={hasActiveFilters}
+                searchQuery={debouncedSearch}
+                statusFilters={statusFilters}
+                updateFilter={updateFilter}
+                defaultOpen={index === 0}
+                openResetKey={accordionOpenResetKey}
+                onProjectOpened={onProjectOpened}
+              />
+            ))}
+            {hasMore || childrenPending ? <IndexLoadingRow label={t("Loading...")} /> : null}
+          </div>
         )}
         <SiteIndexBulkBar onSitesChanged={handleSitesChanged} />
       </PageContent>

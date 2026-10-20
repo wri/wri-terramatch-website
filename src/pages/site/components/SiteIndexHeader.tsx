@@ -136,7 +136,7 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
                 <Button
                   size="small"
                   {...addSiteButton}
-                  disabled={viewProjects.length === 0 || selectedProject == ALL_PROJECTS_VIEW}
+                  disabled={viewProjects.length === 0 || selectedProject === ALL_PROJECTS_VIEW}
                 />
               </Flex>
             }

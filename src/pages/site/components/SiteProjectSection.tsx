@@ -1,9 +1,11 @@
-import { Box, Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
+import { Box, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { type FC, type MouseEvent, memo, ReactNode, useCallback, useEffect, useMemo } from "react";
 
+import EntityUpdateStatus from "@/components/extensive/EntityIndex/EntityUpdateStatus";
+import IndexLoadingRow from "@/components/extensive/EntityIndex/IndexLoadingRow";
 import { Framework, isTerrafund } from "@/context/framework.provider";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useDate } from "@/hooks/useDate";
@@ -28,7 +30,6 @@ import {
   CalendarIcon,
   EditIcon,
   JobsIcon,
-  LoadingIcon,
   RegenerationIcon,
   SeedlingsIcon,
   TreeIcon
@@ -68,41 +69,6 @@ interface SiteProjectSectionProps {
 
 const stopRowClick = (event: MouseEvent) => {
   event.stopPropagation();
-};
-
-const SiteStatusTag: FC<{ status: SiteIndexStatus }> = ({ status }) => <TagSubmission state={status} size="small" />;
-
-const SiteUpdate: FC<{ update: SiteIndexUpdate | null }> = ({ update }) => {
-  const t = useT();
-
-  if (update == null) {
-    return (
-      <Text textStyle="300" color="neutral.800">
-        –
-      </Text>
-    );
-  }
-
-  const updateLabel = {
-    draft: t("Draft"),
-    "pending-approval": t("Pending Approval"),
-    "information-required": t("Information Required"),
-    complete: t("Complete")
-  }[update];
-
-  return (
-    <Box className="flex items-center gap-1 text-theme-neutral-800">
-      <EditIcon boxSize={2.5} />
-      {update != "complete" && (
-        <Text as="span" textStyle="200">
-          {t("Editing:")}
-        </Text>
-      )}
-      <Text as="span" textStyle="200-bold">
-        {updateLabel}
-      </Text>
-    </Box>
-  );
 };
 
 const SiteProjectMetrics: FC<{
@@ -225,13 +191,115 @@ const SiteProjectMetrics: FC<{
   return <IndexMetricCardRow cards={cards} />;
 };
 
+type SiteProjectRowProps = {
+  site: SiteIndexSite;
+  context?: TableRenderRowContext;
+  embeddedInProject: boolean;
+  isSelected: boolean;
+  onRowSelected: (site: SiteIndexSite, selected: boolean) => void;
+};
+
+const SiteProjectRow: FC<SiteProjectRowProps> = ({ site, context, embeddedInProject, isSelected, onRowSelected }) => {
+  const t = useT();
+  const router = useRouter();
+  const { format } = useDate();
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
+    entityName: "sites",
+    entityUUID: site.id,
+    entityStatus: site.status ?? "draft",
+    updateRequestStatus: site.updateRequestStatus,
+    useInformationRequiredModal: true
+  });
+
+  return (
+    <TableRow
+      className={`${context?.className ?? ""} group cursor-pointer`}
+      aria-selected={isSelected}
+      onClick={() => void router.push(getSiteDetailUrl(site.id, !embeddedInProject))}
+    >
+      {EditModals}
+      <TableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)} onClick={stopRowClick}>
+        <Checkbox
+          name={`site-${site.id}`}
+          aria-label={t("Select {siteName}", { siteName: site.name })}
+          checked={isSelected}
+          onCheckedChange={({ checked }) => onRowSelected(site, checked === true)}
+        />
+      </TableCell>
+      <TableCell {...context?.getCellProps("name")}>
+        <Link href={getSiteDetailUrl(site.id, !embeddedInProject)} className="block max-w-full truncate">
+          <Text
+            as="span"
+            textStyle="400-bold"
+            className="text-theme-neutral-800 underline decoration-dotted underline-offset-4"
+          >
+            {site.name}
+          </Text>
+        </Link>
+      </TableCell>
+      <TableCell {...context?.getCellProps("status")}>
+        <TagSubmission state={site.status} size="small" />
+      </TableCell>
+      <TableCell {...context?.getCellProps("update")}>
+        <EntityUpdateStatus status={site.update === "complete" ? "approved" : site.update} />
+      </TableCell>
+      <TableCell {...context?.getCellProps("updatedAt")}>
+        {site.updatedAt !== "" ? (
+          <Box w="min-content">
+            <FeedbackTag
+              type="info-white"
+              size="default"
+              label={format(site.updatedAt)}
+              icon={<CalendarIcon boxSize={2.5} />}
+            />
+          </Box>
+        ) : (
+          <Text textStyle="300" color="neutral.800">
+            –
+          </Text>
+        )}
+      </TableCell>
+      <TableCell {...context?.getCellProps("createdAt")}>
+        {site.createdAt !== "" ? (
+          <Box w="min-content">
+            <FeedbackTag
+              type="info-grey"
+              size="default"
+              label={format(site.createdAt)}
+              icon={<CalendarIcon boxSize={2.5} />}
+            />
+          </Box>
+        ) : (
+          <Text textStyle="300" color="neutral.800">
+            –
+          </Text>
+        )}
+      </TableCell>
+      <TableCell {...context?.getCellProps("actions")} onClick={stopRowClick}>
+        <Box className="flex justify-end pr-2">
+          <ActionCell
+            button={
+              isSiteEditable(site)
+                ? {
+                    children: t("Edit"),
+                    leftIcon: <EditIcon boxSize={2.5} />,
+                    "aria-label": t("Edit {siteName}", { siteName: site.name }),
+                    onClick: () => handleEdit()
+                  }
+                : undefined
+            }
+          />
+        </Box>
+      </TableCell>
+    </TableRow>
+  );
+};
+
 const SiteProjectTable: FC<{
   sites: SiteIndexSite[];
   embeddedInProject: boolean;
 }> = ({ sites, embeddedInProject }) => {
   const t = useT();
-  const router = useRouter();
-  const { format } = useDate();
   const { selectedRows, isSiteSelected, handleRowSelected, handleAllItemsSelected } = useSiteTableSelection(sites);
 
   const columns = useMemo<TableColumn[]>(
@@ -247,100 +315,17 @@ const SiteProjectTable: FC<{
   );
 
   const renderRow = useCallback(
-    (site: SiteIndexSite, context?: TableRenderRowContext) => {
-      const isSelected = isSiteSelected(site);
-      const { handleEdit, EditModals } = useGetEditEntityHandler({
-        entityName: "sites",
-        entityUUID: site.id,
-        entityStatus: site.status ?? "draft",
-        updateRequestStatus: site.updateRequestStatus,
-        useInformationRequiredModal: true
-      });
-
-      return (
-        <TableRow
-          className={`${context?.className ?? ""} group cursor-pointer`}
-          aria-selected={isSelected}
-          onClick={() => void router.push(getSiteDetailUrl(site.id, !embeddedInProject))}
-        >
-          {EditModals}
-          <TableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)} onClick={stopRowClick}>
-            <Checkbox
-              name={`site-${site.id}`}
-              aria-label={t("Select {siteName}", { siteName: site.name })}
-              checked={isSelected}
-              onCheckedChange={({ checked }) => handleRowSelected(site, checked === true)}
-            />
-          </TableCell>
-          <TableCell {...context?.getCellProps("name")}>
-            <Link href={getSiteDetailUrl(site.id, !embeddedInProject)} className="block max-w-full truncate">
-              <Text
-                as="span"
-                textStyle="400-bold"
-                className="text-theme-neutral-800 underline decoration-dotted underline-offset-4"
-              >
-                {site.name}
-              </Text>
-            </Link>
-          </TableCell>
-          <TableCell {...context?.getCellProps("status")}>
-            <SiteStatusTag status={site.status} />
-          </TableCell>
-          <TableCell {...context?.getCellProps("update")}>
-            <SiteUpdate update={site.update} />
-          </TableCell>
-          <TableCell {...context?.getCellProps("updatedAt")}>
-            {site.updatedAt !== "" ? (
-              <Box w="min-content">
-                <FeedbackTag
-                  type="info-white"
-                  size="default"
-                  label={format(site.updatedAt)}
-                  icon={<CalendarIcon boxSize={2.5} />}
-                />
-              </Box>
-            ) : (
-              <Text textStyle="300" color="neutral.800">
-                –
-              </Text>
-            )}
-          </TableCell>
-          <TableCell {...context?.getCellProps("createdAt")}>
-            {site.createdAt !== "" ? (
-              <Box w="min-content">
-                <FeedbackTag
-                  type="info-grey"
-                  size="default"
-                  label={format(site.createdAt)}
-                  icon={<CalendarIcon boxSize={2.5} />}
-                />
-              </Box>
-            ) : (
-              <Text textStyle="300" color="neutral.800">
-                –
-              </Text>
-            )}
-          </TableCell>
-          <TableCell {...context?.getCellProps("actions")} onClick={stopRowClick}>
-            <Box className="flex justify-end pr-2">
-              <ActionCell
-                button={
-                  isSiteEditable(site)
-                    ? {
-                        children: t("Edit"),
-                        leftIcon: <EditIcon boxSize={2.5} />,
-                        "aria-label": t("Edit {siteName}", { siteName: site.name }),
-                        onClick: () => handleEdit()
-                      }
-                    : undefined
-                }
-              />
-            </Box>
-          </TableCell>
-        </TableRow>
-      );
-    },
-    [embeddedInProject, format, handleRowSelected, isSiteSelected, router, t]
+    (site: SiteIndexSite, context?: TableRenderRowContext) => (
+      <SiteProjectRow
+        key={site.id}
+        site={site}
+        context={context}
+        embeddedInProject={embeddedInProject}
+        isSelected={isSiteSelected(site)}
+        onRowSelected={handleRowSelected}
+      />
+    ),
+    [embeddedInProject, handleRowSelected, isSiteSelected]
   );
 
   return (
@@ -403,12 +388,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
   const sectionBody = (
     <Box className="bg-theme-neutral-100 p-4" minW={0}>
       {showSitesLoading ? (
-        <Flex minHeight="10rem" alignItems="center" justifyContent="center" gap={3}>
-          <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
-          <Text textStyle="400" color="neutral.800">
-            {t("Loading sites...")}
-          </Text>
-        </Flex>
+        <IndexLoadingRow label={t("Loading sites...")} minHeight="10rem" />
       ) : (
         <>
           <SiteProjectMetrics

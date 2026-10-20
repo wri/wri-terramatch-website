@@ -9,8 +9,6 @@ import { useStableRows } from "@/hooks/useStableRows";
 import type { SiteIndexProject } from "./siteIndex.types";
 import { mapSiteToIndexSite, toSiteIndexProject } from "./siteIndex.utils";
 
-export const SEARCH_DEBOUNCE_MS = 300;
-
 type UseSiteIndexDataParams = {
   reloadNonce?: number;
   childrenReloadNonce?: number;

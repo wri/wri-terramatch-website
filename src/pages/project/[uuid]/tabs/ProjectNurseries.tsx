@@ -5,6 +5,7 @@ import { twMerge } from "tailwind-merge";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import type { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { INDEX_SEARCH_DEBOUNCE_MS } from "@/hooks/useIndexViewState";
 import NurseriesIndexBulkBar from "@/pages/nurserie/components/NurseriesIndexBulkBar";
 import NurseriesIndexHeader from "@/pages/nurserie/components/NurseriesIndexHeader";
 import NurseryProjectIndexBody from "@/pages/nurserie/components/NurseryProjectIndexBody";
@@ -13,8 +14,6 @@ import { filterNurseryProjectSections } from "@/pages/nurserie/nurseryIndex.util
 import { useNurseriesIndexData } from "@/pages/nurserie/useNurseriesIndexData";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
-
-const SEARCH_DEBOUNCE_MS = 300;
 
 type ProjectNurseriesTabProps = {
   project: ProjectFullDto;
@@ -30,7 +29,7 @@ const ProjectNurseriesTabContent: FC<ProjectNurseriesTabProps> = ({ project }) =
   const [updates, setUpdates] = useState<string[]>([]);
 
   useEffect(() => {
-    const timeoutId = window.setTimeout(() => setDebouncedQuery(query.trim()), SEARCH_DEBOUNCE_MS);
+    const timeoutId = window.setTimeout(() => setDebouncedQuery(query.trim()), INDEX_SEARCH_DEBOUNCE_MS);
     return () => window.clearTimeout(timeoutId);
   }, [query]);
 
