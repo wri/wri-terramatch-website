@@ -64,7 +64,7 @@ export const buildReportTrail = ({
       return {
         root: "nurseries",
         crumbs: [
-          { label: t("Nurseries"), link: "/nurserie" },
+          { label: t("Nurseries"), link: "/nursery" },
           {
             label: profileName ?? t("Nursery"),
             link: appendQueryParams(getEntityDetailPageLink("nurseries", profile.uuid, "reports"), {
