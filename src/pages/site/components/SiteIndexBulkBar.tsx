@@ -1,9 +1,10 @@
 import { FC, useCallback, useState } from "react";
 
+import { EntityIndexModalItem, EntityIndexModals } from "@/components/generic/EntityIndexModals/EntityIndexModals";
+import { useEntityIndexModalsCopy } from "@/components/generic/EntityIndexModals/useEntityIndexModalsCopy";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 
 import SiteIndexBulkActionToolbar from "./SiteIndexBulkActionToolbar";
-import SiteIndexModals from "./SiteIndexModals";
 import { useSiteIndexSelectionActions, useSiteIndexSelectionState } from "./SiteIndexSelection.provider";
 import { useSiteIndexBulkActions } from "./useSiteIndexBulkActions";
 
@@ -17,7 +18,8 @@ const SiteIndexBulkBar: FC<SiteIndexBulkBarProps> = ({ onSitesChanged }) => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openSubmitModal, setOpenSubmitModal] = useState(false);
   const [openSubmittedModal, setOpenSubmittedModal] = useState(false);
-  const [submittedSiteNames, setSubmittedSiteNames] = useState<string[]>([]);
+  const [submittedItems, setSubmittedItems] = useState<EntityIndexModalItem[]>([]);
+  const modalsCopy = useEntityIndexModalsCopy("site");
 
   const { isDownloading, isUpdating, canEdit, canDelete, canSubmit, handleDownload, handleDelete, handleSubmit } =
     useSiteIndexBulkActions({
@@ -40,9 +42,8 @@ const SiteIndexBulkBar: FC<SiteIndexBulkBarProps> = ({ onSitesChanged }) => {
   }, [clearSelection, handleDelete]);
 
   const handleConfirmSubmit = useCallback(async () => {
-    const names = selectedSites.map(site => site.name);
     await handleSubmit();
-    setSubmittedSiteNames(names);
+    setSubmittedItems(selectedSites);
     setOpenSubmittedModal(true);
     clearSelection();
   }, [clearSelection, handleSubmit, selectedSites]);
@@ -72,9 +73,10 @@ const SiteIndexBulkBar: FC<SiteIndexBulkBarProps> = ({ onSitesChanged }) => {
           setOpenSubmitModal(true);
         }}
       />
-      <SiteIndexModals
-        selectedSites={selectedSites}
-        submittedSiteNames={submittedSiteNames}
+      <EntityIndexModals
+        copy={modalsCopy}
+        items={selectedSites}
+        submittedItems={submittedItems}
         openDeleteModal={openDeleteModal}
         openSubmitModal={openSubmitModal}
         openSubmittedModal={openSubmittedModal}

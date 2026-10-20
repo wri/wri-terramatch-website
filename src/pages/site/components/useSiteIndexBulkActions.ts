@@ -39,6 +39,12 @@ const updateSiteStatus = async (siteUuid: string, status: "pending-approval") =>
   });
 };
 
+const refreshTouchedSites = (siteUuids: string[]) => {
+  ApiSlice.pruneCache("sites", siteUuids);
+  ApiSlice.pruneIndex("sites", "");
+  ApiSlice.pruneIndex("projects", "");
+};
+
 export const useSiteIndexBulkActions = ({ selectedSites, onSitesChanged }: UseSiteIndexBulkActionsProps) => {
   const t = useT();
   const router = useRouter();
@@ -51,12 +57,6 @@ export const useSiteIndexBulkActions = ({ selectedSites, onSitesChanged }: UseSi
   const canEdit = selectedSites.length === 1 && isSiteEditable(selectedSites[0]);
   const canSubmit = selectedSites.length > 0 && submittableSites.length === selectedSites.length;
   const canDelete = selectedSites.length > 0 && deletableSites.length === selectedSites.length;
-
-  const refreshTouchedSites = useCallback(async (siteUuids: string[]) => {
-    ApiSlice.pruneCache("sites", siteUuids);
-    ApiSlice.pruneIndex("sites", "");
-    ApiSlice.pruneIndex("projects", "");
-  }, []);
 
   const handleDownload = useCallback(async () => {
     const grouped = groupSiteUuidsByFramework(selectedSites);
@@ -101,12 +101,12 @@ export const useSiteIndexBulkActions = ({ selectedSites, onSitesChanged }: UseSi
     }
 
     setIsUpdating(true);
+    const deletedUuids: string[] = [];
     try {
       for (const site of deletableSites) {
         await deleteSite(site.id);
+        deletedUuids.push(site.id);
       }
-      await refreshTouchedSites(deletableSites.map(site => site.id));
-      onSitesChanged();
       showToast({
         label: t("Site Profile(s) deleted"),
         type: "success",
@@ -122,9 +122,14 @@ export const useSiteIndexBulkActions = ({ selectedSites, onSitesChanged }: UseSi
       });
       throw error;
     } finally {
+      // Refresh whatever was deleted even if a later delete failed, so the cache doesn't keep stale rows.
+      if (deletedUuids.length > 0) {
+        refreshTouchedSites(deletedUuids);
+        onSitesChanged();
+      }
       setIsUpdating(false);
     }
-  }, [canDelete, deletableSites, isUpdating, onSitesChanged, refreshTouchedSites, t]);
+  }, [canDelete, deletableSites, isUpdating, onSitesChanged, t]);
 
   const handleSubmit = useCallback(async () => {
     if (!canSubmit || isUpdating) {
@@ -132,12 +137,12 @@ export const useSiteIndexBulkActions = ({ selectedSites, onSitesChanged }: UseSi
     }
 
     setIsUpdating(true);
+    const submittedUuids: string[] = [];
     try {
       for (const site of submittableSites) {
         await updateSiteStatus(site.id, "pending-approval");
+        submittedUuids.push(site.id);
       }
-      await refreshTouchedSites(submittableSites.map(site => site.id));
-      onSitesChanged();
     } catch (error) {
       Log.error("Failed to submit selected sites", error);
       showToast({
@@ -147,9 +152,14 @@ export const useSiteIndexBulkActions = ({ selectedSites, onSitesChanged }: UseSi
       });
       throw error;
     } finally {
+      // Refresh whatever was submitted even if a later submit failed, so the cache doesn't keep stale rows.
+      if (submittedUuids.length > 0) {
+        refreshTouchedSites(submittedUuids);
+        onSitesChanged();
+      }
       setIsUpdating(false);
     }
-  }, [canSubmit, isUpdating, onSitesChanged, refreshTouchedSites, submittableSites, t]);
+  }, [canSubmit, isUpdating, onSitesChanged, submittableSites, t]);
 
   return {
     isDownloading,

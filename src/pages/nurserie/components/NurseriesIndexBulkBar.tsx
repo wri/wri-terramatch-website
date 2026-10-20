@@ -1,10 +1,11 @@
 import { FC, useCallback, useState } from "react";
 
+import { EntityIndexModalItem, EntityIndexModals } from "@/components/generic/EntityIndexModals/EntityIndexModals";
+import { useEntityIndexModalsCopy } from "@/components/generic/EntityIndexModals/useEntityIndexModalsCopy";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 
 import { useNurseriesSelectionActions, useNurseriesSelectionState } from "../NurseriesSelection.provider";
 import { useNurseriesBulkActions } from "../useNurseriesBulkActions";
-import NurseriesIndexModals from "./Modals/NurseriesIndexModals";
 import NurseriesIndexBulkActionToolbar from "./NurseriesIndexBulkActionToolbar";
 
 type NurseriesIndexBulkBarProps = {
@@ -17,7 +18,8 @@ const NurseriesIndexBulkBar: FC<NurseriesIndexBulkBarProps> = ({ onNurseriesChan
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openSubmitModal, setOpenSubmitModal] = useState(false);
   const [openSubmittedModal, setOpenSubmittedModal] = useState(false);
-  const [submittedNurseryNames, setSubmittedNurseryNames] = useState<string[]>([]);
+  const [submittedItems, setSubmittedItems] = useState<EntityIndexModalItem[]>([]);
+  const modalsCopy = useEntityIndexModalsCopy("nursery");
 
   const { isDownloading, isUpdating, canEdit, canDelete, canSubmit, handleDownload, handleDelete, handleSubmit } =
     useNurseriesBulkActions({
@@ -49,9 +51,8 @@ const NurseriesIndexBulkBar: FC<NurseriesIndexBulkBarProps> = ({ onNurseriesChan
   }, [clearSelection, handleDelete]);
 
   const handleConfirmSubmit = useCallback(async () => {
-    const names = selectedNurseries.map(nursery => nursery.name ?? "Nursery");
     await handleSubmit();
-    setSubmittedNurseryNames(names);
+    setSubmittedItems(selectedNurseries);
     setOpenSubmittedModal(true);
     clearSelection();
   }, [clearSelection, handleSubmit, selectedNurseries]);
@@ -81,9 +82,10 @@ const NurseriesIndexBulkBar: FC<NurseriesIndexBulkBarProps> = ({ onNurseriesChan
           setOpenSubmitModal(true);
         }}
       />
-      <NurseriesIndexModals
-        selectedNurseries={selectedNurseries}
-        submittedNurseryNames={submittedNurseryNames}
+      <EntityIndexModals
+        copy={modalsCopy}
+        items={selectedNurseries}
+        submittedItems={submittedItems}
         openDeleteModal={openDeleteModal}
         openSubmitModal={openSubmitModal}
         openSubmittedModal={openSubmittedModal}

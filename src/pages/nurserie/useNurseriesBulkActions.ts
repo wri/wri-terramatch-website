@@ -37,6 +37,12 @@ const updateNurseryStatus = async (nurseryUuid: string, status: "pending-approva
   });
 };
 
+const refreshTouchedNurseries = (nurseryUuids: string[]) => {
+  ApiSlice.pruneCache("nurseries", nurseryUuids);
+  ApiSlice.pruneIndex("nurseries", "");
+  ApiSlice.pruneIndex("projects", "");
+};
+
 export const useNurseriesBulkActions = ({ selectedNurseries, onNurseriesChanged }: UseNurseriesBulkActionsProps) => {
   const t = useT();
   const { clearSelection } = useNurseriesSelectionActions();
@@ -48,12 +54,6 @@ export const useNurseriesBulkActions = ({ selectedNurseries, onNurseriesChanged 
   const canEdit = selectedNurseries.length === 1 && isNurseryEditable(selectedNurseries[0]);
   const canSubmit = selectedNurseries.length > 0 && submittableNurseries.length === selectedNurseries.length;
   const canDelete = selectedNurseries.length > 0 && deletableNurseries.length === selectedNurseries.length;
-
-  const refreshTouchedNurseries = useCallback(async (nurseryUuids: string[]) => {
-    ApiSlice.pruneCache("nurseries", nurseryUuids);
-    ApiSlice.pruneIndex("nurseries", "");
-    ApiSlice.pruneIndex("projects", "");
-  }, []);
 
   const handleDownload = useCallback(async () => {
     const grouped = groupNurseryUuidsByFramework(selectedNurseries);
@@ -91,12 +91,12 @@ export const useNurseriesBulkActions = ({ selectedNurseries, onNurseriesChanged 
     }
 
     setIsUpdating(true);
+    const deletedUuids: string[] = [];
     try {
       for (const nursery of deletableNurseries) {
         await deleteNursery(nursery.uuid);
+        deletedUuids.push(nursery.uuid);
       }
-      await refreshTouchedNurseries(deletableNurseries.map(nursery => nursery.uuid));
-      onNurseriesChanged();
       showToast({
         label: t("Nursery Profile(s) deleted"),
         type: "success",
@@ -111,9 +111,13 @@ export const useNurseriesBulkActions = ({ selectedNurseries, onNurseriesChanged 
       });
       throw error;
     } finally {
+      if (deletedUuids.length > 0) {
+        refreshTouchedNurseries(deletedUuids);
+        onNurseriesChanged();
+      }
       setIsUpdating(false);
     }
-  }, [canDelete, deletableNurseries, isUpdating, onNurseriesChanged, refreshTouchedNurseries, t]);
+  }, [canDelete, deletableNurseries, isUpdating, onNurseriesChanged, t]);
 
   const handleSubmit = useCallback(async () => {
     if (!canSubmit || isUpdating) {
@@ -121,12 +125,12 @@ export const useNurseriesBulkActions = ({ selectedNurseries, onNurseriesChanged 
     }
 
     setIsUpdating(true);
+    const submittedUuids: string[] = [];
     try {
       for (const nursery of submittableNurseries) {
         await updateNurseryStatus(nursery.uuid, "pending-approval");
+        submittedUuids.push(nursery.uuid);
       }
-      await refreshTouchedNurseries(submittableNurseries.map(nursery => nursery.uuid));
-      onNurseriesChanged();
     } catch (error) {
       showToast({
         label: t("Failed to submit selected nurseries"),
@@ -135,9 +139,13 @@ export const useNurseriesBulkActions = ({ selectedNurseries, onNurseriesChanged 
       });
       throw error;
     } finally {
+      if (submittedUuids.length > 0) {
+        refreshTouchedNurseries(submittedUuids);
+        onNurseriesChanged();
+      }
       setIsUpdating(false);
     }
-  }, [canSubmit, isUpdating, onNurseriesChanged, refreshTouchedNurseries, submittableNurseries, t]);
+  }, [canSubmit, isUpdating, onNurseriesChanged, submittableNurseries, t]);
 
   return {
     isDownloading,
