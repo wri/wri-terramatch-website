@@ -17,8 +17,8 @@ import { ALL_PROJECTS_VIEW } from "./siteIndex.utils";
 import SiteIndexFilterDrawer, {
   type SiteIndexFilterStatus,
   type SiteIndexFilterUpdate,
-  SITE_INDEX_STATUS_OPTIONS,
-  SITE_INDEX_UPDATE_OPTIONS
+  getSiteIndexStatusOptions,
+  getSiteIndexUpdateOptions
 } from "./SiteIndexFilterDrawer";
 
 type SiteIndexHeaderProps = {
@@ -60,8 +60,8 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
         : [
             {
               category: t("Status"),
-              label: statusFilters.map(status =>
-                t(SITE_INDEX_STATUS_OPTIONS.find(option => option.value === status)?.label ?? status)
+              label: statusFilters.map(
+                status => getSiteIndexStatusOptions(t).find(option => option.value === status)?.label ?? status
               ),
               onRemove: () => onApplyFilters([], updateFilter)
             }
@@ -72,7 +72,7 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
             {
               category: t("Update"),
               label: [
-                t(SITE_INDEX_UPDATE_OPTIONS.find(option => option.value === updateFilter)?.label ?? updateFilter)
+                getSiteIndexUpdateOptions(t).find(option => option.value === updateFilter)?.label ?? updateFilter
               ],
               onRemove: () => onApplyFilters(statusFilters, null)
             }
@@ -146,7 +146,7 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
       <ToolbarTable
         className={classNames(
           "!px-6 !pb-6 !pt-5",
-          embeddedInProject ? "border-b border-theme-neutral-300 !bg-theme-neutral-100" : "!bg-theme-neutral-200 "
+          embeddedInProject ? "border-theme-neutral-300 !bg-theme-neutral-100 border-b" : "!bg-theme-neutral-200 "
         )}
         classNameContentLeft={embeddedInProject ? "min-w-0 flex-1 !shrink" : "w-full"}
         classNameContentSearch="w-[19rem] max-w-full"

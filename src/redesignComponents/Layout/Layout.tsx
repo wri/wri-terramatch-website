@@ -22,7 +22,6 @@ import { LayoutShellProvider, useLayoutShell } from "./LayoutShell.provider";
 
 const FOOTER_CLASS_NAME = "mt-auto shrink-0 [zoom:var(--layout-chrome-zoom,1)]";
 
-// Temporary admin-review shell: sidebar links, labels, and notification counts are design placeholders.
 const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
   const router = useRouter();
   // Breadcrumbs of a site / nursery profile start at Projects unless the profile was opened from its own list,
@@ -43,8 +42,8 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
         {
           href: isAdmin
             ? "/admin#/organisation"
-            : myOrg?.organisationId
-            ? `/organization/${myOrg?.organisationId}`
+            : myOrg?.organisationId != null
+            ? `/organization/${myOrg.organisationId}`
             : "/",
           icon: <OrganizationIcon boxSize={4} />,
           label: "Organizations"

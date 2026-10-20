@@ -1,3 +1,4 @@
+import { Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -120,14 +121,14 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
                 size="small"
                 className="underline underline-offset-2"
                 onClick={() =>
-                  router.push(
-                    `/reports/report-index?source=project&uuid=${srpReport.projectUuid}&reportType=project-report`
-                  )
+                  router.push(`/reports?source=project&uuid=${srpReport.projectUuid}&reportType=project-report`)
                 }
               >
                 {t("Project Report")}
               </Button>
-              <span className="text-sm text-theme-neutral-300">|</span>
+              <Text as="span" textStyle="300" color="neutral.300">
+                |
+              </Text>
               <Button
                 variant="borderless"
                 size="small"

@@ -1,3 +1,4 @@
+import { Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -132,7 +133,9 @@ const FinancialReportContent: FC<FinancialReportContentProps> = ({ financialRepo
             >
               {t("Reports")}
             </Button>
-            <span className="text-sm text-theme-neutral-300">|</span>
+            <Text as="span" textStyle="300" color="neutral.300">
+              |
+            </Text>
             <Button
               variant="borderless"
               size="small"

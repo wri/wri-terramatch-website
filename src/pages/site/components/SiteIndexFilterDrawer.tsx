@@ -13,20 +13,20 @@ export type SiteIndexFilterStatus = Extract<
   "draft" | "pending-approval" | "information-required" | "approved"
 >;
 
-export const SITE_INDEX_STATUS_OPTIONS: { label: string; value: SiteIndexFilterStatus }[] = [
-  { label: "Draft", value: "draft" },
-  { label: "Pending Approval", value: "pending-approval" },
-  { label: "Information Required", value: "information-required" },
-  { label: "Approved", value: "approved" }
+export const getSiteIndexStatusOptions = (t: typeof useT): { label: string; value: SiteIndexFilterStatus }[] => [
+  { label: t("Draft"), value: "draft" },
+  { label: t("Pending Approval"), value: "pending-approval" },
+  { label: t("Information Required"), value: "information-required" },
+  { label: t("Approved"), value: "approved" }
 ];
 
 export type SiteIndexFilterUpdate = SiteIndexUpdate;
 
-export const SITE_INDEX_UPDATE_OPTIONS: { label: string; value: SiteIndexFilterUpdate }[] = [
-  { label: "Draft", value: "draft" },
-  { label: "Pending Approval", value: "pending-approval" },
-  { label: "Information Required", value: "information-required" },
-  { label: "Complete", value: "complete" }
+export const getSiteIndexUpdateOptions = (t: typeof useT): { label: string; value: SiteIndexFilterUpdate }[] => [
+  { label: t("Draft"), value: "draft" },
+  { label: t("Pending Approval"), value: "pending-approval" },
+  { label: t("Information Required"), value: "information-required" },
+  { label: t("Complete"), value: "complete" }
 ];
 
 type CheckboxChange = { checked?: boolean | "indeterminate" };
@@ -47,6 +47,8 @@ const SiteIndexFilterDrawer: FC<SiteIndexFilterDrawerProps> = ({
   onApplyFilters
 }) => {
   const t = useT();
+  const statusOptions = useMemo(() => getSiteIndexStatusOptions(t), [t]);
+  const updateOptions = useMemo(() => getSiteIndexUpdateOptions(t), [t]);
   const [draftFilters, setDraftFilters] = useState<SiteIndexFilterStatus[]>(filters);
   const [draftUpdateFilter, setDraftUpdateFilter] = useState<SiteIndexFilterUpdate | null>(updateFilter);
 
@@ -61,17 +63,17 @@ const SiteIndexFilterDrawer: FC<SiteIndexFilterDrawerProps> = ({
     const tags: { id: string; label: string }[] = [];
 
     draftFilters.forEach(status => {
-      const option = SITE_INDEX_STATUS_OPTIONS.find(item => item.value === status);
-      tags.push({ id: `status-${status}`, label: t(option?.label ?? status) });
+      const option = statusOptions.find(item => item.value === status);
+      tags.push({ id: `status-${status}`, label: option?.label ?? status });
     });
 
     if (draftUpdateFilter != null) {
-      const option = SITE_INDEX_UPDATE_OPTIONS.find(item => item.value === draftUpdateFilter);
-      tags.push({ id: "update", label: t(option?.label ?? draftUpdateFilter) });
+      const option = updateOptions.find(item => item.value === draftUpdateFilter);
+      tags.push({ id: "update", label: option?.label ?? draftUpdateFilter });
     }
 
     return tags;
-  }, [draftFilters, draftUpdateFilter, t]);
+  }, [draftFilters, draftUpdateFilter, statusOptions, updateOptions]);
 
   const handleStatusChange = (status: SiteIndexFilterStatus, { checked }: CheckboxChange) => {
     setDraftFilters(current =>
@@ -115,7 +117,7 @@ const SiteIndexFilterDrawer: FC<SiteIndexFilterDrawerProps> = ({
       panelClassName="h-screen max-h-screen shadow-[0_10px_7.5px_rgba(0,0,0,0.1),0_4px_3px_rgba(0,0,0,0.1)]"
     >
       <FilterCard label={t("Status")}>
-        {SITE_INDEX_STATUS_OPTIONS.map(option => (
+        {statusOptions.map(option => (
           <Checkbox
             key={option.value}
             name={`site-status-${option.value}`}
@@ -123,7 +125,7 @@ const SiteIndexFilterDrawer: FC<SiteIndexFilterDrawerProps> = ({
             checked={draftFilters.includes(option.value)}
             onCheckedChange={(change: CheckboxChange) => handleStatusChange(option.value, change)}
           >
-            {t(option.label)}
+            {option.label}
           </Checkbox>
         ))}
       </FilterCard>
@@ -131,10 +133,7 @@ const SiteIndexFilterDrawer: FC<SiteIndexFilterDrawerProps> = ({
         <SelectInput
           placeholder={t("Please select")}
           value={draftUpdateFilter == null ? [] : [draftUpdateFilter]}
-          items={SITE_INDEX_UPDATE_OPTIONS.map(option => ({
-            label: t(option.label),
-            value: option.value
-          }))}
+          items={updateOptions}
           onChange={(values: string[]) =>
             setDraftUpdateFilter((values[0] as SiteIndexFilterUpdate | undefined) ?? null)
           }

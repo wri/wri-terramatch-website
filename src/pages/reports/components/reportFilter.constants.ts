@@ -1,3 +1,5 @@
+import type { useT } from "@transifex/react";
+
 export type ReportTypeOption =
   | "project-report"
   | "site-report"
@@ -91,24 +93,26 @@ export const formatReportPeriodLabel = (filters: ReportFilterState, format: Date
   return undefined;
 };
 
-export const PROGRESS_REPORT_TYPE_OPTIONS: { value: ReportTypeOption; label: string }[] = [
-  { value: "project-report", label: "Project Reports" },
-  { value: "site-report", label: "Site Reports" },
-  { value: "nursery-report", label: "Nursery Reports" }
+type ReportTypeSelectOption = { value: ReportTypeOption; label: string };
+
+export const getProgressReportTypeOptions = (t: typeof useT): ReportTypeSelectOption[] => [
+  { value: "project-report", label: t("Project Reports") },
+  { value: "site-report", label: t("Site Reports") },
+  { value: "nursery-report", label: t("Nursery Reports") }
 ];
 
-export const ADDITIONAL_REPORT_TYPE_OPTIONS: { value: ReportTypeOption; label: string }[] = [
-  { value: "srp-report", label: "Annual SRP" },
-  { value: "disturbance-report", label: "Disturbance Reports" },
-  { value: "financial-report", label: "Financial Reports" }
+export const getAdditionalReportTypeOptions = (t: typeof useT): ReportTypeSelectOption[] => [
+  { value: "srp-report", label: t("Annual SRP") },
+  { value: "disturbance-report", label: t("Disturbance Reports") },
+  { value: "financial-report", label: t("Financial Reports") }
 ];
 
-export const REPORTS_TYPE_OPTIONS_ENTITY_PROFILE: { value: ReportTypeOption; label: string }[] = [
-  { value: "project-report", label: "Project Reports" },
-  { value: "site-report", label: "Site Reports" },
-  { value: "nursery-report", label: "Nursery Reports" },
-  { value: "srp-report", label: "Annual SRP" },
-  { value: "disturbance-report", label: "Disturbance Reports" }
+export const getEntityProfileReportTypeOptions = (t: typeof useT): ReportTypeSelectOption[] => [
+  { value: "project-report", label: t("Project Reports") },
+  { value: "site-report", label: t("Site Reports") },
+  { value: "nursery-report", label: t("Nursery Reports") },
+  { value: "srp-report", label: t("Annual SRP") },
+  { value: "disturbance-report", label: t("Disturbance Reports") }
 ];
 
 /**
@@ -118,11 +122,11 @@ export const REPORTS_TYPE_OPTIONS_ENTITY_PROFILE: { value: ReportTypeOption; lab
 export const hasReportTypeFilter = (source: "project" | "site" | "nursery", entityProfile: boolean) =>
   !entityProfile || source === "project";
 
-export const REPORT_TYPE_LABELS: Record<ReportTypeOption, string> = {
-  "project-report": "Project Reports",
-  "site-report": "Site Reports",
-  "nursery-report": "Nursery Reports",
-  "disturbance-report": "Disturbance Reports",
-  "srp-report": "Annual Reports",
-  "financial-report": "Financial Reports"
-};
+export const getReportTypeLabels = (t: typeof useT): Record<ReportTypeOption, string> => ({
+  "project-report": t("Project Reports"),
+  "site-report": t("Site Reports"),
+  "nursery-report": t("Nursery Reports"),
+  "disturbance-report": t("Disturbance Reports"),
+  "srp-report": t("Annual Reports"),
+  "financial-report": t("Financial Reports")
+});

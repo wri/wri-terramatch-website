@@ -89,7 +89,7 @@ const DisturbanceReportOverviewTab: FC<DisturbanceReportOverviewTabProps> = ({
         if (!cancelled) setPolygonsData(results.flat());
       })
       .catch(error => {
-        Log.error("Failed to load disturbance report affected polygons", { error });
+        Log.error("Failed to load disturbance report affected polygons", error);
       });
 
     return () => {

@@ -1,3 +1,4 @@
+import type { SystemStyleObject } from "@chakra-ui/react";
 import { Radio as WriRadio, RadioGroup as WriRadioGroup } from "@worldresources/wri-design-systems";
 import type { FC } from "react";
 
@@ -9,7 +10,7 @@ export const Radio: FC<RadioProps> = ({ children, ...props }) => <WriRadio {...p
 
 export const RadioGroup: FC<RadioGroupProps> = props => <WriRadioGroup {...props} />;
 
-const WriRadioGroupWithCss: FC<RadioGroupProps & { css?: any }> = WriRadioGroup;
+const WriRadioGroupWithCss: FC<RadioGroupProps & { css?: SystemStyleObject }> = WriRadioGroup;
 
 const RadioButtonGroup: FC<RadioButtonGroupProps> = ({ options, css, color, ...groupProps }) => {
   const styles = {

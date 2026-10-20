@@ -160,6 +160,9 @@ type RequestBody = {
   data?: { type: ResourceType; attributes?: Dictionary<unknown> };
 };
 
+// After this long, a file download falls back to the direct link instead of waiting on the blob.
+const FILE_DOWNLOAD_TIMEOUT = 2 * 60 * 1000; // in ms
+
 export class V3ApiEndpoint<
   TResponse = unknown,
   TError extends ErrorPayload | undefined = ErrorPayload,
@@ -265,7 +268,7 @@ export class V3ApiEndpoint<
       // the caller's promise only resolves once the file is in hand, and avoids Safari's "allow
       // downloads" prompt for a cross-origin link clicked outside a user gesture.
       try {
-        const fileResponse = await fetch(downloadUrl);
+        const fileResponse = await fetch(downloadUrl, { signal: AbortSignal.timeout(FILE_DOWNLOAD_TIMEOUT) });
         if (!fileResponse.ok) throw new Error(`File download failed with status ${fileResponse.status}`);
         await downloadFileBlob(await fileResponse.blob(), fileName);
       } catch (error) {
