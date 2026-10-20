@@ -24,7 +24,7 @@ import SiteIndexFilterDrawer, {
 type SiteIndexHeaderProps = {
   siteCount: number;
   selectedProject: string;
-  viewProjects: SiteIndexProject[];
+  viewProjects: Pick<SiteIndexProject, "id" | "name">[];
   statusFilters: SiteIndexFilterStatus[];
   updateFilter: SiteIndexFilterUpdate | null;
   filtering: boolean;

@@ -4,19 +4,31 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
-import type { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import type { ProjectFullDto, ProjectNurseriesMetaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { INDEX_SEARCH_DEBOUNCE_MS } from "@/hooks/useIndexViewState";
 import NurseriesIndexBulkBar from "@/pages/nursery/components/NurseriesIndexBulkBar";
 import NurseriesIndexHeader from "@/pages/nursery/components/NurseriesIndexHeader";
-import NurseryProjectIndexBody from "@/pages/nursery/components/NurseryProjectIndexBody";
+import NurseryProjectBody from "@/pages/nursery/components/NurseryProjectBody";
 import NurseriesSelectionProvider, { useNurseriesSelectionActions } from "@/pages/nursery/NurseriesSelection.provider";
-import { filterNurseryProjectSections } from "@/pages/nursery/nurseryIndex.utils";
 import { useNurseriesIndexData } from "@/pages/nursery/useNurseriesIndexData";
+import { useNurseryProjectRows } from "@/pages/nursery/useNurseryProjectRows";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 
 type ProjectNurseriesTabProps = {
   project: ProjectFullDto;
+};
+
+const ProjectNurseriesBody: FC<{
+  meta: ProjectNurseriesMetaDto;
+  search: string;
+  statuses: string[];
+  updates: string[];
+  isFiltered: boolean;
+}> = ({ meta, search, statuses, updates, isFiltered }) => {
+  const filters = useMemo(() => ({ search, statuses, updates }), [search, statuses, updates]);
+  const nurseries = useNurseryProjectRows(meta, filters, true);
+  return <NurseryProjectBody meta={meta} nurseries={nurseries} isFiltered={isFiltered} embeddedInProject />;
 };
 
 const ProjectNurseriesTabContent: FC<ProjectNurseriesTabProps> = ({ project }) => {
@@ -33,23 +45,16 @@ const ProjectNurseriesTabContent: FC<ProjectNurseriesTabProps> = ({ project }) =
     return () => window.clearTimeout(timeoutId);
   }, [query]);
 
-  const { sections, loading, onProjectOpened, nurseryTotal, error } = useNurseriesIndexData(reloadNonce, {
+  const { metas, loading, error, nurseryTotal } = useNurseriesIndexData({
     search: debouncedQuery,
+    statuses,
+    updates,
     projectUuid: project.uuid,
-    enabled: true
+    enabled: true,
+    reloadNonce
   });
-
-  const filteredSections = useMemo(
-    () => filterNurseryProjectSections(sections, debouncedQuery, project.uuid, statuses, updates),
-    [debouncedQuery, project.uuid, sections, statuses, updates]
-  );
-  const section = filteredSections[0];
-  const hasAppliedFilters = statuses.length > 0 || updates.length > 0;
-  const hasActiveSearch = query.trim().length > 0;
-  const hasActiveFilters = hasActiveSearch || hasAppliedFilters;
-  const nurseryCount = hasActiveFilters ? section?.nurseries.length ?? 0 : nurseryTotal;
-  const showEmptyProject =
-    section == null || (section.nurseriesLoaded !== false && section.nurseries.length === 0 && !hasActiveFilters);
+  const meta = metas[0];
+  const hasActiveFilters = debouncedQuery !== "" || statuses.length > 0 || updates.length > 0;
 
   const addNurseryHref =
     project.frameworkKey == null
@@ -71,7 +76,7 @@ const ProjectNurseriesTabContent: FC<ProjectNurseriesTabProps> = ({ project }) =
     <div className="flex w-full min-w-0 flex-1 flex-col">
       <NurseriesIndexHeader
         embeddedInProject
-        nurseryCount={nurseryCount}
+        nurseryCount={nurseryTotal}
         viewValue={project.uuid}
         viewItems={[]}
         statuses={statuses}
@@ -94,7 +99,7 @@ const ProjectNurseriesTabContent: FC<ProjectNurseriesTabProps> = ({ project }) =
             title={t("Nurseries could not be loaded")}
             description={t("Please refresh the page and try again.")}
           />
-        ) : showEmptyProject ? (
+        ) : meta == null ? (
           <NoResults
             title={t("No nurseries found")}
             description={
@@ -104,14 +109,12 @@ const ProjectNurseriesTabContent: FC<ProjectNurseriesTabProps> = ({ project }) =
             }
           />
         ) : (
-          <NurseryProjectIndexBody
-            section={section}
-            project={project}
-            query={debouncedQuery}
+          <ProjectNurseriesBody
+            meta={meta}
+            search={debouncedQuery}
             statuses={statuses}
             updates={updates}
             isFiltered={hasActiveFilters}
-            onProjectOpened={onProjectOpened}
           />
         )}
         <NurseriesIndexBulkBar onNurseriesChanged={handleNurseriesChanged} />

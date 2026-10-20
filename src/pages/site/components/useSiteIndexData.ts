@@ -1,118 +1,84 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useMemo } from "react";
 
-import { loadFullProject } from "@/connections/Entity";
+import { indexProjectConnection, indexSiteConnection, projectSitesMetaIndexConnection } from "@/connections/Entity";
 import { toFramework } from "@/context/framework.provider";
-import type { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { useSiteProjectIndex } from "@/hooks/useProjectEntityIndex";
-import { useStableRows } from "@/hooks/useStableRows";
+import { useAllPages, useConnection, useInfinitePages } from "@/hooks/useConnection";
+import ApiSlice from "@/store/apiSlice";
 
-import type { SiteIndexProject } from "./siteIndex.types";
-import { mapSiteToIndexSite, toSiteIndexProject } from "./siteIndex.utils";
+import type { SiteIndexStatus, SiteIndexUpdate } from "./siteIndex.types";
+import { toSiteIndexUpdateRequestStatus } from "./siteIndex.utils";
 
-type UseSiteIndexDataParams = {
-  reloadNonce?: number;
-  childrenReloadNonce?: number;
-  search?: string;
+const PROJECT_PAGE_SIZE = 10;
+
+export type SiteIndexQuery = {
+  search: string;
+  statusFilters: SiteIndexStatus[];
+  updateFilter: SiteIndexUpdate | null;
+  /** Only this project, for the project's sites tab. */
   projectUuid?: string;
-  enabled?: boolean;
-  loadAllChildren?: boolean;
+  enabled: boolean;
+  /** Bumped after a bulk action, so the lists and counts are fetched again. */
+  reloadNonce: number;
 };
 
-const asFullProject = (project: ProjectFullDto | null | undefined): ProjectFullDto | undefined =>
-  project != null && project.lightResource === false ? project : undefined;
-
+/**
+ * Index data for the sites page. Like the reports index, the server applies the filters: the project list
+ * comes from the sites meta endpoint, and each project section loads its own sites when it opens.
+ */
 export const useSiteIndexData = ({
-  reloadNonce = 0,
-  childrenReloadNonce = 0,
-  search = "",
+  search,
+  statusFilters,
+  updateFilter,
   projectUuid,
-  enabled = true,
-  loadAllChildren = false
-}: UseSiteIndexDataParams = {}) => {
-  const index = useSiteProjectIndex({
-    reloadNonce,
-    childrenReloadNonce,
-    search,
-    projectUuid,
-    enabled,
-    loadAllChildren
-  });
-  const loadProjectChildren = index.onProjectOpened;
-  const [fullProjectsById, setFullProjectsById] = useState<Map<string, ProjectFullDto>>(new Map());
-  const fullProjectsRef = useRef(fullProjectsById);
-  fullProjectsRef.current = fullProjectsById;
+  enabled,
+  reloadNonce
+}: SiteIndexQuery) => {
+  const updateRequestStatus = toSiteIndexUpdateRequestStatus(updateFilter);
+  const filter = useMemo(
+    () => ({
+      search: search === "" ? undefined : search,
+      status: statusFilters.length > 0 ? statusFilters : undefined,
+      updateRequestStatus: updateRequestStatus == null ? undefined : [updateRequestStatus],
+      projectUuid
+    }),
+    [projectUuid, search, statusFilters, updateRequestStatus]
+  );
 
   useEffect(() => {
-    setFullProjectsById(new Map());
+    if (reloadNonce === 0) return;
+    ApiSlice.pruneIndex("projectSitesMetas", "");
+    ApiSlice.pruneIndex("sites", "");
   }, [reloadNonce]);
 
-  const onProjectOpened = useCallback(
-    async (projectId: string) => {
-      const fullProjectRequest = fullProjectsRef.current.has(projectId) ? null : loadFullProject({ id: projectId });
-      const [result] = await Promise.all([fullProjectRequest, loadProjectChildren(projectId)]);
-      if (result == null) return;
+  const metaList = useInfinitePages(projectSitesMetaIndexConnection, { enabled, filter }, PROJECT_PAGE_SIZE);
+  const [countLoaded, { indexTotal }] = useConnection(indexSiteConnection, {
+    enabled,
+    pageNumber: 1,
+    pageSize: 1,
+    filter
+  });
+  // The project list for the view dropdown and the add-site link. Only needed on the "All Projects" page.
+  const [, projectRows] = useAllPages(indexProjectConnection, { enabled: enabled && projectUuid == null });
 
-      const fullProject = asFullProject(result.data);
-      if (fullProject == null) return;
-      setFullProjectsById(current => {
-        if (current.has(projectId)) return current;
-        const next = new Map(current);
-        next.set(projectId, fullProject);
-        return next;
-      });
-    },
-    [loadProjectChildren]
-  );
-
-  const toProject = useCallback(
-    (projectId: string, project: Parameters<typeof toSiteIndexProject>[0], withSites: boolean): SiteIndexProject => {
-      const sites = withSites
-        ? (index.childrenByProjectId.get(projectId) ?? []).map(site =>
-            mapSiteToIndexSite(site, toFramework(project.frameworkKey))
-          )
-        : [];
-
-      return toSiteIndexProject(project, {
-        fullProject: fullProjectsById.get(projectId),
-        sites,
-        sitesLoaded: index.childrenByProjectId.has(projectId),
-        sitesLoading: index.loadingProjectIds.has(projectId)
-      });
-    },
-    [fullProjectsById, index.childrenByProjectId, index.loadingProjectIds]
-  );
-
-  // Rows keep their identity until their own inputs change, so appending a batch of projects doesn't
-  // re-render every project section that is already on screen.
-  const viewProjects = useStableRows(
-    index.viewProjects,
-    project => project.uuid,
-    project => [project, fullProjectsById.get(project.uuid), index.loadingProjectIds.has(project.uuid)],
-    project => toProject(project.uuid, project, false)
-  );
-
-  const projects = useStableRows(
-    index.visibleProjects,
-    project => project.uuid,
-    project => [
-      project,
-      index.childrenByProjectId.get(project.uuid),
-      fullProjectsById.get(project.uuid),
-      index.loadingProjectIds.has(project.uuid)
-    ],
-    project => toProject(project.uuid, project, true)
+  const metas = metaList.data;
+  const projects = useMemo(
+    () =>
+      projectRows.map(project => ({
+        id: project.uuid,
+        name: project.name ?? "-",
+        frameworkKey: toFramework(project.frameworkKey)
+      })),
+    [projectRows]
   );
 
   return {
-    loading: index.loading,
-    loadingMore: index.loadingMore,
-    hasMore: index.hasMore,
-    loadMore: index.loadMore,
-    viewProjects,
+    loading: !enabled || !metaList.loaded || !countLoaded,
+    error: metaList.loadFailure != null,
+    metas,
     projects,
-    totalSiteCount: index.childTotal,
-    onProjectOpened,
-    error: index.error,
-    childrenPending: index.childrenPending
+    siteTotal: indexTotal ?? 0,
+    hasMore: metaList.hasMore,
+    loadingMore: metaList.loadingMore,
+    loadMore: metaList.loadMore
   };
 };

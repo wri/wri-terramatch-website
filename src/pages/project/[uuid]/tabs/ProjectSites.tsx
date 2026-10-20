@@ -6,17 +6,18 @@ import { twMerge } from "tailwind-merge";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { toFramework } from "@/context/framework.provider";
-import type { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import type { ProjectFullDto, ProjectSitesMetaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { INDEX_SEARCH_DEBOUNCE_MS } from "@/hooks/useIndexViewState";
-import { filterSiteIndexSites, getSiteCreateUrl } from "@/pages/site/components/siteIndex.utils";
+import { getSiteCreateUrl } from "@/pages/site/components/siteIndex.utils";
 import SiteIndexBulkBar from "@/pages/site/components/SiteIndexBulkBar";
 import { type SiteIndexFilterStatus, type SiteIndexFilterUpdate } from "@/pages/site/components/SiteIndexFilterDrawer";
 import SiteIndexHeader from "@/pages/site/components/SiteIndexHeader";
 import SiteIndexSelectionProvider, {
   useSiteIndexSelectionActions
 } from "@/pages/site/components/SiteIndexSelection.provider";
-import SiteProjectSection from "@/pages/site/components/SiteProjectSection";
+import { SiteProjectBody } from "@/pages/site/components/SiteProjectSection";
 import { useSiteIndexData } from "@/pages/site/components/useSiteIndexData";
+import { useSiteProjectRows } from "@/pages/site/components/useSiteProjectRows";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 
@@ -24,11 +25,30 @@ type ProjectSitesTabProps = {
   project: ProjectFullDto;
 };
 
+const ProjectSitesBody: FC<{
+  meta: ProjectSitesMetaDto;
+  search: string;
+  statusFilters: SiteIndexFilterStatus[];
+  updateFilter: SiteIndexFilterUpdate | null;
+  isFiltered: boolean;
+}> = ({ meta, search, statusFilters, updateFilter, isFiltered }) => {
+  const filters = useMemo(() => ({ search, statusFilters, updateFilter }), [search, statusFilters, updateFilter]);
+  const sites = useSiteProjectRows(meta, filters, true);
+  return (
+    <SiteProjectBody
+      frameworkKey={toFramework(meta.frameworkKey)}
+      meta={meta}
+      sites={sites}
+      isFiltered={isFiltered}
+      embeddedInProject
+    />
+  );
+};
+
 const ProjectSitesTabContent: FC<ProjectSitesTabProps> = ({ project }) => {
   const t = useT();
   const router = useRouter();
   const [reloadNonce, setReloadNonce] = useState(0);
-  const [childrenReloadNonce, setChildrenReloadNonce] = useState(0);
   const { clearSelection } = useSiteIndexSelectionActions();
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -45,30 +65,15 @@ const ProjectSitesTabContent: FC<ProjectSitesTabProps> = ({ project }) => {
   const hasActiveFilters = hasActiveSearch || hasAppliedFilters;
   const filtering = searchQuery.trim() !== debouncedSearch;
 
-  const { loading, projects, totalSiteCount, onProjectOpened, error } = useSiteIndexData({
-    reloadNonce,
-    childrenReloadNonce,
+  const { loading, error, metas, siteTotal } = useSiteIndexData({
     search: debouncedSearch,
+    statusFilters,
+    updateFilter,
     projectUuid: project.uuid,
-    enabled: true
+    enabled: true,
+    reloadNonce
   });
-
-  const siteProject = projects[0];
-
-  const visibleSites = useMemo(() => {
-    if (siteProject == null) return [];
-    return filterSiteIndexSites(siteProject.sites, {
-      search: debouncedSearch,
-      statusFilters,
-      updateFilter
-    });
-  }, [debouncedSearch, siteProject, statusFilters, updateFilter]);
-
-  const siteCount = useMemo(() => {
-    if (!hasActiveFilters) return totalSiteCount;
-    if (siteProject != null && !siteProject.sitesLoaded) return totalSiteCount;
-    return visibleSites.length;
-  }, [hasActiveFilters, siteProject, totalSiteCount, visibleSites.length]);
+  const meta = metas[0];
 
   const handleSitesChanged = useCallback(() => setReloadNonce(current => current + 1), []);
 
@@ -77,9 +82,6 @@ const ProjectSitesTabContent: FC<ProjectSitesTabProps> = ({ project }) => {
       clearSelection();
       setStatusFilters(nextStatusFilters);
       setUpdateFilter(nextUpdateFilter);
-      if (nextStatusFilters.length > 0 || nextUpdateFilter != null) {
-        setChildrenReloadNonce(current => current + 1);
-      }
     },
     [clearSelection]
   );
@@ -94,18 +96,12 @@ const ProjectSitesTabContent: FC<ProjectSitesTabProps> = ({ project }) => {
     );
   }, [project.frameworkKey, project.uuid, router]);
 
-  const showEmptyProject =
-    siteProject != null && siteProject.sitesLoaded && visibleSites.length === 0 && !hasActiveFilters;
-
-  const showEmptyFiltered =
-    siteProject != null && siteProject.sitesLoaded && visibleSites.length === 0 && hasActiveFilters;
-
   return (
     <div className="flex w-full min-w-0 flex-1 flex-col">
       <SiteIndexHeader
         embeddedInProject
         addSiteDisabled={project.frameworkKey == null}
-        siteCount={siteCount}
+        siteCount={siteTotal}
         selectedProject={project.uuid}
         viewProjects={[]}
         statusFilters={statusFilters}
@@ -126,7 +122,7 @@ const ProjectSitesTabContent: FC<ProjectSitesTabProps> = ({ project }) => {
           </Flex>
         ) : error ? (
           <NoResults title={t("Sites could not be loaded")} description={t("Please refresh the page and try again.")} />
-        ) : siteProject == null || showEmptyProject ? (
+        ) : meta == null ? (
           <NoResults
             title={t("No sites found")}
             description={
@@ -135,28 +131,13 @@ const ProjectSitesTabContent: FC<ProjectSitesTabProps> = ({ project }) => {
                 : t("There are no sites available for this project view.")
             }
           />
-        ) : showEmptyFiltered ? (
-          <NoResults
-            title={t("No sites found")}
-            description={
-              hasActiveSearch
-                ? t("We couldn’t find any sites matching your search. Try a different keyword.")
-                : t("We couldn’t find any sites matching your filters. Try adjusting or clearing your filters.")
-            }
-          />
         ) : (
-          <SiteProjectSection
-            embeddedInProject
-            project={siteProject}
-            sites={siteProject.sites}
-            totalSiteCount={siteProject.sites.length}
-            isFiltered={hasActiveFilters}
-            searchQuery={debouncedSearch}
+          <ProjectSitesBody
+            meta={meta}
+            search={debouncedSearch}
             statusFilters={statusFilters}
             updateFilter={updateFilter}
-            defaultOpen
-            openResetKey={`${project.uuid}:${debouncedSearch}:${statusFilters.join(",")}:${updateFilter ?? ""}`}
-            onProjectOpened={onProjectOpened}
+            isFiltered={hasActiveFilters}
           />
         )}
         <SiteIndexBulkBar onSitesChanged={handleSitesChanged} />

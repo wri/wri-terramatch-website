@@ -6,6 +6,7 @@ import { FC, useCallback, useMemo, useState } from "react";
 import IndexLoadingRow from "@/components/extensive/EntityIndex/IndexLoadingRow";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { useIndexViewState } from "@/hooks/useIndexViewState";
+import { InfiniteScrollSentinel } from "@/hooks/useInfiniteScrollSentinel";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 
@@ -13,7 +14,6 @@ import NurseriesIndexBulkBar from "./components/NurseriesIndexBulkBar";
 import NurseriesIndexHeader from "./components/NurseriesIndexHeader";
 import NurseryProjectSection from "./components/NurseryProjectSection";
 import NurseriesSelectionProvider, { useNurseriesSelectionActions } from "./NurseriesSelection.provider";
-import { filterNurseryProjectSections } from "./nurseryIndex.utils";
 import { useNurseriesIndexData } from "./useNurseriesIndexData";
 
 const ALL_PROJECTS_VIEW_VALUE = "all-projects";
@@ -39,14 +39,14 @@ const NurseriesIndexContent: FC = () => {
   const handleNurseriesChanged = useCallback(() => setReloadNonce(current => current + 1), []);
   const selectedProjectUuid = viewValue === ALL_PROJECTS_VIEW_VALUE ? undefined : viewValue;
 
-  const hasChildFilter = debouncedQuery !== "" || statuses.length > 0 || updates.length > 0;
-  const { projects, sections, loading, hasMore, onProjectOpened, nurseryTotal, error, childrenPending } =
-    useNurseriesIndexData(reloadNonce, {
-      search: debouncedQuery,
-      projectUuid: selectedProjectUuid,
-      enabled: hasHydratedQuery,
-      loadAllChildren: hasChildFilter
-    });
+  const { metas, projects, loading, error, nurseryTotal, hasMore, loadingMore, loadMore } = useNurseriesIndexData({
+    search: debouncedQuery,
+    statuses,
+    updates,
+    projectUuid: selectedProjectUuid,
+    enabled: hasHydratedQuery,
+    reloadNonce
+  });
 
   const viewItems = useMemo(
     () => [
@@ -60,20 +60,12 @@ const NurseriesIndexContent: FC = () => {
 
   const selectedProject = useMemo(() => projects.find(project => project.uuid === viewValue), [projects, viewValue]);
   const hasFilters = query.trim() !== "" || statuses.length > 0 || updates.length > 0;
-  // While a filter is applied, a project only appears once its nurseries have loaded and been matched.
-  // Showing unloaded projects would make them vanish as soon as their nurseries arrive.
-  const filteredSections = useMemo(
-    () =>
-      filterNurseryProjectSections(sections, "", undefined, statuses, updates).filter(
-        section => !(hasChildFilter && section.nurseriesLoaded === false)
-      ),
-    [hasChildFilter, sections, statuses, updates]
-  );
   const accordionOpenResetKey = `${viewValue}:${debouncedQuery}:${statuses.join(",")}:${updates.join(",")}`;
-  const nurseryCount =
-    statuses.length > 0 || updates.length > 0
-      ? filteredSections.reduce((total, section) => total + section.nurseries.length, 0)
-      : nurseryTotal;
+  const sectionFilters = useMemo(
+    () => ({ search: debouncedQuery, statuses, updates }),
+    [debouncedQuery, statuses, updates]
+  );
+  const nurseryCount = nurseryTotal;
   const addNurseryHref =
     selectedProject?.frameworkKey == null
       ? undefined
@@ -109,7 +101,7 @@ const NurseriesIndexContent: FC = () => {
             title={t("Nurseries could not be loaded")}
             description={t("Please refresh the page and try again.")}
           />
-        ) : filteredSections.length === 0 && !hasMore && !childrenPending ? (
+        ) : metas.length === 0 && !hasMore ? (
           <NoResults
             title={t("No nurseries found")}
             description={
@@ -120,20 +112,24 @@ const NurseriesIndexContent: FC = () => {
           />
         ) : (
           <Flex gap={4} flexDirection="column">
-            {filteredSections.map((section, index) => (
+            {metas.map((meta, index) => (
               <NurseryProjectSection
-                key={`${viewValue}-${section.id}-${reloadNonce}`}
-                section={section}
-                query={debouncedQuery}
-                statuses={statuses}
-                updates={updates}
+                key={`${viewValue}-${meta.uuid}-${reloadNonce}`}
+                meta={meta}
+                filters={sectionFilters}
                 isFiltered={hasFilters}
                 defaultOpen={index === 0}
                 openResetKey={accordionOpenResetKey}
-                onProjectOpened={onProjectOpened}
               />
             ))}
-            {hasMore || childrenPending ? <IndexLoadingRow label={t("Loading...")} /> : null}
+            <InfiniteScrollSentinel
+              hasMore={hasMore}
+              loading={loading}
+              loadingMore={loadingMore}
+              label={t("Loading...")}
+              resetKey={metas.length}
+              onLoadMore={loadMore}
+            />
           </Flex>
         )}
         <NurseriesIndexBulkBar onNurseriesChanged={handleNurseriesChanged} />

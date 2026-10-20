@@ -9,7 +9,7 @@ import { getEntityDetailPageLink } from "@/helpers/entity";
 import { appendQueryParams } from "@/utils/appendQueryParams";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
-import type { NurseryIndexMetric, NurseryIndexProjectSection, NurseryIndexRow } from "./nurseryIndex.types";
+import type { NurseryIndexRow } from "./nurseryIndex.types";
 
 export const NURSERY_INDEX_ORIGIN = "nurseries";
 
@@ -20,38 +20,7 @@ export const getNurseryDetailUrl = (nurseryUuid: string, fromNurseryIndex: boole
     origin: fromNurseryIndex ? NURSERY_INDEX_ORIGIN : undefined
   });
 
-const normalize = (value?: string | null) => value?.trim().toLocaleLowerCase() ?? "";
-
 export const projectSupportsNurseries = (frameworkKey?: string | null) => isTerrafund(toFramework(frameworkKey));
-
-const getProjectMatch = (nursery: NurseryWithProjectUuid, projects: ProjectLightDto[]) => {
-  if (nursery.projectUuid != null) {
-    const projectByUuid = projects.find(project => project.uuid === nursery.projectUuid);
-    if (projectByUuid != null) return projectByUuid;
-  }
-
-  const projectName = normalize(nursery.projectName);
-  const candidates = projects.filter(project => normalize(project.name) === projectName);
-  if (candidates.length <= 1) return candidates[0];
-
-  const organisationUuidMatches = candidates.filter(
-    project =>
-      nursery.organisationUuid != null &&
-      project.organisationUuid != null &&
-      project.organisationUuid === nursery.organisationUuid
-  );
-  if (organisationUuidMatches.length === 1) return organisationUuidMatches[0];
-
-  const organisationNameMatches = candidates.filter(
-    project =>
-      normalize(nursery.organisationName) !== "" &&
-      normalize(project.organisationName) === normalize(nursery.organisationName)
-  );
-  return organisationNameMatches.length === 1 ? organisationNameMatches[0] : undefined;
-};
-
-const getFallbackSectionId = (nursery: NurseryLightDto) =>
-  [nursery.organisationUuid ?? normalize(nursery.organisationName), normalize(nursery.projectName)].join(":");
 
 export const toNurseryIndexStatus = (status: string | null | undefined): NurseryIndexRow["status"] => {
   if (status == null || status.trim() === "") return null;
@@ -71,7 +40,7 @@ export const toNurseryIndexStatus = (status: string | null | undefined): Nursery
 
 export const toNurseryIndexRows = (
   nurseries: NurseryLightDto[],
-  project?: ProjectLightDto | ProjectFullDto
+  project?: Pick<ProjectLightDto, "uuid" | "frameworkKey">
 ): NurseryIndexRow[] =>
   nurseries
     .map(nursery => ({
@@ -92,121 +61,9 @@ export const sumNurserySeedlingsGrown = (nurseries: Array<Pick<NurseryLightDto, 
 const firstPositiveGoal = (...values: Array<number | null | undefined>) =>
   values.find(value => value != null && value > 0) ?? 0;
 
-export const buildSeedlingsGrownMetric = (
-  nurseries: Array<Pick<NurseryLightDto, "treesSeedlingsGrownCount">>,
-  project?: ProjectFullDto | ProjectLightDto
-): NurseryIndexMetric => {
-  const nurseryProgress = sumNurserySeedlingsGrown(nurseries);
-  const fullProject = project != null && project.lightResource === false ? (project as ProjectFullDto) : undefined;
-
-  return {
-    progress: nurseryProgress,
-    goal: firstPositiveGoal(fullProject?.nurserySeedlingsGoal, fullProject?.seedsGrownGoal, fullProject?.treesGrownGoal)
-  };
-};
-
-export const createNurseryProjectSection = (
-  project: ProjectLightDto,
-  nurseries: NurseryLightDto[] = []
-): NurseryIndexProjectSection => {
-  const rows = toNurseryIndexRows(nurseries, project);
-
-  return {
-    id: project.uuid,
-    projectUuid: project.uuid,
-    projectName: project.name ?? "Project",
-    organisationName: project.organisationName,
-    frameworkKey: project.frameworkKey,
-    seedlingsGrown: buildSeedlingsGrownMetric(rows),
-    nurseries: rows
-  };
-};
-
-export const buildNurseryProjectSections = (
-  nurseries: NurseryLightDto[],
-  projects: ProjectLightDto[],
-  fullProjectsById: Map<string, ProjectFullDto> = new Map()
-): NurseryIndexProjectSection[] => {
-  const sectionsById = new Map<string, NurseryIndexProjectSection>();
-
-  nurseries.forEach(nursery => {
-    const project = getProjectMatch(nursery, projects);
-    const sectionId = project?.uuid ?? getFallbackSectionId(nursery);
-    const row: NurseryIndexRow = {
-      ...nursery,
-      id: nursery.uuid,
-      projectUuid: project?.uuid ?? (nursery as NurseryWithProjectUuid).projectUuid ?? null,
-      projectFrameworkKey: project?.frameworkKey ?? nursery.frameworkKey,
-      status: toNurseryIndexStatus(nursery.status)
-    };
-    const existingSection = sectionsById.get(sectionId);
-
-    if (existingSection != null) {
-      existingSection.nurseries.push(row);
-      return;
-    }
-
-    sectionsById.set(sectionId, {
-      id: sectionId,
-      projectUuid: row.projectUuid,
-      projectName: project?.name ?? nursery.projectName ?? "Project",
-      organisationName: project?.organisationName ?? nursery.organisationName,
-      frameworkKey: row.projectFrameworkKey,
-      seedlingsGrown: { progress: 0, goal: 0 },
-      nurseries: [row]
-    });
-  });
-
-  return Array.from(sectionsById.values())
-    .map(section => {
-      const sortedNurseries = [...section.nurseries].sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""));
-      const fullProject = section.projectUuid == null ? undefined : fullProjectsById.get(section.projectUuid);
-
-      return {
-        ...section,
-        nurseries: sortedNurseries,
-        seedlingsGrown: buildSeedlingsGrownMetric(sortedNurseries, fullProject)
-      };
-    })
-    .sort((a, b) => a.projectName.localeCompare(b.projectName));
-};
-
-export const filterNurseryProjectSections = (
-  sections: NurseryIndexProjectSection[],
-  query: string,
-  projectId?: string,
-  statuses: string[] = [],
-  updates: string[] = []
-) => {
-  const normalizedQuery = normalize(query);
-
-  return sections
-    .filter(section => projectId == null || section.projectUuid === projectId)
-    .map(section => {
-      const projectMatches = [section.projectName, section.organisationName].some(value =>
-        normalize(value).includes(normalizedQuery)
-      );
-
-      const nurseries = section.nurseries.filter(nursery => {
-        const matchesStatus = statuses.length === 0 || (nursery.status != null && statuses.includes(nursery.status));
-        const matchesUpdate =
-          updates.length === 0 ||
-          (nursery.updateRequestStatus != null && updates.includes(nursery.updateRequestStatus));
-        const matchesQuery =
-          normalizedQuery === "" || projectMatches || normalize(nursery.name).includes(normalizedQuery);
-        return matchesStatus && matchesUpdate && matchesQuery;
-      });
-
-      // Returns the same section when nothing was filtered out, so memoized rows keep their identity.
-      return nurseries.length === section.nurseries.length ? section : { ...section, nurseries };
-    })
-    .filter(section => {
-      if (section.nurseriesLoaded === false) return true;
-      const filteringNurseries = normalizedQuery !== "" || statuses.length > 0 || updates.length > 0;
-      if (!filteringNurseries) return true;
-      return section.nurseries.length > 0;
-    });
-};
+/** Seedlings goal for a project section header, taken from the full project when it's loaded. */
+export const getSeedlingsGoal = (project?: ProjectFullDto | null) =>
+  firstPositiveGoal(project?.nurserySeedlingsGoal, project?.seedsGrownGoal, project?.treesGrownGoal);
 
 type NurseryExportFrameworkKey = NonNullable<EntityExportAllQueryParams["frameworkKey"]>;
 

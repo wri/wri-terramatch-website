@@ -3289,8 +3289,8 @@ export type EntityIndexQueryParams = {
   frameworkKey?: string[];
   organisationUuid?: string;
   country?: string;
-  status?: string;
-  updateRequestStatus?: string;
+  status?: string[];
+  updateRequestStatus?: string[];
   projectUuid?: string;
   nurseryUuid?: string;
   siteUuid?: string;
@@ -4063,6 +4063,230 @@ export const entityReportsMetaIndex = new V3ApiEndpoint<
   EntityReportsMetaIndexVariables,
   {}
 >("/entities/v3/{entity}/reportsMeta", "GET");
+
+export type EntityNurseriesMetaIndexPathParams = {
+  /**
+   * Entity type to retrieve nurseries meta for
+   */
+  entity: "projects";
+};
+
+export type EntityNurseriesMetaIndexQueryParams = {
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  /**
+   * Matches nursery, project or organisation names
+   */
+  search?: string;
+  /**
+   * Only the project with this uuid
+   */
+  projectUuid?: string;
+  status?: string[];
+  updateRequestStatus?: string[];
+};
+
+export type EntityNurseriesMetaIndexError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type EntityNurseriesMetaIndexResponse = {
+  meta?: {
+    /**
+     * @example projectNurseriesMetas
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The current page number.
+       */
+      pageNumber?: number;
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
+  };
+  data?: {
+    /**
+     * @example projectNurseriesMetas
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ProjectNurseriesMetaDto;
+  }[];
+};
+
+export type EntityNurseriesMetaIndexVariables = {
+  pathParams: EntityNurseriesMetaIndexPathParams;
+  queryParams?: EntityNurseriesMetaIndexQueryParams;
+};
+
+export const entityNurseriesMetaIndex = new V3ApiEndpoint<
+  EntityNurseriesMetaIndexResponse,
+  EntityNurseriesMetaIndexError,
+  EntityNurseriesMetaIndexVariables,
+  {}
+>("/entities/v3/{entity}/nurseriesMeta", "GET");
+
+export type EntitySitesMetaIndexPathParams = {
+  /**
+   * Entity type to retrieve sites meta for
+   */
+  entity: "projects";
+};
+
+export type EntitySitesMetaIndexQueryParams = {
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  /**
+   * Matches site or project names
+   */
+  search?: string;
+  /**
+   * Only the project with this uuid
+   */
+  projectUuid?: string;
+  status?: string[];
+  updateRequestStatus?: string[];
+};
+
+export type EntitySitesMetaIndexError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type EntitySitesMetaIndexResponse = {
+  meta?: {
+    /**
+     * @example projectSitesMetas
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The current page number.
+       */
+      pageNumber?: number;
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
+  };
+  data?: {
+    /**
+     * @example projectSitesMetas
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ProjectSitesMetaDto;
+  }[];
+};
+
+export type EntitySitesMetaIndexVariables = {
+  pathParams: EntitySitesMetaIndexPathParams;
+  queryParams?: EntitySitesMetaIndexQueryParams;
+};
+
+export const entitySitesMetaIndex = new V3ApiEndpoint<
+  EntitySitesMetaIndexResponse,
+  EntitySitesMetaIndexError,
+  EntitySitesMetaIndexVariables,
+  {}
+>("/entities/v3/{entity}/sitesMeta", "GET");
 
 export type EntityExportAllPathParams = {
   /**
@@ -5428,8 +5652,8 @@ export type EntityAssociationIndexQueryParams = {
   frameworkKey?: string[];
   organisationUuid?: string;
   country?: string;
-  status?: string;
-  updateRequestStatus?: string;
+  status?: string[];
+  updateRequestStatus?: string[];
   projectUuid?: string;
   nurseryUuid?: string;
   siteUuid?: string;
@@ -7912,6 +8136,8 @@ export const operationsByTag = {
     entityIndex,
     entityCreate,
     entityReportsMetaIndex,
+    entityNurseriesMetaIndex,
+    entitySitesMetaIndex,
     entityExportAll,
     entityPushTranslations,
     entityPullTranslations,

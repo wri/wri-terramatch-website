@@ -35,7 +35,6 @@ export interface SiteIndexProject {
   name: string;
   frameworkKey: Framework;
   organisationName: string;
-  attentionCount: number;
   metrics: {
     treesGrowing?: SiteIndexMetric;
     saplingsGrowing?: SiteIndexMetric;
@@ -44,7 +43,4 @@ export interface SiteIndexProject {
     areaRestored: SiteIndexMetric;
     workdays?: SiteIndexMetric;
   };
-  sites: SiteIndexSite[];
-  sitesLoaded: boolean;
-  sitesLoading: boolean;
 }
