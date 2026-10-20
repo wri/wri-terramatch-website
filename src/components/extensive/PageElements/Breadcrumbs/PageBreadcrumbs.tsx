@@ -20,7 +20,7 @@ const PageBreadcrumbs = ({ links, children, className, clasNameText, textVariant
     <div {...props} className={twMerge("flex h-12 items-center bg-primary-100 p-4 px-10 xl:px-0", className)}>
       <Breadcrumbs
         links={links || history}
-        className="mx-auto w-full max-w-[calc(100%-35px)]"
+        className="mx-auto w-full max-w-[calc(100%-2.1875rem)]"
         clasNameText={clasNameText}
         textVariant={textVariant}
       />

@@ -28,7 +28,7 @@ export const ChartTooltip: FC<ChartTooltipProps> = ({ title, rows, variant = "li
     maxWidth="16rem"
     padding={3}
     backgroundColor="neutral.100"
-    borderWidth="1px"
+    borderWidth="0.0625rem"
     borderColor="neutral.300"
     borderRadius="md"
     boxShadow="lg"

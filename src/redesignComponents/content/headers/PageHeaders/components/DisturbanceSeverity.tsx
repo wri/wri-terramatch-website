@@ -57,7 +57,7 @@ const DisturbanceSeverity: FC<{ report: DisturbanceReportFullDto }> = ({ report 
           </Flex>
         </Flex>
         <Flex height="100%" width="fit-content" alignItems="center">
-          <Box height="3.25rem" width="1px" backgroundColor="neutral.300" />
+          <Box height="3.25rem" width="0.0625rem" backgroundColor="neutral.300" />
         </Flex>
         <Flex width="fit-content" flexDirection="column" alignItems="center" gap={2}>
           <Text color="primary.900" textStyle="300" textWrap="nowrap">

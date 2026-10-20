@@ -32,12 +32,12 @@ const NurseryIndexTable: FC<{ nurseries: NurseryIndexRow[]; embeddedInProject: b
 
   const columns = useMemo<TableColumn[]>(
     () => [
-      { key: "name", label: t("Name"), sortable: true, width: "384px" },
-      { key: "status", label: t("Status"), sortable: true, width: "200px" },
-      { key: "updateRequestStatus", label: t("Updates"), sortable: true, width: "250px" },
-      { key: "updatedAt", label: t("Latest Update"), sortable: true, width: "170px" },
-      { key: "createdAt", label: t("Date Created"), sortable: true, width: "150px" },
-      { key: "actions", label: "", width: "130px" }
+      { key: "name", label: t("Name"), sortable: true, width: "24rem" },
+      { key: "status", label: t("Status"), sortable: true, width: "12.5rem" },
+      { key: "updateRequestStatus", label: t("Updates"), sortable: true, width: "15.625rem" },
+      { key: "updatedAt", label: t("Latest Update"), sortable: true, width: "10.625rem" },
+      { key: "createdAt", label: t("Date Created"), sortable: true, width: "9.375rem" },
+      { key: "actions", label: "", width: "8.125rem" }
     ],
     [t]
   );

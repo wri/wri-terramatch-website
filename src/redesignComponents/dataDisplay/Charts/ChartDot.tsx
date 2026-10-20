@@ -14,7 +14,7 @@ export const ChartDot: FC<ChartDotProps> = ({ color, size = "medium" }) => (
     width={DOT_SIZES[size]}
     height={DOT_SIZES[size]}
     borderRadius="full"
-    borderWidth="1px"
+    borderWidth="0.0625rem"
     borderColor="blackAlpha.300"
     style={{ backgroundColor: color }}
   />
