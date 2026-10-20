@@ -198,7 +198,7 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
         ? withFirstIcon([
             {
               label: t("Nurseries"),
-              link: "/nurserie"
+              link: "/nursery"
             },
             { label: entityTitle ?? "-", link: entityPageLinkWithOrigin },
             { label: t("Edit"), link: editLink }

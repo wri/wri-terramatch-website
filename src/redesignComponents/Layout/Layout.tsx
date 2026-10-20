@@ -28,7 +28,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
   // Breadcrumbs of a site / nursery profile start at Projects unless the profile was opened from its own list,
   // so the side menu must highlight the same first level.
   const profileOpenedFromProject = router.pathname === "/site/[uuid]" && router.query.origin !== "sites";
-  const nurseryOpenedFromProject = router.pathname === "/nurserie/[uuid]" && router.query.origin !== "nurseries";
+  const nurseryOpenedFromProject = router.pathname === "/nursery/[uuid]" && router.query.origin !== "nurseries";
   const { isSidebarCollapseDisabled } = useLayoutShell();
   const [, myOrg] = useMyOrg();
   const [, { user: myUser }] = useMyUser();
@@ -55,7 +55,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
             "/my-projects",
             "/project",
             ...(profileOpenedFromProject ? [`/site/${router.query.uuid}`] : []),
-            ...(nurseryOpenedFromProject ? [`/nurserie/${router.query.uuid}`] : [])
+            ...(nurseryOpenedFromProject ? [`/nursery/${router.query.uuid}`] : [])
           ],
           icon: <ProjectIcon boxSize={4} />,
           label: "Projects"
@@ -69,7 +69,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
         ...(showNurseries
           ? [
               {
-                href: isAdmin ? "/admin#/nursery" : "/nurserie",
+                href: isAdmin ? "/admin#/nursery" : "/nursery",
                 activePaths: nurseryOpenedFromProject ? [] : undefined,
                 icon: <NurseryIcon boxSize={4} />,
                 label: "Nurseries"
