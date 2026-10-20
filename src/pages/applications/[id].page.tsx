@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { useMemo } from "react";
 
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
-import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useApplication } from "@/connections/Application";
 import ApplicationHeader from "@/pages/applications/components/ApplicationHeader";
@@ -47,7 +46,6 @@ const ApplicationPage = () => {
           </LoadingContainer>
         </div>
       </PageBody>
-      <PageFooter />
     </>
   );
 };
