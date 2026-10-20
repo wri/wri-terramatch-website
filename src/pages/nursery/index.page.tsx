@@ -32,7 +32,7 @@ const NurseriesIndexContent: FC = () => {
     hasHydratedQuery,
     handleViewChange
   } = useIndexViewState({
-    basePath: "/nurserie",
+    basePath: "/nursery",
     allProjectsValue: ALL_PROJECTS_VIEW_VALUE,
     onViewChange: clearSelection
   });
