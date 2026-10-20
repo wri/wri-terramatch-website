@@ -2,14 +2,16 @@ import { Box, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { type FC, type MouseEvent, memo, ReactNode, useCallback, useEffect, useMemo } from "react";
+import { type FC, type MouseEvent, memo, ReactNode, useCallback, useMemo, useState } from "react";
 
 import EntityUpdateStatus from "@/components/extensive/EntityIndex/EntityUpdateStatus";
 import IndexLoadingRow from "@/components/extensive/EntityIndex/IndexLoadingRow";
-import { Framework, isTerrafund } from "@/context/framework.provider";
+import { Framework, isTerrafund, toFramework } from "@/context/framework.provider";
+import type { ProjectSitesMetaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useDate } from "@/hooks/useDate";
 import { useIndexAccordionOpen } from "@/hooks/useIndexAccordionOpen";
+import { InfiniteScrollSentinel } from "@/hooks/useInfiniteScrollSentinel";
 import { useKeyIndicatorsTooltipContent } from "@/pages/project/[uuid]/tabs/constants/keyIndicatorsTooltipContent";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
@@ -36,10 +38,11 @@ import {
 } from "@/redesignComponents/foundations/Icons";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
-import type { SiteIndexProject, SiteIndexSite, SiteIndexStatus, SiteIndexUpdate } from "./siteIndex.types";
-import { filterSiteIndexSites, getSiteDetailUrl, isSiteApproved } from "./siteIndex.utils";
+import type { SiteIndexProject, SiteIndexSite } from "./siteIndex.types";
+import { getSiteDetailUrl, isSiteApproved, SITE_INDEX_ATTENTION_STATUSES } from "./siteIndex.utils";
 import { useSiteTableSelection } from "./SiteIndexSelection.provider";
 import { isSiteEditable } from "./siteIndexSubmit";
+import { type SiteProjectFilters, useSiteProjectRows } from "./useSiteProjectRows";
 
 const keyIndicatorTooltip = (title?: string, content?: string): ReactNode => {
   if (title == null || title === "" || content == null || content === "") return undefined;
@@ -52,55 +55,29 @@ const keyIndicatorTooltip = (title?: string, content?: string): ReactNode => {
   );
 };
 
-interface SiteProjectSectionProps {
-  project: SiteIndexProject;
-  sites: SiteIndexSite[];
-  totalSiteCount: number;
-  isFiltered: boolean;
-  searchQuery?: string;
-  statusFilters?: SiteIndexStatus[];
-  updateFilter?: SiteIndexUpdate | null;
-  defaultOpen?: boolean;
-  openResetKey?: string;
-  onProjectOpened: (projectId: string) => void;
-  embeddedInProject?: boolean;
-}
-
 const stopRowClick = (event: MouseEvent) => {
   event.stopPropagation();
 };
 
-const SiteProjectMetrics: FC<{
-  project: SiteIndexProject;
-  sites: SiteIndexSite[];
-  totalSiteCount: number;
-  isFiltered: boolean;
-}> = ({ project, sites, isFiltered }) => {
+type SiteProjectMetricsProps = {
+  frameworkKey: Framework;
+  metrics: SiteIndexProject["metrics"];
+  /** Totals of the sites that match the filters (approved sites only, as the index has always shown). */
+  filtered: { treesPlanted: number; hectaresRestored: number } | null;
+  /** Totals of the selected approved sites, shown while some rows are selected. */
+  selection: { treesPlanted: number; hectaresRestored: number } | null;
+};
+
+const SiteProjectMetrics: FC<SiteProjectMetricsProps> = ({ frameworkKey, metrics, filtered, selection }) => {
   const t = useT();
-  const { selectedRows: selectedSites } = useSiteTableSelection(sites);
-  const approvedSites = sites.filter(isSiteApproved);
-  const approvedSelectedSites = selectedSites.filter(isSiteApproved);
-  const approvedTotalCount = project.sites.filter(isSiteApproved).length;
-  const filteredMetric = (progress: number) =>
-    approvedTotalCount === 0 ? 0 : Math.round(progress * (approvedSites.length / approvedTotalCount));
-  const selectedMetric = (progress: number) =>
-    approvedTotalCount === 0 ? 0 : Math.round(progress * (approvedSelectedSites.length / approvedTotalCount));
-  const filteredTrees = approvedSites.reduce((total, site) => total + site.treesPlantedCount, 0);
-  const selectedTrees = approvedSelectedSites.reduce((total, site) => total + site.treesPlantedCount, 0);
-  const filteredArea = approvedSites.reduce((total, site) => total + site.totalHectaresRestoredSum, 0);
-  const selectedArea = approvedSelectedSites.reduce((total, site) => total + site.totalHectaresRestoredSum, 0);
-  const isHbf = project.frameworkKey === Framework.HBF;
-  const isTerraFund = isTerrafund(project.frameworkKey);
-  const primaryMetric = isHbf
-    ? project.metrics.saplingsGrowing
-    : isTerraFund
-    ? project.metrics.treesPlanted
-    : project.metrics.treesGrowing;
+  const isHbf = frameworkKey === Framework.HBF;
+  const isTerraFund = isTerrafund(frameworkKey);
+  const primaryMetric = isHbf ? metrics.saplingsGrowing : isTerraFund ? metrics.treesPlanted : metrics.treesGrowing;
   const primaryMetricIcon = isHbf ? <SeedlingsIcon /> : <TreeIcon />;
   const keyIndicatorsTooltipContent = useKeyIndicatorsTooltipContent();
   const keyIndicatorsTooltipContentItem = useMemo(
-    () => keyIndicatorsTooltipContent.find(content => content.frameworks.includes(project.frameworkKey)),
-    [keyIndicatorsTooltipContent, project.frameworkKey]
+    () => keyIndicatorsTooltipContent.find(content => content.frameworks.includes(frameworkKey)),
+    [frameworkKey, keyIndicatorsTooltipContent]
   );
   const primaryMetricTitle =
     keyIndicatorsTooltipContentItem?.treesRestored.title ??
@@ -128,26 +105,24 @@ const SiteProjectMetrics: FC<{
               keyIndicatorsTooltipContentItem?.treesRestored.title,
               keyIndicatorsTooltipContentItem?.treesRestored.content
             ),
-            filtered: isFiltered ? filteredTrees : undefined,
-            selection: selectedSites.length > 0 ? selectedTrees : undefined
+            filtered: filtered?.treesPlanted,
+            selection: selection?.treesPlanted
           }
         ]),
-    ...(isTerraFund && project.metrics.treesRegenerated != null
+    ...(isTerraFund && metrics.treesRegenerated != null
       ? [
           {
             ...progressBarCard,
             key: "trees-regenerated",
             title: t(keyIndicatorsTooltipContentItem?.treesRegenerated.title ?? "Trees Regenerated"),
-            progress: project.metrics.treesRegenerated.progress,
-            goal: project.metrics.treesRegenerated.goal,
+            progress: metrics.treesRegenerated.progress,
+            goal: metrics.treesRegenerated.goal,
             icon: <RegenerationIcon />,
             color: "secondary.600",
             tooltipContent: keyIndicatorTooltip(
               keyIndicatorsTooltipContentItem?.treesRegenerated.title ?? t("Trees Regenerated"),
               keyIndicatorsTooltipContentItem?.treesRegenerated.content
-            ),
-            filtered: isFiltered ? filteredMetric(project.metrics.treesRegenerated.progress) : undefined,
-            selection: selectedSites.length > 0 ? selectedMetric(project.metrics.treesRegenerated.progress) : undefined
+            )
           }
         ]
       : []),
@@ -155,33 +130,31 @@ const SiteProjectMetrics: FC<{
       ...progressBarCard,
       key: "area-restored",
       title: t(areaTitle),
-      progress: project.metrics.areaRestored.progress,
-      goal: project.metrics.areaRestored.goal,
+      progress: metrics.areaRestored.progress,
+      goal: metrics.areaRestored.goal,
       color: "secondary.700",
       icon: <AreaHectaresIcon />,
       tooltipContent: keyIndicatorTooltip(
         keyIndicatorsTooltipContentItem?.hectaresRestored.title,
         keyIndicatorsTooltipContentItem?.hectaresRestored.content
       ),
-      filtered: isFiltered ? filteredArea : undefined,
-      selection: selectedSites.length > 0 ? selectedArea : undefined
+      filtered: filtered?.hectaresRestored,
+      selection: selection?.hectaresRestored
     },
-    ...(!isHbf && !isTerraFund && project.metrics.workdays != null
+    ...(!isHbf && !isTerraFund && metrics.workdays != null
       ? [
           {
             ...progressBarCard,
             key: "workdays",
             title: t(workdaysTitle),
-            progress: project.metrics.workdays.progress,
-            goal: project.metrics.workdays.goal,
+            progress: metrics.workdays.progress,
+            goal: metrics.workdays.goal,
             icon: <JobsIcon />,
             color: "primary.600",
             tooltipContent: keyIndicatorTooltip(
               keyIndicatorsTooltipContentItem?.jobsCreated.title,
               keyIndicatorsTooltipContentItem?.jobsCreated.content
-            ),
-            filtered: isFiltered ? filteredMetric(project.metrics.workdays.progress) : undefined,
-            selection: selectedSites.length > 0 ? selectedMetric(project.metrics.workdays.progress) : undefined
+            )
           }
         ]
       : [])
@@ -348,88 +321,135 @@ const SiteProjectTable: FC<{
   );
 };
 
-const SiteProjectSection: FC<SiteProjectSectionProps> = ({
-  project,
+type SiteProjectBodyProps = {
+  frameworkKey: Framework;
+  meta: ProjectSitesMetaDto;
+  sites: ReturnType<typeof useSiteProjectRows>;
+  isFiltered: boolean;
+  embeddedInProject: boolean;
+};
+
+/** Metrics and site table for one project. The data comes from the parent's rows hook. */
+export const SiteProjectBody: FC<SiteProjectBodyProps> = ({
+  frameworkKey,
+  meta,
   sites,
-  totalSiteCount,
   isFiltered,
-  searchQuery = "",
-  statusFilters = [],
-  updateFilter = null,
-  defaultOpen = false,
-  openResetKey,
-  onProjectOpened,
-  embeddedInProject = false
+  embeddedInProject
 }) => {
   const t = useT();
-  const [open, setOpen] = useIndexAccordionOpen({ defaultOpen, resetKey: openResetKey });
-  const showSitesLoading = (embeddedInProject || open) && (project.sitesLoading || !project.sitesLoaded);
-  const visibleSites = useMemo(
-    () =>
-      filterSiteIndexSites(sites, {
-        search: searchQuery,
-        statusFilters,
-        updateFilter
-      }),
-    [searchQuery, sites, statusFilters, updateFilter]
-  );
+  const { selectedRows } = useSiteTableSelection(sites.rows);
+  const selectedApproved = selectedRows.filter(isSiteApproved);
+  const filtered = isFiltered
+    ? {
+        treesPlanted: meta.treesPlantedMatching,
+        hectaresRestored: meta.hectaresRestoredMatching
+      }
+    : null;
+  const selection =
+    selectedRows.length > 0
+      ? {
+          treesPlanted: selectedApproved.reduce((total, site) => total + site.treesPlantedCount, 0),
+          hectaresRestored: selectedApproved.reduce((total, site) => total + site.totalHectaresRestoredSum, 0)
+        }
+      : null;
 
-  useEffect(() => {
-    if (embeddedInProject) {
-      if (project.sitesLoaded || project.sitesLoading) return;
-      onProjectOpened(project.id);
-      return;
-    }
-    if (!open || project.sitesLoaded || project.sitesLoading) return;
-    onProjectOpened(project.id);
-  }, [embeddedInProject, onProjectOpened, open, project.id, project.sitesLoaded, project.sitesLoading]);
-
-  const sectionBody = (
+  return (
     <Box className="bg-theme-neutral-100 p-4" minW={0}>
-      {showSitesLoading ? (
+      {!sites.loaded || !sites.metricsLoaded ? (
         <IndexLoadingRow label={t("Loading sites...")} minHeight="10rem" />
       ) : (
         <>
           <SiteProjectMetrics
-            project={project}
-            sites={visibleSites}
-            totalSiteCount={totalSiteCount}
-            isFiltered={isFiltered}
+            frameworkKey={frameworkKey}
+            metrics={sites.metrics}
+            filtered={filtered}
+            selection={selection}
           />
-          <SiteProjectTable sites={visibleSites} embeddedInProject={embeddedInProject} />
+          <SiteProjectTable sites={sites.rows} embeddedInProject={embeddedInProject} />
+          <InfiniteScrollSentinel
+            hasMore={sites.hasMore}
+            loading={!sites.loaded}
+            loadingMore={sites.loadingMore}
+            label={t("Loading sites...")}
+            resetKey={sites.rows.length}
+            onLoadMore={sites.loadMore}
+          />
         </>
       )}
     </Box>
   );
+};
 
-  if (embeddedInProject) {
-    return <Box className="bg-theme-neutral-100 overflow-hidden rounded">{sectionBody}</Box>;
-  }
+interface SiteProjectSectionProps {
+  meta: ProjectSitesMetaDto;
+  filters: SiteProjectFilters;
+  isFiltered: boolean;
+  defaultOpen?: boolean;
+  openResetKey?: string;
+}
+
+/**
+ * One project in the sites index. Its sites load the first time the section opens, the same way the reports
+ * index loads each project's reports.
+ */
+const SiteProjectSection: FC<SiteProjectSectionProps> = ({
+  meta,
+  filters,
+  isFiltered,
+  defaultOpen = false,
+  openResetKey
+}) => {
+  const t = useT();
+  const [open, setOpen] = useIndexAccordionOpen({ defaultOpen, resetKey: openResetKey });
+  const [loadRequested, setLoadRequested] = useState(defaultOpen);
+  const handleOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      if (nextOpen) setLoadRequested(true);
+      setOpen(nextOpen);
+    },
+    [setOpen]
+  );
+
+  const sites = useSiteProjectRows(meta, filters, loadRequested);
+  const attentionCount = useMemo(
+    () => sites.rows.filter(site => SITE_INDEX_ATTENTION_STATUSES.has(site.status)).length,
+    [sites.rows]
+  );
+  const frameworkKey = toFramework(meta.frameworkKey);
 
   return (
     <Accordion
       variant="tertiary"
       open={open}
-      onOpenChange={setOpen}
+      onOpenChange={handleOpenChange}
       isScrollable={false}
-      className="bg-theme-neutral-100 w-full overflow-hidden rounded"
+      className="w-full overflow-hidden rounded bg-theme-neutral-100"
       classNameHeader="!mb-0"
       header={
         <ListSectionHeader
           level="top-level"
-          title={project.name}
+          title={meta.name ?? t("Project")}
           open={open}
-          titleHref={`/project/${project.id}`}
-          caption={project.organisationName}
+          titleHref={`/project/${meta.uuid}`}
+          caption={meta.organisationName ?? ""}
           statusLabels={
-            project.attentionCount > 0 ? (
-              <TextBadge>{t("{count} Require Attention", { count: project.attentionCount })}</TextBadge>
+            attentionCount > 0 ? (
+              <TextBadge>{t("{count} Require Attention", { count: attentionCount })}</TextBadge>
             ) : null
           }
         />
       }
     >
-      {sectionBody}
+      {open ? (
+        <SiteProjectBody
+          frameworkKey={frameworkKey}
+          meta={meta}
+          sites={sites}
+          isFiltered={isFiltered}
+          embeddedInProject={false}
+        />
+      ) : null}
     </Accordion>
   );
 };

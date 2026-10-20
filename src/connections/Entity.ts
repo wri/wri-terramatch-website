@@ -14,8 +14,12 @@ import {
   entityIndex,
   EntityIndexQueryParams,
   EntityIndexVariables,
+  entityNurseriesMetaIndex,
+  EntityNurseriesMetaIndexQueryParams,
   entityReportsMetaIndex,
   EntityReportsMetaIndexQueryParams,
+  entitySitesMetaIndex,
+  EntitySitesMetaIndexQueryParams,
   entityUpdate,
   EntityUpdateVariables,
   reportCountsGet,
@@ -40,10 +44,12 @@ import {
   ProjectCreateData,
   ProjectFullDto,
   ProjectLightDto,
+  ProjectNurseriesMetaDto,
   ProjectReportFullDto,
   ProjectReportLightDto,
   ProjectReportMetaDto,
   ProjectReportUpdateData,
+  ProjectSitesMetaDto,
   ProjectUpdateData,
   ReportCountsDto,
   SiteCreateData,
@@ -165,7 +171,7 @@ export const useFullProject = connectionHook(fullProjectConnection);
 export const deleteProject = createEntityDeleter("projects");
 const lightProjectConnection = createEntityGetConnection<ProjectLightDto, ProjectUpdateData>("projects", false);
 export const useLightProject = connectionHook(lightProjectConnection);
-const indexProjectConnection = createEntityIndexConnection<ProjectLightDto>("projects");
+export const indexProjectConnection = createEntityIndexConnection<ProjectLightDto>("projects");
 export const loadProjectIndex = connectionLoader(indexProjectConnection);
 export const useProjectIndex = connectionHook(indexProjectConnection);
 export const useCreateProject = creationHook(
@@ -178,6 +184,15 @@ export const loadFullSite = connectionLoader(fullSiteConnection);
 export const useFullSite = connectionHook(fullSiteConnection);
 export const deleteSite = createEntityDeleter("sites");
 export const indexSiteConnection = createEntityIndexConnection<SiteLightDto>("sites");
+
+/** Projects with at least one site matching the filters, with site counts and trees / hectares totals. */
+export const projectSitesMetaIndexConnection = v3Resource("projectSitesMetas", entitySitesMetaIndex)
+  .index<ProjectSitesMetaDto>(() => ({ pathParams: { entity: "projects" } }))
+  .pagination()
+  .filter<Filter<EntitySitesMetaIndexQueryParams>>()
+  .enabledProp()
+  .refetch(() => ApiSlice.pruneIndex("projectSitesMetas", ""))
+  .buildConnection();
 export const loadSiteIndex = connectionLoader(indexSiteConnection);
 export const useSiteIndex = connectionHook(indexSiteConnection);
 export const useCreateSite = creationHook(createEntityCreateConnection<SiteFullDto, SiteCreateData>("sites"));
@@ -190,6 +205,15 @@ export const loadFullNursery = connectionLoader(fullNurseryConnection);
 export const useFullNursery = connectionHook(fullNurseryConnection);
 export const deleteNursery = createEntityDeleter("nurseries");
 export const indexNurseryConnection = createEntityIndexConnection<NurseryLightDto>("nurseries");
+
+/** Projects with at least one nursery matching the filters, with nursery counts and seedlings grown. */
+export const projectNurseriesMetaIndexConnection = v3Resource("projectNurseriesMetas", entityNurseriesMetaIndex)
+  .index<ProjectNurseriesMetaDto>(() => ({ pathParams: { entity: "projects" } }))
+  .pagination()
+  .filter<Filter<EntityNurseriesMetaIndexQueryParams>>()
+  .enabledProp()
+  .refetch(() => ApiSlice.pruneIndex("projectNurseriesMetas", ""))
+  .buildConnection();
 export const loadNurseryIndex = connectionLoader(indexNurseryConnection);
 export const useNurseryIndex = connectionHook(indexNurseryConnection);
 export const useCreateNursery = creationHook(

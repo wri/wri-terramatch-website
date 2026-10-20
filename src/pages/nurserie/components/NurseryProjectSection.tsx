@@ -1,122 +1,64 @@
-import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, memo, useEffect, useMemo, useState } from "react";
+import { FC, memo, useCallback, useMemo, useState } from "react";
 
-import { loadFullProject } from "@/connections/Entity";
-import type { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import type { ProjectNurseriesMetaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useIndexAccordionOpen } from "@/hooks/useIndexAccordionOpen";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
-import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
-import { LoadingIcon, SeedlingsIcon } from "@/redesignComponents/foundations/Icons";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
-import Log from "@/utils/log";
 
-import { useNurseryTableSelection } from "../NurseriesSelection.provider";
-import type { NurseryIndexProjectSection } from "../nurseryIndex.types";
-import {
-  buildSeedlingsGrownMetric,
-  filterNurseryProjectSections,
-  sumNurserySeedlingsGrown
-} from "../nurseryIndex.utils";
-import NurseryIndexTable from "./NurseryIndexTable";
+import { type NurseryProjectFilters, useNurseryProjectRows } from "../useNurseryProjectRows";
+import NurseryProjectBody from "./NurseryProjectBody";
 
 type NurseryProjectSectionProps = {
-  section: NurseryIndexProjectSection;
-  query?: string;
-  statuses?: string[];
-  updates?: string[];
+  meta: ProjectNurseriesMetaDto;
+  filters: NurseryProjectFilters;
   isFiltered?: boolean;
   defaultOpen?: boolean;
   openResetKey?: string;
-  onProjectOpened?: (projectId: string) => void;
-  embeddedInProject?: boolean;
 };
 
+/**
+ * One project in the nurseries index. Its nurseries load the first time the section opens, the same way the
+ * reports index loads each project's reports.
+ */
 const NurseryProjectSection: FC<NurseryProjectSectionProps> = ({
-  section,
-  query = "",
-  statuses = [],
-  updates = [],
+  meta,
+  filters,
   isFiltered = false,
   defaultOpen = false,
-  openResetKey,
-  onProjectOpened,
-  embeddedInProject = false
+  openResetKey
 }) => {
   const t = useT();
   const [open, setOpen] = useIndexAccordionOpen({ defaultOpen, resetKey: openResetKey });
-  const [fullProject, setFullProject] = useState<ProjectFullDto | null>(null);
-  const [goalReady, setGoalReady] = useState(section.projectUuid == null);
-  const nurseries = section.nurseries;
-  const visibleNurseries = useMemo(
-    () =>
-      filterNurseryProjectSections([{ ...section, nurseries }], query, undefined, statuses, updates)[0]?.nurseries ??
-      [],
-    [nurseries, query, section, statuses, updates]
+  const [loadRequested, setLoadRequested] = useState(defaultOpen);
+  const handleOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      if (nextOpen) setLoadRequested(true);
+      setOpen(nextOpen);
+    },
+    [setOpen]
   );
-  const { selectedRows } = useNurseryTableSelection(visibleNurseries);
+
+  const nurseries = useNurseryProjectRows(meta, filters, loadRequested);
   const attentionCount = useMemo(
-    () => nurseries.filter(nursery => nursery.status === "information-required").length,
-    [nurseries]
+    () => nurseries.rows.filter(nursery => nursery.status === "information-required").length,
+    [nurseries.rows]
   );
-  const seedlingsGrown = useMemo(
-    () => buildSeedlingsGrownMetric(nurseries, fullProject ?? undefined),
-    [fullProject, nurseries]
-  );
-  const filteredSeedlings = useMemo(() => sumNurserySeedlingsGrown(visibleNurseries), [visibleNurseries]);
-  const selectedSeedlings = useMemo(() => sumNurserySeedlingsGrown(selectedRows), [selectedRows]);
-
-  useEffect(() => {
-    if (!open || section.nurseriesLoaded !== false || section.projectUuid == null) return;
-    onProjectOpened?.(section.projectUuid);
-  }, [onProjectOpened, open, section.nurseriesLoaded, section.projectUuid]);
-
-  useEffect(() => {
-    if (!open || fullProject != null) return;
-    const projectUuid = section.projectUuid;
-    if (projectUuid == null) {
-      setGoalReady(true);
-      return;
-    }
-
-    let cancelled = false;
-    setGoalReady(false);
-
-    const loadGoal = async () => {
-      try {
-        const result = await loadFullProject({ id: projectUuid });
-        const project = result.data ?? null;
-        if (!cancelled && project != null && project.lightResource === false) {
-          setFullProject(project);
-        }
-      } catch (error) {
-        Log.error("Failed to load full project for nursery section metrics", error);
-      } finally {
-        if (!cancelled) setGoalReady(true);
-      }
-    };
-
-    void loadGoal();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [fullProject, open, section.projectUuid]);
 
   return (
     <Accordion
       variant="tertiary"
       open={open}
-      onOpenChange={setOpen}
+      onOpenChange={handleOpenChange}
       className="overflow-hidden rounded bg-theme-neutral-100"
       classNameHeader="!mb-0"
       header={
         <ListSectionHeader
           level="top-level"
-          title={section.projectName}
-          titleHref={section.projectUuid == null ? undefined : `/project/${section.projectUuid}`}
-          caption={section.organisationName ?? ""}
+          title={meta.name ?? t("Project")}
+          titleHref={`/project/${meta.uuid}`}
+          caption={meta.organisationName ?? ""}
           open={open}
           statusLabels={
             <>
@@ -128,41 +70,7 @@ const NurseryProjectSection: FC<NurseryProjectSectionProps> = ({
         />
       }
     >
-      <Flex p={4} bg="neutral.100" gap={5} flexDirection="column">
-        {open && !goalReady ? (
-          <Flex minHeight="3rem" alignItems="center" gap={3}>
-            <LoadingIcon boxSize={5} className="animate-spin" color="primary.700" />
-            <Text textStyle="400" color="neutral.800">
-              {t("Loading seedlings goal...")}
-            </Text>
-          </Flex>
-        ) : null}
-        {open && goalReady ? (
-          <MetricCard
-            className="w-fit min-w-[16rem]"
-            goal={seedlingsGrown.goal}
-            icon={<SeedlingsIcon />}
-            progress={seedlingsGrown.progress}
-            title={t("Seedlings Grown")}
-            tooltipContent={t("Number of seedlings grown for this project")}
-            variant="progressBar"
-            color="secondary.600"
-            selection={selectedRows.length > 0 ? selectedSeedlings : undefined}
-            filtered={isFiltered ? filteredSeedlings : undefined}
-          />
-        ) : null}
-        {open && section.nurseriesLoaded === false ? (
-          <Flex minHeight="3rem" alignItems="center" gap={3}>
-            <LoadingIcon boxSize={5} className="animate-spin" color="primary.700" />
-            <Text textStyle="400" color="neutral.800">
-              {t("Loading...")}
-            </Text>
-          </Flex>
-        ) : null}
-        {open && section.nurseriesLoaded !== false ? (
-          <NurseryIndexTable nurseries={visibleNurseries} embeddedInProject={embeddedInProject} />
-        ) : null}
-      </Flex>
+      {open ? <NurseryProjectBody meta={meta} nurseries={nurseries} isFiltered={isFiltered} /> : null}
     </Accordion>
   );
 };

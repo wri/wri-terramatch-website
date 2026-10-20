@@ -5,11 +5,12 @@ import { FC, useCallback, useMemo, useState } from "react";
 import IndexLoadingRow from "@/components/extensive/EntityIndex/IndexLoadingRow";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { useIndexViewState } from "@/hooks/useIndexViewState";
+import { InfiniteScrollSentinel } from "@/hooks/useInfiniteScrollSentinel";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 
-import { ALL_PROJECTS_VIEW, filterSiteIndexSites, getSiteCreateUrl } from "./components/siteIndex.utils";
+import { ALL_PROJECTS_VIEW, getSiteCreateUrl } from "./components/siteIndex.utils";
 import SiteIndexBulkBar from "./components/SiteIndexBulkBar";
 import { type SiteIndexFilterStatus, type SiteIndexFilterUpdate } from "./components/SiteIndexFilterDrawer";
 import SiteIndexHeader from "./components/SiteIndexHeader";
@@ -22,7 +23,6 @@ const SiteIndexPageContent: FC = () => {
   const router = useRouter();
   const { clearSelection } = useSiteIndexSelectionActions();
   const [reloadNonce, setReloadNonce] = useState(0);
-  const [childrenReloadNonce, setChildrenReloadNonce] = useState(0);
   const [statusFilters, setStatusFilters] = useState<SiteIndexFilterStatus[]>([]);
   const [updateFilter, setUpdateFilter] = useState<SiteIndexFilterUpdate | null>(null);
   const {
@@ -38,57 +38,26 @@ const SiteIndexPageContent: FC = () => {
   const hasAppliedFilters = statusFilters.length > 0 || updateFilter != null;
   const hasActiveFilters = hasActiveSearch || hasAppliedFilters;
   const filtering = searchQuery.trim() !== debouncedSearch;
-  const { loading, hasMore, viewProjects, projects, totalSiteCount, onProjectOpened, error, childrenPending } =
-    useSiteIndexData({
-      reloadNonce,
-      childrenReloadNonce,
-      search: debouncedSearch,
-      projectUuid: selectedProject === ALL_PROJECTS_VIEW ? undefined : selectedProject,
-      enabled: hasHydratedQuery,
-      loadAllChildren: debouncedSearch !== "" || hasAppliedFilters
-    });
+  const { loading, error, metas, projects, siteTotal, hasMore, loadingMore, loadMore } = useSiteIndexData({
+    search: debouncedSearch,
+    statusFilters,
+    updateFilter,
+    projectUuid: selectedProject === ALL_PROJECTS_VIEW ? undefined : selectedProject,
+    enabled: hasHydratedQuery,
+    reloadNonce
+  });
   const accordionOpenResetKey = `${selectedProject}:${debouncedSearch}:${statusFilters.join(",")}:${
     updateFilter ?? ""
   }`;
-
-  const visibleProjects = useMemo(() => {
-    const scopedProjects = projects.filter(
-      project => selectedProject === ALL_PROJECTS_VIEW || project.id === selectedProject
-    );
-
-    if (!hasActiveFilters) return scopedProjects;
-
-    // A project only appears once its sites have loaded and been matched, so it doesn't vanish later.
-    return scopedProjects.filter(
-      project =>
-        project.sitesLoaded &&
-        filterSiteIndexSites(project.sites, {
-          search: debouncedSearch,
-          statusFilters,
-          updateFilter
-        }).length > 0
-    );
-  }, [debouncedSearch, hasActiveFilters, projects, selectedProject, statusFilters, updateFilter]);
-
-  const visibleSiteCount = useMemo(() => {
-    if (!hasAppliedFilters || visibleProjects.some(project => !project.sitesLoaded)) return totalSiteCount;
-
-    return visibleProjects.reduce(
-      (total, project) =>
-        total +
-        filterSiteIndexSites(project.sites, {
-          search: debouncedSearch,
-          statusFilters,
-          updateFilter
-        }).length,
-      0
-    );
-  }, [debouncedSearch, hasAppliedFilters, statusFilters, totalSiteCount, updateFilter, visibleProjects]);
+  const sectionFilters = useMemo(
+    () => ({ search: debouncedSearch, statusFilters, updateFilter }),
+    [debouncedSearch, statusFilters, updateFilter]
+  );
 
   const handleSitesChanged = useCallback(() => setReloadNonce(current => current + 1), []);
 
   const handleAddSite = useCallback(() => {
-    const targetProject = viewProjects.find(project => project.id === selectedProject);
+    const targetProject = projects.find(project => project.id === selectedProject);
     if (targetProject == null) {
       showToast({
         label: t("Select a project from View to add a site."),
@@ -100,15 +69,12 @@ const SiteIndexPageContent: FC = () => {
     }
 
     void router.push(getSiteCreateUrl(targetProject));
-  }, [router, selectedProject, t, viewProjects]);
+  }, [projects, router, selectedProject, t]);
 
   const handleApplyFilters = useCallback(
     (nextStatusFilters: SiteIndexFilterStatus[], nextUpdateFilter: SiteIndexFilterUpdate | null) => {
       setStatusFilters(nextStatusFilters);
       setUpdateFilter(nextUpdateFilter);
-      if (nextStatusFilters.length > 0 || nextUpdateFilter != null) {
-        setChildrenReloadNonce(current => current + 1);
-      }
     },
     []
   );
@@ -117,9 +83,9 @@ const SiteIndexPageContent: FC = () => {
     <>
       <ResponsiveTypography />
       <SiteIndexHeader
-        siteCount={visibleSiteCount}
+        siteCount={siteTotal}
         selectedProject={selectedProject}
-        viewProjects={viewProjects}
+        viewProjects={projects}
         statusFilters={statusFilters}
         updateFilter={updateFilter}
         filtering={filtering}
@@ -134,7 +100,7 @@ const SiteIndexPageContent: FC = () => {
           <IndexLoadingRow label={t("Loading sites...")} minHeight="15rem" />
         ) : error ? (
           <NoResults title={t("Sites could not be loaded")} description={t("Please refresh the page and try again.")} />
-        ) : visibleProjects.length === 0 && !hasMore && !childrenPending ? (
+        ) : metas.length === 0 && !hasMore ? (
           <NoResults
             title={t("No sites found")}
             description={
@@ -147,22 +113,24 @@ const SiteIndexPageContent: FC = () => {
           />
         ) : (
           <div className="space-y-4">
-            {visibleProjects.map((project, index) => (
+            {metas.map((meta, index) => (
               <SiteProjectSection
-                key={project.id}
-                project={project}
-                sites={project.sites}
-                totalSiteCount={project.sites.length}
+                key={`${selectedProject}-${meta.uuid}-${reloadNonce}`}
+                meta={meta}
+                filters={sectionFilters}
                 isFiltered={hasActiveFilters}
-                searchQuery={debouncedSearch}
-                statusFilters={statusFilters}
-                updateFilter={updateFilter}
                 defaultOpen={index === 0}
                 openResetKey={accordionOpenResetKey}
-                onProjectOpened={onProjectOpened}
               />
             ))}
-            {hasMore || childrenPending ? <IndexLoadingRow label={t("Loading...")} /> : null}
+            <InfiniteScrollSentinel
+              hasMore={hasMore}
+              loading={loading}
+              loadingMore={loadingMore}
+              label={t("Loading...")}
+              resetKey={metas.length}
+              onLoadMore={loadMore}
+            />
           </div>
         )}
         <SiteIndexBulkBar onSitesChanged={handleSitesChanged} />

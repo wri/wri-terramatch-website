@@ -176,16 +176,17 @@ export const useReportsBulkActions = ({ selectedReports, clearSelection }: UseRe
     if (!canMarkNothingToReport || isUpdating) return;
 
     setIsUpdating(true);
+    const updatedReports: ReportIndexItem[] = [];
     try {
       for (const report of nothingToReportReports) {
         await updateReport(report, { nothingToReport: true });
+        updatedReports.push(report);
       }
       trackBulkActionSubmitted({
         actionType: "mark_nothing_to_report",
         selectedCount: selectedReports.length,
         eligibleCount: nothingToReportReports.length
       });
-      await refreshSelectedReports(nothingToReportReports);
       clearSelection();
       showToast({
         label: t('Your report(s) have been successfully marked as "Nothing to Report" for this reporting period'),
@@ -200,6 +201,7 @@ export const useReportsBulkActions = ({ selectedReports, clearSelection }: UseRe
         placement: "bottom"
       });
     } finally {
+      if (updatedReports.length > 0) await refreshSelectedReports(updatedReports);
       setIsUpdating(false);
     }
   }, [
@@ -216,16 +218,17 @@ export const useReportsBulkActions = ({ selectedReports, clearSelection }: UseRe
     if (!canSubmit || isUpdating) return;
 
     setIsUpdating(true);
+    const updatedReports: ReportIndexItem[] = [];
     try {
       for (const report of submittableReports) {
         await updateReport(report, { status: "pending-approval" });
+        updatedReports.push(report);
       }
       trackBulkActionSubmitted({
         actionType: "submit_for_approval",
         selectedCount: selectedReports.length,
         eligibleCount: submittableReports.length
       });
-      await refreshSelectedReports(submittableReports);
       clearSelection();
       showToast({
         label: t("Your report(s) have been successfully submitted and will be reviewed by the team"),
@@ -240,6 +243,8 @@ export const useReportsBulkActions = ({ selectedReports, clearSelection }: UseRe
         placement: "bottom"
       });
     } finally {
+      // Refresh the reports that were saved even if a later one failed, so the table isn't left stale.
+      if (updatedReports.length > 0) await refreshSelectedReports(updatedReports);
       setIsUpdating(false);
     }
   }, [canSubmit, clearSelection, isUpdating, selectedReports.length, submittableReports, t, trackBulkActionSubmitted]);
