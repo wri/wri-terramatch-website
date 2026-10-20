@@ -10,11 +10,15 @@ import { DownloadIcon, PlusIcon, UploadIcon } from "@/redesignComponents/foundat
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
 
+type PolygonReviewToolbarProps = {
+  isProjectSelected: boolean;
+};
+
 /**
- * Polygon search, Level 2 filters and polygon actions, all locked until a project is selected.
- * TM-3989 / the project-scoped workspace replace the locked controls once a project can be picked.
+ * Polygon search, Level 2 filters and polygon actions. Search and filters unlock once a Level 1 project is selected
+ * (the filters themselves arrive with TM-4043); the actions stay disabled until the project-scoped workspace lands.
  */
-const PolygonReviewToolbar: FC = () => {
+const PolygonReviewToolbar: FC<PolygonReviewToolbarProps> = ({ isProjectSelected }) => {
   const t = useT();
 
   return (
@@ -22,7 +26,7 @@ const PolygonReviewToolbar: FC = () => {
       className="!px-0"
       search={{ placeholder: t("Search polygons"), options: [] }}
       selectedFilters={[]}
-      lockedMessage={t("Select a project to search and filter polygons")}
+      lockedMessage={isProjectSelected ? undefined : t("Select a project to search and filter polygons")}
       showClearFilters={false}
       onClearFilters={noop}
       actions={

@@ -1,10 +1,10 @@
 import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { noop } from "lodash";
 import { useRouter } from "next/router";
-import { FC, useEffect, useMemo } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
+import { useProjectMapIndex } from "@/connections/ProjectMapIndex";
 import { useMyUser } from "@/connections/User";
 import { MapAreaProvider } from "@/context/mapArea.provider";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
@@ -15,17 +15,46 @@ import { buildPolygonTableColumns } from "../site/[uuid]/components/polygonTable
 import PolygonReviewEmptyState from "./components/PolygonReviewEmptyState";
 import PolygonReviewMap from "./components/PolygonReviewMap";
 import PolygonReviewToolbar from "./components/PolygonReviewToolbar";
+import ProjectContextPicker from "./components/ProjectContextPicker";
+import { EMPTY_PROJECT_CONTEXT_FILTERS, filterProjects, ProjectContextFilters } from "./utils/projectContextFilter";
 
 /**
- * Initial (unscoped) state of the Polygon Review index: no polygon data loads until a project is selected.
- * Selecting a project arrives with the Level 1 project picker (TM-3989).
+ * Polygon Review index. No polygon data loads until a project is picked in the Level 1 project context filter;
+ * clearing that filter returns the page to its initial (unscoped) state.
  */
 const PolygonReviewIndexPage: FC = () => {
   const t = useT();
   const router = useRouter();
   const [isUserLoaded, { isAdmin }] = useMyUser();
+  const [, { data: mapIndex, loadFailure }] = useProjectMapIndex({ enabled: isAdmin });
+
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
+  const [filters, setFilters] = useState<ProjectContextFilters>(EMPTY_PROJECT_CONTEXT_FILTERS);
+  const [selectedProjectUuid, setSelectedProjectUuid] = useState<string | null>(null);
 
   const columns = useMemo(() => buildPolygonTableColumns(t, { showEntityColumns: true }), [t]);
+
+  const projects = useMemo(() => mapIndex?.projects ?? [], [mapIndex]);
+  const selectedProject = useMemo(
+    () => projects.find(({ uuid }) => uuid === selectedProjectUuid) ?? null,
+    [projects, selectedProjectUuid]
+  );
+  const mapProjects = useMemo(
+    () => (selectedProject != null ? [selectedProject] : filterProjects(projects, filters)),
+    [filters, projects, selectedProject]
+  );
+
+  const openPicker = useCallback(() => setIsPickerOpen(true), []);
+
+  const selectProject = useCallback((uuid: string) => {
+    setSelectedProjectUuid(uuid);
+    setIsPickerOpen(false);
+  }, []);
+
+  const clearProjectContext = useCallback(() => {
+    setFilters(EMPTY_PROJECT_CONTEXT_FILTERS);
+    setSelectedProjectUuid(null);
+  }, []);
 
   const isAccessDenied = isUserLoaded && !isAdmin;
   useEffect(() => {
@@ -38,12 +67,26 @@ const PolygonReviewIndexPage: FC = () => {
 
   return (
     <Layout>
-      <PageHeader title={t("Polygon Review")} />
+      <PageHeader
+        title={t("Polygon Review")}
+        actions={
+          <ProjectContextPicker
+            open={isPickerOpen}
+            projects={projects}
+            filters={filters}
+            selectedProject={selectedProject}
+            onOpenChange={setIsPickerOpen}
+            onFiltersChange={setFilters}
+            onSelectProject={selectProject}
+            onClear={clearProjectContext}
+          />
+        }
+      />
       <MapAreaProvider>
         <PageContent className="bg-theme-neutral-100">
           <Flex direction="column" gap={4}>
-            <PolygonReviewToolbar />
-            <PolygonReviewMap />
+            <PolygonReviewToolbar isProjectSelected={selectedProject != null} />
+            <PolygonReviewMap projects={mapProjects} hasLoadFailure={loadFailure != null} />
             <Flex
               direction="column"
               borderWidth="1px"
@@ -52,8 +95,7 @@ const PolygonReviewIndexPage: FC = () => {
               bg="neutral.100"
             >
               <Table data={[]} columns={columns} selectable showPagination={false} />
-              {/* TM-3989: open the Level 1 project picker. */}
-              <PolygonReviewEmptyState onSelectProject={noop} />
+              {selectedProject == null && <PolygonReviewEmptyState onSelectProject={openPicker} />}
             </Flex>
           </Flex>
         </PageContent>

@@ -8,6 +8,7 @@ import { ProjectMapIndexDto } from "@/generated/v3/researchService/researchServi
 
 const projectMapIndexConnection = v3Resource("projectMapIndexes", projectsMapIndex)
   .singleByFilter<ProjectMapIndexDto, ProjectsMapIndexQueryParams>()
+  .enabledProp()
   .buildConnection();
 
 export const useProjectMapIndex = connectionHook(projectMapIndexConnection);
