@@ -14,10 +14,13 @@ import { OrganizationIcon } from "../foundations/Icons/NavigationSections/Organi
 import { ProjectIcon } from "../foundations/Icons/NavigationSections/ProjectIcon";
 import { ReportsIcon } from "../foundations/Icons/NavigationSections/ReportsIcon";
 import { SiteIcon } from "../foundations/Icons/NavigationSections/SiteIcon";
+import Footer from "../navigation/Footer/Footer";
 import Navbar from "../navigation/NavBar/Navbar";
 import SideNavigation, { SideNavigationGroup } from "../navigation/NavBar/SideNavigation/SideNavigation";
 import { useNavbarData } from "../navigation/NavBar/useNavbarData";
 import { LayoutShellProvider, useLayoutShell } from "./LayoutShell.provider";
+
+const FOOTER_CLASS_NAME = "mt-auto shrink-0 [zoom:var(--layout-chrome-zoom,1)]";
 
 // Temporary admin-review shell: sidebar links, labels, and notification counts are design placeholders.
 const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
@@ -104,11 +107,13 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
           </Flex>
           <Flex as="main" className="min-h-0 flex-[1_1_0] flex-col overflow-auto">
             {children}
+            <Footer className={FOOTER_CLASS_NAME} />
           </Flex>
         </Flex>
       ) : (
         <Flex as="main" className="min-h-0 flex-1 flex-col overflow-auto">
           {children}
+          <Footer className={FOOTER_CLASS_NAME} />
         </Flex>
       )}
     </Flex>

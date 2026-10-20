@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { useMemo } from "react";
 
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
-import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useApplication } from "@/connections/Application";
 import ApplicationHeader from "@/pages/applications/components/ApplicationHeader";
@@ -36,7 +35,7 @@ const ApplicationPage = () => {
           <LoadingContainer loading={!applicationLoaded}>
             <ApplicationHeader name={applicationName} uuid={uuid} />
 
-            <div className="m-auto flex max-w-[82vw] flex-col gap-15 py-15">
+            <div className="m-auto flex max-w-[calc(100%-35px)] flex-col gap-15 py-15">
               <ApplicationStatus application={application} />
               <ApplicationTimeline applicationUuid={application?.uuid} />
               <ApplicationOverview
@@ -47,7 +46,6 @@ const ApplicationPage = () => {
           </LoadingContainer>
         </div>
       </PageBody>
-      <PageFooter />
     </>
   );
 };
