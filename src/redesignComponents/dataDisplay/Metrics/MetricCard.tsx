@@ -16,6 +16,7 @@ import ProgressBar from "./ProgressBar";
 import {
   DonutChartMetricCardContentProps,
   MetricCardProps,
+  NoGoalMediumMetricCardContentProps,
   NoGoalMetricCardContentProps,
   ProgressBarMetricCardContentProps
 } from "./types";
@@ -60,9 +61,10 @@ type MetricContextDetailsProps = {
   selection?: number | null;
   filtered?: number | null;
   suffix?: string;
+  withLeadingDivider?: boolean;
 };
 
-const MetricContextDetails: FC<MetricContextDetailsProps> = ({ selection, filtered, suffix }) => {
+const MetricContextDetails: FC<MetricContextDetailsProps> = ({ selection, filtered, suffix, withLeadingDivider }) => {
   const t = useT();
   const selectionItem = selection !== undefined ? { key: "selection", label: t("Selected:"), value: selection } : null;
   const filteredItem = filtered !== undefined ? { key: "filtered", label: t("Filtered:"), value: filtered } : null;
@@ -76,7 +78,9 @@ const MetricContextDetails: FC<MetricContextDetailsProps> = ({ selection, filter
     <Flex gap={2} className="items-center">
       {items.map((item, itemIndex) => (
         <Flex key={item.key} gap={2} className="items-center">
-          {itemIndex > 0 && <SimpleDivider variant="vertical" className="!h-3 shrink-0" />}
+          {(itemIndex > 0 || withLeadingDivider === true) && (
+            <SimpleDivider variant="vertical" className="!h-3 shrink-0" />
+          )}
           <MetricContextItem label={item.label} value={item.value} suffix={suffix} />
         </Flex>
       ))}
@@ -111,7 +115,7 @@ const MetricTooltipTrigger: FC<MetricTooltipTriggerProps> = ({ tooltipContent, m
   );
 };
 
-const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
+const NoGoalMediumMetricCardContent: FC<NoGoalMediumMetricCardContentProps> = ({
   title,
   progress,
   progressLabel,
@@ -121,7 +125,9 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
   tooltipContent,
   classNameTitle,
   metricLabel,
-  type
+  type,
+  selection,
+  filtered
 }) => (
   <Flex direction="column" gap={2}>
     <Flex gap={1} color={color} alignItems="center">
@@ -138,15 +144,18 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
         <MetricTooltipTrigger tooltipContent={tooltipContent} metricLabel={metricLabel} type={type} />
       )}
     </Flex>
-    <Flex gap={1} className="items-center">
-      <Text textStyle="400-bold" color="neutral.900">
-        {progressLabel ?? formatNumberLocaleString(progress)}
-      </Text>
-      {shouldRenderSuffix(progressLabel, progressSuffix) ? (
+    <Flex gap={2} className="flex-wrap items-center">
+      <Flex gap={1} className="items-center">
         <Text textStyle="400-bold" color="neutral.900">
-          {progressSuffix}
+          {progressLabel ?? formatNumberLocaleString(progress)}
         </Text>
-      ) : null}
+        {shouldRenderSuffix(progressLabel, progressSuffix) ? (
+          <Text textStyle="400-bold" color="neutral.900">
+            {progressSuffix}
+          </Text>
+        ) : null}
+      </Flex>
+      <MetricContextDetails selection={selection} filtered={filtered} suffix={progressSuffix} withLeadingDivider />
     </Flex>
   </Flex>
 );
@@ -406,6 +415,8 @@ const MetricCard: FC<MetricCardProps> = props => {
           classNameTitle={classNameTitle}
           metricLabel={metricLabel}
           type={type}
+          selection={selection}
+          filtered={filtered}
         />
       );
       break;
@@ -438,7 +449,9 @@ const MetricCard: FC<MetricCardProps> = props => {
       )}
     >
       {content}
-      <MetricContextDetails selection={selection} filtered={filtered} suffix={progressSuffix} />
+      {variant !== "medium" && (
+        <MetricContextDetails selection={selection} filtered={filtered} suffix={progressSuffix} />
+      )}
     </Flex>
   );
 };

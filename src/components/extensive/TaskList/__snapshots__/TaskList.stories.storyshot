@@ -2,7 +2,7 @@
 
 exports[`Storyshots Components/Extensive/TaskList Default 1`] = `
 <div
-  className="w-[82vw] max-w-[82vw] overflow-hidden"
+  className="w-[82vw] max-w-[calc(100%-2.1875rem)] overflow-hidden"
 >
   <div
     className="bg-white p-8"

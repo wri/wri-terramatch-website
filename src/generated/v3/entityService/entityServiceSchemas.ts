@@ -1658,6 +1658,60 @@ export type ProjectReportMetaDto = {
   };
 };
 
+export type ProjectNurseriesMetaDto = {
+  uuid: string;
+  name: string | null;
+  organisationName: string | null;
+  frameworkKey: string | null;
+  /**
+   * Number of nurseries in the project, ignoring the filters
+   */
+  nurseriesTotal: number;
+  /**
+   * Number of nurseries in the project that match the filters
+   */
+  nurseriesMatching: number;
+  /**
+   * Seedlings grown across all nurseries in the project
+   */
+  seedlingsGrownTotal: number;
+  /**
+   * Seedlings grown across the nurseries that match the filters
+   */
+  seedlingsGrownMatching: number;
+};
+
+export type ProjectSitesMetaDto = {
+  uuid: string;
+  name: string | null;
+  organisationName: string | null;
+  frameworkKey: string | null;
+  /**
+   * Number of sites in the project, ignoring the filters
+   */
+  sitesTotal: number;
+  /**
+   * Number of sites in the project that match the filters
+   */
+  sitesMatching: number;
+  /**
+   * Trees planted across all sites in the project
+   */
+  treesPlantedTotal: number;
+  /**
+   * Trees planted across the sites that match the filters
+   */
+  treesPlantedMatching: number;
+  /**
+   * Hectares restored across all sites in the project
+   */
+  hectaresRestoredTotal: number;
+  /**
+   * Hectares restored across the sites that match the filters
+   */
+  hectaresRestoredMatching: number;
+};
+
 export type FileDownloadDto = {
   url: string;
 };

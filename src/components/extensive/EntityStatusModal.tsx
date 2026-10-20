@@ -7,6 +7,7 @@ import { FC } from "react";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormEntity } from "@/connections/Form";
+import { withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
 import { InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
 
@@ -45,7 +46,10 @@ const EntityStatusModal: FC<EntityStatusModalProps> = ({
 
     handleClose();
     router.push(
-      `/entity/${kebabCase(entityName)}/edit/${entityUuid}?${STEP_QUERY_PARAM}=${encodeURIComponent(targetStepId)}`
+      withReportOrigin(
+        `/entity/${kebabCase(entityName)}/edit/${entityUuid}?${STEP_QUERY_PARAM}=${encodeURIComponent(targetStepId)}`,
+        router.query
+      )
     );
   };
 

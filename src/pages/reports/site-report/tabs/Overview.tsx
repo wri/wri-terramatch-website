@@ -1,13 +1,11 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
-import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import StatusTag from "@/components/elements/StatusTag/StatusTag";
-import { IconNames } from "@/components/extensive/Icon/Icon";
 import OnboardingCard from "@/components/extensive/OnboardingCard/OnboardingCard";
 import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
@@ -99,22 +97,12 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
       return <TagSubmission size="small" state={isAdmin ? "pending-approval" : "pending-approval-neutral"} />;
     }
 
-    return <StatusTag size="small" status={siteReport.status} />;
-  }, [siteReport.status, siteReport.updateRequestStatus, isAdmin]);
+    if (siteReport.nothingToReport) {
+      return <StatusTag size="small" status={"nothing-reported"} />;
+    }
 
-  if (siteReport.nothingToReport) {
-    return (
-      <PageContent>
-        <EmptyState
-          iconProps={{ name: IconNames.DOCUMENT_CIRCLE, className: "fill-success" }}
-          title={t("Nothing to report")}
-          subtitle={t(
-            "You've marked this report as 'Nothing to Report,' indicating there are no updates for this site report. If you wish to add information to this report, please use the edit button."
-          )}
-        />
-      </PageContent>
-    );
-  }
+    return <StatusTag size="small" status={siteReport.status} />;
+  }, [siteReport.status, siteReport.updateRequestStatus, isAdmin, siteReport.nothingToReport]);
 
   const isHBFFramework = siteReport.frameworkKey === Framework.HBF;
 
@@ -124,41 +112,43 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
         {EditModals}
         <Flex gap={7} className="flex-col">
           <Flex gap={7} className="mobile:flex-col">
-            <Flex gap={5} className={classNames(isHBFFramework ? "flex-row" : "flex-col", "flex-[2]")}>
-              <PageItem
-                title={t("Key Indicators and Insights")}
-                buttonProps={{
-                  variant: "secondary",
-                  size: "small",
-                  children: t("View Indicator & Insights"),
-                  rightIcon: <ChevronRightIcon />,
-                  onClick: createMetricsCardCtaHandler({ entityType: "site-report", entityId: siteReport.uuid }, () =>
-                    goToTab("goals")
-                  )
-                }}
-              >
-                <HighLevelMetricsCard entityType="site-report" entityId={siteReport.uuid}>
-                  <SiteReportKeyIndicatorsInsights siteReport={siteReport} workdaysTotal={workdaysTotal} />
-                </HighLevelMetricsCard>
-              </PageItem>
-              <PageItem
-                title={t("Featured Images")}
-                buttonProps={{
-                  variant: "secondary",
-                  size: "small",
-                  children: t("View Gallery"),
-                  rightIcon: <ChevronRightIcon />,
-                  onClick: () => goToTab("gallery")
-                }}
-              >
-                <LatestImagesSectionTab
-                  entityUuid={siteReport.uuid}
-                  entityName="siteReports"
-                  columns={isHBFFramework ? 2 : 4}
-                  rows={1}
-                />
-              </PageItem>
-            </Flex>
+            {!siteReport.nothingToReport && (
+              <Flex gap={5} className={classNames(isHBFFramework ? "flex-row" : "flex-col", "flex-[2]")}>
+                <PageItem
+                  title={t("Key Indicators and Insights")}
+                  buttonProps={{
+                    variant: "secondary",
+                    size: "small",
+                    children: t("View Indicator & Insights"),
+                    rightIcon: <ChevronRightIcon />,
+                    onClick: createMetricsCardCtaHandler({ entityType: "site-report", entityId: siteReport.uuid }, () =>
+                      goToTab("goals")
+                    )
+                  }}
+                >
+                  <HighLevelMetricsCard entityType="site-report" entityId={siteReport.uuid}>
+                    <SiteReportKeyIndicatorsInsights siteReport={siteReport} workdaysTotal={workdaysTotal} />
+                  </HighLevelMetricsCard>
+                </PageItem>
+                <PageItem
+                  title={t("Featured Images")}
+                  buttonProps={{
+                    variant: "secondary",
+                    size: "small",
+                    children: t("View Gallery"),
+                    rightIcon: <ChevronRightIcon />,
+                    onClick: () => goToTab("gallery")
+                  }}
+                >
+                  <LatestImagesSectionTab
+                    entityUuid={siteReport.uuid}
+                    entityName="siteReports"
+                    columns={isHBFFramework ? 2 : 4}
+                    rows={1}
+                  />
+                </PageItem>
+              </Flex>
+            )}
             <PageItem
               title={t("Site Report")}
               flexProps={{ flex: 1 }}
@@ -171,6 +161,13 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
               }}
               tag={statusTag}
             >
+              {siteReport.nothingToReport && (
+                <Text textStyle="400" color="neutral.800">
+                  {t(
+                    "It was indicated that there are no updates for this project report. If you wish to add information, please click on Edit."
+                  )}
+                </Text>
+              )}
               <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
                 <EntitySetUpSection
                   onStatusChange={setIsReportSetupComplete}
@@ -179,12 +176,13 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
                   type="siteReports"
                   entityTitle={siteReport.siteName ?? ""}
                   reportTitle={siteReport.reportTitle ?? ""}
+                  disabled={siteReport.nothingToReport === true}
                 />
               </Box>
             </PageItem>
           </Flex>
           <Flex gap={7} className="mobile:flex-col">
-            {site != null && (
+            {site != null && !siteReport.nothingToReport && (
               <PageItem title={t("Site Map")} flexProps={{ flex: 1 }} className="min-h-0">
                 <Box className="relative overflow-hidden rounded" minH={SITE_POLYGON_MAP_INITIAL_HEIGHT}>
                   <OverviewMapArea
@@ -192,7 +190,7 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
                     type="sites"
                     className="h-full min-h-0 rounded"
                     hideFullscreenControl={true}
-                    overviewPolygonPopup={true}
+                    overviewPolygonPopup="attributes"
                   />
                   {mapIndexLoaded && (mapIndex?.total ?? 0) === 0 && (
                     <MapPlaceholder
@@ -222,7 +220,11 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
               entityType="site-report"
               entityId={siteReport.uuid}
             >
-              <AboutPageItem type="site-report" flexProps={{ flex: 1 }} />
+              <AboutPageItem
+                type="site-report"
+                flexProps={{ flex: 1 }}
+                isNothingToReport={siteReport?.nothingToReport!}
+              />
             </OnboardingCard>
           </Flex>
         </Flex>

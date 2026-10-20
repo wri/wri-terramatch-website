@@ -1,6 +1,5 @@
 import { Flex, Spinner } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { deleteAuditStatusAsync, updateAuditStatusAsync, useAuditStatuses } from "@/connections/AuditStatus";
@@ -10,6 +9,7 @@ import { uploadFile } from "@/generated/v3/entityService/entityServiceComponents
 import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import CommentCard, { CommentCardAttachment } from "@/redesignComponents/content/Message/CommentCard";
 import CommentInput from "@/redesignComponents/content/Message/CommentInput";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
@@ -168,8 +168,7 @@ const PolygonCommentContent: FC<PolygonCommentContentProps> = ({ polygonUuid = "
           label: t("You can upload a maximum of 5 files."),
           type: "error",
           placement: "bottom",
-          duration: 5000,
-          maxWidth: "auto"
+          duration: 5000
         });
         return;
       }
@@ -179,8 +178,7 @@ const PolygonCommentContent: FC<PolygonCommentContentProps> = ({ polygonUuid = "
           label: t("Invalid file type. Only PDF, XLS, DOC, XLSX, DOCX, JPG, PNG, and TIFF are allowed."),
           type: "error",
           placement: "bottom",
-          duration: 5000,
-          maxWidth: "auto"
+          duration: 5000
         });
         return;
       }
@@ -190,8 +188,7 @@ const PolygonCommentContent: FC<PolygonCommentContentProps> = ({ polygonUuid = "
           label: t("File size must be less than 10MB."),
           type: "error",
           placement: "bottom",
-          duration: 5000,
-          maxWidth: "auto"
+          duration: 5000
         });
         return;
       }
@@ -264,8 +261,7 @@ const PolygonCommentContent: FC<PolygonCommentContentProps> = ({ polygonUuid = "
           label: t("Please enter a message or attach a file."),
           type: "error",
           placement: "bottom",
-          duration: 5000,
-          maxWidth: "auto"
+          duration: 5000
         });
         return;
       }
@@ -292,8 +288,7 @@ const PolygonCommentContent: FC<PolygonCommentContentProps> = ({ polygonUuid = "
           label: t("Your comment was updated."),
           type: "success",
           placement: "bottom",
-          duration: 5000,
-          maxWidth: "auto"
+          duration: 5000
         });
       } catch (error) {
         Log.error("Failed to update comment", error);
@@ -301,8 +296,7 @@ const PolygonCommentContent: FC<PolygonCommentContentProps> = ({ polygonUuid = "
           label: t("Failed to update comment. Please try again."),
           type: "error",
           placement: "bottom",
-          duration: 5000,
-          maxWidth: "auto"
+          duration: 5000
         });
       } finally {
         setIsSavingEdit(false);
@@ -342,8 +336,7 @@ const PolygonCommentContent: FC<PolygonCommentContentProps> = ({ polygonUuid = "
           label: t("Failed to mark comment as read. Please try again."),
           type: "error",
           placement: "bottom",
-          duration: 5000,
-          maxWidth: "auto"
+          duration: 5000
         });
       }
     },
@@ -368,16 +361,14 @@ const PolygonCommentContent: FC<PolygonCommentContentProps> = ({ polygonUuid = "
           label: t("Comment deleted successfully."),
           type: "success",
           placement: "bottom",
-          duration: 5000,
-          maxWidth: "auto"
+          duration: 5000
         });
       } catch {
         showToast({
           label: t("Failed to delete comment. Please try again."),
           type: "error",
           placement: "bottom",
-          duration: 5000,
-          maxWidth: "auto"
+          duration: 5000
         });
       }
     },
