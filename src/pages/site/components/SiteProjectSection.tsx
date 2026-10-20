@@ -403,7 +403,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
   );
 
   if (embeddedInProject) {
-    return <Box className="bg-theme-neutral-100 overflow-hidden rounded">{sectionBody}</Box>;
+    return <Box className="overflow-hidden rounded bg-theme-neutral-100">{sectionBody}</Box>;
   }
 
   return (
@@ -412,7 +412,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
       open={open}
       onOpenChange={setOpen}
       isScrollable={false}
-      className="bg-theme-neutral-100 w-full overflow-hidden rounded"
+      className="w-full overflow-hidden rounded bg-theme-neutral-100"
       classNameHeader="!mb-0"
       header={
         <ListSectionHeader
