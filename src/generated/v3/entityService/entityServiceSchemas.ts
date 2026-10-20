@@ -1360,7 +1360,16 @@ export type ProjectLightDto = {
    * @format date-time
    */
   plantingStartDate: string | null;
+  /**
+   * Use level0Project instead
+   *
+   * @deprecated true
+   */
   country: string | null;
+  /**
+   * Project country codes (GADM level 0)
+   */
+  level0Project: string[] | null;
   /**
    * Latitude coordinate
    */
@@ -1757,7 +1766,16 @@ export type ProjectFullDto = {
    * @format date-time
    */
   plantingStartDate: string | null;
+  /**
+   * Use level0Project instead
+   *
+   * @deprecated true
+   */
   country: string | null;
+  /**
+   * Project country codes (GADM level 0)
+   */
+  level0Project: string[] | null;
   /**
    * Latitude coordinate
    */

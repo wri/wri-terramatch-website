@@ -102,7 +102,7 @@ const OverviewMapArea: FC<OverviewMapAreaProps> = ({
       ? {}
       : entityType === "sites"
       ? { country: entityModel?.projectCountry }
-      : { country: entityModel?.country }
+      : { country: entityModel?.level0Project?.[0] }
   );
 
   const extentBbox = useMemo(
