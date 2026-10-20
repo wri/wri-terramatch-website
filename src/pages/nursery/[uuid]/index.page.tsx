@@ -6,7 +6,7 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullNursery } from "@/connections/Entity";
 import FrameworkProvider from "@/context/framework.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import NurseryOverviewTab from "@/pages/nurserie/[uuid]/tabs/Overview";
+import NurseryOverviewTab from "@/pages/nursery/[uuid]/tabs/Overview";
 import EntityProfileReportsTab from "@/pages/reports/components/EntityProfileReportsTab";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import NurseryBanner from "@/redesignComponents/content/Banner/NurseryBanner/NurseryBanner";
@@ -86,7 +86,7 @@ const NurseryDetailPage = () => {
                   ? [
                       {
                         label: t("Nurseries"),
-                        link: "/nurserie",
+                        link: "/nursery",
                         icon: <NurseryIcon className="!text-theme-primary-900" />
                       },
                       { label: nursery.name ?? "Nursery", link: getNurseryDetailUrl(nursery.uuid, true) }
@@ -98,7 +98,7 @@ const NurseryDetailPage = () => {
                         icon: <ProjectIcon className="!text-theme-primary-900" />
                       },
                       { label: nursery.projectName ?? "", link: `/project/${nursery.projectUuid}` },
-                      { label: nursery.name ?? "Nursery", link: `/nurserie/${nursery.uuid}` }
+                      { label: nursery.name ?? "Nursery", link: `/nursery/${nursery.uuid}` }
                     ]
               }
               suffix={

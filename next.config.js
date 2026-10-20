@@ -36,7 +36,7 @@ const nextConfig = {
         permanent: true
       },
       {
-        source: "/nurserie/:uuid",
+        source: "/nursery/:uuid",
         has: [{ type: "query", key: "tab", value: "completed-tasks" }],
         destination: "/reports?source=nursery&uuid=:uuid",
         permanent: true
@@ -54,12 +54,7 @@ const nextConfig = {
       },
       {
         source: "/nurseries",
-        destination: "/nurserie",
-        permanent: true
-      },
-      {
-        source: "/nursery/:path*",
-        destination: "/nurserie/:path*",
+        destination: "/nursery",
         permanent: true
       },
       {
