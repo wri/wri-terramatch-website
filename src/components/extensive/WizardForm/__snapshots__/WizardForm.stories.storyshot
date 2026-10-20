@@ -9,7 +9,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
       className="sticky top-[74px] z-40 flex border-neutral-150 bg-treesHeaderWithOverlay bg-cover bg-no-repeat px-10 py-3 md:py-8"
     >
       <div
-        className="mx-auto flex w-full min-w-0 max-w-[calc(100%-35px)] items-center gap-8"
+        className="mx-auto flex w-full min-w-0 max-w-[calc(100%-2.1875rem)] items-center gap-8"
       >
         <div
           className="min-w-0 flex-grow text-white"
@@ -44,7 +44,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Create Form 1`] = `
       </div>
     </div>
     <div
-      className="mx-auto mt-0 max-w-[calc(100%-35px)] px-6 py-10 xl:px-0"
+      className="mx-auto mt-0 max-w-[calc(100%-2.1875rem)] px-6 py-10 xl:px-0"
     >
       <div
         className="flex h-full w-full shadow"
@@ -523,7 +523,7 @@ exports[`Storyshots Components/Extensive/Form/Wizard Edit Form 1`] = `
 >
   <div>
     <div
-      className="mx-auto mt-0 max-w-[calc(100%-35px)] px-6 py-10 xl:px-0"
+      className="mx-auto mt-0 max-w-[calc(100%-2.1875rem)] px-6 py-10 xl:px-0"
     >
       <div
         className="flex h-full w-full shadow"
