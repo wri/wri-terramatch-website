@@ -7,7 +7,6 @@ import ToolbarInfoTooltipContent from "@/redesignComponents/navigation/Toolbar/T
 import { getProfileDeleteDisabledTooltip, getProfileSubmitDisabledTooltip } from "@/utils/profileActionTooltips";
 
 import type { NurseryIndexRow } from "../nurseryIndex.types";
-import { isNurserySubmittable } from "../nurseryIndexSubmit";
 
 interface NurseriesIndexBulkActionToolbarProps {
   selectedNurseries: NurseryIndexRow[];
@@ -15,6 +14,7 @@ interface NurseriesIndexBulkActionToolbarProps {
   isUpdating?: boolean;
   canEdit?: boolean;
   canDelete?: boolean;
+  canSubmit: boolean;
   onCancel: () => void;
   onDelete: () => void;
   onDownload: () => void;
@@ -28,6 +28,7 @@ const NurseriesIndexBulkActionToolbar: FC<NurseriesIndexBulkActionToolbarProps> 
   isUpdating = false,
   canEdit = false,
   canDelete = false,
+  canSubmit,
   onCancel,
   onDelete,
   onDownload,
@@ -38,7 +39,6 @@ const NurseriesIndexBulkActionToolbar: FC<NurseriesIndexBulkActionToolbarProps> 
   const { setSidebarCollapseDisabled } = useLayoutShell();
   const selectedCount = selectedNurseries.length;
   const visible = selectedCount > 0;
-  const canSubmit = selectedCount > 0 && selectedNurseries.every(isNurserySubmittable);
   const selectedStatuses = useMemo(() => selectedNurseries.map(nursery => nursery.status), [selectedNurseries]);
 
   useEffect(() => {

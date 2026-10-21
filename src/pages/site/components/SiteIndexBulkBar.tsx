@@ -1,11 +1,14 @@
 import { FC, useCallback, useState } from "react";
 
 import { EntityIndexModalItem, EntityIndexModals } from "@/components/generic/EntityIndexModals/EntityIndexModals";
+import EntitySubmissionProbe from "@/components/generic/EntityIndexModals/EntitySubmissionProbe";
 import { useEntityIndexModalsCopy } from "@/components/generic/EntityIndexModals/useEntityIndexModalsCopy";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 
+import type { SiteIndexSite } from "./siteIndex.types";
 import SiteIndexBulkActionToolbar from "./SiteIndexBulkActionToolbar";
 import { useSiteIndexSelectionActions, useSiteIndexSelectionState } from "./SiteIndexSelection.provider";
+import { isSiteSubmittable } from "./siteIndexSubmit";
 import { useSiteIndexBulkActions } from "./useSiteIndexBulkActions";
 
 type SiteIndexBulkBarProps = {
@@ -19,11 +22,18 @@ const SiteIndexBulkBar: FC<SiteIndexBulkBarProps> = ({ onSitesChanged }) => {
   const [openSubmitModal, setOpenSubmitModal] = useState(false);
   const [openSubmittedModal, setOpenSubmittedModal] = useState(false);
   const [submittedItems, setSubmittedItems] = useState<EntityIndexModalItem[]>([]);
+  const [completeness, setCompleteness] = useState<Record<string, boolean>>({});
   const modalsCopy = useEntityIndexModalsCopy("site");
+
+  const handleCompleteness = useCallback((siteUuid: string, complete: boolean) => {
+    setCompleteness(previous => (previous[siteUuid] === complete ? previous : { ...previous, [siteUuid]: complete }));
+  }, []);
+  const isSubmissionReady = useCallback((site: SiteIndexSite) => completeness[site.id] === true, [completeness]);
 
   const { isDownloading, isUpdating, canEdit, canDelete, canSubmit, handleDownload, handleDelete, handleSubmit } =
     useSiteIndexBulkActions({
       selectedSites,
+      isSubmissionReady,
       onSitesChanged
     });
 
@@ -51,12 +61,16 @@ const SiteIndexBulkBar: FC<SiteIndexBulkBarProps> = ({ onSitesChanged }) => {
   return (
     <>
       {EditModals}
+      {selectedSites.filter(isSiteSubmittable).map(site => (
+        <EntitySubmissionProbe key={site.id} entityName="sites" entityUuid={site.id} onResult={handleCompleteness} />
+      ))}
       <SiteIndexBulkActionToolbar
         selectedSites={selectedSites}
         isDownloading={isDownloading}
         isUpdating={isUpdating}
         canEdit={canEdit}
         canDelete={canDelete}
+        canSubmit={canSubmit}
         onCancel={clearSelection}
         onDelete={() => {
           if (!canDelete) {

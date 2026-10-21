@@ -23,6 +23,8 @@ import { isSiteDeletable, isSiteEditable, isSiteSubmittable } from "./siteIndexS
 
 type UseSiteIndexBulkActionsProps = {
   selectedSites: SiteIndexSite[];
+  /** True once a selected site has been checked as complete against its form. */
+  isSubmissionReady: (site: SiteIndexSite) => boolean;
   onSitesChanged: () => void;
 };
 
@@ -45,14 +47,21 @@ const refreshTouchedSites = (siteUuids: string[]) => {
   ApiSlice.pruneIndex("projects", "");
 };
 
-export const useSiteIndexBulkActions = ({ selectedSites, onSitesChanged }: UseSiteIndexBulkActionsProps) => {
+export const useSiteIndexBulkActions = ({
+  selectedSites,
+  isSubmissionReady,
+  onSitesChanged
+}: UseSiteIndexBulkActionsProps) => {
   const t = useT();
   const router = useRouter();
   const { clearSelection } = useSiteIndexSelectionActions();
   const [isDownloading, setIsDownloading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  const submittableSites = useMemo(() => selectedSites.filter(isSiteSubmittable), [selectedSites]);
+  const submittableSites = useMemo(
+    () => selectedSites.filter(site => isSiteSubmittable(site) && isSubmissionReady(site)),
+    [isSubmissionReady, selectedSites]
+  );
   const deletableSites = useMemo(() => selectedSites.filter(isSiteDeletable), [selectedSites]);
   const canEdit = selectedSites.length === 1 && isSiteEditable(selectedSites[0]);
   const canSubmit = selectedSites.length > 0 && submittableSites.length === selectedSites.length;

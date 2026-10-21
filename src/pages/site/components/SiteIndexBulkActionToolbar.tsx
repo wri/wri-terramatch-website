@@ -6,7 +6,6 @@ import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActio
 import { getProfileDeleteDisabledTooltip, getProfileSubmitDisabledTooltip } from "@/utils/profileActionTooltips";
 
 import type { SiteIndexSite } from "./siteIndex.types";
-import { isSiteSubmittable } from "./siteIndexSubmit";
 
 interface SiteIndexBulkActionToolbarProps {
   selectedSites: SiteIndexSite[];
@@ -14,6 +13,7 @@ interface SiteIndexBulkActionToolbarProps {
   isUpdating?: boolean;
   canEdit?: boolean;
   canDelete?: boolean;
+  canSubmit: boolean;
   onCancel: () => void;
   onDelete: () => void;
   onDownload: () => void;
@@ -27,6 +27,7 @@ const SiteIndexBulkActionToolbar: FC<SiteIndexBulkActionToolbarProps> = ({
   isUpdating = false,
   canEdit = false,
   canDelete = false,
+  canSubmit,
   onCancel,
   onDelete,
   onDownload,
@@ -37,7 +38,6 @@ const SiteIndexBulkActionToolbar: FC<SiteIndexBulkActionToolbarProps> = ({
   const { setSidebarCollapseDisabled } = useLayoutShell();
   const selectedCount = selectedSites.length;
   const visible = selectedCount > 0;
-  const canSubmit = selectedCount > 0 && selectedSites.every(isSiteSubmittable);
   const selectedStatuses = useMemo(() => selectedSites.map(site => site.status), [selectedSites]);
   const submitTooltip = useMemo(
     () => (canSubmit ? undefined : getProfileSubmitDisabledTooltip(selectedStatuses, t)),

@@ -1,10 +1,13 @@
 import { FC, useCallback, useState } from "react";
 
 import { EntityIndexModalItem, EntityIndexModals } from "@/components/generic/EntityIndexModals/EntityIndexModals";
+import EntitySubmissionProbe from "@/components/generic/EntityIndexModals/EntitySubmissionProbe";
 import { useEntityIndexModalsCopy } from "@/components/generic/EntityIndexModals/useEntityIndexModalsCopy";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 
 import { useNurseriesSelectionActions, useNurseriesSelectionState } from "../NurseriesSelection.provider";
+import type { NurseryIndexRow } from "../nurseryIndex.types";
+import { isNurserySubmittable } from "../nurseryIndexSubmit";
 import { useNurseriesBulkActions } from "../useNurseriesBulkActions";
 import NurseriesIndexBulkActionToolbar from "./NurseriesIndexBulkActionToolbar";
 
@@ -19,11 +22,23 @@ const NurseriesIndexBulkBar: FC<NurseriesIndexBulkBarProps> = ({ onNurseriesChan
   const [openSubmitModal, setOpenSubmitModal] = useState(false);
   const [openSubmittedModal, setOpenSubmittedModal] = useState(false);
   const [submittedItems, setSubmittedItems] = useState<EntityIndexModalItem[]>([]);
+  const [completeness, setCompleteness] = useState<Record<string, boolean>>({});
   const modalsCopy = useEntityIndexModalsCopy("nursery");
+
+  const handleCompleteness = useCallback((nurseryUuid: string, complete: boolean) => {
+    setCompleteness(previous =>
+      previous[nurseryUuid] === complete ? previous : { ...previous, [nurseryUuid]: complete }
+    );
+  }, []);
+  const isSubmissionReady = useCallback(
+    (nursery: NurseryIndexRow) => completeness[nursery.uuid] === true,
+    [completeness]
+  );
 
   const { isDownloading, isUpdating, canEdit, canDelete, canSubmit, handleDownload, handleDelete, handleSubmit } =
     useNurseriesBulkActions({
       selectedNurseries,
+      isSubmissionReady,
       onNurseriesChanged
     });
 
@@ -60,12 +75,21 @@ const NurseriesIndexBulkBar: FC<NurseriesIndexBulkBarProps> = ({ onNurseriesChan
   return (
     <>
       {EditModals}
+      {selectedNurseries.filter(isNurserySubmittable).map(nursery => (
+        <EntitySubmissionProbe
+          key={nursery.uuid}
+          entityName="nurseries"
+          entityUuid={nursery.uuid}
+          onResult={handleCompleteness}
+        />
+      ))}
       <NurseriesIndexBulkActionToolbar
         selectedNurseries={selectedNurseries}
         isDownloading={isDownloading}
         isUpdating={isUpdating}
         canEdit={canEdit}
         canDelete={canDelete}
+        canSubmit={canSubmit}
         onCancel={clearSelection}
         onDelete={() => {
           if (!canDelete) {

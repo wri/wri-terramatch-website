@@ -21,6 +21,7 @@ import { isNurseryDeletable, isNurseryEditable, isNurserySubmittable } from "./n
 
 type UseNurseriesBulkActionsProps = {
   selectedNurseries: NurseryIndexRow[];
+  isSubmissionReady: (nursery: NurseryIndexRow) => boolean;
   onNurseriesChanged: () => void;
 };
 
@@ -43,13 +44,20 @@ const refreshTouchedNurseries = (nurseryUuids: string[]) => {
   ApiSlice.pruneIndex("projects", "");
 };
 
-export const useNurseriesBulkActions = ({ selectedNurseries, onNurseriesChanged }: UseNurseriesBulkActionsProps) => {
+export const useNurseriesBulkActions = ({
+  selectedNurseries,
+  isSubmissionReady,
+  onNurseriesChanged
+}: UseNurseriesBulkActionsProps) => {
   const t = useT();
   const { clearSelection } = useNurseriesSelectionActions();
   const [isDownloading, setIsDownloading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  const submittableNurseries = useMemo(() => selectedNurseries.filter(isNurserySubmittable), [selectedNurseries]);
+  const submittableNurseries = useMemo(
+    () => selectedNurseries.filter(nursery => isNurserySubmittable(nursery) && isSubmissionReady(nursery)),
+    [isSubmissionReady, selectedNurseries]
+  );
   const deletableNurseries = useMemo(() => selectedNurseries.filter(isNurseryDeletable), [selectedNurseries]);
   const canEdit = selectedNurseries.length === 1 && isNurseryEditable(selectedNurseries[0]);
   const canSubmit = selectedNurseries.length > 0 && submittableNurseries.length === selectedNurseries.length;
