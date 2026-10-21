@@ -73,7 +73,7 @@ const Navbar: FC<NavbarProps> = ({
     <Box as="header" backgroundColor="primary.900" position="sticky" top={0} zIndex={50}>
       <Flex justifyContent="space-between" alignItems="center" gap={{ base: 2, md: 4 }} h="3rem">
         <Flex gap={{ base: 2, md: 4 }} alignItems="center" pl={4}>
-          <TMLogo boxSize={{ base: "2.75rem", md: "3.25rem" }} />
+          <TMLogo boxSize="3.25rem" />
           <Flex gap={4} alignItems="center" display={{ base: "none", md: "flex" }}>
             {navLinks.map(link => (
               <Button
@@ -93,7 +93,7 @@ const Navbar: FC<NavbarProps> = ({
             ))}
           </Flex>
         </Flex>
-        <Flex gap={{ base: 1, md: 2 }} alignItems="center">
+        <Flex alignItems="center">
           {isLoggedIn ? (
             <NavbarMenu
               items={accountItems}
@@ -126,7 +126,7 @@ const Navbar: FC<NavbarProps> = ({
               </Button>
             </>
           )}
-          <Flex alignItems="center" gap={2} display={{ base: "none", md: "flex" }}>
+          <Flex alignItems="center" display={{ base: "none", md: "flex" }}>
             <SimpleDivider backgroundColor="neutral.500" className="!h-12 !w-px" />
             <NavbarMenu
               items={languageItems}
