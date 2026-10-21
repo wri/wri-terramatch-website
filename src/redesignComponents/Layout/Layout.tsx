@@ -1,4 +1,5 @@
 import { Box, Flex } from "@chakra-ui/react";
+import classNames from "classnames";
 import { useRouter } from "next/router";
 import { FC, PropsWithChildren } from "react";
 
@@ -34,6 +35,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
   const data = useNavbarData();
   const isAdmin = useIsAdmin();
   const showNurseries = userHasNurseries(myUser);
+  const showLoggedInFooter = router.pathname === "/home";
 
   const sideNavigationGroups: SideNavigationGroup[] = [
     {
@@ -96,19 +98,32 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
         <Navbar mobileMenuGroups={data.isLoggedIn ? sideNavigationGroups : undefined} />
       </Box>
       {data.isLoggedIn ? (
-        <Flex className="min-h-0 flex-1 overflow-hidden">
-          <Flex display={{ base: "none", md: "flex" }} className="[zoom:var(--layout-chrome-zoom,1)]">
-            <SideNavigation
-              isCollapsedDisabled={isSidebarCollapseDisabled}
-              groups={sideNavigationGroups}
-              title="Management Panel"
-            />
+        <Box className="grid min-h-0 flex-1 grid-cols-[auto_minmax(0,1fr)] grid-rows-[1fr_auto] overflow-auto [container-type:size]">
+          <Flex
+            display={{ base: "none", md: "flex" }}
+            className="sticky top-0 col-start-1 row-span-2 row-start-1 h-[100cqh] self-start"
+          >
+            <Flex className="[zoom:var(--layout-chrome-zoom,1)]">
+              <SideNavigation
+                isCollapsedDisabled={isSidebarCollapseDisabled}
+                groups={sideNavigationGroups}
+                title="Management Panel"
+              />
+            </Flex>
           </Flex>
-          <Flex as="main" className="min-h-0 flex-[1_1_0] flex-col overflow-auto">
+          <Flex
+            as="main"
+            className={classNames(
+              "col-start-2 row-start-1 min-w-0 flex-col",
+              !showLoggedInFooter && "min-h-0 overflow-auto"
+            )}
+          >
             {children}
-            <Footer className={FOOTER_CLASS_NAME} />
           </Flex>
-        </Flex>
+          {showLoggedInFooter && (
+            <Footer className={classNames(FOOTER_CLASS_NAME, "relative z-10 col-span-2 col-start-1 row-start-2")} />
+          )}
+        </Box>
       ) : (
         <Flex as="main" className="min-h-0 flex-1 flex-col overflow-auto">
           {children}
