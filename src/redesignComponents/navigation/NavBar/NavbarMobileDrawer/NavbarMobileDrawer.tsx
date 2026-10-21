@@ -69,7 +69,7 @@ const NavbarMobileDrawer: FC<NavbarMobileDrawerProps> = ({
             <Flex justifyContent="flex-end" px={2} py={2}>
               <Button
                 aria-label={t("Close navigation menu")}
-                className="!min-w-0 !text-theme-neutral-100 hover:!bg-theme-primary-500/20"
+                className="!text-theme-neutral-100 hover:!bg-theme-primary-500/20"
                 variant="ghost"
                 onClick={onClose}
               >
@@ -91,7 +91,7 @@ const NavbarMobileDrawer: FC<NavbarMobileDrawerProps> = ({
                           link.onClick?.();
                         }}
                       >
-                        <Text as="span" textStyle="400">
+                        <Text as="span" textStyle={link.isActive === true ? "400-bold" : "400"}>
                           {link.label}
                         </Text>
                       </button>
@@ -138,7 +138,7 @@ const NavbarMobileDrawer: FC<NavbarMobileDrawerProps> = ({
                     className={drawerRowClassName(isSelected)}
                     onClick={() => onLanguageSelect(index)}
                   >
-                    <Text as="span" textStyle="400">
+                    <Text as="span" textStyle={isSelected ? "400-bold" : "400"}>
                       {item.label}
                     </Text>
                     {isSelected ? <CheckIcon boxSize={4} /> : null}

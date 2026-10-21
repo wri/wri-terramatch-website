@@ -89,7 +89,7 @@ const SideNavigationLinkItem: FC<SideNavigationLinkItemProps> = ({
             </Badge>
             {isCollapsed ? null : (
               <>
-                <Text textStyle="400">{t(label)}</Text>
+                <Text textStyle={isActive ? "400-bold" : "400"}>{t(label)}</Text>
                 <NumberBadge count={notificationValue} />
               </>
             )}
