@@ -1314,6 +1314,13 @@ export type ReportCountsDto = {
   reportingPeriods: ReportingPeriodDto[];
 };
 
+export type EntityCountsDto = {
+  /**
+   * The total number of entities matching the requested filters
+   */
+  total: number;
+};
+
 export type ProjectLightDto = {
   /**
    * Indicates if this resource has the full resource definition.

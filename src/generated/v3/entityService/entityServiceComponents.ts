@@ -3247,6 +3247,116 @@ export const reportCountsGet = new V3ApiEndpoint<
   {}
 >("/entities/v3/reportCounts", "GET");
 
+export type SitesCountsGetQueryParams = {
+  /**
+   * Matches the entity, project or organisation names
+   */
+  search?: string;
+  status?: string[];
+  updateRequestStatus?: string[];
+  /**
+   * Only the project with this uuid
+   */
+  projectUuid?: string;
+};
+
+export type SitesCountsGetError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type SitesCountsGetResponse = {
+  meta?: {
+    /**
+     * @example entityCounts
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example entityCounts
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.EntityCountsDto;
+  };
+};
+
+export type SitesCountsGetVariables = {
+  queryParams?: SitesCountsGetQueryParams;
+};
+
+export const sitesCountsGet = new V3ApiEndpoint<
+  SitesCountsGetResponse,
+  SitesCountsGetError,
+  SitesCountsGetVariables,
+  {}
+>("/entities/v3/sitesCounts", "GET");
+
+export type NurseriesCountsGetQueryParams = {
+  /**
+   * Matches the entity, project or organisation names
+   */
+  search?: string;
+  status?: string[];
+  updateRequestStatus?: string[];
+  /**
+   * Only the project with this uuid
+   */
+  projectUuid?: string;
+};
+
+export type NurseriesCountsGetError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type NurseriesCountsGetResponse = {
+  meta?: {
+    /**
+     * @example entityCounts
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example entityCounts
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.EntityCountsDto;
+  };
+};
+
+export type NurseriesCountsGetVariables = {
+  queryParams?: NurseriesCountsGetQueryParams;
+};
+
+export const nurseriesCountsGet = new V3ApiEndpoint<
+  NurseriesCountsGetResponse,
+  NurseriesCountsGetError,
+  NurseriesCountsGetVariables,
+  {}
+>("/entities/v3/nurseriesCounts", "GET");
+
 export type EntityIndexPathParams = {
   /**
    * Entity type to retrieve
@@ -8133,6 +8243,8 @@ export const operationsByTag = {
   aggregateReports: { getAggregateReports },
   entities: {
     reportCountsGet,
+    sitesCountsGet,
+    nurseriesCountsGet,
     entityIndex,
     entityCreate,
     entityReportsMetaIndex,
