@@ -63,9 +63,9 @@ type SiteProjectMetricsProps = {
   frameworkKey: Framework;
   metrics: SiteIndexProject["metrics"];
   /** Totals of the sites that match the filters (approved sites only, as the index has always shown). */
-  filtered: { treesPlanted: number; hectaresRestored: number; workdays: number } | null;
+  filtered: { treesPlanted: number; hectaresRestored: number; workdays: number; treesRegenerated: number } | null;
   /** Totals of the selected approved sites, shown while some rows are selected. */
-  selection: { treesPlanted: number; hectaresRestored: number; workdays: number } | null;
+  selection: { treesPlanted: number; hectaresRestored: number; workdays: number; treesRegenerated: number } | null;
 };
 
 const SiteProjectMetrics: FC<SiteProjectMetricsProps> = ({ frameworkKey, metrics, filtered, selection }) => {
@@ -122,7 +122,9 @@ const SiteProjectMetrics: FC<SiteProjectMetricsProps> = ({ frameworkKey, metrics
             tooltipContent: keyIndicatorTooltip(
               keyIndicatorsTooltipContentItem?.treesRegenerated.title ?? t("Trees Regenerated"),
               keyIndicatorsTooltipContentItem?.treesRegenerated.content
-            )
+            ),
+            filtered: filtered?.treesRegenerated,
+            selection: selection?.treesRegenerated
           }
         ]
       : []),
@@ -343,11 +345,15 @@ export const SiteProjectBody: FC<SiteProjectBodyProps> = ({
   const t = useT();
   const { selectedRows } = useSiteTableSelection(sites.rows);
   const selectedApproved = selectedRows.filter(isSiteApproved);
+  const regeneratedProgress = sites.metrics.treesRegenerated?.progress ?? 0;
+  const regeneratedShare = (siteCount: number) =>
+    meta.sitesTotal === 0 ? 0 : Math.round((regeneratedProgress * siteCount) / meta.sitesTotal);
   const filtered = isFiltered
     ? {
         treesPlanted: meta.treesPlantedMatching,
         hectaresRestored: meta.hectaresRestoredMatching,
-        workdays: meta.workdaysMatching
+        workdays: meta.workdaysMatching,
+        treesRegenerated: regeneratedShare(meta.sitesMatching)
       }
     : null;
   const selection =
@@ -355,7 +361,8 @@ export const SiteProjectBody: FC<SiteProjectBodyProps> = ({
       ? {
           treesPlanted: selectedApproved.reduce((total, site) => total + site.treesPlantedCount, 0),
           hectaresRestored: selectedApproved.reduce((total, site) => total + site.totalHectaresRestoredSum, 0),
-          workdays: selectedApproved.reduce((total, site) => total + site.combinedWorkdayCount, 0)
+          workdays: selectedApproved.reduce((total, site) => total + site.combinedWorkdayCount, 0),
+          treesRegenerated: regeneratedShare(selectedRows.length)
         }
       : null;
 
