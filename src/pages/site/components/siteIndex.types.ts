@@ -27,6 +27,7 @@ export interface SiteIndexSite {
   plantingStatus: string | null;
   treesPlantedCount: number;
   totalHectaresRestoredSum: number;
+  combinedWorkdayCount: number;
   hectaresToRestoreGoal: number | null;
 }
 

@@ -210,7 +210,8 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
   classNameTitle,
   metricLabel,
   widthProgressBar = "100%",
-  type
+  type,
+  hideGoal = false
 }) => {
   const t = useT();
   const progressValue = goal > 0 ? (progress / goal) * 100 : 0;
@@ -239,19 +240,23 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
               </Text>
             ) : null}
           </Flex>
-          <Text textStyle="300" color="neutral.800">
-            {t("of")}
-          </Text>
-          <Flex gap={1} className="items-center">
-            <Text textStyle="300" color="neutral.800">
-              {formatNumberLocaleString(goal)}
-            </Text>
-            {goalSuffix != null && goalSuffix !== "" ? (
+          {hideGoal ? null : (
+            <>
               <Text textStyle="300" color="neutral.800">
-                {goalSuffix}
+                {t("of")}
               </Text>
-            ) : null}
-          </Flex>
+              <Flex gap={1} className="items-center">
+                <Text textStyle="300" color="neutral.800">
+                  {formatNumberLocaleString(goal)}
+                </Text>
+                {goalSuffix != null && goalSuffix !== "" ? (
+                  <Text textStyle="300" color="neutral.800">
+                    {goalSuffix}
+                  </Text>
+                ) : null}
+              </Flex>
+            </>
+          )}
         </Flex>
       </Flex>
     </Flex>
@@ -355,7 +360,8 @@ const MetricCard: FC<MetricCardProps> = props => {
     selection,
     filtered,
     metricLabel,
-    widthProgressBar
+    widthProgressBar,
+    hideGoal
   } = props;
   const iconWithColor14 = getIconWithProgressColor(icon, progress, goal, "0.875rem", color, variant);
   const iconWithColor24 = getIconWithProgressColor(icon, progress, goal, "1.5rem", color, variant);
@@ -380,6 +386,7 @@ const MetricCard: FC<MetricCardProps> = props => {
           metricLabel={metricLabel}
           type={type}
           widthProgressBar={widthProgressBar}
+          hideGoal={hideGoal}
         />
       );
       break;

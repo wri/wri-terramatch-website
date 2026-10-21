@@ -76,6 +76,7 @@ export const mapSiteToIndexSite = (site: SiteLightDto, frameworkKey: Framework):
   plantingStatus: site.plantingStatus,
   treesPlantedCount: site.treesPlantedCount ?? 0,
   totalHectaresRestoredSum: site.totalHectaresRestoredSum ?? 0,
+  combinedWorkdayCount: site.combinedWorkdayCount ?? 0,
   hectaresToRestoreGoal: site.hectaresToRestoreGoal
 });
 
