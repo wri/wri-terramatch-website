@@ -1439,6 +1439,10 @@ export type SiteLightDto = {
   treesPlantedCount: number;
   hectaresToRestoreGoal: number | null;
   totalHectaresRestoredSum: number;
+  /**
+   * Workdays for this site: demographic workdays from approved reports due on or after the demographics cutoff, plus self-reported workdays from approved reports due before it.
+   */
+  combinedWorkdayCount: number;
   totalSiteReports: number;
   /**
    * @format date-time
@@ -1710,6 +1714,10 @@ export type ProjectSitesMetaDto = {
    * Hectares restored across the sites that match the filters
    */
   hectaresRestoredMatching: number;
+  /**
+   * Workdays across the approved sites that match the filters
+   */
+  workdaysMatching: number;
 };
 
 export type FileDownloadDto = {
@@ -2018,6 +2026,10 @@ export type SiteFullDto = {
   treesPlantedCount: number;
   hectaresToRestoreGoal: number | null;
   totalHectaresRestoredSum: number;
+  /**
+   * Workdays for this site: demographic workdays from approved reports due on or after the demographics cutoff, plus self-reported workdays from approved reports due before it.
+   */
+  combinedWorkdayCount: number;
   totalSiteReports: number;
   /**
    * @format date-time
@@ -2047,7 +2059,6 @@ export type SiteFullDto = {
    * Sum of tree species amounts for collection 'anr' across approved site reports for this site
    */
   treesRegeneratingSpeciesCount: number;
-  combinedWorkdayCount: number;
   workdayCount: number;
   ppcExternalId: number | null;
   sitingStrategy: string | null;

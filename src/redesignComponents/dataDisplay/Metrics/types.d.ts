@@ -41,6 +41,8 @@ export interface MetricCardProps {
   filtered?: number | null;
   metricLabel?: string;
   widthProgressBar?: string;
+  /** Hides the "of goal" part of a progress bar card, for metrics that have no goal to show. */
+  hideGoal?: boolean;
 }
 
 type MetricCardFieldsForContentVariants =
@@ -55,7 +57,8 @@ type MetricCardFieldsForContentVariants =
   | "type"
   | "frameworkKey"
   | "metricLabel"
-  | "widthProgressBar";
+  | "widthProgressBar"
+  | "hideGoal";
 
 export interface MetricCardCommonVariantProps extends Pick<MetricCardProps, MetricCardFieldsForContentVariants> {
   iconWithColor: ReactNode;
@@ -92,7 +95,8 @@ type ProgressBarMetricCardContentKeys =
   | "tooltipContent"
   | "classNameTitle"
   | "metricLabel"
-  | "widthProgressBar";
+  | "widthProgressBar"
+  | "hideGoal";
 
 export type ProgressBarMetricCardContentProps = Pick<MetricCardCommonVariantProps, ProgressBarMetricCardContentKeys>;
 

@@ -63,9 +63,9 @@ type SiteProjectMetricsProps = {
   frameworkKey: Framework;
   metrics: SiteIndexProject["metrics"];
   /** Totals of the sites that match the filters (approved sites only, as the index has always shown). */
-  filtered: { treesPlanted: number; hectaresRestored: number } | null;
+  filtered: { treesPlanted: number; hectaresRestored: number; workdays: number } | null;
   /** Totals of the selected approved sites, shown while some rows are selected. */
-  selection: { treesPlanted: number; hectaresRestored: number } | null;
+  selection: { treesPlanted: number; hectaresRestored: number; workdays: number } | null;
 };
 
 const SiteProjectMetrics: FC<SiteProjectMetricsProps> = ({ frameworkKey, metrics, filtered, selection }) => {
@@ -149,12 +149,15 @@ const SiteProjectMetrics: FC<SiteProjectMetricsProps> = ({ frameworkKey, metrics
             title: t(workdaysTitle),
             progress: metrics.workdays.progress,
             goal: metrics.workdays.goal,
+            hideGoal: metrics.workdays.goal <= 0,
             icon: <JobsIcon />,
             color: "primary.600",
             tooltipContent: keyIndicatorTooltip(
               keyIndicatorsTooltipContentItem?.jobsCreated.title,
               keyIndicatorsTooltipContentItem?.jobsCreated.content
-            )
+            ),
+            filtered: filtered?.workdays,
+            selection: selection?.workdays
           }
         ]
       : [])
@@ -343,14 +346,16 @@ export const SiteProjectBody: FC<SiteProjectBodyProps> = ({
   const filtered = isFiltered
     ? {
         treesPlanted: meta.treesPlantedMatching,
-        hectaresRestored: meta.hectaresRestoredMatching
+        hectaresRestored: meta.hectaresRestoredMatching,
+        workdays: meta.workdaysMatching
       }
     : null;
   const selection =
     selectedRows.length > 0
       ? {
           treesPlanted: selectedApproved.reduce((total, site) => total + site.treesPlantedCount, 0),
-          hectaresRestored: selectedApproved.reduce((total, site) => total + site.totalHectaresRestoredSum, 0)
+          hectaresRestored: selectedApproved.reduce((total, site) => total + site.totalHectaresRestoredSum, 0),
+          workdays: selectedApproved.reduce((total, site) => total + site.combinedWorkdayCount, 0)
         }
       : null;
 

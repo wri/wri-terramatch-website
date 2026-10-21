@@ -21,6 +21,7 @@ export type IndexMetricCardItem = {
   progressSuffix?: string;
   variant?: MetricCardVariant;
   widthProgressBar?: string;
+  hideGoal?: boolean;
 };
 
 type IndexMetricCardRowProps = {
@@ -50,6 +51,7 @@ const IndexMetricCardRow: FC<IndexMetricCardRowProps> = ({ cards, className }) =
           progressSuffix={card.progressSuffix}
           variant={card.variant}
           widthProgressBar={card.widthProgressBar}
+          hideGoal={card.hideGoal}
           className={INDEX_METRIC_CARD_CLASS_NAME}
         />
       ))}
