@@ -23,6 +23,7 @@ const SiteIndexPageContent: FC = () => {
   const router = useRouter();
   const { clearSelection } = useSiteIndexSelectionActions();
   const [reloadNonce, setReloadNonce] = useState(0);
+  const [viewMenuOpened, setViewMenuOpened] = useState(false);
   const [statusFilters, setStatusFilters] = useState<SiteIndexFilterStatus[]>([]);
   const [updateFilter, setUpdateFilter] = useState<SiteIndexFilterUpdate | null>(null);
   const {
@@ -44,6 +45,7 @@ const SiteIndexPageContent: FC = () => {
     updateFilter,
     projectUuid: selectedProject === ALL_PROJECTS_VIEW ? undefined : selectedProject,
     enabled: hasHydratedQuery,
+    catalogRequested: viewMenuOpened,
     reloadNonce
   });
   const accordionOpenResetKey = `${selectedProject}:${debouncedSearch}:${statusFilters.join(",")}:${
@@ -91,6 +93,7 @@ const SiteIndexPageContent: FC = () => {
         filtering={filtering}
         onApplyFilters={handleApplyFilters}
         onViewChange={handleViewChange}
+        onViewOpenChange={open => open && setViewMenuOpened(true)}
         onAddSite={handleAddSite}
         onQueryChange={setSearchQuery}
       />
@@ -115,7 +118,7 @@ const SiteIndexPageContent: FC = () => {
           <div className="space-y-4">
             {metas.map((meta, index) => (
               <SiteProjectSection
-                key={`${selectedProject}-${meta.uuid}-${reloadNonce}`}
+                key={`${selectedProject}-${meta.uuid}`}
                 meta={meta}
                 filters={sectionFilters}
                 isFiltered={hasActiveFilters}

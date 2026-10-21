@@ -4,9 +4,10 @@ import { useRouter } from "next/router";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
-import { useProjectIndex } from "@/connections/Entity";
+import { indexProjectConnection } from "@/connections/Entity";
 import { useReportsContext } from "@/context/reports.provider";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useAllPages } from "@/hooks/useConnection";
 import { InfiniteScrollSentinel } from "@/hooks/useInfiniteScrollSentinel";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import type { HighLevelSelectorItem } from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector.types";
@@ -55,7 +56,7 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
     viewFromQuery === ALL_PROJECTS_VIEW_VALUE ? ALL_PROJECTS_VIEW_VALUE : project.uuid
   );
   const { clearSelection } = useReportsSelectionActions();
-  const [, { data: projects }] = useProjectIndex({});
+  const [, projects] = useAllPages(indexProjectConnection, {});
   const organisationViewItems = useMemo<HighLevelSelectorItem[]>(() => {
     const labelsByUuid = new Map<string, string>();
     (projects ?? []).forEach(item => {

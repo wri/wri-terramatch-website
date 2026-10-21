@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useLightProject, useProjectIndex } from "@/connections/Entity";
@@ -18,11 +18,14 @@ const ReportsIndexPage: FC = () => {
   const t = useT();
   const sourceUuid = typeof router.query.uuid === "string" ? router.query.uuid : undefined;
 
+  const [initialUrlChecked, setInitialUrlChecked] = useState(false);
   useEffect(() => {
-    if (router.isReady && sourceUuid == null && router.query.view == null) {
+    if (!router.isReady || initialUrlChecked) return;
+    setInitialUrlChecked(true);
+    if (sourceUuid == null && router.query.view == null) {
       void router.replace(`/reports?view=${ALL_PROJECTS_VIEW_VALUE}`, undefined, { shallow: true });
     }
-  }, [router, sourceUuid]);
+  }, [initialUrlChecked, router, sourceUuid]);
 
   const [projectsLoaded, { data: projects }] = useProjectIndex({});
   const [projectLoaded, { data: project }] = useLightProject({ id: sourceUuid, enabled: sourceUuid != null });

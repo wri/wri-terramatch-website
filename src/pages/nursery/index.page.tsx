@@ -22,6 +22,7 @@ const NurseriesIndexContent: FC = () => {
   const t = useT();
   const { clearSelection } = useNurseriesSelectionActions();
   const [reloadNonce, setReloadNonce] = useState(0);
+  const [viewMenuOpened, setViewMenuOpened] = useState(false);
   const [statuses, setStatuses] = useState<string[]>([]);
   const [updates, setUpdates] = useState<string[]>([]);
   const {
@@ -45,6 +46,7 @@ const NurseriesIndexContent: FC = () => {
     updates,
     projectUuid: selectedProjectUuid,
     enabled: hasHydratedQuery,
+    catalogRequested: viewMenuOpened,
     reloadNonce
   });
 
@@ -91,6 +93,7 @@ const NurseriesIndexContent: FC = () => {
         addNurseryHref={addNurseryHref}
         onApplyFilters={handleApplyFilters}
         onViewChange={handleViewChange}
+        onViewOpenChange={open => open && setViewMenuOpened(true)}
         onQueryChange={setQuery}
       />
       <PageContent className="h-auto flex-1 px-2 py-0">
@@ -114,7 +117,7 @@ const NurseriesIndexContent: FC = () => {
           <Flex gap={4} flexDirection="column">
             {metas.map((meta, index) => (
               <NurseryProjectSection
-                key={`${viewValue}-${meta.uuid}-${reloadNonce}`}
+                key={`${viewValue}-${meta.uuid}`}
                 meta={meta}
                 filters={sectionFilters}
                 isFiltered={hasFilters}

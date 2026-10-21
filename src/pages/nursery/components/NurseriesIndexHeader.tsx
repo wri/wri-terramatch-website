@@ -25,6 +25,7 @@ type NurseriesIndexHeaderProps = {
   addNurseryHref?: string;
   onApplyFilters: (statuses: string[], updates: string[]) => void;
   onViewChange: (value: string) => void;
+  onViewOpenChange?: (open: boolean) => void;
   onQueryChange: (query: string) => void;
   embeddedInProject?: boolean;
 };
@@ -38,6 +39,7 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
   addNurseryHref,
   onApplyFilters,
   onViewChange,
+  onViewOpenChange,
   onQueryChange,
   embeddedInProject = false
 }) => {
@@ -118,6 +120,7 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
                   width="25rem"
                   className="mobile:!w-full"
                   onChange={onViewChange}
+                  onOpenChange={onViewOpenChange}
                 />
                 <Button size="small" {...addNurseryButton} />
               </Flex>

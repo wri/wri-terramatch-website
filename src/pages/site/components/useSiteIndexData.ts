@@ -17,6 +17,8 @@ export type SiteIndexQuery = {
   /** Only this project, for the project's sites tab. */
   projectUuid?: string;
   enabled: boolean;
+  /** Set once the view dropdown has been opened; the project catalog is only loaded then. */
+  catalogRequested?: boolean;
   /** Bumped after a bulk action, so the lists and counts are fetched again. */
   reloadNonce: number;
 };
@@ -31,6 +33,7 @@ export const useSiteIndexData = ({
   updateFilter,
   projectUuid,
   enabled,
+  catalogRequested = false,
   reloadNonce
 }: SiteIndexQuery) => {
   const updateRequestStatus = toSiteIndexUpdateRequestStatus(updateFilter);
@@ -51,14 +54,20 @@ export const useSiteIndexData = ({
   }, [reloadNonce]);
 
   const metaList = useInfinitePages(projectSitesMetaIndexConnection, { enabled, filter }, PROJECT_PAGE_SIZE);
+  // On the all-projects page the total comes from a count request. On a single project the meta already has the
+  // matching count, so that request is skipped.
   const [countLoaded, { indexTotal }] = useConnection(indexSiteConnection, {
-    enabled,
+    enabled: enabled && projectUuid == null,
     pageNumber: 1,
     pageSize: 1,
     filter
   });
   // The project list for the view dropdown and the add-site link. Only needed on the "All Projects" page.
-  const [, projectRows] = useAllPages(indexProjectConnection, { enabled: enabled && projectUuid == null });
+  // The project list for the view dropdown and the add-site link. Loaded only once the dropdown opens, or when a
+  // project is selected (the label and the add-site link need it).
+  const [, projectRows] = useAllPages(indexProjectConnection, {
+    enabled: enabled && (catalogRequested || projectUuid != null)
+  });
 
   const metas = metaList.data;
   const projects = useMemo(
@@ -72,11 +81,11 @@ export const useSiteIndexData = ({
   );
 
   return {
-    loading: !enabled || !metaList.loaded || !countLoaded,
+    loading: !enabled || !metaList.loaded || (projectUuid == null && !countLoaded),
     error: metaList.loadFailure != null,
     metas,
     projects,
-    siteTotal: indexTotal ?? 0,
+    siteTotal: projectUuid == null ? indexTotal ?? 0 : metaList.data[0]?.sitesMatching ?? 0,
     hasMore: metaList.hasMore,
     loadingMore: metaList.loadingMore,
     loadMore: metaList.loadMore
