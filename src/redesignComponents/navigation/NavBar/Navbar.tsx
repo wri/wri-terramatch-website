@@ -109,7 +109,7 @@ const Navbar: FC<NavbarProps> = ({
               disabled={linksDisabled}
             />
           ) : (
-            <>
+            <Flex alignItems="center" gap={2} mr={2}>
               <Button
                 variant="outline"
                 color="neutral.100 !important"
@@ -124,7 +124,7 @@ const Navbar: FC<NavbarProps> = ({
               <Button variant="primary" size="small" onClick={() => router.push("/auth/login")}>
                 {t("Sign in")}
               </Button>
-            </>
+            </Flex>
           )}
           <Flex alignItems="center" display={{ base: "none", md: "flex" }}>
             <SimpleDivider backgroundColor="neutral.500" className="!h-12 !w-px" />
