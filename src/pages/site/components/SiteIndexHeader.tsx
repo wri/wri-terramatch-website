@@ -30,6 +30,7 @@ type SiteIndexHeaderProps = {
   filtering: boolean;
   onApplyFilters: (statusFilters: SiteIndexFilterStatus[], updateFilter: SiteIndexFilterUpdate | null) => void;
   onViewChange: (value: string) => void;
+  onViewOpenChange?: (open: boolean) => void;
   onAddSite: () => void;
   onQueryChange: (query: string) => void;
   embeddedInProject?: boolean;
@@ -45,6 +46,7 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
   filtering,
   onApplyFilters,
   onViewChange,
+  onViewOpenChange,
   onAddSite,
   onQueryChange,
   embeddedInProject = false,
@@ -131,6 +133,7 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
                     value={selectedProject}
                     emptyMessage={t("No results found")}
                     onChange={onViewChange}
+                    onOpenChange={onViewOpenChange}
                   />
                 </Box>
                 <Button
