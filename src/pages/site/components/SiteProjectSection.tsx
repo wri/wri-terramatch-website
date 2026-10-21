@@ -192,7 +192,6 @@ const SiteProjectRow: FC<SiteProjectRowProps> = ({ site, context, embeddedInProj
       aria-selected={isSelected}
       onClick={() => void router.push(getSiteDetailUrl(site.id, !embeddedInProject))}
     >
-      {EditModals}
       <TableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)} onClick={stopRowClick}>
         <Checkbox
           name={`site-${site.id}`}
@@ -251,6 +250,7 @@ const SiteProjectRow: FC<SiteProjectRowProps> = ({ site, context, embeddedInProj
         )}
       </TableCell>
       <TableCell {...context?.getCellProps("actions")} onClick={stopRowClick}>
+        {EditModals}
         <Box className="flex justify-end pr-2">
           <ActionCell
             button={
