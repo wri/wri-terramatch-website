@@ -1,8 +1,8 @@
 import { useEffect, useMemo } from "react";
 
-import { indexProjectConnection, indexSiteConnection, projectSitesMetaIndexConnection } from "@/connections/Entity";
+import { indexProjectConnection, projectSitesMetaIndexConnection, useSiteCounts } from "@/connections/Entity";
 import { toFramework } from "@/context/framework.provider";
-import { useAllPages, useConnection, useInfinitePages } from "@/hooks/useConnection";
+import { useAllPages, useInfinitePages } from "@/hooks/useConnection";
 import ApiSlice from "@/store/apiSlice";
 
 import type { SiteIndexStatus, SiteIndexUpdate } from "./siteIndex.types";
@@ -51,17 +51,13 @@ export const useSiteIndexData = ({
     if (reloadNonce === 0) return;
     ApiSlice.pruneIndex("projectSitesMetas", "");
     ApiSlice.pruneIndex("sites", "");
+    ApiSlice.pruneCache("entityCounts");
   }, [reloadNonce]);
 
   const metaList = useInfinitePages(projectSitesMetaIndexConnection, { enabled, filter }, PROJECT_PAGE_SIZE);
   // On the all-projects page the total comes from a count request. On a single project the meta already has the
   // matching count, so that request is skipped.
-  const [countLoaded, { indexTotal }] = useConnection(indexSiteConnection, {
-    enabled: enabled && projectUuid == null,
-    pageNumber: 1,
-    pageSize: 1,
-    filter
-  });
+  const [countLoaded, { data: counts }] = useSiteCounts(filter, enabled && projectUuid == null);
   // The project list for the view dropdown and the add-site link. Only needed on the "All Projects" page.
   // The project list for the view dropdown and the add-site link. Loaded only once the dropdown opens, or when a
   // project is selected (the label and the add-site link need it).
@@ -85,7 +81,7 @@ export const useSiteIndexData = ({
     error: metaList.loadFailure != null,
     metas,
     projects,
-    siteTotal: projectUuid == null ? indexTotal ?? 0 : metaList.data[0]?.sitesMatching ?? 0,
+    siteTotal: projectUuid == null ? counts?.total ?? 0 : metaList.data[0]?.sitesMatching ?? 0,
     hasMore: metaList.hasMore,
     loadingMore: metaList.loadingMore,
     loadMore: metaList.loadMore

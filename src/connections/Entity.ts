@@ -22,8 +22,12 @@ import {
   EntitySitesMetaIndexQueryParams,
   entityUpdate,
   EntityUpdateVariables,
+  nurseriesCountsGet,
+  NurseriesCountsGetQueryParams,
   reportCountsGet,
-  ReportCountsGetQueryParams
+  ReportCountsGetQueryParams,
+  sitesCountsGet,
+  SitesCountsGetQueryParams
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { SupportedEntities } from "@/generated/v3/entityService/entityServiceConstants";
 import {
@@ -31,6 +35,7 @@ import {
   DisturbanceReportFullDto,
   DisturbanceReportLightDto,
   DisturbanceReportUpdateData,
+  EntityCountsDto,
   FinancialReportFullDto,
   FinancialReportLightDto,
   FinancialReportUpdateData,
@@ -204,6 +209,44 @@ export const loadFullNursery = connectionLoader(fullNurseryConnection);
 export const useFullNursery = connectionHook(fullNurseryConnection);
 export const deleteNursery = createEntityDeleter("nurseries");
 export const indexNurseryConnection = createEntityIndexConnection<NurseryLightDto>("nurseries");
+
+/**
+ * Totals for the sites and nurseries index. Like the reports counts, the count always has the same ID, so it is pruned
+ * whenever the connection is enabled or its filter changes, and then refetched.
+ */
+const SITE_COUNTS_ID = "sitesCounts";
+const siteCountsConnection = v3Resource("entityCounts", sitesCountsGet)
+  .singleByCustomId<EntityCountsDto, FilterProp<SitesCountsGetQueryParams>>(
+    ({ filter }) => ({ queryParams: filter }),
+    () => SITE_COUNTS_ID
+  )
+  .enabledProp()
+  .buildConnection();
+
+export const useSiteCounts = (filter: SitesCountsGetQueryParams, enabled = true) => {
+  const stableFilter = useStableProps(filter);
+  useEffect(() => {
+    if (enabled) ApiSlice.pruneCache("entityCounts", [SITE_COUNTS_ID]);
+  }, [enabled, stableFilter]);
+  return useConnection(siteCountsConnection, { filter: stableFilter, enabled });
+};
+
+const NURSERY_COUNTS_ID = "nurseriesCounts";
+const nurseryCountsConnection = v3Resource("entityCounts", nurseriesCountsGet)
+  .singleByCustomId<EntityCountsDto, FilterProp<NurseriesCountsGetQueryParams>>(
+    ({ filter }) => ({ queryParams: filter }),
+    () => NURSERY_COUNTS_ID
+  )
+  .enabledProp()
+  .buildConnection();
+
+export const useNurseryCounts = (filter: NurseriesCountsGetQueryParams, enabled = true) => {
+  const stableFilter = useStableProps(filter);
+  useEffect(() => {
+    if (enabled) ApiSlice.pruneCache("entityCounts", [NURSERY_COUNTS_ID]);
+  }, [enabled, stableFilter]);
+  return useConnection(nurseryCountsConnection, { filter: stableFilter, enabled });
+};
 
 /** Projects with at least one nursery matching the filters, with nursery counts and seedlings grown. */
 export const projectNurseriesMetaIndexConnection = v3Resource("projectNurseriesMetas", entityNurseriesMetaIndex)

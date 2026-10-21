@@ -1,11 +1,7 @@
 import { useEffect, useMemo } from "react";
 
-import {
-  indexNurseryConnection,
-  indexProjectConnection,
-  projectNurseriesMetaIndexConnection
-} from "@/connections/Entity";
-import { useAllPages, useConnection, useInfinitePages } from "@/hooks/useConnection";
+import { indexProjectConnection, projectNurseriesMetaIndexConnection, useNurseryCounts } from "@/connections/Entity";
+import { useAllPages, useInfinitePages } from "@/hooks/useConnection";
 import ApiSlice from "@/store/apiSlice";
 
 import { projectSupportsNurseries } from "./nurseryIndex.utils";
@@ -52,15 +48,11 @@ export const useNurseriesIndexData = ({
     if (reloadNonce === 0) return;
     ApiSlice.pruneIndex("projectNurseriesMetas", "");
     ApiSlice.pruneIndex("nurseries", "");
+    ApiSlice.pruneCache("entityCounts");
   }, [reloadNonce]);
 
   const metaList = useInfinitePages(projectNurseriesMetaIndexConnection, { enabled, filter }, PROJECT_PAGE_SIZE);
-  const [countLoaded, { indexTotal }] = useConnection(indexNurseryConnection, {
-    enabled,
-    pageNumber: 1,
-    pageSize: 1,
-    filter
-  });
+  const [countLoaded, { data: counts }] = useNurseryCounts(filter, enabled);
   // The project list for the view dropdown. Only needed on the "All Projects" page.
   const [, projectRows] = useAllPages(indexProjectConnection, {
     enabled: enabled && (catalogRequested || projectUuid != null)
@@ -80,7 +72,7 @@ export const useNurseriesIndexData = ({
     error: metaList.loadFailure != null,
     metas,
     projects,
-    nurseryTotal: indexTotal ?? 0,
+    nurseryTotal: counts?.total ?? 0,
     hasMore: metaList.hasMore,
     loadingMore: metaList.loadingMore,
     loadMore: metaList.loadMore
