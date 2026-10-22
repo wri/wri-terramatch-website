@@ -2,12 +2,14 @@ import { Button, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import NextLink from "next/link";
+import { useRouter } from "next/router";
 import type { FC, KeyboardEvent, MouseEvent, ReactNode } from "react";
 
 import MenuCustom from "@/redesignComponents/actions/Buttons/Menu/MenuCustom";
 import { MenuItemOption } from "@/redesignComponents/actions/Buttons/Menu/MenuCustom.types";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import { MoreVertIcon, PlusIcon } from "@/redesignComponents/foundations/Icons";
+import { useLayoutShell } from "@/redesignComponents/Layout/LayoutShell.provider";
 import Badge from "@/redesignComponents/status/Badge/Badge";
 import NumberBadge from "@/redesignComponents/status/Badge/NumberBadge";
 
@@ -43,6 +45,15 @@ const SideNavigationLinkItem: FC<SideNavigationLinkItemProps> = ({
 }) => {
   const t = useT();
   const isActive = useIsRouteActive(href, activePaths);
+  const router = useRouter();
+  const { resetPage } = useLayoutShell();
+
+  const handleLinkClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (router.pathname !== href.split("?")[0]) return;
+    event.preventDefault();
+    resetPage();
+    void router.replace(href, undefined, { shallow: true });
+  };
 
   const handleLinkKeyDown = (event: KeyboardEvent<HTMLAnchorElement>) => {
     if (event.key === "Enter") {
@@ -78,6 +89,7 @@ const SideNavigationLinkItem: FC<SideNavigationLinkItemProps> = ({
           href={href}
           aria-label={t(label)}
           className="min-w-0 flex-1 after:absolute after:-inset-0.5 after:rounded-md focus:outline-none"
+          onClick={handleLinkClick}
           onKeyDown={handleLinkKeyDown}
         >
           <Flex alignItems="center" gap={2}>
