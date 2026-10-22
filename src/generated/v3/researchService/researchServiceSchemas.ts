@@ -1529,6 +1529,22 @@ export type ProjectMapEntryDto = {
    * Number of active polygons across the project's sites.
    */
   polygonCount: number;
+  /**
+   * Sum of numTrees across the project's active polygons.
+   */
+  sumNumTrees: number;
+  /**
+   * Sum of calcArea (ha) across the project's active polygons.
+   */
+  sumCalcArea: number;
+  /**
+   * Reporting cycle (1-5) of the most recently updated QA status. Null when there is no QA status.
+   */
+  latestQaCycle: number | null;
+  /**
+   * QA status of the most recently updated reporting cycle. Null when there is none, or it was cleared.
+   */
+  latestQaStatus: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed" | null;
 };
 
 export type ProjectMapIndexDto = {

@@ -93,6 +93,7 @@ const PolygonReviewIndexPage: FC = () => {
               projects={filteredProjects}
               selectedProject={selectedProject}
               hasLoadFailure={loadFailure != null}
+              onViewProjectPolygons={selectProject}
             />
             <Flex
               direction="column"

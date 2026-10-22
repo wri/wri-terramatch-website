@@ -4487,9 +4487,10 @@ export type ProjectsMapIndexVariables = {
 
 /**
  * Returns one resource whose attributes hold every project as
- *     `{ uuid, name, lat, long, frameworkKey, level0Project, cohort, polygonCount }`, plus a `total`. There is no
- *     pagination: the payload stays small because each row carries only the fields needed to place a project marker
- *     and to build the framework / country / cohort facets.
+ *     `{ uuid, name, lat, long, frameworkKey, level0Project, cohort, polygonCount, sumNumTrees, sumCalcArea,
+ *     latestQaCycle, latestQaStatus }`, plus a `total`. There is no pagination: the payload stays small because each
+ *     row carries only the fields needed to place a project marker, fill its tooltip and build the framework / country /
+ *     cohort facets.
  *
  *     frameworkKey[], country[], organisationUuid[] and plantingStatus are optional and combine. Test projects
  *     are excluded. Projects without polygons are included with a null lat / long, so they can still be selected.

@@ -19,13 +19,19 @@ type PolygonReviewMapProps = {
   projects: ProjectMapEntryDto[];
   selectedProject: ProjectMapEntryDto | null;
   hasLoadFailure: boolean;
+  onViewProjectPolygons: (projectUuid: string) => void;
 };
 
 /**
  * Shows the project markers until a project is picked, then every polygon of that project across all its sites.
  * Polygons come from the GeoServer tiles filtered by the project's map index, so only the sparse index is fetched.
  */
-const PolygonReviewMap: FC<PolygonReviewMapProps> = ({ projects, selectedProject, hasLoadFailure }) => {
+const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
+  projects,
+  selectedProject,
+  hasLoadFailure,
+  onViewProjectPolygons
+}) => {
   const t = useT();
   const mapFunctions = useBaseMap();
   const projectUuid = selectedProject?.uuid;
@@ -67,6 +73,7 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({ projects, selectedProject
           mapFunctions={mapFunctions}
           bbox={bbox}
           projectMarkers={projectMarkers}
+          onViewProjectPolygons={onViewProjectPolygons}
           mapIndexPolygons={mapIndexPolygons}
           showLegend
           disabledPolygonPanel

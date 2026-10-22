@@ -8,14 +8,21 @@ type UseMapProjectMarkersParams = {
   styleReady: boolean;
   styleVersion: number;
   projectMarkers?: ProjectMarkerPoint[];
+  onViewProjectPolygons?: (projectUuid: string) => void;
 };
 
-export function useMapProjectMarkers({ map, styleReady, styleVersion, projectMarkers }: UseMapProjectMarkersParams) {
+export function useMapProjectMarkers({
+  map,
+  styleReady,
+  styleVersion,
+  projectMarkers,
+  onViewProjectPolygons
+}: UseMapProjectMarkersParams) {
   useEffect(() => {
     const mapInstance = map.current;
-    if (mapInstance == null || !styleReady || projectMarkers == null) return;
+    if (mapInstance == null || !styleReady || projectMarkers == null || onViewProjectPolygons == null) return;
 
-    addProjectMarkerLayer(mapInstance, projectMarkers);
+    addProjectMarkerLayer(mapInstance, projectMarkers, onViewProjectPolygons);
     return () => removeProjectMarkerLayer(mapInstance);
-  }, [map, projectMarkers, styleReady, styleVersion]);
+  }, [map, onViewProjectPolygons, projectMarkers, styleReady, styleVersion]);
 }
