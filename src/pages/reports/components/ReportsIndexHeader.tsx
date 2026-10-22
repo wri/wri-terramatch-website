@@ -52,6 +52,7 @@ type ReportsIndexHeaderProps = {
   entityProfile?: boolean;
   availableReportTypes?: ReportTypeOption[];
   showSearchInput?: boolean;
+  addDisturbanceReportDisabled?: boolean;
 };
 
 const getSearchPlaceholder = (
@@ -80,7 +81,8 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
   indexHref,
   entityProfile = false,
   availableReportTypes,
-  showSearchInput = false
+  showSearchInput = false,
+  addDisturbanceReportDisabled = false
 }) => {
   const t = useT();
   const router = useRouter();
@@ -234,7 +236,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
             <Button
               size="small"
               leftIcon={<PlusIcon boxSize="0.625rem" />}
-              disabled={disturbanceReportCreating}
+              disabled={disturbanceReportCreating || addDisturbanceReportDisabled}
               onClick={() => {
                 trackDisturbanceReportClicked();
                 createDisturbanceReport({ parentUuid: projectUuid });
@@ -303,7 +305,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
             : {
                 size: "small",
                 leftIcon: <PlusIcon boxSize="0.625rem" />,
-                disabled: disturbanceReportCreating,
+                disabled: disturbanceReportCreating || addDisturbanceReportDisabled,
                 onClick: () => {
                   trackDisturbanceReportClicked();
                   createDisturbanceReport({ parentUuid: projectUuid });
