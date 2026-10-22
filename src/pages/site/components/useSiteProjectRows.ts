@@ -6,14 +6,14 @@ import type { ProjectSitesMetaDto } from "@/generated/v3/entityService/entitySer
 import { useInfinitePages } from "@/hooks/useConnection";
 
 import type { SiteIndexStatus, SiteIndexUpdate } from "./siteIndex.types";
-import { buildProjectMetrics, mapSiteToIndexSite, toSiteIndexUpdateRequestStatus } from "./siteIndex.utils";
+import { buildProjectMetrics, mapSiteToIndexSite, toSiteIndexUpdateRequestStatuses } from "./siteIndex.utils";
 
 const SITE_PAGE_SIZE = 100;
 
 export type SiteProjectFilters = {
   search: string;
   statusFilters: SiteIndexStatus[];
-  updateFilter: SiteIndexUpdate | null;
+  updateFilters: SiteIndexUpdate[];
 };
 
 /**
@@ -21,16 +21,16 @@ export type SiteProjectFilters = {
  * project's header metrics. Only enabled once the project section is opened.
  */
 export const useSiteProjectRows = (meta: ProjectSitesMetaDto, filters: SiteProjectFilters, enabled: boolean) => {
-  const { search, statusFilters, updateFilter } = filters;
-  const updateRequestStatus = toSiteIndexUpdateRequestStatus(updateFilter);
+  const { search, statusFilters, updateFilters } = filters;
+  const updateRequestStatuses = useMemo(() => toSiteIndexUpdateRequestStatuses(updateFilters), [updateFilters]);
   const filter = useMemo(
     () => ({
       projectUuid: meta.uuid,
       search: search === "" ? undefined : search,
       status: statusFilters.length > 0 ? statusFilters : undefined,
-      updateRequestStatus: updateRequestStatus == null ? undefined : [updateRequestStatus]
+      updateRequestStatus: updateRequestStatuses.length === 0 ? undefined : updateRequestStatuses
     }),
-    [meta.uuid, search, statusFilters, updateRequestStatus]
+    [meta.uuid, search, statusFilters, updateRequestStatuses]
   );
 
   const sites = useInfinitePages(indexSiteConnection, { enabled, filter }, SITE_PAGE_SIZE);
