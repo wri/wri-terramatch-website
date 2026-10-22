@@ -94,6 +94,14 @@ const EntityIntroPage = () => {
     `Failed to create ${kebabCase(singularEntityName(entityName)).replace("-", " ")}`
   );
 
+  const handleCancel = useCallback(() => {
+    if (entityName === "disturbance-reports" && from != null) {
+      void router.replace(from);
+      return;
+    }
+    router.back();
+  }, [entityName, from, router]);
+
   const handleContinue = useCallback(() => {
     if (entityUUID != null) {
       router.push(withReportsIndexReturn(`/entity/${entityName}/edit/${entityUUID}`, from));
@@ -134,7 +142,7 @@ const EntityIntroPage = () => {
               }}
               backButtonProps={{
                 children: t("Cancel"),
-                onClick: () => router.back()
+                onClick: handleCancel
               }}
             />
           )}
