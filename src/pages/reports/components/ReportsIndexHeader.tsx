@@ -102,9 +102,8 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
   const updateActiveFilters = useCallback(
     (next: ReportFilterState) => {
       setFiltersByTab(current => ({ ...current, [activeTab]: next }));
-      setFilters(next);
     },
-    [activeTab, setFilters]
+    [activeTab]
   );
 
   useEffect(() => {
@@ -113,6 +112,10 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
       "additional-reports": EMPTY_REPORT_FILTERS
     });
   }, [reportTypeFromQuery, source, sourceUuid]);
+
+  useEffect(() => {
+    setFilters(filtersByTab[activeTab] ?? EMPTY_REPORT_FILTERS);
+  }, [activeTab, filtersByTab, setFilters]);
 
   const { create: createDisturbanceReport, isCreating: disturbanceReportCreating } = useCreateDisturbanceReport(
     {},
