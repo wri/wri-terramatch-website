@@ -6,10 +6,18 @@ import { ProjectMapEntryDto } from "@/generated/v3/researchService/researchServi
 export const toProjectMarkerPoints = (projects: ProjectMapEntryDto[]): ProjectMarkerPoint[] =>
   projects.flatMap(({ uuid, lat, long }) => (lat == null || long == null ? [] : [{ uuid, lat, lng: long }]));
 
+const SINGLE_MARKER_PADDING_DEGREES = 0.5;
+
 export const getProjectMarkersBbox = (points: ProjectMarkerPoint[]): BBox | undefined => {
   if (points.length === 0) return undefined;
 
   const lngs = points.map(({ lng }) => lng);
   const lats = points.map(({ lat }) => lat);
-  return [Math.min(...lngs), Math.min(...lats), Math.max(...lngs), Math.max(...lats)];
+  const padding = points.length === 1 ? SINGLE_MARKER_PADDING_DEGREES : 0;
+  return [
+    Math.min(...lngs) - padding,
+    Math.min(...lats) - padding,
+    Math.max(...lngs) + padding,
+    Math.max(...lats) + padding
+  ];
 };
