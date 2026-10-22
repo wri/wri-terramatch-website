@@ -103,7 +103,7 @@ const Accordion: FC<AccordionProps> = ({
   defaultOpen = false,
   open,
   onOpenChange,
-  isScrollable = true
+  isScrollable = false
 }) => {
   const { container, header: headerStyles } = variantStyles[variant];
   const isControlled = open !== undefined;

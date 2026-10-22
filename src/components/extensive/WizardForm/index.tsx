@@ -24,6 +24,7 @@ import WizardFormProvider, {
   ProjectFormDetails,
   useFieldsProvider
 } from "@/context/wizardForm.provider";
+import { DisturbanceReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { entityLinkHeaderMap, mapEntityTitle, mapStatusToTagState } from "@/helpers/entityFormLinkHeader";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useDownloadFormAnswers } from "@/hooks/useDownloadFormAnswers";
@@ -31,9 +32,11 @@ import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { SuffixButtonConfig } from "@/pages/project/[uuid]/index.page";
+import { disturbanceReportTitle } from "@/pages/reports/disturbance-report/[uuid]/index.page";
+import { getReportsIndexHrefFromQuery, getReportsIndexUrl } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
-import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
+import { NurseryIcon, ReportsIcon, SiteIcon } from "@/redesignComponents/foundations/Icons";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons/NavigationSections/ProjectIcon";
 import NextLinkAdapter from "@/redesignComponents/navigation/Breadcrumbs/NextLinkAdapter";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
@@ -120,6 +123,8 @@ export interface WizardFormProps {
 
   adminListPath?: string;
   entity?: WizardFormEntity;
+  /** UUID of the submission being edited, for flows (e.g. applications) that save answers to a submission. */
+  submissionUuid?: string;
 
   /** When true, step errors and field validation messages are hidden until the user submits a step or reopens the form. */
   deferValidation?: boolean;
@@ -526,10 +531,18 @@ function WizardForm(props: WizardFormProps) {
         entity: entity,
         firstLinkIcon: models[0].model.includes("Reports") ? (
           <ReportsIcon className="!text-theme-primary-900" />
+        ) : models[0].model == "nurseries" ? (
+          <NurseryIcon className="!text-theme-primary-900" />
+        ) : models[0].model == "sites" ? (
+          <SiteIcon className="!text-theme-primary-900" />
         ) : (
           <ProjectIcon className="!text-theme-primary-900" />
         ),
         t,
+        from: router.query.from,
+        origin: router.query.origin,
+        profile: router.query.profile,
+        profileUuid: router.query.profileUuid,
         taskTitle
       })[models[0].model];
     }
@@ -543,6 +556,10 @@ function WizardForm(props: WizardFormProps) {
     props.adminListPath,
     t,
     isAdmin,
+    router.query.from,
+    router.query.origin,
+    router.query.profile,
+    router.query.profileUuid,
     taskTitle
   ]);
 
@@ -558,25 +575,13 @@ function WizardForm(props: WizardFormProps) {
     } else if (models[0]?.model === "nurseryReports") {
       return getFormHeaderLabel(entity?.nurseryName ?? "", taskTitle);
     } else if (models[0]?.model === "disturbanceReports") {
-      return entity?.projectName + " - " + entity?.title;
+      return disturbanceReportTitle(entity as DisturbanceReportFullDto);
     } else if (models[0]?.model === "financialReports") {
       return getFormHeaderLabel(entity?.organisationName ?? "", taskTitle);
     } else {
       return mapEntityTitle(entity?.title ?? entity?.name ?? null, models[0]?.model ?? "", t);
     }
-  }, [
-    isSubmissionModel,
-    models,
-    entity?.organisationName,
-    entity?.fundingProgrammeName,
-    entity?.projectName,
-    entity?.siteName,
-    entity?.nurseryName,
-    entity?.title,
-    entity?.name,
-    t,
-    taskTitle
-  ]);
+  }, [isSubmissionModel, models, t, taskTitle, entity]);
 
   const suffixButtons: SuffixButtonConfig[] = useMemo(() => {
     if (models[0]?.model === "siteReports") {
@@ -618,14 +623,33 @@ function WizardForm(props: WizardFormProps) {
     (tab: string) => {
       if (tab === "project-profile") {
         router.push(`/project/${entity?.projectUuid}`, undefined, { shallow: true });
-      } else if (tab == "site-profile") {
+      } else if (tab === "site-profile") {
         router.push(`/site/${entity?.siteUuid}`, undefined, { shallow: true });
-      } else if (tab == "nursery-profile") {
+      } else if (tab === "nursery-profile") {
         router.push(`/nursery/${entity?.nurseryUuid}`, undefined, { shallow: true });
-      } else if (tab == "project-report") {
+      } else if (tab === "organisation-profile") {
+        router.push(`/organization/${entity?.organisationUuid}`, undefined, { shallow: true });
+      } else if (tab === "my-projects") {
+        router.push("/my-projects", undefined, { shallow: true });
+      } else if (tab === "project-report") {
         router.push(`/reports/project-report/${entity?.projectReportUuid}`, undefined, { shallow: true });
+      } else if (tab === "site-reports") {
+        if (entity?.projectUuid != null) {
+          void router.push(getReportsIndexUrl("project", entity.projectUuid, { reportType: "site-report" }));
+        }
+      } else if (tab === "nursery-reports" || tab === "nurseries-reports") {
+        if (entity?.projectUuid != null) {
+          void router.push(getReportsIndexUrl("project", entity.projectUuid, { reportType: "nursery-report" }));
+        }
       } else {
-        router.push(`/project/${entity?.projectUuid}/reporting-task/${entity?.taskUuid}`, undefined, { shallow: true });
+        const reportsIndexHref = getReportsIndexHrefFromQuery(router.query.from);
+        if (reportsIndexHref != null) {
+          router.push(reportsIndexHref, undefined, { shallow: true });
+          return;
+        }
+        if (entity?.projectUuid != null) {
+          router.push(getReportsIndexUrl("project", entity.projectUuid), undefined, { shallow: true });
+        }
       }
     },
     [router, entity]
@@ -650,6 +674,7 @@ function WizardForm(props: WizardFormProps) {
           orgDetails={orgDetails}
           projectDetails={props.projectDetails}
           showValidationErrors={showValidationErrors}
+          submissionUuid={props.submissionUuid}
         >
           <div className={twMerge("flex h-full w-full flex-col", props.className)}>
             {entity != null && (

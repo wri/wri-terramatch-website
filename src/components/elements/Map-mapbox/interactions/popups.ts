@@ -17,11 +17,13 @@ import Log from "@/utils/log";
 
 import { ANR_PLOT_FILL_LAYER_ID } from "../adapters/geoserver";
 import PopupProviders from "../components/PopupProviders";
+import { isMediaPhotoAt } from "../layers/mediaPhotoHitTest";
 import type {
   DashboardPopupContext,
   EditPolygonState,
   LayerType,
   MobilePopupData,
+  OverviewPolygonPopup,
   PolygonEntityScope,
   PopupComponentProps,
   SetPolygonFromMap,
@@ -110,7 +112,7 @@ export type PopupHandlerOptions = {
   /** Tracks the polygonUuid shown in the currently open popup so it can be closed when deleted. */
   setActivePopupPolygonUuid?: (uuid: string | null) => void;
   championsMap?: boolean;
-  overviewPolygonPopup?: boolean;
+  overviewPolygonPopup?: OverviewPolygonPopup;
 };
 
 type OpenPolygonPopupParams = {
@@ -214,6 +216,7 @@ const handleLayerClick = (
     Log.warn("No feature found in click event");
     return;
   }
+  if (isMediaPhotoAt(map, e.point)) return;
   e.preventDefault();
 
   const { dashboard, setLoader, setMobilePopupData } = options;

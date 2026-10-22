@@ -4,8 +4,9 @@ import { type FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { useEntityMapMedia } from "@/components/elements/Map-mapbox/hooks/useEntityMapMedia";
+import type { OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
-import type { PolygonEntityScope } from "@/components/elements/Map-mapbox/Map.d";
+import type { OverviewPolygonPopup, PolygonEntityScope } from "@/components/elements/Map-mapbox/Map.d";
 import { resolveMapExtentBbox, useBoundingBox } from "@/connections/BoundingBox";
 import { useDelayedJobs } from "@/connections/DelayedJob";
 import { pruneSitePolygonsCache, useSitePolygonMapIndex } from "@/connections/SitePolygons";
@@ -13,6 +14,7 @@ import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import { isNotNull } from "@/utils/array";
 
 import { storePolygon } from "../utils";
 import LoadingMap from "./LoadingMap";
@@ -22,7 +24,9 @@ type OverviewMapAreaProps = {
   type: string;
   className?: string;
   hideFullscreenControl?: boolean;
-  overviewPolygonPopup?: boolean;
+  overviewPolygonPopup?: OverviewPolygonPopup;
+  sitePolygonUuids?: string[];
+  alertPoints?: OverlapPolygonPoint[];
 };
 
 const CLOSED_POLYGON_FROM_MAP = { isOpen: false, uuid: "" };
@@ -32,7 +36,9 @@ const OverviewMapArea: FC<OverviewMapAreaProps> = ({
   type,
   className,
   hideFullscreenControl = false,
-  overviewPolygonPopup = false
+  overviewPolygonPopup,
+  sitePolygonUuids,
+  alertPoints
 }) => {
   const [isPolygonTilesLoading, setIsPolygonTilesLoading] = useState(false);
   const [processedPolyValidationJobs, setProcessedPolyValidationJobs] = useState<Set<string>>(new Set());
@@ -66,7 +72,12 @@ const OverviewMapArea: FC<OverviewMapAreaProps> = ({
     enabled: entityModel?.uuid != null && entityModel.uuid !== "",
     filter: mapIndexFilter
   });
-  const mapPolygons = useMemo(() => mapIndex?.polygons ?? [], [mapIndex?.polygons]);
+  const mapPolygons = useMemo(() => {
+    const polygons = mapIndex?.polygons ?? [];
+    if (sitePolygonUuids == null) return polygons;
+    const visibleUuids = new Set(sitePolygonUuids);
+    return polygons.filter(polygon => visibleUuids.has(polygon.uuid));
+  }, [mapIndex?.polygons, sitePolygonUuids]);
 
   const refetch = useCallback(() => {
     pruneSitePolygonsCache();
@@ -85,10 +96,19 @@ const OverviewMapArea: FC<OverviewMapAreaProps> = ({
 
   const mediaFiles = useEntityMapMedia({ entity: entityType, uuid: entityModel?.uuid });
 
-  const hasPolygons = (mapIndex?.total ?? 0) > 0;
+  const hasPolygons = mapPolygons.length > 0;
+
+  const filteredGeometryUuids = useMemo(
+    () => (sitePolygonUuids == null ? [] : mapPolygons.map(polygon => polygon.polygonUuid).filter(isNotNull)),
+    [mapPolygons, sitePolygonUuids]
+  );
 
   const modelBbox = useBoundingBox(
-    entityType === "sites" ? { siteUuid: entityModel.uuid } : { projectUuid: entityModel.uuid }
+    filteredGeometryUuids.length > 0
+      ? { polygonUuids: filteredGeometryUuids }
+      : entityType === "sites"
+      ? { siteUuid: entityModel.uuid }
+      : { projectUuid: entityModel.uuid }
   );
 
   const projectBbox = useBoundingBox(
@@ -102,7 +122,7 @@ const OverviewMapArea: FC<OverviewMapAreaProps> = ({
       ? {}
       : entityType === "sites"
       ? { country: entityModel?.projectCountry }
-      : { country: entityModel?.country }
+      : { country: entityModel?.level0Project?.[0] }
   );
 
   const extentBbox = useMemo(
@@ -198,6 +218,7 @@ const OverviewMapArea: FC<OverviewMapAreaProps> = ({
           isPolygonGeometryLoading={isMapLoading}
           onPolygonTilesLoadingChange={setIsPolygonTilesLoading}
           overviewPolygonPopup={overviewPolygonPopup}
+          overlapPolygons={alertPoints}
         />
       </Box>
     </AnrMapOverlayProvider>

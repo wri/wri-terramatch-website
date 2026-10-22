@@ -1,9 +1,9 @@
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import { useCallback, useState } from "react";
 
 import { deleteAnrPlotGeometry, upsertAnrPlotGeometryResource } from "@/connections/AnrPlotGeometry";
 import { releaseModalScrollLock } from "@/hooks/useModalScrollFix";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
@@ -64,8 +64,7 @@ export const useAnrMonitoringPlotActions = ({
           caption: t("Missing polygon information."),
           type: "error",
           placement: "bottom",
-          duration: 5000,
-          maxWidth: "auto"
+          duration: 5000
         });
         return false;
       }
@@ -76,8 +75,7 @@ export const useAnrMonitoringPlotActions = ({
           caption: t("Please upload a .geojson file."),
           type: "error",
           placement: "bottom",
-          duration: 5000,
-          maxWidth: "auto"
+          duration: 5000
         });
         return false;
       }
@@ -91,8 +89,7 @@ export const useAnrMonitoringPlotActions = ({
           label: mode === "replace" ? t("Monitoring plots updated") : t("Monitoring plots uploaded"),
           type: "success",
           placement: "bottom",
-          duration: 5000,
-          maxWidth: "auto"
+          duration: 5000
         });
         return true;
       } catch (error) {
@@ -103,8 +100,7 @@ export const useAnrMonitoringPlotActions = ({
           caption: t(errorMessage),
           type: "error",
           placement: "bottom",
-          duration: 5000,
-          maxWidth: "auto"
+          duration: 5000
         });
         Log.error("Failed to upload ANR monitoring plots:", error);
         return false;
@@ -123,8 +119,7 @@ export const useAnrMonitoringPlotActions = ({
         caption: t("Missing polygon information."),
         type: "error",
         placement: "bottom",
-        duration: 5000,
-        maxWidth: "auto"
+        duration: 5000
       });
       return false;
     }
@@ -138,8 +133,7 @@ export const useAnrMonitoringPlotActions = ({
         label: t("Monitoring plots deleted"),
         type: "success",
         placement: "bottom",
-        duration: 5000,
-        maxWidth: "auto"
+        duration: 5000
       });
       return true;
     } catch (error) {
@@ -150,8 +144,7 @@ export const useAnrMonitoringPlotActions = ({
         caption: t(errorMessage),
         type: "error",
         placement: "bottom",
-        duration: 5000,
-        maxWidth: "auto"
+        duration: 5000
       });
       Log.error("Failed to delete ANR monitoring plots:", error);
       return false;

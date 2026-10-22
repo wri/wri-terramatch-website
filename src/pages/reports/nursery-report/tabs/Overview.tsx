@@ -1,4 +1,4 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
@@ -19,7 +19,6 @@ import { getEntitySetupButtonLabel } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
-import NothingToReportEmptyState from "@/pages/reports/nursery-report/components/NothingToReportEmptyState";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { ChevronRightIcon, SeedlingsIcon } from "@/redesignComponents/foundations/Icons";
@@ -111,16 +110,12 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
       return <TagSubmission size="small" state="pending-approval" />;
     }
 
-    return <StatusTag size="small" status={report.status} />;
-  }, [report.status, report.updateRequestStatus]);
+    if (report.nothingToReport) {
+      return <StatusTag size="small" status={"nothing-reported"} />;
+    }
 
-  if (report.nothingToReport) {
-    return (
-      <PageContent>
-        <NothingToReportEmptyState />
-      </PageContent>
-    );
-  }
+    return <StatusTag size="small" status={report.status} />;
+  }, [report.status, report.updateRequestStatus, report.nothingToReport]);
 
   const isTerrafundFramework = isTerrafund(toFramework(report.frameworkKey));
 
@@ -129,57 +124,59 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
       {EditModals}
       <Flex gap={7} className="flex-col">
         <Flex gap={7}>
-          <Flex gap={5} className={classNames(isTerrafundFramework ? "flex-row" : "flex-col", "flex-[2]")}>
-            <PageItem
-              title={t("Key Indicators and Insights")}
-              buttonProps={{
-                variant: "secondary",
-                size: "small",
-                children: t("View Indicator & Insights"),
-                rightIcon: <ChevronRightIcon />,
-                onClick: createMetricsCardCtaHandler({ entityType: "nursery-report", entityId: report.uuid }, () =>
-                  goToTab("goals")
-                )
-              }}
-            >
-              <HighLevelMetricsCard entityType="nursery-report" entityId={report.uuid}>
-                <MetricCardsRow>
-                  <MetricCard
-                    title={t("Seedlings Grown")}
-                    progress={seedlingsGrown}
-                    goal={0}
-                    variant="large"
-                    icon={<SeedlingsIcon />}
-                    color="secondary.600"
-                    metricLabel="seedlings_grown"
-                    tooltipContent={t(
-                      "This is the total number of seedlings produced in this nursery during this reporting period."
-                    )}
-                    className="flex-1"
-                  />
-                </MetricCardsRow>
-              </HighLevelMetricsCard>
-            </PageItem>
-            <PageItem
-              title={t("Featured Images")}
-              buttonProps={{
-                variant: "secondary",
-                size: "small",
-                children: t("View Gallery"),
-                rightIcon: <ChevronRightIcon />,
-                onClick: () => goToTab("gallery")
-              }}
-            >
-              <LatestImagesSectionTab
-                entityUuid={report.uuid}
-                entityName="nurseryReports"
-                columns={isTerrafundFramework ? 2 : 4}
-                rows={1}
-                minItems={2}
-                onClickAdd={() => goToTab("gallery")}
-              />
-            </PageItem>
-          </Flex>
+          {!report.nothingToReport && (
+            <Flex gap={5} className={classNames(isTerrafundFramework ? "flex-row" : "flex-col", "flex-[2]")}>
+              <PageItem
+                title={t("Key Indicators and Insights")}
+                buttonProps={{
+                  variant: "secondary",
+                  size: "small",
+                  children: t("View Indicator & Insights"),
+                  rightIcon: <ChevronRightIcon />,
+                  onClick: createMetricsCardCtaHandler({ entityType: "nursery-report", entityId: report.uuid }, () =>
+                    goToTab("goals")
+                  )
+                }}
+              >
+                <HighLevelMetricsCard entityType="nursery-report" entityId={report.uuid}>
+                  <MetricCardsRow>
+                    <MetricCard
+                      title={t("Seedlings Grown")}
+                      progress={seedlingsGrown}
+                      goal={0}
+                      variant="large"
+                      icon={<SeedlingsIcon />}
+                      color="secondary.600"
+                      metricLabel="seedlings_grown"
+                      tooltipContent={t(
+                        "This is the total number of seedlings produced in this nursery during this reporting period."
+                      )}
+                      className="flex-1"
+                    />
+                  </MetricCardsRow>
+                </HighLevelMetricsCard>
+              </PageItem>
+              <PageItem
+                title={t("Featured Images")}
+                buttonProps={{
+                  variant: "secondary",
+                  size: "small",
+                  children: t("View Gallery"),
+                  rightIcon: <ChevronRightIcon />,
+                  onClick: () => goToTab("gallery")
+                }}
+              >
+                <LatestImagesSectionTab
+                  entityUuid={report.uuid}
+                  entityName="nurseryReports"
+                  columns={isTerrafundFramework ? 2 : 4}
+                  rows={1}
+                  minItems={2}
+                  onClickAdd={() => goToTab("gallery")}
+                />
+              </PageItem>
+            </Flex>
+          )}
           <PageItem
             title={t("Nursery Report")}
             flexProps={{ flex: 1 }}
@@ -192,6 +189,13 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
             }}
             tag={statusTag}
           >
+            {report.nothingToReport && (
+              <Text textStyle="400" color="neutral.800">
+                {t(
+                  "It was indicated that there are no updates for this project report. If you wish to add information, please click on Edit."
+                )}
+              </Text>
+            )}
             <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
               <EntitySetUpSection
                 onStatusChange={setIsReportSetupComplete}
@@ -200,6 +204,7 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
                 type="nurseryReports"
                 entityTitle={report.nurseryName ?? ""}
                 reportTitle={report.reportTitle ?? ""}
+                disabled={report.nothingToReport === true}
               />
             </Box>
           </PageItem>
@@ -214,6 +219,7 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
             className="flex-row gap-14"
             contentClassName="flex-row gap-14"
             descriptionMaxWidth="65%"
+            isNothingToReport={report?.nothingToReport!}
           />
         </OnboardingCard>
       </Flex>

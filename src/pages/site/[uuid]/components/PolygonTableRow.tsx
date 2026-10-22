@@ -208,7 +208,7 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
     <TableRow
       className={context?.className}
       aria-selected={isSelected}
-      data-hovered={isHovered || undefined}
+      data-hovered={isHovered ? true : undefined}
       onMouseEnter={handleMouseEnter}
     >
       <TableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)}>

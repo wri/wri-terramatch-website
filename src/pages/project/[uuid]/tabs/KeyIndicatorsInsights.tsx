@@ -30,6 +30,10 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
   const firstCardTreesProgress = isCombinedTreesGrowingCard
     ? (project.treesPlantedCount ?? 0) + (project.seedsPlantedCount ?? 0) + treesFromReportsAnr
     : project.treesPlantedCount ?? 0;
+  // Fundo Flora reports regenerating trees and nursery seedlings by species.
+  const isFundoFlora = project.frameworkKey === Framework.FF_1;
+  const treesRegeneratedProgress = isFundoFlora ? project.treesRegeneratingSpeciesCount : treesFromReportsAnr;
+  const seedlingsGrownProgress = isFundoFlora ? project.treesSeedlingsGrownCount : project.seedsPlantedCount ?? 0;
   const treesGrownGoal = project.treesGrownGoal ?? 0;
   const t = useT();
   const totalHectaresRestored = project.totalHectaresRestoredSum ?? 0;
@@ -73,7 +77,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
       <ContextCondition frameworksHide={[Framework.PPC, Framework.HBF]}>
         <MetricCard
           title={t(`${keyIndicatorsTooltipContentItem?.treesRegenerated.title}`)}
-          progress={treesFromReportsAnr}
+          progress={treesRegeneratedProgress}
           goal={project.goalTreesRestoredAnr ?? 0}
           variant="donutChart"
           icon={<RegenerationIcon />}
@@ -90,7 +94,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         />
         <MetricCard
           title={t(`${keyIndicatorsTooltipContentItem?.saplingsRestored.title}`)}
-          progress={project.seedsPlantedCount ?? 0}
+          progress={seedlingsGrownProgress}
           goal={project.seedsGrownGoal ?? 0}
           variant="donutChart"
           icon={<SeedlingsIcon />}

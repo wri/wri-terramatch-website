@@ -25,10 +25,8 @@ export const dispatchUndoPolygonDrawEvent = (): void => {
   window.dispatchEvent(new Event(UNDO_POLYGON_DRAW_EVENT));
 };
 
-export const isPolygonDrawUndoShortcut = (event: KeyboardEvent): boolean => {
-  const key = event.key.toLowerCase();
-  return (event.ctrlKey || event.metaKey) && key === "z" && event.shiftKey !== true;
-};
+export const isPolygonDrawUndoShortcut = (event: KeyboardEvent): boolean =>
+  (event.ctrlKey || event.metaKey) && event.shiftKey !== true && event.key?.toLowerCase() === "z";
 
 const EDITABLE_UNDO_TARGET_SELECTOR = "input, textarea, select, [contenteditable=''], [contenteditable='true']";
 

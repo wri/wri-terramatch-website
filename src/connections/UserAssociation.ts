@@ -8,8 +8,7 @@ import {
   getUserAssociation,
   GetUserAssociationPathParams,
   GetUserAssociationQueryParams,
-  inviteOrganisationUser,
-  updateUserAssociation
+  inviteOrganisationUser
 } from "@/generated/v3/userService/userServiceComponents";
 import {
   OrganisationInviteRequestDto,
@@ -129,12 +128,8 @@ const organisationUserAssociationConnection = v3Resource("associatedUsers", getU
 
 export const useOrganisationUserAssociations = connectionHook(organisationUserAssociationConnection);
 
-export const bulkDeleteUserAssociations = async (
-  resourceUuid: string,
-  uuids: string[],
-  model: "projects" | "organisations" = "projects"
-): Promise<void> => {
-  const variables = { pathParams: { uuid: resourceUuid, model }, queryParams: { uuids } };
+export const bulkDeleteUserAssociations = async (projectUuid: string, uuids: string[]): Promise<void> => {
+  const variables = { pathParams: { uuid: projectUuid, model: "projects" as const }, queryParams: { uuids } };
   const failureSelector = deleteUserAssociation.fetchFailedSelector(variables);
   const previousFailure = failureSelector(ApiSlice.currentState);
   if (previousFailure != null) {
@@ -159,29 +154,7 @@ export const bulkDeleteUserAssociations = async (
       }
     });
   });
-  ApiSlice.pruneCache("associatedUsers");
-  ApiSlice.pruneIndex("associatedUsers", "");
-};
-
-export const updateOrganisationUserStatuses = async (
-  organisationUuid: string,
-  userUuids: string[],
-  status: "approved" | "rejected"
-): Promise<void> => {
-  let failure: unknown;
-  for (const userUuid of userUuids) {
-    try {
-      await updateUserAssociation.fetchAwait({
-        pathParams: { model: "organisations", uuid: organisationUuid, userUuid },
-        body: { data: { type: "associatedUsers", attributes: { status } } }
-      });
-    } catch (error) {
-      failure = error;
-      break;
-    }
-  }
 
   ApiSlice.pruneCache("associatedUsers");
   ApiSlice.pruneIndex("associatedUsers", "");
-  if (failure != null) throw failure;
 };

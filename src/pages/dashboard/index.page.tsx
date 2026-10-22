@@ -401,9 +401,10 @@ const Dashboard = () => {
   }, [t, hasCountrySelection, projectsInCountry, transformedStories]);
 
   const countryData = useMemo(() => {
-    if (!singleDashboardProject?.country || !countryChoices?.length) return undefined;
+    const projectCountry = singleDashboardProject?.level0Project?.[0];
+    if (projectCountry == null || countryChoices == null || countryChoices.length === 0) return undefined;
 
-    const gadmCountry = countryChoices.find(country => country.id === singleDashboardProject?.country);
+    const gadmCountry = countryChoices.find(country => country.id === projectCountry);
     if (!gadmCountry) return undefined;
 
     const countrySlug = String(gadmCountry.id);
@@ -415,7 +416,7 @@ const Dashboard = () => {
       },
       id: 1
     };
-  }, [singleDashboardProject?.country, countryChoices]);
+  }, [singleDashboardProject?.level0Project, countryChoices]);
 
   useEffect(() => {
     if (filters.uuid == null || filters.uuid === "") return;
