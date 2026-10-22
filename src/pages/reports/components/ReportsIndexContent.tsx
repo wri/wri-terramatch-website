@@ -336,6 +336,7 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
         onViewChange={handleViewChange}
         onQueryChange={setQuery}
         indexHref={indexHref}
+        addDisturbanceReportDisabled={isAllProjectsView}
       />
       <PageContent className="h-auto flex-1 px-2 pt-0 pb-8">
         {activeTab === "progress-reports" && (
