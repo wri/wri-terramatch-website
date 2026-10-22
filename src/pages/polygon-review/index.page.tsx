@@ -12,10 +12,12 @@ import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import Layout from "@/redesignComponents/Layout/Layout";
 
 import { buildPolygonTableColumns } from "../site/[uuid]/components/polygonTableColumns";
+import { useSitePolygonFilters } from "../site/[uuid]/hooks/useSitePolygonFilters";
 import PolygonReviewEmptyState from "./components/PolygonReviewEmptyState";
 import PolygonReviewMap from "./components/PolygonReviewMap";
 import PolygonReviewToolbar from "./components/PolygonReviewToolbar";
 import ProjectContextPicker from "./components/ProjectContextPicker";
+import { useProjectSiteOptions } from "./hooks/useProjectSiteOptions";
 import {
   EMPTY_PROJECT_CONTEXT_FILTERS,
   filterProjects,
@@ -25,7 +27,8 @@ import {
 
 /**
  * Polygon Review index. No polygon data loads until a project is picked in the Level 1 project context filter;
- * clearing that filter returns the page to its initial (unscoped) state.
+ * clearing that filter returns the page to its initial (unscoped) state. The Level 2 polygon filters belong to the
+ * selected project, so picking another project resets them.
  */
 const PolygonReviewIndexPage: FC = () => {
   const t = useT();
@@ -39,6 +42,10 @@ const PolygonReviewIndexPage: FC = () => {
 
   const columns = useMemo(() => buildPolygonTableColumns(t, { showEntityColumns: true }), [t]);
 
+  const siteOptions = useProjectSiteOptions(selectedProjectUuid ?? undefined);
+  const { polygonFilters, sitePolygonFilter, activeFilterLabels, setPolygonFilters, handleClearPolygonFilters } =
+    useSitePolygonFilters({ t, siteOptions });
+
   const projects = useMemo(() => sortProjectsByName(mapIndex?.projects ?? []), [mapIndex]);
   const filteredProjects = useMemo(() => filterProjects(projects, filters), [filters, projects]);
   const selectedProject = useMemo(
@@ -48,15 +55,20 @@ const PolygonReviewIndexPage: FC = () => {
 
   const openPicker = useCallback(() => setIsPickerOpen(true), []);
 
-  const selectProject = useCallback((uuid: string) => {
-    setSelectedProjectUuid(uuid);
-    setIsPickerOpen(false);
-  }, []);
+  const selectProject = useCallback(
+    (uuid: string) => {
+      setSelectedProjectUuid(uuid);
+      setIsPickerOpen(false);
+      handleClearPolygonFilters();
+    },
+    [handleClearPolygonFilters]
+  );
 
   const clearProjectContext = useCallback(() => {
     setFilters(EMPTY_PROJECT_CONTEXT_FILTERS);
     setSelectedProjectUuid(null);
-  }, []);
+    handleClearPolygonFilters();
+  }, [handleClearPolygonFilters]);
 
   const isAccessDenied = isUserLoaded && !isAdmin;
   useEffect(() => {
@@ -88,10 +100,19 @@ const PolygonReviewIndexPage: FC = () => {
       <MapAreaProvider>
         <PageContent className="bg-theme-neutral-100">
           <Flex direction="column" gap={4}>
-            <PolygonReviewToolbar isProjectSelected={selectedProject != null} />
+            <PolygonReviewToolbar
+              isProjectSelected={selectedProject != null}
+              polygonFilters={polygonFilters}
+              activeFilterLabels={activeFilterLabels}
+              siteOptions={siteOptions}
+              onApplyFilters={setPolygonFilters}
+              onClearFilters={handleClearPolygonFilters}
+            />
             <PolygonReviewMap
               projects={filteredProjects}
               selectedProject={selectedProject}
+              siteUuids={polygonFilters.siteUuids}
+              polygonFilter={sitePolygonFilter}
               hasLoadFailure={loadFailure != null}
               onViewProjectPolygons={selectProject}
             />

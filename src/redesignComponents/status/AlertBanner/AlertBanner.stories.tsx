@@ -1,8 +1,15 @@
-import { SimpleGrid } from "@chakra-ui/react";
+import { Flex, SimpleGrid, Text } from "@chakra-ui/react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { Tag } from "@worldresources/wri-design-systems";
 
 import AlertBanner from "./AlertBanner";
+
+const TitleWithTag = ({ title }: { title: string }) => (
+  <Flex alignItems="center" gap={2}>
+    <Text textStyle="400-bold">{title}</Text>
+    <Tag label="Label" variant="info-white" />
+  </Flex>
+);
 
 const meta = {
   title: "Redesign Components/Status/Alert Banner",
@@ -25,7 +32,7 @@ const meta = {
   ],
   tags: ["autodocs"],
   argTypes: {
-    title: { description: "Banner title content", control: false },
+    children: { description: "Banner content", control: false },
     variant: {
       description: "Semantic variant — sets color and icon",
       control: { type: "select" },
@@ -56,54 +63,63 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    title: "Information",
-    variant: "information"
+    variant: "information",
+    children: "Information"
   }
 };
 
 export const WithLabel: Story = {
   args: {
-    title: "Success",
     variant: "success",
-    children: "Text label"
+    children: "Success"
   }
 };
 
 export const WithChildren: Story = {
   args: {
-    title: "General white",
     variant: "general-grey",
-    children: <Tag label="Label" variant="info-white" />
+    children: <TitleWithTag title="General white" />
   }
 };
 
 export const Inline: Story = {
   args: {
-    title: "Information",
     variant: "information",
     width: "inline",
-    children: <Tag label="Label" variant="info-white" />
+    children: <TitleWithTag title="Information" />
   }
 };
 
 export const Centered: Story = {
   args: {
-    title: "Success",
     variant: "success",
     isCentered: true,
-    children: <Tag label="Label" variant="info-white" />
+    children: <TitleWithTag title="Success" />
   }
 };
 
 export const AllVariants: Story = {
+  args: { children: "Label" },
   render: () => (
     <SimpleGrid columns={1} gap={4}>
-      <AlertBanner variant="general-white" title="Label" width="full-width" />
-      <AlertBanner variant="general-grey" title="Label" width="full-width" />
-      <AlertBanner variant="information" title="Label" width="full-width" />
-      <AlertBanner variant="success" title="Label" width="full-width" />
-      <AlertBanner variant="warning" title="Label" width="full-width" />
-      <AlertBanner variant="error" title="Label" width="full-width" />
+      <AlertBanner variant="general-white" width="full-width">
+        Label
+      </AlertBanner>
+      <AlertBanner variant="general-grey" width="full-width">
+        Label
+      </AlertBanner>
+      <AlertBanner variant="information" width="full-width">
+        Label
+      </AlertBanner>
+      <AlertBanner variant="success" width="full-width">
+        Label
+      </AlertBanner>
+      <AlertBanner variant="warning" width="full-width">
+        Label
+      </AlertBanner>
+      <AlertBanner variant="error" width="full-width">
+        Label
+      </AlertBanner>
     </SimpleGrid>
   )
 };

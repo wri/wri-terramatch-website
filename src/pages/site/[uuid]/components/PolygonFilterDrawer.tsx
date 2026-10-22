@@ -21,6 +21,7 @@ import FilterPanel from "@/redesignComponents/containers/FilterPanel/FilterPanel
 import FilterCard from "@/redesignComponents/containers/FilterPanel/FilterPanelElements/FilterCards";
 import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
 import Switch from "@/redesignComponents/Forms/Actions/Switch/Switch";
+import Combobox from "@/redesignComponents/Forms/Inputs/Combobox";
 import DateRangeInput from "@/redesignComponents/Forms/Inputs/DateInputs/DateRangeInputs/DateRangeInput";
 import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 
@@ -30,6 +31,7 @@ import {
   PolygonFilterState,
   PolygonSubmissionStatus,
   PolygonValidationStatus,
+  SiteFilterOption,
   SUBMISSION_CYCLE_LABELS,
   SUBMISSION_CYCLE_OPTIONS
 } from "./polygonFilter.constants";
@@ -62,6 +64,10 @@ interface PolygonFilterDrawerProps {
   open?: boolean;
   filters: PolygonFilterState;
   isAdminReview?: boolean;
+  /**
+   * Shows the Site filter when set. The combobox only reads its options on mount, so pass them once they're loaded.
+   */
+  siteOptions?: SiteFilterOption[];
   onApplyFilters: (filters: PolygonFilterState) => void;
   onClearFilters: () => void;
   onOpenChange?: (open: boolean) => void;
@@ -72,6 +78,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
   open,
   filters,
   isAdminReview = false,
+  siteOptions,
   onApplyFilters,
   onClearFilters,
   onOpenChange
@@ -94,6 +101,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
     }
   }, [filters, open]);
 
+  // Selected sites already show as tags under the Site combobox, so they're left out of these tags.
   const activeFilters = useMemo(() => {
     const tags: { id: string; label: string }[] = [];
 
@@ -159,6 +167,10 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
           return current;
       }
     });
+  };
+
+  const handleSiteChange = (siteUuids: string[]) => {
+    setDraftFilters(current => ({ ...current, siteUuids }));
   };
 
   const handleSubmissionStatusChange = (value: PolygonSubmissionStatus, { checked }: CheckboxChange) => {
@@ -264,6 +276,20 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                   />
                 ))}
               </Flex>
+              {siteOptions != null && (
+                <FilterCard label={t("Site")}>
+                  <Combobox
+                    placeholder={t("Type to search sites")}
+                    size="small"
+                    noMarginBottom
+                    multiple
+                    showSelectedItems
+                    initialItems={siteOptions}
+                    value={draftFilters.siteUuids}
+                    onChange={handleSiteChange}
+                  />
+                </FilterCard>
+              )}
               <FilterCard label={t("Submission Status")}>
                 {submissionStatusOptions.map(option => (
                   <Checkbox

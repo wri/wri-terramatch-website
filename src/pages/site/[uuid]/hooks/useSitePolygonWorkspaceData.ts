@@ -8,7 +8,7 @@ import {
 } from "@/connections/SitePolygons";
 import type { SitePolygonsIndexQueryParams } from "@/generated/v3/researchService/researchServiceComponents";
 
-type UseSitePolygonWorkspaceDataParams = Required<PolygonEntityScopeProps> & {
+type UseSitePolygonWorkspaceDataParams = Required<Pick<PolygonEntityScopeProps, "entityName" | "entityUuid">> & {
   filter: Partial<SitePolygonsIndexQueryParams>;
   pageNumber: number;
   pageSize: number;
