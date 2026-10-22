@@ -4,7 +4,6 @@ import { FC, useEffect, useMemo, useState } from "react";
 import FilterCard from "@/redesignComponents/containers/FilterPanel/FilterPanelElements/FilterCards";
 import IndexFilterDrawer from "@/redesignComponents/containers/FilterPanel/IndexFilterDrawer";
 import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
-import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 
 import type { SiteIndexStatus, SiteIndexUpdate } from "./siteIndex.types";
 
@@ -34,15 +33,15 @@ type CheckboxChange = { checked?: boolean | "indeterminate" };
 interface SiteIndexFilterDrawerProps {
   open: boolean;
   filters: SiteIndexFilterStatus[];
-  updateFilter: SiteIndexFilterUpdate | null;
+  updateFilters: SiteIndexFilterUpdate[];
   onOpenChange: (open: boolean) => void;
-  onApplyFilters: (filters: SiteIndexFilterStatus[], updateFilter: SiteIndexFilterUpdate | null) => void;
+  onApplyFilters: (filters: SiteIndexFilterStatus[], updateFilters: SiteIndexFilterUpdate[]) => void;
 }
 
 const SiteIndexFilterDrawer: FC<SiteIndexFilterDrawerProps> = ({
   open,
   filters,
-  updateFilter,
+  updateFilters,
   onOpenChange,
   onApplyFilters
 }) => {
@@ -50,14 +49,14 @@ const SiteIndexFilterDrawer: FC<SiteIndexFilterDrawerProps> = ({
   const statusOptions = useMemo(() => getSiteIndexStatusOptions(t), [t]);
   const updateOptions = useMemo(() => getSiteIndexUpdateOptions(t), [t]);
   const [draftFilters, setDraftFilters] = useState<SiteIndexFilterStatus[]>(filters);
-  const [draftUpdateFilter, setDraftUpdateFilter] = useState<SiteIndexFilterUpdate | null>(updateFilter);
+  const [draftUpdateFilters, setDraftUpdateFilters] = useState<SiteIndexFilterUpdate[]>(updateFilters);
 
   useEffect(() => {
     if (open) {
       setDraftFilters(filters);
-      setDraftUpdateFilter(updateFilter);
+      setDraftUpdateFilters(updateFilters);
     }
-  }, [filters, open, updateFilter]);
+  }, [filters, open, updateFilters]);
 
   const activeFilterTags = useMemo(() => {
     const tags: { id: string; label: string }[] = [];
@@ -67,13 +66,13 @@ const SiteIndexFilterDrawer: FC<SiteIndexFilterDrawerProps> = ({
       tags.push({ id: `status-${status}`, label: option?.label ?? status });
     });
 
-    if (draftUpdateFilter != null) {
-      const option = updateOptions.find(item => item.value === draftUpdateFilter);
-      tags.push({ id: "update", label: option?.label ?? draftUpdateFilter });
-    }
+    draftUpdateFilters.forEach(update => {
+      const option = updateOptions.find(item => item.value === update);
+      tags.push({ id: `update-${update}`, label: option?.label ?? update });
+    });
 
     return tags;
-  }, [draftFilters, draftUpdateFilter, statusOptions, updateOptions]);
+  }, [draftFilters, draftUpdateFilters, statusOptions, updateOptions]);
 
   const handleStatusChange = (status: SiteIndexFilterStatus, { checked }: CheckboxChange) => {
     setDraftFilters(current =>
@@ -85,9 +84,20 @@ const SiteIndexFilterDrawer: FC<SiteIndexFilterDrawerProps> = ({
     );
   };
 
+  const handleUpdateChange = (update: SiteIndexFilterUpdate, { checked }: CheckboxChange) => {
+    setDraftUpdateFilters(current =>
+      checked === true
+        ? current.includes(update)
+          ? current
+          : [...current, update]
+        : current.filter(currentUpdate => currentUpdate !== update)
+    );
+  };
+
   const removeFilterTag = (id: string) => {
-    if (id === "update") {
-      setDraftUpdateFilter(null);
+    if (id.startsWith("update-")) {
+      const update = id.replace("update-", "") as SiteIndexFilterUpdate;
+      setDraftUpdateFilters(current => current.filter(currentUpdate => currentUpdate !== update));
       return;
     }
 
@@ -105,9 +115,9 @@ const SiteIndexFilterDrawer: FC<SiteIndexFilterDrawerProps> = ({
       onRemoveTag={removeFilterTag}
       onClear={() => {
         setDraftFilters([]);
-        setDraftUpdateFilter(null);
+        setDraftUpdateFilters([]);
       }}
-      onApply={() => onApplyFilters(draftFilters, draftUpdateFilter)}
+      onApply={() => onApplyFilters(draftFilters, draftUpdateFilters)}
       drawerSize="filterPanel"
       drawerPlacement="end"
       drawerMaxW="22.75rem"
@@ -130,14 +140,17 @@ const SiteIndexFilterDrawer: FC<SiteIndexFilterDrawerProps> = ({
         ))}
       </FilterCard>
       <FilterCard label={t("Updates")}>
-        <SelectInput
-          placeholder={t("Please select")}
-          value={draftUpdateFilter == null ? [] : [draftUpdateFilter]}
-          items={updateOptions}
-          onChange={(values: string[]) =>
-            setDraftUpdateFilter((values[0] as SiteIndexFilterUpdate | undefined) ?? null)
-          }
-        />
+        {updateOptions.map(option => (
+          <Checkbox
+            key={option.value}
+            name={`site-update-${option.value}`}
+            value={option.value}
+            checked={draftUpdateFilters.includes(option.value)}
+            onCheckedChange={(change: CheckboxChange) => handleUpdateChange(option.value, change)}
+          >
+            {option.label}
+          </Checkbox>
+        ))}
       </FilterCard>
     </IndexFilterDrawer>
   );

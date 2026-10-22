@@ -25,7 +25,7 @@ const SiteIndexPageContent: FC = () => {
   const [reloadNonce, setReloadNonce] = useState(0);
   const [viewMenuOpened, setViewMenuOpened] = useState(false);
   const [statusFilters, setStatusFilters] = useState<SiteIndexFilterStatus[]>([]);
-  const [updateFilter, setUpdateFilter] = useState<SiteIndexFilterUpdate | null>(null);
+  const [updateFilters, setUpdateFilters] = useState<SiteIndexFilterUpdate[]>([]);
   const {
     view: selectedProject,
     query: searchQuery,
@@ -36,24 +36,24 @@ const SiteIndexPageContent: FC = () => {
   } = useIndexViewState({ basePath: "/site", allProjectsValue: ALL_PROJECTS_VIEW, onViewChange: clearSelection });
 
   const hasActiveSearch = searchQuery.trim() !== "";
-  const hasAppliedFilters = statusFilters.length > 0 || updateFilter != null;
+  const hasAppliedFilters = statusFilters.length > 0 || updateFilters.length > 0;
   const hasActiveFilters = hasActiveSearch || hasAppliedFilters;
   const filtering = searchQuery.trim() !== debouncedSearch;
   const { loading, error, metas, projects, siteTotal, hasMore, loadingMore, loadMore } = useSiteIndexData({
     search: debouncedSearch,
     statusFilters,
-    updateFilter,
+    updateFilters,
     projectUuid: selectedProject === ALL_PROJECTS_VIEW ? undefined : selectedProject,
     enabled: hasHydratedQuery,
     catalogRequested: viewMenuOpened,
     reloadNonce
   });
-  const accordionOpenResetKey = `${selectedProject}:${debouncedSearch}:${statusFilters.join(",")}:${
-    updateFilter ?? ""
-  }`;
+  const accordionOpenResetKey = `${selectedProject}:${debouncedSearch}:${statusFilters.join(",")}:${updateFilters.join(
+    ","
+  )}`;
   const sectionFilters = useMemo(
-    () => ({ search: debouncedSearch, statusFilters, updateFilter }),
-    [debouncedSearch, statusFilters, updateFilter]
+    () => ({ search: debouncedSearch, statusFilters, updateFilters }),
+    [debouncedSearch, statusFilters, updateFilters]
   );
 
   const handleSitesChanged = useCallback(() => setReloadNonce(current => current + 1), []);
@@ -74,9 +74,9 @@ const SiteIndexPageContent: FC = () => {
   }, [projects, router, selectedProject, t]);
 
   const handleApplyFilters = useCallback(
-    (nextStatusFilters: SiteIndexFilterStatus[], nextUpdateFilter: SiteIndexFilterUpdate | null) => {
+    (nextStatusFilters: SiteIndexFilterStatus[], nextUpdateFilters: SiteIndexFilterUpdate[]) => {
       setStatusFilters(nextStatusFilters);
-      setUpdateFilter(nextUpdateFilter);
+      setUpdateFilters(nextUpdateFilters);
     },
     []
   );
@@ -89,7 +89,7 @@ const SiteIndexPageContent: FC = () => {
         selectedProject={selectedProject}
         viewProjects={projects}
         statusFilters={statusFilters}
-        updateFilter={updateFilter}
+        updateFilters={updateFilters}
         filtering={filtering}
         onApplyFilters={handleApplyFilters}
         onViewChange={handleViewChange}

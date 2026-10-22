@@ -5,7 +5,6 @@ import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/opt
 import FilterCard from "@/redesignComponents/containers/FilterPanel/FilterPanelElements/FilterCards";
 import IndexFilterDrawer from "@/redesignComponents/containers/FilterPanel/IndexFilterDrawer";
 import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
-import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 
 type CheckboxChange = { checked?: boolean | "indeterminate" };
 
@@ -38,10 +37,6 @@ const NurseriesFilterDrawer: FC<NurseriesFilterDrawerProps> = ({
       ),
     [t]
   );
-  const updateSelectItems = useMemo(
-    () => updateOptions.map(option => ({ label: String(option.title), value: String(option.value) })),
-    [updateOptions]
-  );
   const [draftStatuses, setDraftStatuses] = useState(statuses);
   const [draftUpdates, setDraftUpdates] = useState(updates);
 
@@ -67,6 +62,10 @@ const NurseriesFilterDrawer: FC<NurseriesFilterDrawerProps> = ({
 
   const handleStatusChange = (value: string, { checked }: CheckboxChange) => {
     setDraftStatuses(current => setArrayValue(current, value, checked === true));
+  };
+
+  const handleUpdateChange = (value: string, { checked }: CheckboxChange) => {
+    setDraftUpdates(current => setArrayValue(current, value, checked === true));
   };
 
   const removeFilterTag = (id: string) => {
@@ -112,14 +111,20 @@ const NurseriesFilterDrawer: FC<NurseriesFilterDrawerProps> = ({
       </FilterCard>
 
       <FilterCard label={t("Updates")}>
-        <SelectInput
-          placeholder={t("Please Select")}
-          size="small"
-          value={draftUpdates}
-          items={updateSelectItems}
-          onChange={setDraftUpdates}
-          multiple
-        />
+        {updateOptions.map(option => {
+          const value = String(option.value);
+          return (
+            <Checkbox
+              key={value}
+              name={`nursery-update-${value}`}
+              value={value}
+              checked={draftUpdates.includes(value)}
+              onCheckedChange={(change: CheckboxChange) => handleUpdateChange(value, change)}
+            >
+              {option.title}
+            </Checkbox>
+          );
+        })}
       </FilterCard>
     </IndexFilterDrawer>
   );

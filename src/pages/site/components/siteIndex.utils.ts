@@ -99,17 +99,11 @@ export const groupSiteUuidsByFramework = (sites: SiteIndexSite[]) => {
   return Array.from(grouped, ([frameworkKey, uuids]) => ({ frameworkKey, uuids }));
 };
 
-export const toSiteIndexUpdateRequestStatus = (
-  update: SiteIndexUpdate | null | undefined
-): NonNullable<SiteLightDto["updateRequestStatus"]> | undefined => {
-  if (update == null) {
-    return undefined;
-  }
-  if (update === "complete") {
-    return "approved";
-  }
-  return update;
-};
+export const toSiteIndexUpdateRequestStatuses = (
+  updates: SiteIndexUpdate[]
+): NonNullable<SiteLightDto["updateRequestStatus"]>[] => [
+  ...new Set(updates.map(update => (update === "complete" ? "approved" : update)))
+];
 
 const metric = (progress: number | null | undefined, goal: number | null | undefined): SiteIndexMetric => ({
   progress: progress ?? 0,

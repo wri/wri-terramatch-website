@@ -29,10 +29,10 @@ const ProjectSitesBody: FC<{
   meta: ProjectSitesMetaDto;
   search: string;
   statusFilters: SiteIndexFilterStatus[];
-  updateFilter: SiteIndexFilterUpdate | null;
+  updateFilters: SiteIndexFilterUpdate[];
   isFiltered: boolean;
-}> = ({ meta, search, statusFilters, updateFilter, isFiltered }) => {
-  const filters = useMemo(() => ({ search, statusFilters, updateFilter }), [search, statusFilters, updateFilter]);
+}> = ({ meta, search, statusFilters, updateFilters, isFiltered }) => {
+  const filters = useMemo(() => ({ search, statusFilters, updateFilters }), [search, statusFilters, updateFilters]);
   const sites = useSiteProjectRows(meta, filters, true);
   return (
     <SiteProjectBody
@@ -53,7 +53,7 @@ const ProjectSitesTabContent: FC<ProjectSitesTabProps> = ({ project }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilters, setStatusFilters] = useState<SiteIndexFilterStatus[]>([]);
-  const [updateFilter, setUpdateFilter] = useState<SiteIndexFilterUpdate | null>(null);
+  const [updateFilters, setUpdateFilters] = useState<SiteIndexFilterUpdate[]>([]);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => setDebouncedSearch(searchQuery.trim()), INDEX_SEARCH_DEBOUNCE_MS);
@@ -61,14 +61,14 @@ const ProjectSitesTabContent: FC<ProjectSitesTabProps> = ({ project }) => {
   }, [searchQuery]);
 
   const hasActiveSearch = searchQuery.trim().length > 0;
-  const hasAppliedFilters = statusFilters.length > 0 || updateFilter != null;
+  const hasAppliedFilters = statusFilters.length > 0 || updateFilters.length > 0;
   const hasActiveFilters = hasActiveSearch || hasAppliedFilters;
   const filtering = searchQuery.trim() !== debouncedSearch;
 
   const { loading, error, metas, siteTotal } = useSiteIndexData({
     search: debouncedSearch,
     statusFilters,
-    updateFilter,
+    updateFilters,
     projectUuid: project.uuid,
     enabled: true,
     reloadNonce
@@ -78,10 +78,10 @@ const ProjectSitesTabContent: FC<ProjectSitesTabProps> = ({ project }) => {
   const handleSitesChanged = useCallback(() => setReloadNonce(current => current + 1), []);
 
   const handleApplyFilters = useCallback(
-    (nextStatusFilters: SiteIndexFilterStatus[], nextUpdateFilter: SiteIndexFilterUpdate | null) => {
+    (nextStatusFilters: SiteIndexFilterStatus[], nextUpdateFilters: SiteIndexFilterUpdate[]) => {
       clearSelection();
       setStatusFilters(nextStatusFilters);
-      setUpdateFilter(nextUpdateFilter);
+      setUpdateFilters(nextUpdateFilters);
     },
     [clearSelection]
   );
@@ -105,7 +105,7 @@ const ProjectSitesTabContent: FC<ProjectSitesTabProps> = ({ project }) => {
         selectedProject={project.uuid}
         viewProjects={[]}
         statusFilters={statusFilters}
-        updateFilter={updateFilter}
+        updateFilters={updateFilters}
         filtering={filtering}
         onApplyFilters={handleApplyFilters}
         onViewChange={() => undefined}
@@ -136,7 +136,7 @@ const ProjectSitesTabContent: FC<ProjectSitesTabProps> = ({ project }) => {
             meta={meta}
             search={debouncedSearch}
             statusFilters={statusFilters}
-            updateFilter={updateFilter}
+            updateFilters={updateFilters}
             isFiltered={hasActiveFilters}
           />
         )}
