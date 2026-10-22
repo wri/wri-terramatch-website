@@ -24,11 +24,9 @@ export const useIndexViewState = ({ basePath, allProjectsValue, onViewChange }: 
   useEffect(() => {
     if (!router.isReady) return;
     const projectFromQuery = router.query.project;
-    if (typeof projectFromQuery === "string" && projectFromQuery !== "") {
-      setView(projectFromQuery);
-    }
+    setView(typeof projectFromQuery === "string" && projectFromQuery !== "" ? projectFromQuery : allProjectsValue);
     setHasHydratedQuery(true);
-  }, [router.isReady, router.query.project]);
+  }, [allProjectsValue, router.isReady, router.query.project]);
 
   const handleViewChange = useCallback(
     (value: string) => {

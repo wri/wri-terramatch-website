@@ -78,7 +78,8 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
             ]
           : []),
         {
-          href: isAdmin ? "/admin#/projectReport" : "/reports",
+          href: isAdmin ? "/admin#/projectReport" : "/reports?view=all",
+          activePaths: isAdmin ? undefined : ["/reports"],
           icon: <ReportsIcon boxSize={4} />,
           label: "Reports"
         },
