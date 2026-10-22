@@ -1,4 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
+import { noop } from "lodash";
+
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 
 import ToolbarTable from "./ToolbarTable";
 
@@ -23,6 +26,12 @@ const meta: Meta<typeof ToolbarTable> = {
     },
     button: {
       description: "Optional primary action button rendered on the right side of the toolbar"
+    },
+    actions: {
+      description: "Extra controls rendered on the right side, before the primary button"
+    },
+    lockedMessage: {
+      description: "Disables search and filters and shows this message next to a lock icon"
     },
     tooltipContent: {
       description: "Text shown inside the info tooltip icon on the right side"
@@ -98,5 +107,23 @@ export const WithManySelectedFilters: Story = {
       { category: "Organisation", label: "Label", onRemove: () => console.log("remove org") },
       { category: "Organisation", label: "Label", onRemove: () => console.log("remove org") }
     ]
+  }
+};
+
+export const Locked: Story = {
+  name: "Locked Until a Scope Is Selected",
+  args: {
+    search: { placeholder: "Search", options: [] },
+    selectedFilters: [],
+    lockedMessage: "Select a project to search and filter",
+    showClearFilters: false,
+    className: "w-full",
+    classNameContentLeft: "w-full",
+    onClearFilters: noop,
+    actions: (
+      <Button variant="secondary" size="small" disabled>
+        Download All
+      </Button>
+    )
   }
 };

@@ -100,14 +100,15 @@ const ProjectDataGrid = () => {
         sortable={false}
       />
       <FunctionField
-        source="country"
+        source="level0Project"
         label="Country"
-        render={(props: any) => {
+        render={(record?: ProjectLightDto) => {
+          const country = record?.level0Project?.[0];
           return (
-            props?.country && (
+            country != null && (
               <div className="flex items-center gap-2">
-                <CountryFlag src={`/flags/${props.country.toLowerCase()}.svg`} size="md" alt="" />
-                <Text variant="text-14-light">{formatOptionsList(countryOptions ?? [], props?.country ?? [])}</Text>
+                <CountryFlag src={`/flags/${country.toLowerCase()}.svg`} size="md" alt="" />
+                <Text variant="text-14-light">{formatOptionsList(countryOptions ?? [], country)}</Text>
               </div>
             )
           );
