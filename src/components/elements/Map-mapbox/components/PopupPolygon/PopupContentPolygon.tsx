@@ -5,15 +5,18 @@ import type { FC, ReactNode } from "react";
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
 import { useTargetLandUseLabels } from "@/hooks/translation/useTargetLandUseLabels";
 import ValidationTag, { type ValidationTagState } from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
-import { AreaHectaresIcon, CommentIcon, TreeCircleIcon } from "@/redesignComponents/foundations/Icons";
+import { AreaHectaresIcon, CommentIcon, SiteIcon, TreeCircleIcon } from "@/redesignComponents/foundations/Icons";
 import { renderRestorationPracticeIcons, renderTargetLandUseLabel } from "@/utils/polygonAttributeDisplay";
+
+import type { OverviewPolygonPopup } from "../../Map.d";
 
 type PopupContentPolygonProps = {
   treesPlantedDisplay?: string;
   areaHectaresDisplay?: string;
   commentsDisplay?: string;
   validationStatus?: ValidationTagState;
-  overviewPolygonPopup?: boolean;
+  overviewPolygonPopup?: OverviewPolygonPopup;
+  siteName?: string;
   restorationPractice?: restorationStrategyType[];
   targetLandUse?: targetLandUseType | null;
 };
@@ -27,19 +30,53 @@ const PopupAttributeRow: FC<{ label: string; value: ReactNode }> = ({ label, val
   </Flex>
 );
 
+const PopupIconAttributeRow: FC<{ icon: ReactNode; label: string; value: string }> = ({ icon, label, value }) => (
+  <Flex alignItems="center" justifyContent="space-between" gap={4}>
+    <Flex alignItems="center" gap={2}>
+      <Flex h={6} w={6} alignItems="center" justifyContent="center">
+        {icon}
+      </Flex>
+      <Text color="neutral.700" textStyle="400" textWrap="nowrap">
+        {label}
+      </Text>
+    </Flex>
+    <Text color="neutral.900" textStyle="400-bold" textAlign="right">
+      {value}
+    </Text>
+  </Flex>
+);
+
 const PopupContentPolygon: FC<PopupContentPolygonProps> = ({
   treesPlantedDisplay = "\u2014",
   areaHectaresDisplay = "\u2014",
   commentsDisplay = "\u2014",
   validationStatus = "not-started",
-  overviewPolygonPopup = false,
+  overviewPolygonPopup,
+  siteName = "\u2014",
   restorationPractice = [],
   targetLandUse = null
 }) => {
   const t = useT();
   const targetLandUseLabels = useTargetLandUseLabels();
 
-  if (overviewPolygonPopup) {
+  if (overviewPolygonPopup === "site-summary") {
+    return (
+      <Flex padding="0.75rem" direction="column" gap={4} width="20rem">
+        <PopupIconAttributeRow
+          icon={<SiteIcon boxSize={4} color="neutral.800" />}
+          label={t("Site Name")}
+          value={siteName}
+        />
+        <PopupIconAttributeRow
+          icon={<AreaHectaresIcon boxSize={4} color="secondary.800" />}
+          label={t("Area (ha)")}
+          value={areaHectaresDisplay}
+        />
+      </Flex>
+    );
+  }
+
+  if (overviewPolygonPopup === "attributes") {
     return (
       <Flex padding="0.75rem" direction="column" gap={4} width="20rem">
         <PopupAttributeRow

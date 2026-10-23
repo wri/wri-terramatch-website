@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { downloadMultiplePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
@@ -21,6 +20,7 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
 import { setPolygonTableHoveredUuid } from "@/context/polygonTableInteraction.store";
 import type { SitePolygonLightDto, ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ApiSlice from "@/store/apiSlice";
 import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
@@ -942,8 +942,7 @@ export const useSitePolygonBulkActions = ({
           label: t("Could not find selected polygons to download"),
           type: "error",
           placement: "bottom",
-          duration: 5000,
-          maxWidth: "auto"
+          duration: 5000
         });
         return;
       }
@@ -979,8 +978,7 @@ export const useSitePolygonBulkActions = ({
           label: t("Error Downloading Polygon"),
           type: "error",
           placement: "bottom",
-          duration: 5000,
-          maxWidth: "auto"
+          duration: 5000
         });
       } finally {
         setIsDownloadingSelectedPolygons(false);

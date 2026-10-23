@@ -69,6 +69,7 @@ import type {
   EntityData,
   MapFunctions,
   MobilePopupData,
+  OverviewPolygonPopup,
   PolygonCentroid,
   PolygonEntityScope,
   PolygonFromMapState,
@@ -112,7 +113,7 @@ export interface BaseMapProps {
   initialPolygonFingerprint?: string;
   /** Champions (non-admin) map layout and controls; omit or false for the default map. */
   championsMap?: boolean;
-  overviewPolygonPopup?: boolean;
+  overviewPolygonPopup?: OverviewPolygonPopup;
   polygonTableHighlight?: {
     selectedPolygonUuids: string[];
     onPolygonClickedFromMap?: (uuid: string) => void;
@@ -270,7 +271,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     hideMediaPopupActions,
     hideMediaOnMap,
     isPolygonGeometryLoading = false,
-    overviewPolygonPopup = false
+    overviewPolygonPopup
   } = props;
 
   const polygonsDataForLayers = useMemo(() => {

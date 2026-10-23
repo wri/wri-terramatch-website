@@ -43,6 +43,12 @@ const TypedMenuPositioner = MenuPositioner as FC<MenuContainerTyped>;
 const TypedMenuContent = MenuContent as FC<MenuContainerTyped>;
 const TypedMenuItem = Menu.Item as FC<MenuItemTyped>;
 
+const MENU_MIN_WIDTH: Record<NonNullable<NavbarMenuProps["variant"]>, string> = {
+  mega: "17.5rem",
+  list: "12.5rem",
+  simple: "8rem"
+};
+
 const Caret: FC<{ direction: "top" | "bottom" }> = ({ direction }) => {
   const isTop = direction === "top";
   return (
@@ -105,7 +111,7 @@ const NavbarMenu: FC<NavbarMenuProps> = ({
         <Button
           disabled={disabled}
           className={twMerge(
-            "!h-fit w-fit items-center !gap-2 !rounded-none !px-4 !py-3 !text-theme-neutral-100",
+            "!h-12 w-fit items-center !gap-2 !rounded-none !px-4 !py-0 !text-theme-neutral-100",
             "hover:!bg-theme-primary-700",
             "active:!bg-theme-primary-800",
             "data-[state=open]:!bg-theme-primary-800",
@@ -142,7 +148,7 @@ const NavbarMenu: FC<NavbarMenuProps> = ({
                 borderColor="neutral.300"
                 boxShadow="lg"
                 p={3}
-                minW={variant === "mega" ? "17.5rem" : "12.5rem"}
+                minW={MENU_MIN_WIDTH[variant]}
                 display="flex"
                 flexDirection="column"
                 gap={2}

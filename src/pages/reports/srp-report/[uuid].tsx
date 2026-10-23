@@ -1,25 +1,27 @@
+import { Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo } from "react";
 
-import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
-import { getFormHeaderLabel, getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
+import { getFormHeaderLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullSRPReport } from "@/connections/Entity";
 import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { SrpReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useReportBreadcrumbs } from "@/hooks/useReportBreadcrumbs";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import { withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
-import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
 import AuditLog from "./tabs/AuditLog";
 import SrpReportDetailsTab from "./tabs/Details";
+import SrpReportOverviewTab from "./tabs/Overview";
 
 type TabItem = {
   key: string;
@@ -36,7 +38,7 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
   const t = useT();
   const router = useRouter();
   const srpReportUUID = srpReport.uuid;
-  const currentTab = (router.query.tab as string) ?? "details";
+  const currentTab = (router.query.tab as string) ?? "overview";
 
   const window = useReportingWindow(toFramework(srpReport.frameworkKey), srpReport?.dueAt!);
   const taskTitle = t("Reporting Task {window}", { window });
@@ -45,7 +47,9 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
 
   const navigateToTab = useCallback(
     (tab: string) => {
-      router.push(`/reports/srp-report/${srpReportUUID}?tab=${tab}`, undefined, { shallow: true });
+      router.push(withReportOrigin(`/reports/srp-report/${srpReportUUID}?tab=${tab}`, router.query), undefined, {
+        shallow: true
+      });
     },
     [router, srpReportUUID]
   );
@@ -53,22 +57,27 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
   const tabItems = useMemo<TabItem[]>(
     () => [
       {
+        key: "overview",
+        title: t("Overview"),
+        renderBody: () => <SrpReportOverviewTab report={srpReport} onViewDetails={() => navigateToTab("details")} />
+      },
+      {
         key: "details",
         title: t("Report Details"),
         renderBody: () => <SrpReportDetailsTab report={srpReport} />
       },
       {
         key: "audit-log",
-        title: t("Audit Log"),
+        title: t("History"),
         renderBody: () => <AuditLog srpReport={srpReport} />
       }
     ],
-    [srpReport, t]
+    [navigateToTab, srpReport, t]
   );
 
   const visibleTabItems = useMemo(() => {
     if (srpReport.nothingToReport) {
-      return tabItems.filter(item => item.key === "details");
+      return tabItems.filter(item => item.key === "overview");
     }
 
     return tabItems;
@@ -83,8 +92,14 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
     [visibleTabItems]
   );
 
-  const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "details";
+  const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "overview";
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
+  const srpReportTitle = t("Socioeconomic Restoration Partners Report") + " - " + headerReportTitle?.replace(/\D/g, "");
+  const breadcrumbs = useReportBreadcrumbs(
+    { label: t("SRP Report"), link: `/reports/srp-report/${srpReportUUID}` },
+    "project",
+    { project: { uuid: srpReport.projectUuid, name: srpReport.projectName } }
+  );
 
   return (
     <>
@@ -94,35 +109,26 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
       </Head>
       <ReportBanner
         report={srpReport}
-        title={headerReportTitle}
+        title={srpReportTitle}
         dueAt={taskDueAt ?? srpReport.dueAt}
         entityName="srp-report"
-        breadcrumbs={[
-          {
-            label: t("Projects"),
-            link: "/my-projects",
-            icon: <ProjectIcon className="!text-theme-primary-900" />
-          },
-          {
-            label: srpReport.projectName ?? t("Project"),
-            link: `/project/${srpReport.projectUuid}`
-          },
-          {
-            label: t("Reports"),
-            link: `/project/${srpReport.projectUuid}?tab=reporting-tasks`
-          },
-          {
-            label: getShortPeriodLabel(taskTitle ?? "", true),
-            link: `/project/${srpReport.projectUuid ?? ""}/reporting-task/${srpReport.taskUuid ?? ""}`
-          },
-          {
-            label: t("SRP Report"),
-            link: `/reports/srp-report/${srpReportUUID}`
-          }
-        ]}
+        breadcrumbs={breadcrumbs}
         suffix={
-          <div className="flex items-center gap-1.5">
-            {srpReport.projectUuid != null && (
+          srpReport.projectUuid != null && (
+            <div className="flex items-center gap-1.5">
+              <Button
+                variant="borderless"
+                size="small"
+                className="underline underline-offset-2"
+                onClick={() =>
+                  router.push(`/reports?source=project&uuid=${srpReport.projectUuid}&reportType=project-report`)
+                }
+              >
+                {t("Project Report")}
+              </Button>
+              <Text as="span" textStyle="300" color="neutral.300">
+                |
+              </Text>
               <Button
                 variant="borderless"
                 size="small"
@@ -131,21 +137,8 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
               >
                 {t("Project Profile")}
               </Button>
-            )}
-            <span className="text-sm text-theme-neutral-300">|</span>
-            <Button
-              variant="borderless"
-              size="small"
-              className="underline underline-offset-2"
-              onClick={() => {
-                router.push(`/reports/project-report/${srpReport.projectReportUuid}`, undefined, {
-                  shallow: true
-                });
-              }}
-            >
-              {t("Project Report")}
-            </Button>
-          </div>
+            </div>
+          )
         }
         toolbar={{
           tabBar: {
@@ -158,7 +151,6 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
         }}
       />
       <div className="flex flex-1">{activeTabItem.renderBody()}</div>
-      <PageFooter />
     </>
   );
 };
@@ -176,8 +168,7 @@ const SocioEconomicReportDetailPage = () => {
         label: t("SRP report not found"),
         type: "error",
         placement: "bottom",
-        duration: 5000,
-        maxWidth: "auto"
+        duration: 5000
       });
     }
   });

@@ -16,6 +16,7 @@ export type AboutPageItemDisplayProps = Pick<PageItemProps, "flexProps" | "class
   aboutSection: AboutSectionDto;
   contentClassName?: string;
   descriptionMaxWidth?: string;
+  isNothingToReport?: boolean;
 };
 
 const parserReplacements: HTMLReactParserOptions["replace"] = domNode => {
@@ -53,14 +54,21 @@ const AboutPageItemDisplay: FC<AboutPageItemDisplayProps> = ({
   flexProps,
   className,
   contentClassName,
-  descriptionMaxWidth
+  descriptionMaxWidth,
+  isNothingToReport
 }) => {
   const t = useT();
   const onboardingAnalytics = useOnboardingCardAnalyticsContext();
 
   return (
     <PageItem title={aboutSection.header} className={className} flexProps={flexProps}>
-      <Flex className={twMerge("rounded-1 min-h-0 flex-col gap-2 bg-theme-neutral-100 p-5", contentClassName)}>
+      <Flex
+        className={twMerge(
+          "rounded-1 min-h-0 gap-2 bg-theme-neutral-100 p-5",
+          isNothingToReport ? "flex" : "flex-col",
+          contentClassName
+        )}
+      >
         {aboutSection.title && (
           <Text color="neutral.900" textStyle="400-bold">
             {t(aboutSection.title)}

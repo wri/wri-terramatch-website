@@ -12,10 +12,11 @@ import SideNavigationItem from "./SideNavigationItem";
 const EXPANDED_WIDTH_CLASS = "w-56";
 const COLLAPSED_WIDTH_CLASS = "w-12";
 
-interface SideNavigationLink {
+export interface SideNavigationLink {
   icon: React.ReactNode;
   label: string;
   href?: string;
+  activePaths?: string[];
   notificationValue?: number;
   onAddClick?: () => void;
   MenuItems?: MenuItemOption[];
@@ -24,11 +25,12 @@ interface SideNavigationLink {
     label: string;
     onAddClick?: () => void;
     href: string;
+    activePaths?: string[];
     MenuItems?: MenuItemOption[];
   }[];
 }
 
-interface SideNavigationGroup {
+export interface SideNavigationGroup {
   id: string;
   links: SideNavigationLink[];
 }
@@ -102,6 +104,7 @@ const SideNavigation: FC<SideNavigationProps> = ({ title, groups, collapsed = fa
                 icon={link.icon}
                 label={link.label}
                 href={link.href}
+                activePaths={link.activePaths}
                 notificationValue={link.notificationValue}
                 onAddClick={link.onAddClick}
                 MenuItems={link.MenuItems}
