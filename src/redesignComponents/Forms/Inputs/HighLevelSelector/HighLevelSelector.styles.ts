@@ -64,6 +64,26 @@ export const contentMenuStyles = {
   width: "100%"
 } as const;
 
+export const groupedContentMenuStyles = {
+  ...contentMenuStyles,
+  border: "none",
+  maxHeight: "24rem",
+  p: 0
+} as const;
+
+export const menuGroupStyles = {
+  display: "flex",
+  flexDirection: "column",
+  gap: 0.5,
+  px: 1,
+  py: 2
+} as const;
+
+export const menuGroupLabelStyles = {
+  pb: 1,
+  px: 2
+} as const;
+
 const menuItemFocusStyles = {
   bg: "primary.500/20",
   boxShadow:

@@ -57,6 +57,10 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
   );
   const { clearSelection } = useReportsSelectionActions();
   const [, projects] = useAllPages(indexProjectConnection, {});
+  const isSingleProject = projects?.length === 1;
+  useEffect(() => {
+    if (isSingleProject && viewValue !== project.uuid) setViewValue(project.uuid);
+  }, [isSingleProject, project.uuid, viewValue]);
   const projectUuidsInOrder = useMemo(() => (projects ?? []).map(item => item.uuid), [projects]);
   const organisationViewItems = useMemo<HighLevelSelectorItem[]>(() => {
     const labelsByUuid = new Map<string, string>();
@@ -239,7 +243,11 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
       : [{ label: project.name ?? t("Project"), value: project.uuid }, ...projectItems];
 
     if (activeTab === "additional-reports") {
-      return [{ label: t("All"), value: ALL_PROJECTS_VIEW_VALUE }, ...items, ...organisationViewItems];
+      return [
+        { label: t("All"), value: ALL_PROJECTS_VIEW_VALUE },
+        ...items.map(item => ({ ...item, group: t("Projects") })),
+        ...organisationViewItems.map(item => ({ ...item, group: t("Organizations") }))
+      ];
     }
 
     return [{ label: t("All Projects"), value: ALL_PROJECTS_VIEW_VALUE }, ...items];
@@ -354,6 +362,7 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
         onQueryChange={setQuery}
         indexHref={indexHref}
         addDisturbanceReportDisabled={isAllProjectsView}
+        showViewSelector={!isSingleProject}
       />
       <PageContent className="h-auto flex-1 px-2 pt-0 pb-8">
         {activeTab === "progress-reports" && (

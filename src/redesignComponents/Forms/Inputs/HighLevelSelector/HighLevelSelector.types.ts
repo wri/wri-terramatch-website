@@ -4,6 +4,7 @@ export interface HighLevelSelectorItem {
   label: string;
   value: string;
   disabled?: boolean;
+  group?: string;
 }
 
 export interface HighLevelSelectorProps {

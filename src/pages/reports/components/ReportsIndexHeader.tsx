@@ -53,6 +53,7 @@ type ReportsIndexHeaderProps = {
   availableReportTypes?: ReportTypeOption[];
   showSearchInput?: boolean;
   addDisturbanceReportDisabled?: boolean;
+  showViewSelector?: boolean;
 };
 
 const getSearchPlaceholder = (
@@ -82,7 +83,8 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
   entityProfile = false,
   availableReportTypes,
   showSearchInput = false,
-  addDisturbanceReportDisabled = false
+  addDisturbanceReportDisabled = false,
+  showViewSelector = true
 }) => {
   const t = useT();
   const router = useRouter();
@@ -268,15 +270,17 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
             />
           }
           contentRight={
-            <HighLevelSelector
-              label={t("View:")}
-              items={viewItems}
-              value={viewValue}
-              emptyMessage={t("No results found")}
-              width="25rem"
-              className="mobile:!w-full"
-              onChange={onViewChange}
-            />
+            showViewSelector ? (
+              <HighLevelSelector
+                label={t("View:")}
+                items={viewItems}
+                value={viewValue}
+                emptyMessage={t("No results found")}
+                width="25rem"
+                className="mobile:!w-full"
+                onChange={onViewChange}
+              />
+            ) : undefined
           }
         />
       )}
