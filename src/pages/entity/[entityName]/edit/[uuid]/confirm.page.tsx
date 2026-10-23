@@ -81,10 +81,8 @@ const getCallToAction = (
       const report = entity as SiteReportFullDto;
       const reportsIndexHref =
         getReportsIndexHrefFromQuery(from) ??
-        (report.siteUuid != null
-          ? getReportsIndexUrl("site", report.siteUuid)
-          : report.projectUuid != null
-          ? getReportsIndexUrl("project", report.projectUuid)
+        (report.projectUuid != null
+          ? getReportsIndexUrl("project", report.projectUuid, { reportType: "site-report" })
           : undefined);
       return [
         { children: t("View Report"), href: getEntityDetailPageLink("site-reports", report.uuid) },
@@ -98,10 +96,8 @@ const getCallToAction = (
       const report = entity as NurseryReportFullDto;
       const reportsIndexHref =
         getReportsIndexHrefFromQuery(from) ??
-        (report.nurseryUuid != null
-          ? getReportsIndexUrl("nursery", report.nurseryUuid)
-          : report.projectUuid != null
-          ? getReportsIndexUrl("project", report.projectUuid)
+        (report.projectUuid != null
+          ? getReportsIndexUrl("project", report.projectUuid, { reportType: "nursery-report" })
           : undefined);
       return [
         { children: t("View Report"), href: getEntityDetailPageLink("nursery-reports", report.uuid) },
