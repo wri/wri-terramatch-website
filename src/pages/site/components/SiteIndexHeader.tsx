@@ -30,11 +30,11 @@ type SiteIndexHeaderProps = {
   filtering: boolean;
   onApplyFilters: (statusFilters: SiteIndexFilterStatus[], updateFilters: SiteIndexFilterUpdate[]) => void;
   onViewChange: (value: string) => void;
-  onViewOpenChange?: (open: boolean) => void;
   onAddSite: () => void;
   onQueryChange: (query: string) => void;
   embeddedInProject?: boolean;
   addSiteDisabled?: boolean;
+  showViewSelector?: boolean;
 };
 
 const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
@@ -46,11 +46,11 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
   filtering,
   onApplyFilters,
   onViewChange,
-  onViewOpenChange,
   onAddSite,
   onQueryChange,
   embeddedInProject = false,
-  addSiteDisabled = false
+  addSiteDisabled = false,
+  showViewSelector = true
 }) => {
   const t = useT();
   const router = useRouter();
@@ -114,20 +114,21 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
             classNameActions="mobile:w-full"
             actions={
               <Flex gap="0.5rem" alignItems="center" className="mobile:w-full mobile:flex-col mobile:items-stretch">
-                <Box className="w-[25rem] mobile:w-full">
-                  <HighLevelSelector
-                    width="100%"
-                    label={t("View:")}
-                    items={[
-                      { label: t("All Projects"), value: ALL_PROJECTS_VIEW },
-                      ...viewProjects.map(project => ({ label: project.name, value: project.id }))
-                    ]}
-                    value={selectedProject}
-                    emptyMessage={t("No results found")}
-                    onChange={onViewChange}
-                    onOpenChange={onViewOpenChange}
-                  />
-                </Box>
+                {showViewSelector && (
+                  <Box className="w-[25rem] mobile:w-full">
+                    <HighLevelSelector
+                      width="100%"
+                      label={t("View:")}
+                      items={[
+                        { label: t("All Projects"), value: ALL_PROJECTS_VIEW },
+                        ...viewProjects.map(project => ({ label: project.name, value: project.id }))
+                      ]}
+                      value={selectedProject}
+                      emptyMessage={t("No results found")}
+                      onChange={onViewChange}
+                    />
+                  </Box>
+                )}
                 <Button
                   size="small"
                   {...addSiteButton}
