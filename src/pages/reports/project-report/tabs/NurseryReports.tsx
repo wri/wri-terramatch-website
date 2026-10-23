@@ -16,6 +16,7 @@ import { useLightNurseryReportList } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
+import { toDueDate } from "@/pages/reports/reportPeriodFilter";
 
 interface NurseryReportsTabProps {
   taskUuid: string;
@@ -51,7 +52,11 @@ const NurseryReportsTab: FC<NurseryReportsTabProps> = ({ taskUuid }) => {
               <Table
                 data={nurseryReports}
                 columns={[
-                  { header: t("Due Date"), accessorKey: "dueAt", cell: (props: any) => format(props.getValue()) },
+                  {
+                    header: t("Due Date"),
+                    accessorKey: "dueAt",
+                    cell: (props: any) => format(toDueDate(props.getValue()))
+                  },
                   {
                     header: t("Date Submitted"),
                     accessorKey: "updatedAt",
