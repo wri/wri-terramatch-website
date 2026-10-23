@@ -66,6 +66,7 @@ import {
   SrpReportLightDto,
   SrpReportUpdateData
 } from "@/generated/v3/entityService/entityServiceSchemas";
+import { getStableQuery } from "@/generated/v3/utils";
 import { useConnection } from "@/hooks/useConnection";
 import ApiSlice from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
@@ -208,11 +209,15 @@ export const deleteNursery = createEntityDeleter("nurseries");
 export const indexNurseryConnection = createEntityIndexConnection<NurseryLightDto>("nurseries");
 
 /**
- * Totals for the sites and nurseries index. The BE sends the stable request query as the ID, so each filter combination
- * has its own cached count, and a response that arrives late can't replace the count for a different filter.
+ * Totals for the sites and nurseries index. The BE sends the entity plus the stable request query as the ID, so each
+ * filter combination has its own cached count, sites and nurseries don't share one, and a response that arrives late
+ * can't replace the count for a different filter.
  */
 const siteCountsConnection = v3Resource("entityCounts", sitesCountsGet)
-  .singleByFilter<EntityCountsDto, SitesCountsGetQueryParams>()
+  .singleByCustomId<EntityCountsDto, FilterProp<SitesCountsGetQueryParams>>(
+    ({ filter }) => ({ queryParams: filter }),
+    ({ filter }) => `sitesCounts${getStableQuery(filter)}`
+  )
   .enabledProp()
   .buildConnection();
 
@@ -220,7 +225,10 @@ export const useSiteCounts = (filter: SitesCountsGetQueryParams, enabled = true)
   useConnection(siteCountsConnection, { filter, enabled });
 
 const nurseryCountsConnection = v3Resource("entityCounts", nurseriesCountsGet)
-  .singleByFilter<EntityCountsDto, NurseriesCountsGetQueryParams>()
+  .singleByCustomId<EntityCountsDto, FilterProp<NurseriesCountsGetQueryParams>>(
+    ({ filter }) => ({ queryParams: filter }),
+    ({ filter }) => `nurseriesCounts${getStableQuery(filter)}`
+  )
   .enabledProp()
   .buildConnection();
 
