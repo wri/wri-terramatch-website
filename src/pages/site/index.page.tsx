@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import IndexLoadingRow from "@/components/extensive/EntityIndex/IndexLoadingRow";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
@@ -23,7 +23,6 @@ const SiteIndexPageContent: FC = () => {
   const router = useRouter();
   const { clearSelection } = useSiteIndexSelectionActions();
   const [reloadNonce, setReloadNonce] = useState(0);
-  const [viewMenuOpened, setViewMenuOpened] = useState(false);
   const [statusFilters, setStatusFilters] = useState<SiteIndexFilterStatus[]>([]);
   const [updateFilters, setUpdateFilters] = useState<SiteIndexFilterUpdate[]>([]);
   const {
@@ -45,9 +44,9 @@ const SiteIndexPageContent: FC = () => {
     updateFilters,
     projectUuid: selectedProject === ALL_PROJECTS_VIEW ? undefined : selectedProject,
     enabled: hasHydratedQuery,
-    catalogRequested: viewMenuOpened,
     reloadNonce
   });
+  const singleProjectId = projects.length === 1 ? projects[0].id : undefined;
   const accordionOpenResetKey = `${selectedProject}:${debouncedSearch}:${statusFilters.join(",")}:${updateFilters.join(
     ","
   )}`;
@@ -57,6 +56,10 @@ const SiteIndexPageContent: FC = () => {
   );
 
   const handleSitesChanged = useCallback(() => setReloadNonce(current => current + 1), []);
+
+  useEffect(() => {
+    if (singleProjectId != null && selectedProject !== singleProjectId) handleViewChange(singleProjectId);
+  }, [handleViewChange, selectedProject, singleProjectId]);
 
   const handleAddSite = useCallback(() => {
     const targetProject = projects.find(project => project.id === selectedProject);
@@ -93,7 +96,7 @@ const SiteIndexPageContent: FC = () => {
         filtering={filtering}
         onApplyFilters={handleApplyFilters}
         onViewChange={handleViewChange}
-        onViewOpenChange={open => open && setViewMenuOpened(true)}
+        showViewSelector={singleProjectId == null}
         onAddSite={handleAddSite}
         onQueryChange={setSearchQuery}
       />

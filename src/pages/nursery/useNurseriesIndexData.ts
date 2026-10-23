@@ -15,8 +15,6 @@ export type NurseriesIndexQuery = {
   /** Only this project, for the project's nurseries tab. */
   projectUuid?: string;
   enabled: boolean;
-  /** Set once the view dropdown has been opened; the project catalog is only loaded then. */
-  catalogRequested?: boolean;
   /** Bumped after a bulk action, so the lists and counts are fetched again. */
   reloadNonce: number;
 };
@@ -31,7 +29,6 @@ export const useNurseriesIndexData = ({
   updates,
   projectUuid,
   enabled,
-  catalogRequested = false,
   reloadNonce
 }: NurseriesIndexQuery) => {
   const filter = useMemo(
@@ -53,10 +50,7 @@ export const useNurseriesIndexData = ({
 
   const metaList = useInfinitePages(projectNurseriesMetaIndexConnection, { enabled, filter }, PROJECT_PAGE_SIZE);
   const [countLoaded, { data: counts }] = useNurseryCounts(filter, enabled);
-  // The project list for the view dropdown. Only needed on the "All Projects" page.
-  const [, projectRows] = useAllPages(indexProjectConnection, {
-    enabled: enabled && (catalogRequested || projectUuid != null)
-  });
+  const [, projectRows] = useAllPages(indexProjectConnection, { enabled });
 
   const metas = useMemo(
     () => metaList.data.filter(meta => projectSupportsNurseries(meta.frameworkKey)),

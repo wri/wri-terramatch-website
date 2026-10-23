@@ -25,9 +25,9 @@ type NurseriesIndexHeaderProps = {
   addNurseryHref?: string;
   onApplyFilters: (statuses: string[], updates: string[]) => void;
   onViewChange: (value: string) => void;
-  onViewOpenChange?: (open: boolean) => void;
   onQueryChange: (query: string) => void;
   embeddedInProject?: boolean;
+  showViewSelector?: boolean;
 };
 
 const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
@@ -39,9 +39,9 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
   addNurseryHref,
   onApplyFilters,
   onViewChange,
-  onViewOpenChange,
   onQueryChange,
-  embeddedInProject = false
+  embeddedInProject = false,
+  showViewSelector = true
 }) => {
   const t = useT();
   const router = useRouter();
@@ -104,16 +104,17 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
             title={t("Nurseries")}
             actions={
               <Flex gap={4} alignItems="center">
-                <HighLevelSelector
-                  label={t("View:")}
-                  items={viewItems}
-                  value={viewValue}
-                  emptyMessage={t("No projects found")}
-                  width="25rem"
-                  className="mobile:!w-full"
-                  onChange={onViewChange}
-                  onOpenChange={onViewOpenChange}
-                />
+                {showViewSelector && (
+                  <HighLevelSelector
+                    label={t("View:")}
+                    items={viewItems}
+                    value={viewValue}
+                    emptyMessage={t("No projects found")}
+                    width="25rem"
+                    className="mobile:!w-full"
+                    onChange={onViewChange}
+                  />
+                )}
                 <Button size="small" {...addNurseryButton} />
               </Flex>
             }
