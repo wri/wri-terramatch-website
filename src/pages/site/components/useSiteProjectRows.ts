@@ -46,9 +46,10 @@ export const useSiteProjectRows = (meta: ProjectSitesMetaDto, filters: SiteProje
     () =>
       buildProjectMetrics(frameworkKey, fullProject, {
         treesPlanted: meta.treesPlantedTotal,
-        hectaresRestored: meta.hectaresRestoredTotal
+        hectaresRestored: meta.hectaresRestoredTotal,
+        aNatRegenerationGoal: meta.aNatRegenerationGoalTotal
       }),
-    [frameworkKey, fullProject, meta.hectaresRestoredTotal, meta.treesPlantedTotal]
+    [frameworkKey, fullProject, meta.aNatRegenerationGoalTotal, meta.hectaresRestoredTotal, meta.treesPlantedTotal]
   );
 
   return {

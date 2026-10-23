@@ -1,10 +1,6 @@
 import { Framework, shouldHideNurseries, toFramework } from "@/context/framework.provider";
 import type { EntityExportAllQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
-import type {
-  NurseryLightDto,
-  ProjectFullDto,
-  ProjectLightDto
-} from "@/generated/v3/entityService/entityServiceSchemas";
+import type { NurseryLightDto, ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { appendQueryParams } from "@/utils/appendQueryParams";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
@@ -58,13 +54,6 @@ const getNurserySeedlingsGrownCount = (nursery: Pick<NurseryLightDto, "treesSeed
 
 export const sumNurserySeedlingsGrown = (nurseries: Array<Pick<NurseryLightDto, "treesSeedlingsGrownCount">>) =>
   nurseries.reduce((total, nursery) => total + getNurserySeedlingsGrownCount(nursery), 0);
-
-const firstPositiveGoal = (...values: Array<number | null | undefined>) =>
-  values.find(value => value != null && value > 0) ?? 0;
-
-/** Seedlings goal for a project section header, taken from the full project when it's loaded. */
-export const getSeedlingsGoal = (project?: ProjectFullDto | null) =>
-  firstPositiveGoal(project?.nurserySeedlingsGoal, project?.seedsGrownGoal, project?.treesGrownGoal);
 
 type NurseryExportFrameworkKey = NonNullable<EntityExportAllQueryParams["frameworkKey"]>;
 
