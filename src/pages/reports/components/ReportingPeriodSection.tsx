@@ -28,7 +28,7 @@ import {
   getReportingPeriodDueDateType,
   getReportsRequiringAttention
 } from "../reportIndex.utils";
-import { getIsoMonth, getIsoYear } from "../reportPeriodFilter";
+import { getIsoMonth, getIsoYear, toDueDate } from "../reportPeriodFilter";
 import {
   ReportingPeriodMetricCard,
   useReportingPeriodMetricCards,
@@ -204,7 +204,8 @@ const ReportingPeriodSection: FC<ReportingPeriodSectionProps> = ({
   const frameworkKey = projectReport?.frameworkKey ?? period.frameworkKey;
   const metricsLoading = open && (!metricsReady || (projectReportUuid != null && !reportLoaded));
   const dueDateType = getReportingPeriodDueDateType(period.dueAt, period.reports, isAdmin);
-  const formattedDueDate = period.dueAt == null ? undefined : format(period.dueAt);
+  const dueDate = toDueDate(period.dueAt);
+  const formattedDueDate = dueDate == null ? undefined : format(dueDate);
   const dueDateLabel =
     formattedDueDate == null
       ? undefined
