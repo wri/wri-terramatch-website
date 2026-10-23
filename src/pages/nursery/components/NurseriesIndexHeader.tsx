@@ -111,8 +111,6 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
             actions={
               <Flex gap={4} alignItems="center">
                 <HighLevelSelector
-                  key={`${viewValue}:${viewItems.find(item => item.value === viewValue)?.label ?? ""}`}
-                  autocomplete
                   label={t("View:")}
                   items={viewItems}
                   value={viewValue}
