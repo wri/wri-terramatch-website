@@ -21,7 +21,6 @@ export interface PageItemProps {
   multiActionButtonProps?: IMultiActionButtonProps;
   classNameHeader?: string;
   classNameRightSectionHeader?: string;
-  classNameTitle?: string;
 }
 
 const PageItem: FC<PageItemProps> = ({
