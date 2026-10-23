@@ -45,10 +45,6 @@ const PolygonReviewIndexPage: FC = () => {
     () => projects.find(({ uuid }) => uuid === selectedProjectUuid) ?? null,
     [projects, selectedProjectUuid]
   );
-  const mapProjects = useMemo(
-    () => (selectedProject != null ? [selectedProject] : filteredProjects),
-    [filteredProjects, selectedProject]
-  );
 
   const openPicker = useCallback(() => setIsPickerOpen(true), []);
 
@@ -93,7 +89,11 @@ const PolygonReviewIndexPage: FC = () => {
         <PageContent className="bg-theme-neutral-100">
           <Flex direction="column" gap={4}>
             <PolygonReviewToolbar isProjectSelected={selectedProject != null} />
-            <PolygonReviewMap projects={mapProjects} hasLoadFailure={loadFailure != null} />
+            <PolygonReviewMap
+              projects={filteredProjects}
+              selectedProject={selectedProject}
+              hasLoadFailure={loadFailure != null}
+            />
             <Flex
               direction="column"
               borderWidth="1px"
