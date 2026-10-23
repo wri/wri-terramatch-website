@@ -82,7 +82,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
               />
             ) : (
               <Box
-                className="min-w-full rounded-md bg-theme-neutral-200"
+                className={twMerge("min-w-full rounded-md bg-theme-neutral-200", classNameImage)}
                 style={{ width: resolveRemSizeValue(imageSize), height: resolveRemSizeValue(imageSize) }}
               />
             )}

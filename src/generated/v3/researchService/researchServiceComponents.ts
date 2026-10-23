@@ -2028,9 +2028,9 @@ export type BoundingBoxGetQueryParams = {
    */
   polygonUuids?: string[];
   /**
-   * UUID of a site to get the bounding box of all its polygons
+   * Array of site UUIDs to get one combined bounding box of all their polygons
    */
-  siteUuid?: string;
+  siteUuids?: string[];
   /**
    * UUID of a project to get the bounding box of all its site polygons
    */

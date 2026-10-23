@@ -5,7 +5,6 @@ import { useMemo } from "react";
 
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import HeroBanner from "@/components/extensive/Banner/Hero/HeroBanner";
-import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useOrganisation, useOrganisationMediaByCollection } from "@/connections/Organisation";
 
@@ -48,7 +47,7 @@ const OrganizationPage = () => {
       <HeroBanner bgImage={coverUrl ?? "/images/bg-hero-banner-2.webp"} className="h-[200px]" />
       <OrganizationHeader organization={organisation ?? undefined} />
       <SecondaryTabs
-        containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
+        containerClassName="max-w-[calc(100%-2.1875rem)] px-10 xl:px-0 w-full"
         tabItems={[
           {
             key: "overview",
@@ -83,7 +82,6 @@ const OrganizationPage = () => {
           }
         ]}
       />
-      <PageFooter />
     </LoadingContainer>
   );
 };

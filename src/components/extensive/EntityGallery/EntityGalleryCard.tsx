@@ -141,7 +141,7 @@ const EntityGalleryCard = ({
     enabled: !!entityUUID && (modelName === "projects" || modelName === "sites")
   });
 
-  const mapBbox = useBoundingBox(modelName === "sites" ? { siteUuid: entityUUID } : { projectUuid: entityUUID });
+  const mapBbox = useBoundingBox(modelName === "sites" ? { siteUuids: [entityUUID] } : { projectUuid: entityUUID });
   const mapPolygons = useMemo(
     () => (mapIndexLoaded ? mapIndex?.polygons ?? [] : []),
     [mapIndexLoaded, mapIndex?.polygons]

@@ -22,16 +22,7 @@ type PolygonReviewMapProps = {
   onViewProjectPolygons: (projectUuid: string) => void;
 };
 
-/**
- * Shows the project markers until a project is picked, then every polygon of that project across all its sites.
- * Polygons come from the GeoServer tiles filtered by the project's map index, so only the sparse index is fetched.
- */
-const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
-  projects,
-  selectedProject,
-  hasLoadFailure,
-  onViewProjectPolygons
-}) => {
+const PolygonReviewMap: FC<PolygonReviewMapProps> = ({ projects, selectedProject, hasLoadFailure }) => {
   const t = useT();
   const mapFunctions = useBaseMap();
   const projectUuid = selectedProject?.uuid;
@@ -43,8 +34,7 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
   });
   const projectPolygons = polygonMapIndex?.polygons;
 
-  // The polygon tile layers are only added once a project's polygons arrive, so landing on the page loads no
-  // polygon tiles. Clearing the project afterwards must pass an empty list to hide the layers that stay on the map.
+  // Once the polygon layers are added, an empty list is needed to hide them when the project is cleared.
   const [hasPolygonLayers, setHasPolygonLayers] = useState(false);
   if (projectPolygons != null && !hasPolygonLayers) setHasPolygonLayers(true);
 

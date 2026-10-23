@@ -41,13 +41,14 @@ const PageItem: FC<PageItemProps> = ({
       <Flex
         alignItems="center"
         justifyContent="space-between"
+        textStyle="200"
         className={classNames("mobile:!items-start mobile:gap-2", classNameHeader)}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center gap-2 mobile:items-baseline">
           <Text color="primary.900" textStyle="600">
             {t(title)}
           </Text>
-          {tag !== null && tag}
+          {tag !== null && <div className="shrink-0">{tag}</div>}
         </div>
         <Flex gap={4} className={classNames("mobile:justify-end", classNameRightSectionHeader)}>
           {downloadButtonProps !== null && <Button {...downloadButtonProps} />}

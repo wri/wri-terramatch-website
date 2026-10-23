@@ -5,6 +5,7 @@ import {
   MessagesIcon,
   NotificationIcon,
   NurseryIcon,
+  OpportunitiesIcon,
   OrganizationIcon,
   ProgrammeIcon,
   ProjectIcon,
@@ -61,6 +62,25 @@ export const Default: Story = {
           { icon: <NurseryIcon boxSize={4} />, label: "Nurseries", href: storybookDocsPath },
           { icon: <ReportsIcon boxSize={4} />, label: "Reports", href: storybookDocsPath },
           { icon: <UserIcon boxSize={4} />, label: "Users", href: storybookDocsPath }
+        ]
+      }
+    ]
+  }
+};
+
+export const Launch: Story = {
+  args: {
+    title: "Management Panel",
+    groups: [
+      {
+        id: "management",
+        links: [
+          { icon: <OrganizationIcon boxSize={4} />, label: "Organizations", href: storybookDocsPath },
+          { icon: <ProjectIcon boxSize={4} />, label: "Projects", href: storybookDocsPath },
+          { icon: <SiteIcon boxSize={4} />, label: "Sites", href: storybookDocsPath },
+          { icon: <NurseryIcon boxSize={4} />, label: "Nurseries", href: storybookDocsPath },
+          { icon: <ReportsIcon boxSize={4} />, label: "Reports", href: storybookDocsPath },
+          { icon: <OpportunitiesIcon boxSize={4} />, label: "Opportunities", href: storybookDocsPath }
         ]
       }
     ]
