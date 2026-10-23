@@ -22,7 +22,12 @@ type PolygonReviewMapProps = {
   onViewProjectPolygons: (projectUuid: string) => void;
 };
 
-const PolygonReviewMap: FC<PolygonReviewMapProps> = ({ projects, selectedProject, hasLoadFailure }) => {
+const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
+  projects,
+  selectedProject,
+  hasLoadFailure,
+  onViewProjectPolygons
+}) => {
   const t = useT();
   const mapFunctions = useBaseMap();
   const projectUuid = selectedProject?.uuid;
