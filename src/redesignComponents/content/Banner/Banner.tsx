@@ -28,7 +28,7 @@ const Banner: FC<BannerProps> = ({ breadcrumbs, suffix, toolbar, className, chil
           breadcrumbs={{ links: breadcrumbs, linkRouter: NextLinkAdapter }}
           suffix={suffix}
           className="gap-3 mobile:flex-col mobile:items-start"
-          classNameSuffix="mobile:w-full mobile:flex mobile:justify-end"
+          classNameSuffix="mobile:w-full mobile:flex mobile:justify-start"
         />
       </Box>
       {children}

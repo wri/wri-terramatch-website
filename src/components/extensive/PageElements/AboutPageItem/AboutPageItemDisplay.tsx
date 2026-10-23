@@ -65,7 +65,7 @@ const AboutPageItemDisplay: FC<AboutPageItemDisplayProps> = ({
       <Flex
         className={twMerge(
           "rounded-1 min-h-0 gap-2 bg-theme-neutral-100 p-5",
-          isNothingToReport ? "flex" : "flex-col",
+          isNothingToReport ? "flex mobile:flex-col" : "flex-col",
           contentClassName
         )}
       >
@@ -74,7 +74,7 @@ const AboutPageItemDisplay: FC<AboutPageItemDisplayProps> = ({
             {t(aboutSection.title)}
           </Text>
         )}
-        <Flex direction="column" gap={5} maxWidth={descriptionMaxWidth}>
+        <Flex direction="column" gap={5} maxWidth={descriptionMaxWidth} className="mobile:!max-w-full">
           {parse(t(aboutSection.description), { replace: parserReplacements })}
           <ContactSupport
             message={t(aboutSection.contactSupportMessage)}

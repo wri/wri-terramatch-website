@@ -67,7 +67,7 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
     <PageContent>
       {EditModals}
       <Flex gap={7} className="flex-col">
-        <Flex gap={7}>
+        <Flex gap={7} className="mobile:flex-col">
           <Flex gap={5} className="flex-[2] flex-col">
             <PageItem
               title={t("Key Indicators and Insights")}
@@ -136,7 +136,7 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
           <AboutPageItem
             type="project-report"
             flexProps={{ flex: 1 }}
-            contentClassName="flex-row gap-14"
+            contentClassName="flex-row gap-14 mobile:flex-col mobile:gap-5"
             descriptionMaxWidth="65%"
           />
         </OnboardingCard>
