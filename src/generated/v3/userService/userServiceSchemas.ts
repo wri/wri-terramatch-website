@@ -859,6 +859,19 @@ export type UserTaskDto = {
   associations: UserTaskAssociation[];
 };
 
+export type NotificationDto = {
+  uuid: string;
+  projectUuid?: string | null;
+  projectName?: string | null;
+  summary: string | null;
+  category: "project-reporting" | "financial-reporting" | "applications" | "polygons";
+  unread: boolean;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+};
+
 /**
  * CONSTANTS
  */

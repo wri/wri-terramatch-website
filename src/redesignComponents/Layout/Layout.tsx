@@ -20,7 +20,7 @@ import Footer from "../navigation/Footer/Footer";
 import Navbar from "../navigation/NavBar/Navbar";
 import SideNavigation, { SideNavigationGroup } from "../navigation/NavBar/SideNavigation/SideNavigation";
 import { useNavbarData } from "../navigation/NavBar/useNavbarData";
-import { LayoutShellProvider, useLayoutShell } from "./LayoutShell.provider";
+import { useLayoutShell } from "./LayoutShell.provider";
 
 const FOOTER_CLASS_NAME = "mt-auto shrink-0 [zoom:var(--layout-chrome-zoom,1)]";
 
@@ -30,7 +30,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
   // so the side menu must highlight the same first level.
   const profileOpenedFromProject = router.pathname === "/site/[uuid]" && router.query.origin !== "sites";
   const nurseryOpenedFromProject = router.pathname === "/nursery/[uuid]" && router.query.origin !== "nurseries";
-  const { isSidebarCollapseDisabled, pageResetKey } = useLayoutShell();
+  const { isSidebarCollapsed, setSidebarCollapsed, isSidebarCollapseDisabled, pageResetKey } = useLayoutShell();
   const [, myOrg] = useMyOrg();
   const [, { user: myUser }] = useMyUser();
   const data = useNavbarData();
@@ -116,6 +116,8 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
           >
             <Flex className="[zoom:var(--layout-chrome-zoom,1)]">
               <SideNavigation
+                collapsed={isSidebarCollapsed}
+                onCollapsedChange={setSidebarCollapsed}
                 isCollapsedDisabled={isSidebarCollapseDisabled}
                 groups={sideNavigationGroups}
                 title="Management Panel"
@@ -145,10 +147,6 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
   );
 };
 
-const Layout: FC<PropsWithChildren> = ({ children }) => (
-  <LayoutShellProvider>
-    <LayoutContent>{children}</LayoutContent>
-  </LayoutShellProvider>
-);
+const Layout: FC<PropsWithChildren> = ({ children }) => <LayoutContent>{children}</LayoutContent>;
 
 export default Layout;

@@ -53,9 +53,7 @@ const NurseriesIndexContent: FC = () => {
   const viewItems = useMemo(
     () => [
       { label: t("All Projects"), value: ALL_PROJECTS_VIEW_VALUE },
-      ...projects
-        .map(project => ({ label: project.name ?? t("Project"), value: project.uuid }))
-        .sort((a, b) => a.label.localeCompare(b.label))
+      ...projects.map(project => ({ label: project.name ?? t("Project"), value: project.uuid }))
     ],
     [projects, t]
   );

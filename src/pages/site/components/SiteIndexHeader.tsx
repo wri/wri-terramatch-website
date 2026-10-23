@@ -26,9 +26,9 @@ type SiteIndexHeaderProps = {
   selectedProject: string;
   viewProjects: Pick<SiteIndexProject, "id" | "name">[];
   statusFilters: SiteIndexFilterStatus[];
-  updateFilter: SiteIndexFilterUpdate | null;
+  updateFilters: SiteIndexFilterUpdate[];
   filtering: boolean;
-  onApplyFilters: (statusFilters: SiteIndexFilterStatus[], updateFilter: SiteIndexFilterUpdate | null) => void;
+  onApplyFilters: (statusFilters: SiteIndexFilterStatus[], updateFilters: SiteIndexFilterUpdate[]) => void;
   onViewChange: (value: string) => void;
   onViewOpenChange?: (open: boolean) => void;
   onAddSite: () => void;
@@ -42,7 +42,7 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
   selectedProject,
   viewProjects,
   statusFilters,
-  updateFilter,
+  updateFilters,
   filtering,
   onApplyFilters,
   onViewChange,
@@ -65,22 +65,22 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
               label: statusFilters.map(
                 status => getSiteIndexStatusOptions(t).find(option => option.value === status)?.label ?? status
               ),
-              onRemove: () => onApplyFilters([], updateFilter)
+              onRemove: () => onApplyFilters([], updateFilters)
             }
           ]),
-      ...(updateFilter == null
+      ...(updateFilters.length === 0
         ? []
         : [
             {
               category: t("Update"),
-              label: [
-                getSiteIndexUpdateOptions(t).find(option => option.value === updateFilter)?.label ?? updateFilter
-              ],
-              onRemove: () => onApplyFilters(statusFilters, null)
+              label: updateFilters.map(
+                update => getSiteIndexUpdateOptions(t).find(option => option.value === update)?.label ?? update
+              ),
+              onRemove: () => onApplyFilters(statusFilters, [])
             }
           ])
     ],
-    [onApplyFilters, statusFilters, t, updateFilter]
+    [onApplyFilters, statusFilters, t, updateFilters]
   );
 
   const addSiteButton = {
@@ -116,14 +116,6 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
               <Flex gap="0.5rem" alignItems="center" className="mobile:w-full mobile:flex-col mobile:items-stretch">
                 <Box className="w-[25rem] mobile:w-full">
                   <HighLevelSelector
-                    key={
-                      selectedProject === ALL_PROJECTS_VIEW
-                        ? ALL_PROJECTS_VIEW
-                        : `${selectedProject}:${
-                            viewProjects.find(project => project.id === selectedProject)?.name ?? ""
-                          }`
-                    }
-                    autocomplete
                     width="100%"
                     label={t("View:")}
                     items={[
@@ -164,14 +156,14 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
         }}
         selectedFilters={selectedFilters}
         onClickFilterButton={() => setIsFilterDrawerOpen(true)}
-        onClearFilters={() => onApplyFilters([], null)}
+        onClearFilters={() => onApplyFilters([], [])}
         showClearFilters={selectedFilters.length > 0}
         button={embeddedInProject ? addSiteButton : undefined}
       />
       <SiteIndexFilterDrawer
         open={isFilterDrawerOpen}
         filters={statusFilters}
-        updateFilter={updateFilter}
+        updateFilters={updateFilters}
         onOpenChange={setIsFilterDrawerOpen}
         onApplyFilters={onApplyFilters}
       />

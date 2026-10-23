@@ -19,9 +19,11 @@ export const getIsoMonth = (value: string | null | undefined): string | undefine
 
 export type ReportPeriod = { month: string; year: string };
 
-/** The reporting period a report is for ends the month before the report is due. */
-export const getDueReportingPeriod = ({ dueYear, dueMonth }: ReportingPeriodDto): ReportPeriod =>
-  dueMonth === 1 ? { month: "12", year: String(dueYear - 1) } : { month: String(dueMonth - 1), year: String(dueYear) };
+/** The reporting period a report is for is the month the report is due in. */
+export const getDueReportingPeriod = ({ dueYear, dueMonth }: ReportingPeriodDto): ReportPeriod => ({
+  month: String(dueMonth),
+  year: String(dueYear)
+});
 
 export const getReportingPeriod = (dueAt: string | null | undefined): ReportPeriod | undefined => {
   const year = getIsoYear(dueAt);
@@ -97,14 +99,14 @@ export const getReportPeriodOptions = (
 
 /**
  * The inverse of getReportingPeriod: converts a reporting period month / year refinement into the
- * due date query params the BE filters on. A reporting period's reports are due the month after it.
+ * due date query params the BE filters on. A reporting period is the month its reports are due in.
  */
 export const getDueDateQuery = (month: string, year: string) => {
   if (month === "") {
-    return year === "" ? {} : { dueDateFrom: `${year}-02-01`, dueDateTo: `${Number(year) + 1}-01-31` };
+    return year === "" ? {} : { dueDateFrom: `${year}-01-01`, dueDateTo: `${year}-12-31` };
   }
 
-  const dueMonth = (Number(month) % 12) + 1;
+  const dueMonth = Number(month);
   if (year === "") return { dueMonth };
-  return { dueMonth, dueYear: dueMonth === 1 ? Number(year) + 1 : Number(year) };
+  return { dueMonth, dueYear: Number(year) };
 };

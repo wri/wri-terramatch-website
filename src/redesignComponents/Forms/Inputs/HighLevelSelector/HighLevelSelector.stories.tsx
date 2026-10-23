@@ -18,7 +18,6 @@ const meta = {
   },
   tags: ["autodocs"],
   argTypes: {
-    autocomplete: { control: "boolean" },
     label: { control: "text" },
     placeholder: { control: "text" },
     disabled: { control: "boolean" },
@@ -31,7 +30,6 @@ const meta = {
     placeholder: "Label",
     width: "25rem",
     onChange: action("onChange"),
-    onInputChange: action("onInputChange"),
     onOpenChange: action("onOpenChange")
   }
 } satisfies Meta<typeof HighLevelSelector>;
@@ -42,12 +40,6 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     defaultValue: "label-1"
-  }
-};
-
-export const Autocomplete: Story = {
-  args: {
-    autocomplete: true
   }
 };
 

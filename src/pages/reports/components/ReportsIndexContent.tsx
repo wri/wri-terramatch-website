@@ -57,6 +57,7 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
   );
   const { clearSelection } = useReportsSelectionActions();
   const [, projects] = useAllPages(indexProjectConnection, {});
+  const projectUuidsInOrder = useMemo(() => (projects ?? []).map(item => item.uuid), [projects]);
   const organisationViewItems = useMemo<HighLevelSelectorItem[]>(() => {
     const labelsByUuid = new Map<string, string>();
     (projects ?? []).forEach(item => {
@@ -77,9 +78,15 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
     (viewFromQuery === viewValue && viewValue !== ALL_PROJECTS_VIEW_VALUE && !isKnownProjectView);
   const isAllProjectsView = viewValue === ALL_PROJECTS_VIEW_VALUE || isOrganisationView;
   const isSwitchingProject = !isAllProjectsView && viewValue !== project.uuid;
+  const selectedAdditionalProject =
+    activeTab !== "additional-reports" || isAllProjectsView
+      ? null
+      : viewValue === project.uuid
+      ? project
+      : (projects ?? []).find(item => item.uuid === viewValue) ?? null;
   const additionalOrganisationUuid =
     activeTab === "additional-reports"
-      ? viewValue === ALL_PROJECTS_VIEW_VALUE
+      ? viewValue === ALL_PROJECTS_VIEW_VALUE || selectedAdditionalProject != null
         ? null
         : viewValue
       : viewValue === ALL_PROJECTS_VIEW_VALUE
@@ -107,7 +114,13 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
     sections: additionalSections,
     loading: additionalLoading,
     error: additionalError
-  } = useAdditionalReportsData(project, true, additionalOrganisationUuid);
+  } = useAdditionalReportsData(
+    selectedAdditionalProject ?? project,
+    true,
+    selectedAdditionalProject == null ? additionalOrganisationUuid : null,
+    selectedAdditionalProject == null ? "organisation" : "project",
+    projectUuidsInOrder
+  );
 
   const { filteredProgressSections, filteredAdditionalSections, progressReportCount, additionalReportCount } =
     useReportsIndexFilters({ progressSections, additionalSections, query });
@@ -215,10 +228,6 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
   );
 
   const viewItems = useMemo<HighLevelSelectorItem[]>(() => {
-    if (activeTab === "additional-reports") {
-      return [{ label: t("All"), value: ALL_PROJECTS_VIEW_VALUE }, ...organisationViewItems];
-    }
-
     const projectItems =
       projects?.map(item => ({
         label: item.name ?? t("Project"),
@@ -229,6 +238,10 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
       ? projectItems
       : [{ label: project.name ?? t("Project"), value: project.uuid }, ...projectItems];
 
+    if (activeTab === "additional-reports") {
+      return [{ label: t("All"), value: ALL_PROJECTS_VIEW_VALUE }, ...items, ...organisationViewItems];
+    }
+
     return [{ label: t("All Projects"), value: ALL_PROJECTS_VIEW_VALUE }, ...items];
   }, [activeTab, organisationViewItems, project.name, project.uuid, projects, t]);
 
@@ -236,6 +249,8 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
     activeTab === "additional-reports"
       ? viewValue === ALL_PROJECTS_VIEW_VALUE
         ? ALL_PROJECTS_VIEW_VALUE
+        : selectedAdditionalProject != null
+        ? viewValue
         : additionalOrganisationUuid ?? ALL_PROJECTS_VIEW_VALUE
       : isOrganisationView
       ? ALL_PROJECTS_VIEW_VALUE
@@ -308,7 +323,9 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
   const handleTabChange = useCallback(
     (tab: string) => {
       clearSelection();
+      setViewValue(ALL_PROJECTS_VIEW_VALUE);
       const query = { ...router.query };
+      query.view = ALL_PROJECTS_VIEW_VALUE;
       if (tab === "additional-reports") {
         query.tab = tab;
         delete query.reportType;
@@ -327,7 +344,7 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
         activeTab={activeTab}
         source={SOURCE}
         sourceUuid={project.uuid}
-        projectUuid={project.uuid}
+        projectUuid={(selectedAdditionalProject ?? project).uuid}
         reportCount={reportCount}
         viewValue={headerViewValue}
         viewItems={viewItems}
@@ -423,7 +440,7 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
         {activeTab === "additional-reports" && (
           <AdditionalReportsContent
             sections={filteredAdditionalSections}
-            loading={additionalLoading || isSwitchingProject || !restoreReady}
+            loading={additionalLoading || !restoreReady}
             error={additionalError}
             hasActiveSearch={hasActiveSearch}
             openResetKey={accordionOpenResetKey}

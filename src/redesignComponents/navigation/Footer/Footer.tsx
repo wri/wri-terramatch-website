@@ -40,12 +40,12 @@ const Footer: FC<FooterProps> = ({ maxWidth, className }) => {
       }}
     >
       <WriFooter label={t("© TerraMatch")} maxWidth={maxWidth}>
-        <Link href={privacyPolicyLink}>
+        <Link href={privacyPolicyLink} target="_blank" rel="noopener noreferrer">
           <Text as="span" textStyle="300" color="neutral.200">
             {t("Privacy policy")}
           </Text>
         </Link>
-        <Link href={termsAndConditionsLink}>
+        <Link href={termsAndConditionsLink} target="_blank" rel="noopener noreferrer">
           <Text as="span" textStyle="300" color="neutral.200">
             {t("Terms of service")}
           </Text>

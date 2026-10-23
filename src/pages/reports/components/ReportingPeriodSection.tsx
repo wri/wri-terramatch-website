@@ -3,7 +3,6 @@ import { useT } from "@transifex/react";
 import { FC, ReactNode, useEffect, useMemo } from "react";
 
 import useCollectionsTotal from "@/components/extensive/TrackingCollapseGrid/hooks";
-import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
 import {
   DemographicsLoader,
@@ -11,12 +10,11 @@ import {
   getTooltipContent
 } from "@/components/reports/KeyIndicators/reportKeyIndicatorPrimitives";
 import { useLightProjectReport } from "@/connections/Entity";
-import FrameworkProvider, { toFramework } from "@/context/framework.provider";
+import FrameworkProvider from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { useDate } from "@/hooks/useDate";
 import { useIndexAccordionOpen } from "@/hooks/useIndexAccordionOpen";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
-import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useReportsIndexAnalytics } from "@/hooks/useReportsIndexAnalytics";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
@@ -30,6 +28,7 @@ import {
   getReportingPeriodDueDateType,
   getReportsRequiringAttention
 } from "../reportIndex.utils";
+import { getIsoMonth, getIsoYear } from "../reportPeriodFilter";
 import {
   ReportingPeriodMetricCard,
   useReportingPeriodMetricCards,
@@ -193,8 +192,10 @@ const ReportingPeriodSection: FC<ReportingPeriodSectionProps> = ({
     trackAttentionDisplayed({ attentionCount, periodStatus });
   }, [attentionCount, period.id, periodStatus, trackAttentionDisplayed]);
 
-  const periodLabel = useReportingWindow(toFramework(period.frameworkKey), period.dueAt ?? undefined);
-  const taskTitle = t("Reporting Task {window}", { window: periodLabel });
+  const dueYear = getIsoYear(period.dueAt);
+  const dueMonth = getIsoMonth(period.dueAt);
+  const periodLabel =
+    dueYear == null || dueMonth == null ? "" : format(new Date(Number(dueYear), Number(dueMonth) - 1, 1), "MMMM yyyy");
   const projectReportUuid = metricsReady ? period.projectReportUuid : null;
 
   const [reportLoaded, { data: projectReport }] = useLightProjectReport({
@@ -224,7 +225,7 @@ const ReportingPeriodSection: FC<ReportingPeriodSectionProps> = ({
           <ListSectionHeader
             level="sub-level"
             label={t("Reporting Period")}
-            title={getShortPeriodLabel(taskTitle ?? "", false)}
+            title={periodLabel}
             dueIcon={
               <Flex alignItems="center">
                 <DueIcon color={dueDateType === "error" ? "error.500" : undefined} />
@@ -243,7 +244,7 @@ const ReportingPeriodSection: FC<ReportingPeriodSectionProps> = ({
         }
       >
         {open ? (
-          <div className="bg-theme-neutral-100 p-4">
+          <div className="bg-theme-neutral-100 p-4" data-table-scroll-anchor>
             {metricsLoading ? (
               <DemographicsLoader className="mb-5 h-10 w-full" />
             ) : (

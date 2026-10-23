@@ -6,14 +6,14 @@ import { useAllPages, useInfinitePages } from "@/hooks/useConnection";
 import ApiSlice from "@/store/apiSlice";
 
 import type { SiteIndexStatus, SiteIndexUpdate } from "./siteIndex.types";
-import { toSiteIndexUpdateRequestStatus } from "./siteIndex.utils";
+import { toSiteIndexUpdateRequestStatuses } from "./siteIndex.utils";
 
 const PROJECT_PAGE_SIZE = 10;
 
 export type SiteIndexQuery = {
   search: string;
   statusFilters: SiteIndexStatus[];
-  updateFilter: SiteIndexUpdate | null;
+  updateFilters: SiteIndexUpdate[];
   /** Only this project, for the project's sites tab. */
   projectUuid?: string;
   enabled: boolean;
@@ -30,21 +30,21 @@ export type SiteIndexQuery = {
 export const useSiteIndexData = ({
   search,
   statusFilters,
-  updateFilter,
+  updateFilters,
   projectUuid,
   enabled,
   catalogRequested = false,
   reloadNonce
 }: SiteIndexQuery) => {
-  const updateRequestStatus = toSiteIndexUpdateRequestStatus(updateFilter);
+  const updateRequestStatuses = useMemo(() => toSiteIndexUpdateRequestStatuses(updateFilters), [updateFilters]);
   const filter = useMemo(
     () => ({
       search: search === "" ? undefined : search,
       status: statusFilters.length > 0 ? statusFilters : undefined,
-      updateRequestStatus: updateRequestStatus == null ? undefined : [updateRequestStatus],
+      updateRequestStatus: updateRequestStatuses.length === 0 ? undefined : updateRequestStatuses,
       projectUuid
     }),
-    [projectUuid, search, statusFilters, updateRequestStatus]
+    [projectUuid, search, statusFilters, updateRequestStatuses]
   );
 
   useEffect(() => {
