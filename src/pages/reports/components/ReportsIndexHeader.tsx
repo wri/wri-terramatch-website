@@ -269,6 +269,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
           }
           contentRight={
             <HighLevelSelector
+              key={`${activeTab}:${viewValue}`}
               autocomplete
               label={t("View:")}
               items={viewItems}

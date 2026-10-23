@@ -36,7 +36,7 @@ const NurseryProjectBody: FC<NurseryProjectBodyProps> = ({
   const selectedSeedlings = useMemo(() => sumNurserySeedlingsGrown(selectedRows), [selectedRows]);
 
   return (
-    <Flex p={4} bg="neutral.100" gap={5} flexDirection="column">
+    <Flex p={4} bg="neutral.100" gap={5} flexDirection="column" data-table-scroll-anchor>
       {!nurseries.goalLoaded ? (
         <Flex minHeight="3rem" alignItems="center" gap={3}>
           <LoadingIcon boxSize={5} className="animate-spin" color="primary.700" />

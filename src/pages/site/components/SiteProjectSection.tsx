@@ -367,7 +367,7 @@ export const SiteProjectBody: FC<SiteProjectBodyProps> = ({
       : null;
 
   return (
-    <Box className="bg-theme-neutral-100 p-4" minW={0}>
+    <Box className="bg-theme-neutral-100 p-4" minW={0} data-table-scroll-anchor>
       {!sites.loaded || !sites.metricsLoaded ? (
         <IndexLoadingRow label={t("Loading sites...")} minHeight="10rem" />
       ) : (

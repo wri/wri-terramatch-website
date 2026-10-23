@@ -6,7 +6,6 @@ import {
   indexFinancialReportConnection,
   indexSRPReportConnection
 } from "@/connections/Entity";
-import { useOrganisation } from "@/connections/Organisation";
 import {
   DisturbanceReportEntryDto,
   DisturbanceReportLightDto,
@@ -48,11 +47,7 @@ const getEntryValue = (entries: DisturbanceReportEntryDto[] | null, name: string
   }
 };
 
-const toFinancialReport = (
-  report: FinancialReportLightDto,
-  currency: string | null,
-  financialYearStart: number | null
-): AdditionalFinancialReport => ({
+const toFinancialReport = (report: FinancialReportLightDto): AdditionalFinancialReport => ({
   id: report.uuid,
   name: "Financial Report",
   type: "financial-report",
@@ -61,8 +56,8 @@ const toFinancialReport = (
   updateRequestStatus: report.updateRequestStatus ?? null,
   dueAt: report.dueAt,
   updatedAt: report.updatedAt,
-  currency,
-  financialYearStart,
+  currency: report.currency ?? null,
+  financialYearStart: report.finStartMonth ?? null,
   completion: null,
   organisationName: report.organisationName ?? null,
   organisationUuid: report.organisationUuid ?? null,
@@ -178,16 +173,13 @@ export const useAdditionalReportsData = (
   project: ProjectLightDto,
   enabled: boolean,
   organisationUuid: string | null,
-  scope: "organisation" | "project" = "organisation"
+  scope: "organisation" | "project" = "organisation",
+  projectUuidsInOrder: string[] = []
 ): AdditionalReportsDataState => {
   const loadFinancialReports = enabled && scope === "organisation";
-  const loadOrganisationData = loadFinancialReports && organisationUuid != null;
+  const loadProjectReports = enabled && (scope === "project" || organisationUuid == null);
   const indexFilter =
     scope === "project" ? { projectUuid: project.uuid } : organisationUuid == null ? {} : { organisationUuid };
-
-  const [organisationLoaded, { data: organisation }] = useOrganisation(
-    loadOrganisationData ? { id: organisationUuid } : {}
-  );
 
   const [financialLoaded, financialData, financialFailure] = useAllPages(indexFinancialReportConnection, {
     ...INDEX_PROPS,
@@ -198,18 +190,22 @@ export const useAdditionalReportsData = (
   const [srpLoaded, srpData, srpFailure] = useAllPages(indexSRPReportConnection, {
     ...INDEX_PROPS,
     filter: indexFilter,
-    enabled
+    enabled: loadProjectReports
   });
 
   const [disturbanceLoaded, disturbanceData, disturbanceFailure] = useAllPages(indexDisturbanceReportConnection, {
     ...INDEX_PROPS,
     filter: indexFilter,
-    enabled
+    enabled: loadProjectReports
   });
 
-  const organisationReady = !loadOrganisationData || organisationLoaded;
+  const projectPosition = useMemo(
+    () => new Map(projectUuidsInOrder.map((uuid, index) => [uuid, index])),
+    [projectUuidsInOrder]
+  );
+
   const financialReady = !loadFinancialReports || financialLoaded;
-  const loading = enabled && !(organisationReady && financialReady && srpLoaded && disturbanceLoaded);
+  const loading = enabled && !(financialReady && srpLoaded && disturbanceLoaded);
   // Financial reports are optional on this tab: a failed unfiltered "All" fetch must not hide SRP
   // and disturbance reports that already loaded.
   const error = enabled && (srpFailure != null || disturbanceFailure != null);
@@ -259,13 +255,8 @@ export const useAdditionalReportsData = (
     };
 
     (!loadFinancialReports || financialFailure != null ? [] : financialData).forEach(report => {
-      const isScopedOrganisation = organisationUuid != null && report.organisationUuid === organisationUuid;
       organisationDraft(report.organisationUuid, report.organisationName).financialReports.push(
-        toFinancialReport(
-          report,
-          isScopedOrganisation ? organisation?.currency ?? null : null,
-          isScopedOrganisation ? organisation?.finStartMonth ?? null : null
-        )
+        toFinancialReport(report)
       );
     });
     srpData.forEach(report => projectDraft(report).srpReports.push(toSrpReport(report)));
@@ -276,7 +267,11 @@ export const useAdditionalReportsData = (
         const children = Array.from(draft.projects.values())
           .map(toProjectSection)
           .filter((section): section is AdditionalReportsEntitySection => section != null)
-          .sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""));
+          .sort(
+            (a, b) =>
+              (projectPosition.get(a.id) ?? Number.MAX_SAFE_INTEGER) -
+                (projectPosition.get(b.id) ?? Number.MAX_SAFE_INTEGER) || (a.name ?? "").localeCompare(b.name ?? "")
+          );
         const groups: AdditionalReportGroup[] =
           draft.financialReports.length === 0
             ? []
@@ -302,19 +297,17 @@ export const useAdditionalReportsData = (
       .sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""));
   }, [
     disturbanceData,
+    projectPosition,
     enabled,
     error,
     financialData,
     financialFailure,
     loadFinancialReports,
     loading,
-    organisation?.currency,
-    organisation?.finStartMonth,
     project.name,
     project.organisationName,
     project.organisationUuid,
     project.uuid,
-    organisationUuid,
     srpData
   ]);
 

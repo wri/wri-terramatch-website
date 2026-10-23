@@ -34,7 +34,8 @@ const Footer: FC<FooterProps> = ({ maxWidth, className }) => {
           justifyContent: "center"
         },
         "& footer > div > div:last-of-type p": {
-          color: "neutral.200"
+          color: "neutral.200",
+          width: "auto"
         }
       }}
     >

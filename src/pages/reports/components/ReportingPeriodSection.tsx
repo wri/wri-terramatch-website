@@ -243,7 +243,7 @@ const ReportingPeriodSection: FC<ReportingPeriodSectionProps> = ({
         }
       >
         {open ? (
-          <div className="bg-theme-neutral-100 p-4">
+          <div className="bg-theme-neutral-100 p-4" data-table-scroll-anchor>
             {metricsLoading ? (
               <DemographicsLoader className="mb-5 h-10 w-full" />
             ) : (

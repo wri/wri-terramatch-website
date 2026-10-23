@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 import { EnabledProp, FilterProp, IdProp, SideloadsProp, v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader, creationHook } from "@/connections/util/connectionShortcuts";
 import { deleterAsync } from "@/connections/util/resourceDeleter";
@@ -69,7 +67,6 @@ import {
   SrpReportUpdateData
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";
-import { useStableProps } from "@/hooks/useStableProps";
 import ApiSlice from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import { Filter, PaginatedConnectionProps } from "@/types/connection";
@@ -211,42 +208,24 @@ export const deleteNursery = createEntityDeleter("nurseries");
 export const indexNurseryConnection = createEntityIndexConnection<NurseryLightDto>("nurseries");
 
 /**
- * Totals for the sites and nurseries index. Like the reports counts, the count always has the same ID, so it is pruned
- * whenever the connection is enabled or its filter changes, and then refetched.
+ * Totals for the sites and nurseries index. The BE sends the stable request query as the ID, so each filter combination
+ * has its own cached count, and a response that arrives late can't replace the count for a different filter.
  */
-const SITE_COUNTS_ID = "sitesCounts";
 const siteCountsConnection = v3Resource("entityCounts", sitesCountsGet)
-  .singleByCustomId<EntityCountsDto, FilterProp<SitesCountsGetQueryParams>>(
-    ({ filter }) => ({ queryParams: filter }),
-    () => SITE_COUNTS_ID
-  )
+  .singleByFilter<EntityCountsDto, SitesCountsGetQueryParams>()
   .enabledProp()
   .buildConnection();
 
-export const useSiteCounts = (filter: SitesCountsGetQueryParams, enabled = true) => {
-  const stableFilter = useStableProps(filter);
-  useEffect(() => {
-    if (enabled) ApiSlice.pruneCache("entityCounts", [SITE_COUNTS_ID]);
-  }, [enabled, stableFilter]);
-  return useConnection(siteCountsConnection, { filter: stableFilter, enabled });
-};
+export const useSiteCounts = (filter: SitesCountsGetQueryParams, enabled = true) =>
+  useConnection(siteCountsConnection, { filter, enabled });
 
-const NURSERY_COUNTS_ID = "nurseriesCounts";
 const nurseryCountsConnection = v3Resource("entityCounts", nurseriesCountsGet)
-  .singleByCustomId<EntityCountsDto, FilterProp<NurseriesCountsGetQueryParams>>(
-    ({ filter }) => ({ queryParams: filter }),
-    () => NURSERY_COUNTS_ID
-  )
+  .singleByFilter<EntityCountsDto, NurseriesCountsGetQueryParams>()
   .enabledProp()
   .buildConnection();
 
-export const useNurseryCounts = (filter: NurseriesCountsGetQueryParams, enabled = true) => {
-  const stableFilter = useStableProps(filter);
-  useEffect(() => {
-    if (enabled) ApiSlice.pruneCache("entityCounts", [NURSERY_COUNTS_ID]);
-  }, [enabled, stableFilter]);
-  return useConnection(nurseryCountsConnection, { filter: stableFilter, enabled });
-};
+export const useNurseryCounts = (filter: NurseriesCountsGetQueryParams, enabled = true) =>
+  useConnection(nurseryCountsConnection, { filter, enabled });
 
 /** Projects with at least one nursery matching the filters, with nursery counts and seedlings grown. */
 export const projectNurseriesMetaIndexConnection = v3Resource("projectNurseriesMetas", entityNurseriesMetaIndex)
@@ -393,28 +372,14 @@ export const pruneReportsMeta = () => {
   ApiSlice.pruneCache("reportCounts");
 };
 
-// The BE sends this virtual resource with a fixed ID regardless of the filters requested.
-const REPORT_COUNTS_ID = "reportCounts";
 const reportCountsConnection = v3Resource("reportCounts", reportCountsGet)
-  .singleByCustomId<ReportCountsDto, FilterProp<ReportCountsGetQueryParams>>(
-    ({ filter }) => ({ queryParams: filter }),
-    () => REPORT_COUNTS_ID
-  )
+  .singleByFilter<ReportCountsDto, ReportCountsGetQueryParams>()
   .enabledProp()
   .buildConnection();
 
-/**
- * Because the reportCounts resource always has the same ID, the cached value can't be tied to the
- * filters that produced it. Instead, the cached value is pruned (causing a refetch) any time the
- * connection becomes enabled or the filter changes.
- */
-export const useReportCounts = (filter: ReportCountsGetQueryParams, enabled = true) => {
-  const stableFilter = useStableProps(filter);
-  useEffect(() => {
-    if (enabled) ApiSlice.pruneCache("reportCounts", [REPORT_COUNTS_ID]);
-  }, [enabled, stableFilter]);
-  return useConnection(reportCountsConnection, { filter: stableFilter, enabled });
-};
+/** The BE sends the stable request query as the ID, so each filter combination has its own cached counts. */
+export const useReportCounts = (filter: ReportCountsGetQueryParams, enabled = true) =>
+  useConnection(reportCountsConnection, { filter, enabled });
 
 /**
  * Get the full entity connection in a component that is shared amongst entity types. It's technically

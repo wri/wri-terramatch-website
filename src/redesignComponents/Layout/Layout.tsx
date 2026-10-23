@@ -1,7 +1,7 @@
 import { Box, Flex } from "@chakra-ui/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
-import { FC, PropsWithChildren } from "react";
+import { FC, Fragment, PropsWithChildren } from "react";
 
 import { useMyOrg } from "@/connections/Organisation";
 import { useMyUser } from "@/connections/User";
@@ -29,7 +29,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
   // so the side menu must highlight the same first level.
   const profileOpenedFromProject = router.pathname === "/site/[uuid]" && router.query.origin !== "sites";
   const nurseryOpenedFromProject = router.pathname === "/nursery/[uuid]" && router.query.origin !== "nurseries";
-  const { isSidebarCollapseDisabled } = useLayoutShell();
+  const { isSidebarCollapseDisabled, pageResetKey } = useLayoutShell();
   const [, myOrg] = useMyOrg();
   const [, { user: myUser }] = useMyUser();
   const data = useNavbarData();
@@ -119,7 +119,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
               !showLoggedInFooter && "min-h-0 overflow-auto"
             )}
           >
-            {children}
+            <Fragment key={pageResetKey}>{children}</Fragment>
           </Flex>
           {showLoggedInFooter && (
             <Footer className={classNames(FOOTER_CLASS_NAME, "relative z-10 col-span-2 col-start-1 row-start-2")} />
@@ -127,7 +127,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
         </Box>
       ) : (
         <Flex as="main" className="min-h-0 flex-1 flex-col overflow-auto">
-          {children}
+          <Fragment key={pageResetKey}>{children}</Fragment>
           <Footer className={FOOTER_CLASS_NAME} />
         </Flex>
       )}
