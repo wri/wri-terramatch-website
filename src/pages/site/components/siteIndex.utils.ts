@@ -77,6 +77,7 @@ export const mapSiteToIndexSite = (site: SiteLightDto, frameworkKey: Framework):
   treesPlantedCount: site.treesPlantedCount ?? 0,
   totalHectaresRestoredSum: site.totalHectaresRestoredSum ?? 0,
   combinedWorkdayCount: site.combinedWorkdayCount ?? 0,
+  treesRestoredPpc: site.treesRestoredPpc ?? 0,
   hectaresToRestoreGoal: site.hectaresToRestoreGoal
 });
 
@@ -120,7 +121,7 @@ const firstPositiveGoal = (...values: Array<number | null | undefined>) =>
 export const buildProjectMetrics = (
   frameworkKey: Framework,
   project: ProjectFullDto | undefined,
-  totals: { treesPlanted: number; hectaresRestored: number }
+  totals: { treesPlanted: number; hectaresRestored: number; aNatRegenerationGoal: number }
 ): SiteIndexProject["metrics"] => {
   const treesPlanted = project?.treesPlantedCount ?? totals.treesPlanted;
   const treesFromReportsAnr = project?.regeneratedTreesCount ?? 0;
@@ -137,9 +138,17 @@ export const buildProjectMetrics = (
   }
 
   if (isTerrafund(frameworkKey)) {
+    let treesRegeneratedGoal = firstPositiveGoal(project?.treesToBeRestoredGoal);
+    if (frameworkKey === Framework.TF_3 || frameworkKey === Framework.ENTERPRISES) {
+      // These frameworks enter the ANR goal per site, so the goal is the sum across approved sites.
+      treesRegeneratedGoal = totals.aNatRegenerationGoal;
+    } else if (frameworkKey === Framework.TF) {
+      // TerraFund cohort 1 & 2 have no Trees Regenerated goal, so the card shows progress without one.
+      treesRegeneratedGoal = 0;
+    }
     return {
       treesPlanted: metric(treesPlanted, treesGoal),
-      treesRegenerated: metric(project?.treesRestoredPpc, treesGoal),
+      treesRegenerated: metric(project?.treesRestoredPpc, treesRegeneratedGoal),
       areaRestored: metric(restoredAreaProgress, restoredAreaGoal)
     };
   }

@@ -117,6 +117,7 @@ const SiteProjectMetrics: FC<SiteProjectMetricsProps> = ({ frameworkKey, metrics
             title: t(keyIndicatorsTooltipContentItem?.treesRegenerated.title ?? "Trees Regenerated"),
             progress: metrics.treesRegenerated.progress,
             goal: metrics.treesRegenerated.goal,
+            hideGoal: metrics.treesRegenerated.goal <= 0,
             icon: <RegenerationIcon />,
             color: "secondary.600",
             tooltipContent: keyIndicatorTooltip(
@@ -345,15 +346,12 @@ export const SiteProjectBody: FC<SiteProjectBodyProps> = ({
   const t = useT();
   const { selectedRows } = useSiteTableSelection(sites.rows);
   const selectedApproved = selectedRows.filter(isSiteApproved);
-  const regeneratedProgress = sites.metrics.treesRegenerated?.progress ?? 0;
-  const regeneratedShare = (siteCount: number) =>
-    meta.sitesTotal === 0 ? 0 : Math.round((regeneratedProgress * siteCount) / meta.sitesTotal);
   const filtered = isFiltered
     ? {
         treesPlanted: meta.treesPlantedMatching,
         hectaresRestored: meta.hectaresRestoredMatching,
         workdays: meta.workdaysMatching,
-        treesRegenerated: regeneratedShare(meta.sitesMatching)
+        treesRegenerated: meta.treesRestoredPpcMatching
       }
     : null;
   const selection =
@@ -362,7 +360,7 @@ export const SiteProjectBody: FC<SiteProjectBodyProps> = ({
           treesPlanted: selectedApproved.reduce((total, site) => total + site.treesPlantedCount, 0),
           hectaresRestored: selectedApproved.reduce((total, site) => total + site.totalHectaresRestoredSum, 0),
           workdays: selectedApproved.reduce((total, site) => total + site.combinedWorkdayCount, 0),
-          treesRegenerated: regeneratedShare(selectedRows.length)
+          treesRegenerated: selectedApproved.reduce((total, site) => total + site.treesRestoredPpc, 0)
         }
       : null;
 
