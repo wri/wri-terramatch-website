@@ -1,4 +1,4 @@
-import { Framework, isTerrafund, toFramework } from "@/context/framework.provider";
+import { Framework, shouldHideNurseries, toFramework } from "@/context/framework.provider";
 import type { EntityExportAllQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
 import type {
   NurseryLightDto,
@@ -20,7 +20,8 @@ export const getNurseryDetailUrl = (nurseryUuid: string, fromNurseryIndex: boole
     origin: fromNurseryIndex ? NURSERY_INDEX_ORIGIN : undefined
   });
 
-export const projectSupportsNurseries = (frameworkKey?: string | null) => isTerrafund(toFramework(frameworkKey));
+export const projectSupportsNurseries = (frameworkKey?: string | null) =>
+  !shouldHideNurseries(toFramework(frameworkKey));
 
 export const toNurseryIndexStatus = (status: string | null | undefined): NurseryIndexRow["status"] => {
   if (status == null || status.trim() === "") return null;
