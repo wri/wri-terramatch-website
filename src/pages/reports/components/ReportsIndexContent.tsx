@@ -57,6 +57,10 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
   );
   const { clearSelection } = useReportsSelectionActions();
   const [, projects] = useAllPages(indexProjectConnection, {});
+  const isSingleProject = projects?.length === 1;
+  useEffect(() => {
+    if (isSingleProject && viewValue !== project.uuid) setViewValue(project.uuid);
+  }, [isSingleProject, project.uuid, viewValue]);
   const projectUuidsInOrder = useMemo(() => (projects ?? []).map(item => item.uuid), [projects]);
   const organisationViewItems = useMemo<HighLevelSelectorItem[]>(() => {
     const labelsByUuid = new Map<string, string>();
@@ -354,6 +358,7 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
         onQueryChange={setQuery}
         indexHref={indexHref}
         addDisturbanceReportDisabled={isAllProjectsView}
+        showViewSelector={!isSingleProject}
       />
       <PageContent className="h-auto flex-1 px-2 pt-0 pb-8">
         {activeTab === "progress-reports" && (
