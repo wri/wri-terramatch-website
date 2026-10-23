@@ -10,7 +10,7 @@ export type TeamMemberAction = "approve" | "reject" | "remove";
 export type TeamBulkMember = {
   id: string;
   fullName: string;
-  associationStatus: "requested" | "approved" | "rejected";
+  associationStatus: "requested" | "approved" | "invited" | "rejected";
 };
 
 type TeamMemberActionModalProps = {

@@ -11,6 +11,7 @@ import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/Button
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { showToast } from "@/redesignComponents/status/Toast/showToast";
+import { PendingError } from "@/store/apiSlice";
 interface InviteTeamMemberModalProps {
   organisationUUID: string;
   open: boolean;
@@ -46,6 +47,29 @@ const InviteTeamMemberModal = ({ organisationUUID, open, onClose, onSuccess }: I
     reset();
   }, [onClose, reset]);
 
+  // The API returns one message per validation failure; map the ones the user can act on to their copy.
+  const inviteErrorMessage = useCallback(
+    (failure: PendingError) => {
+      const message = [failure.message].flat().join(" ");
+      if (message.includes("already been invited")) {
+        return t("This user has already been invited to this organisation, please try a different email address.");
+      }
+      if (message.includes("already a member")) {
+        return t("This user is already a member of the organisation.");
+      }
+      if (message.includes("user type cannot be added")) {
+        return t("This user type cannot be added to the organisation, please try a different email address.");
+      }
+      if (message.includes("pending request to join another organisation")) {
+        return t(
+          "This user has a pending request to join another organisation. If this is incorrect, please reach out to TerraMatch support at support@terramatch.org."
+        );
+      }
+      return t("Unable to send the invite. Please try again.");
+    },
+    [t]
+  );
+
   useRequestComplete(
     isLoading,
     inviteFailure,
@@ -56,20 +80,17 @@ const InviteTeamMemberModal = ({ organisationUUID, open, onClose, onSuccess }: I
             onSuccess();
           }
           showToast({
-            label: t("Invitation sent successfully"),
+            label: t("Invite sent successfully"),
             type: "success",
             placement: "bottom",
             duration: 5000
           });
           hideModal();
         } else {
-          setError("email", {
-            message: t("This user already has a TerraMatch account, please try a different email address."),
-            type: "validate"
-          });
+          setError("email", { message: inviteErrorMessage(failure), type: "validate" });
         }
       },
-      [onSuccess, t, setError, hideModal]
+      [onSuccess, t, setError, hideModal, inviteErrorMessage]
     )
   );
 
