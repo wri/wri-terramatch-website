@@ -243,7 +243,11 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
       : [{ label: project.name ?? t("Project"), value: project.uuid }, ...projectItems];
 
     if (activeTab === "additional-reports") {
-      return [{ label: t("All"), value: ALL_PROJECTS_VIEW_VALUE }, ...items, ...organisationViewItems];
+      return [
+        { label: t("All"), value: ALL_PROJECTS_VIEW_VALUE },
+        ...items.map(item => ({ ...item, group: t("Projects") })),
+        ...organisationViewItems.map(item => ({ ...item, group: t("Organizations") }))
+      ];
     }
 
     return [{ label: t("All Projects"), value: ALL_PROJECTS_VIEW_VALUE }, ...items];
