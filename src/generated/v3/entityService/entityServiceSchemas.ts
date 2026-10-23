@@ -1550,6 +1550,8 @@ export type FinancialReportLightDto = {
    * @format date-time
    */
   submittedAt: string | null;
+  finStartMonth: number | null;
+  currency: string | null;
   /**
    * @format date-time
    */
@@ -2667,6 +2669,8 @@ export type FinancialReportFullDto = {
    * @format date-time
    */
   submittedAt: string | null;
+  finStartMonth: number | null;
+  currency: string | null;
   /**
    * @format date-time
    */
@@ -2681,9 +2685,7 @@ export type FinancialReportFullDto = {
   feedback: string | null;
   feedbackFields: string[] | null;
   answers: string | null;
-  finStartMonth: number | null;
   financialCollection: FinancialIndicatorDto[] | null;
-  currency: string | null;
   /**
    * The associated organisation type
    */
