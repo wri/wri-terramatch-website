@@ -49,6 +49,7 @@ export const ModalId = {
   IMAGE_GALLERY_PREVIEWER: "ImageGalleryPreviewer",
   SHAPE_PROPERTIES_MODAL: "ShapePropertiesModal",
   WELCOME_MODAL: "WelcomeModal",
+  WHATS_NEW_MODAL: "WhatsNewModal",
   POLYGON_SUBMISSION_ANNOUNCEMENT: "PolygonSubmissionAnnouncement",
   WARNING: "Warning",
   MODAL_RUN_ANALYSIS: "ModalRunAnalysis",
