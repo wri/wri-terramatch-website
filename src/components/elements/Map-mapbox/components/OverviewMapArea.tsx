@@ -107,7 +107,7 @@ const OverviewMapArea: FC<OverviewMapAreaProps> = ({
     filteredGeometryUuids.length > 0
       ? { polygonUuids: filteredGeometryUuids }
       : entityType === "sites"
-      ? { siteUuid: entityModel.uuid }
+      ? { siteUuids: [entityModel.uuid] }
       : { projectUuid: entityModel.uuid }
   );
 
