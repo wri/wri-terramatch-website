@@ -36,7 +36,8 @@ import InviteTeamMemberModal from "../InviteTeamMemberModal";
 import TeamBulkActionToolbar from "./TeamBulkActionToolbar";
 import TeamMemberActionModal, { type TeamMemberAction } from "./TeamMemberActionModal";
 
-type AssociationStatus = "requested" | "approved" | "rejected";
+// "invited" is derived in the FE: an approved member whose organisation invite has not been accepted yet.
+type AssociationStatus = "requested" | "approved" | "invited" | "rejected";
 
 type TeamMemberRow = Omit<UserAssociationDto, "status"> & {
   id: string;
@@ -58,6 +59,7 @@ const ROLE_LABELS: Record<string, string> = {
 const STATUS_LABELS: Record<AssociationStatus, string> = {
   requested: "Pending",
   approved: "Accepted",
+  invited: "Invited",
   rejected: "Rejected"
 };
 
@@ -77,6 +79,7 @@ const STATUS_TAG_CONFIG: Record<AssociationStatus, { state: "attention" | "succe
   {
     requested: { state: "attention", iconColor: "warning.500" },
     approved: { state: "success", iconColor: "success.500" },
+    invited: { state: "attention", iconColor: "neutral.500" },
     rejected: { state: "warning", iconColor: "error.500" }
   };
 
@@ -89,6 +92,7 @@ const TeamTabContent: FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResetKey, setSearchResetKey] = useState(0);
   const [selectedStatus, setSelectedStatus] = useState<AssociationStatus | null>(null);
+  const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [rowAction, setRowAction] = useState<RowActionState | null>(null);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const isSubmittingRef = useRef(false);
@@ -112,7 +116,11 @@ const TeamTabContent: FC = () => {
   const allMembers = useMemo<TeamMemberRow[]>(
     () => [
       ...(pendingUsers ?? []).map(user => toTeamMemberRow(user, t(STATUS_LABELS.requested), "requested")),
-      ...(approvedUsers ?? []).map(user => toTeamMemberRow(user, t(STATUS_LABELS.approved), "approved")),
+      ...(approvedUsers ?? []).map(user =>
+        user.invitePending === true
+          ? toTeamMemberRow(user, t(STATUS_LABELS.invited), "invited")
+          : toTeamMemberRow(user, t(STATUS_LABELS.approved), "approved")
+      ),
       ...(rejectedUsers ?? []).map(user => toTeamMemberRow(user, t(STATUS_LABELS.rejected), "rejected"))
     ],
     [approvedUsers, pendingUsers, rejectedUsers, t]
@@ -128,18 +136,29 @@ const TeamTabContent: FC = () => {
     [t]
   );
 
+  const roleOptions = useMemo(
+    () =>
+      Object.keys(ROLE_LABELS).map(role => ({
+        label: t(ROLE_LABELS[role]),
+        value: role,
+        onClick: () => setSelectedRole(role)
+      })),
+    [t]
+  );
+
   const teamMembers = useMemo(() => {
     const queryValue = searchQuery.trim().toLowerCase();
 
     return allMembers.filter(member => {
       if (selectedStatus != null && member.associationStatus !== selectedStatus) return false;
+      if (selectedRole != null && member.roleName !== selectedRole) return false;
       if (queryValue.length === 0) return true;
 
       return [member.fullName, member.emailAddress, member.roleName, member.status]
         .filter((value): value is string => value != null)
         .some(value => value.toLowerCase().includes(queryValue));
     });
-  }, [allMembers, searchQuery, selectedStatus]);
+  }, [allMembers, searchQuery, selectedRole, selectedStatus]);
 
   const { selectedRows, selectedRowIds, setSelectedRowIds, handleRowSelected, onAllItemsSelected } = useTableSelection(
     true,
@@ -168,6 +187,17 @@ const TeamTabContent: FC = () => {
           rowAction.action === "approve" ? "approved" : "rejected"
         );
       }
+      showToast({
+        label:
+          rowAction.action === "approve"
+            ? t("Access request approved")
+            : rowAction.action === "reject"
+            ? t("Access request rejected")
+            : t("Team member removed"),
+        type: "success",
+        placement: "bottom",
+        duration: 5000
+      });
       setRowAction(null);
     } catch {
       showToast({
@@ -231,6 +261,9 @@ const TeamTabContent: FC = () => {
         label: "",
         width: "214px",
         cell: (member: TeamMemberRow) => {
+          // Invited members have no actions until the reminder endpoint exists.
+          if (member.associationStatus === "invited") return null;
+
           if (member.associationStatus === "requested") {
             return (
               <ActionCell
@@ -323,6 +356,7 @@ const TeamTabContent: FC = () => {
         classNameContentLeft="min-w-0"
         onClearFilters={() => {
           setSelectedStatus(null);
+          setSelectedRole(null);
           setSearchQuery("");
           setSearchResetKey(key => key + 1);
         }}
@@ -331,6 +365,12 @@ const TeamTabContent: FC = () => {
             mainActionLabel: selectedStatus == null ? t("Status") : t(STATUS_LABELS[selectedStatus]),
             mainActionOnClick: () => setSelectedStatus(null),
             otherActions: statusOptions,
+            variant: "secondary"
+          },
+          {
+            mainActionLabel: selectedRole == null ? t("Role") : t(ROLE_LABELS[selectedRole]),
+            mainActionOnClick: () => setSelectedRole(null),
+            otherActions: roleOptions,
             variant: "secondary"
           }
         ]}
@@ -344,7 +384,7 @@ const TeamTabContent: FC = () => {
           resetKey: searchResetKey
         }}
         button={{ children: t("Add Team Member"), leftIcon: <UserAddIcon />, onClick: handleInvite }}
-        showClearFilters={selectedStatus != null || searchQuery.length > 0}
+        showClearFilters={selectedStatus != null || selectedRole != null || searchQuery.length > 0}
       />
       <InviteTeamMemberModal
         organisationUUID={organisationUuid}

@@ -115,6 +115,12 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
         if (rejectedIds.length > 0) {
           await bulkDeleteUserAssociations(organisationUuid, rejectedIds, "organisations");
         }
+        showToast({
+          label: t("Team member removed"),
+          type: "success",
+          placement: "bottom",
+          duration: 5000
+        });
         setModalAction(null);
         onCancel();
       } catch {
@@ -149,6 +155,12 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
         memberIds,
         modalAction === "approve" ? "approved" : "rejected"
       );
+      showToast({
+        label: modalAction === "approve" ? t("Access request approved") : t("Access request rejected"),
+        type: "success",
+        placement: "bottom",
+        duration: 5000
+      });
       setModalAction(null);
       onCancel();
     } catch {
