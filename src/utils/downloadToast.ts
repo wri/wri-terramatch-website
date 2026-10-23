@@ -1,7 +1,12 @@
-import { closeToast, showToast } from "@worldresources/wri-design-systems";
+import { closeToast } from "@worldresources/wri-design-systems";
+
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 
 const DEFAULT_TOAST_ID = "downloadToast";
 const DEFAULT_PLACEMENT = "bottom" as const;
+const DEFAULT_DURATION_MS = 5000;
+/** Progress toasts must persist until the download finishes; design system defaults to 5s when omitted. */
+const PROGRESS_DURATION_MS = Number.POSITIVE_INFINITY;
 
 export type DownloadToastMessages = {
   downloading: string;
@@ -15,17 +20,18 @@ const showDownloadingToast = (id: string, label: string) => {
     label,
     type: "loading",
     placement: DEFAULT_PLACEMENT,
-    maxWidth: "auto"
+    duration: PROGRESS_DURATION_MS
   });
 };
 
-const showDownloadCompleteToast = (label: string) => {
+// Reuses the progress toast id so the progress toast turns into the success toast, as the polygon downloads do.
+const showDownloadCompleteToast = (id: string, label: string) => {
   showToast({
+    id,
     label,
     type: "success",
     placement: DEFAULT_PLACEMENT,
-    duration: 5000,
-    maxWidth: "auto"
+    duration: DEFAULT_DURATION_MS
   });
 };
 
@@ -34,8 +40,7 @@ const showDownloadErrorToast = (label: string) => {
     label,
     type: "error",
     placement: DEFAULT_PLACEMENT,
-    duration: 5000,
-    maxWidth: "auto"
+    duration: DEFAULT_DURATION_MS
   });
 };
 
@@ -48,8 +53,7 @@ export const runWithDownloadToast = async (
 
   try {
     await action();
-    closeToast(toastId);
-    showDownloadCompleteToast(messages.complete);
+    showDownloadCompleteToast(toastId, messages.complete);
   } catch (error) {
     closeToast(toastId);
     if (messages.error) {

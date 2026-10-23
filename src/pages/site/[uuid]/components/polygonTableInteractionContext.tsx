@@ -1,4 +1,4 @@
-import { type ReactNode, createContext, useContext, useMemo } from "react";
+import { type PropsWithChildren, createContext, FC, useContext, useMemo } from "react";
 
 import { setPolygonTableHoveredUuid } from "@/context/polygonTableInteraction.store";
 
@@ -11,13 +11,11 @@ type PolygonTableInteractionActions = {
 
 const PolygonTableInteractionActionsContext = createContext<PolygonTableInteractionActions | null>(null);
 
-export const PolygonTableInteractionActionsProvider = ({
-  children,
-  onSelectChange
-}: {
-  children: ReactNode;
-  onSelectChange: (row: PolygonTableRow, checked: boolean) => void;
-}) => {
+export const PolygonTableInteractionActionsProvider: FC<
+  PropsWithChildren<{
+    onSelectChange: (row: PolygonTableRow, checked: boolean) => void;
+  }>
+> = ({ children, onSelectChange }) => {
   const value = useMemo(
     () => ({
       onHover: setPolygonTableHoveredUuid,
