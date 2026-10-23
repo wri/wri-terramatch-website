@@ -1,37 +1,37 @@
+import { Flex, Text } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import { useCallback } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import Button from "@/components/elements/Button/Button";
-import Input from "@/components/elements/Inputs/Input/Input";
-import Text from "@/components/elements/Text/Text";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { ModalBase } from "@/components/extensive/Modal/ModalsBases";
-import InlineLoader from "@/components/generic/Loading/InlineLoader";
 import { useInviteOrganisationUser } from "@/connections/UserAssociation";
-import { useModalContext } from "@/context/modal.provider";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
-
+import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
+import Modal from "@/redesignComponents/containers/Modal/Modal";
+import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
+import { PendingError } from "@/store/apiSlice";
 interface InviteTeamMemberModalProps {
   organisationUUID: string;
+  open: boolean;
+  onClose: () => void;
   onSuccess?: () => void;
 }
 
 const schema = yup.object({
+  firstName: yup.string().trim().required(),
+  lastName: yup.string().trim().required(),
   email: yup.string().email().required()
 });
 
 type FormValues = yup.InferType<typeof schema>;
 
-const InviteTeamMemberModal = ({ organisationUUID, onSuccess }: InviteTeamMemberModalProps) => {
+const InviteTeamMemberModal = ({ organisationUUID, open, onClose, onSuccess }: InviteTeamMemberModalProps) => {
   const t = useT();
-  const { closeModal } = useModalContext();
 
   const {
-    register,
+    control,
     formState: { errors },
     setError,
     reset,
@@ -43,9 +43,32 @@ const InviteTeamMemberModal = ({ organisationUUID, onSuccess }: InviteTeamMember
   });
 
   const hideModal = useCallback(() => {
-    closeModal(ModalId.INVITE_MONITORING_PARTNER_MODAL);
+    onClose();
     reset();
-  }, [closeModal, reset]);
+  }, [onClose, reset]);
+
+  // The API returns one message per validation failure; map the ones the user can act on to their copy.
+  const inviteErrorMessage = useCallback(
+    (failure: PendingError) => {
+      const message = [failure.message].flat().join(" ");
+      if (message.includes("already been invited")) {
+        return t("This user has already been invited to this organisation, please try a different email address.");
+      }
+      if (message.includes("already a member")) {
+        return t("This user is already a member of the organisation.");
+      }
+      if (message.includes("user type cannot be added")) {
+        return t("This user type cannot be added to the organisation, please try a different email address.");
+      }
+      if (message.includes("pending request to join another organisation")) {
+        return t(
+          "This user has a pending request to join another organisation. If this is incorrect, please reach out to TerraMatch support at support@terramatch.org."
+        );
+      }
+      return t("Unable to send the invite. Please try again.");
+    },
+    [t]
+  );
 
   useRequestComplete(
     isLoading,
@@ -57,59 +80,98 @@ const InviteTeamMemberModal = ({ organisationUUID, onSuccess }: InviteTeamMember
             onSuccess();
           }
           showToast({
-            label: t("Invitation sent successfully"),
+            label: t("Invite sent successfully"),
             type: "success",
             placement: "bottom",
-            duration: 5000,
-            maxWidth: "auto"
+            duration: 5000
           });
           hideModal();
         } else {
-          setError("email", {
-            message: t("This user already has a TerraMatch account, please try a different email address."),
-            type: "validate"
-          });
+          setError("email", { message: inviteErrorMessage(failure), type: "validate" });
         }
       },
-      [onSuccess, t, setError, hideModal]
+      [onSuccess, t, setError, hideModal, inviteErrorMessage]
     )
   );
 
   const onSubmit = (data: FormValues) => {
     inviteTeamMember({
       emailAddress: data.email,
+      firstName: data.firstName,
+      lastName: data.lastName,
       callbackUrl: `${window.location.origin}/auth/signup`
     });
   };
 
   return (
-    <ModalBase>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex w-full flex-col gap-8">
-        <Text variant="text-bold-headline-1000" className="text-center uppercase">
+    <Modal
+      open={open}
+      onClose={hideModal}
+      header={
+        <Text textStyle="400-bold" color="neutral.800">
           {t("Invite Team Member")}
         </Text>
-        <Text variant="text-light-body-300" className="mt-2 text-center" containHtml>
-          {t(
-            "Here, you can invite someone to create a TerraMatch account as member of your organization. This will allow them to access all your applications and project pitches."
-          )}
-        </Text>
-        <Input
-          {...register("email", { required: true })}
-          label={t("Email Address")}
-          type="email"
-          error={errors.email}
+      }
+      width="34.75rem"
+      content={
+        <Flex className="flex-col gap-3 px-3 pt-2 pb-3">
+          <Flex className="flex-col">
+            <Text textStyle="400" color="neutral.900">
+              {t(
+                "Invite someone to join your organisation. If they don’t have a TerraMatch account yet, they’ll be asked to create one."
+              )}
+            </Text>
+            <Text textStyle="400-bold" color="warning.900">
+              {t("Once they join, they’ll have access to all of your applications and project pitches.")}
+            </Text>
+          </Flex>
+          <Controller
+            name="firstName"
+            control={control}
+            render={({ field }) => (
+              <TextInput {...field} label={t("First Name")} errorMessage={errors.firstName?.message} required />
+            )}
+          />
+          <Controller
+            name="lastName"
+            control={control}
+            render={({ field }) => (
+              <TextInput {...field} label={t("Last Name")} errorMessage={errors.lastName?.message} required />
+            )}
+          />
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <TextInput
+                {...field}
+                label={t("Email Address")}
+                type="email"
+                errorMessage={errors.email?.message}
+                required
+              />
+            )}
+          />
+        </Flex>
+      }
+      footer={
+        <ButtonGroup
+          buttons={[
+            {
+              id: "cancel",
+              variant: "secondary",
+              children: t("Cancel"),
+              onClick: hideModal
+            },
+            {
+              id: "send",
+              children: t("Send Invite"),
+              onClick: handleSubmit(onSubmit)
+            }
+          ]}
         />
-        <div className="flex w-full justify-between gap-3">
-          <Button variant="secondary" onClick={() => hideModal()}>
-            {t("Cancel")}
-          </Button>
-          <Button type="submit" disabled={isLoading}>
-            {t("Invite Team Member")}
-            <InlineLoader loading={isLoading} />
-          </Button>
-        </div>
-      </form>
-    </ModalBase>
+      }
+    />
   );
 };
 
