@@ -1502,6 +1502,33 @@ export type ProjectMapEntryDto = {
    * Longitude of the project centroid (average of its polygon centroids). Null when the project has no polygons.
    */
   long: number | null;
+  /**
+   * Framework key of the project.
+   */
+  frameworkKey:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "terrafund-3"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora-1"
+    | "wcb"
+    | "barka-fund"
+    | null;
+  /**
+   * Project country codes (GADM level 0).
+   */
+  level0Project: string[] | null;
+  /**
+   * Cohort of the project.
+   */
+  cohort: string | null;
+  /**
+   * Number of active polygons across the project's sites.
+   */
+  polygonCount: number;
 };
 
 export type ProjectMapIndexDto = {

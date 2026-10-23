@@ -116,14 +116,6 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
               <Flex gap="0.5rem" alignItems="center" className="mobile:w-full mobile:flex-col mobile:items-stretch">
                 <Box className="w-[25rem] mobile:w-full">
                   <HighLevelSelector
-                    key={
-                      selectedProject === ALL_PROJECTS_VIEW
-                        ? ALL_PROJECTS_VIEW
-                        : `${selectedProject}:${
-                            viewProjects.find(project => project.id === selectedProject)?.name ?? ""
-                          }`
-                    }
-                    autocomplete
                     width="100%"
                     label={t("View:")}
                     items={[

@@ -39,10 +39,17 @@ interface SideNavigationProps {
   title: string;
   groups: SideNavigationGroup[];
   collapsed?: boolean;
+  onCollapsedChange?: (collapsed: boolean) => void;
   isCollapsedDisabled?: boolean;
 }
 
-const SideNavigation: FC<SideNavigationProps> = ({ title, groups, collapsed = false, isCollapsedDisabled = false }) => {
+const SideNavigation: FC<SideNavigationProps> = ({
+  title,
+  groups,
+  collapsed = false,
+  onCollapsedChange,
+  isCollapsedDisabled = false
+}) => {
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
   const t = useT();
 
@@ -54,6 +61,7 @@ const SideNavigation: FC<SideNavigationProps> = ({ title, groups, collapsed = fa
 
   const handleCollapse = () => {
     setIsCollapsed(!isCollapsed);
+    onCollapsedChange?.(!isCollapsed);
   };
 
   const shellTransition = "overflow-hidden transition-[width] duration-300 ease-in-out motion-reduce:transition-none";
@@ -69,7 +77,7 @@ const SideNavigation: FC<SideNavigationProps> = ({ title, groups, collapsed = fa
       <Button
         className={classNames(
           "flex min-h-0 items-center justify-start px-4 py-3.5 transition-[gap] duration-300 ease-in-out motion-reduce:transition-none",
-          isCollapsed ? "gap-0" : "gap-2"
+          isCollapsed ? "gap-0" : "gap-4"
         )}
         color="neutral.100"
         onClick={handleCollapse}
@@ -84,7 +92,7 @@ const SideNavigation: FC<SideNavigationProps> = ({ title, groups, collapsed = fa
         <ChevronRightIcon
           boxSize={4}
           className={classNames(
-            "shrink-0 transition-transform duration-300 ease-in-out motion-reduce:transition-none",
+            "flex-[1] shrink-0 transition-transform duration-300 ease-in-out motion-reduce:transition-none",
             isCollapsed ? "rotate-0" : "rotate-180"
           )}
         />

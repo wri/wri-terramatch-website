@@ -113,7 +113,10 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
         <Flex gap={7} className="flex-col">
           <Flex gap={7} className="mobile:flex-col">
             {!siteReport.nothingToReport && (
-              <Flex gap={5} className={classNames(isHBFFramework ? "flex-row" : "flex-col", "flex-[2]")}>
+              <Flex
+                gap={5}
+                className={classNames(isHBFFramework ? "flex-row mobile:flex-col" : "flex-col", "flex-[2]")}
+              >
                 <PageItem
                   title={t("Key Indicators and Insights")}
                   buttonProps={{

@@ -9,7 +9,7 @@ import { useNavbarContext } from "@/context/navbar.provider";
 
 import { ModalId } from "../Modal/ModalConst";
 import ToolTip from "./Tooltip";
-import WelcomeModal from "./WelcomeModal";
+import WhatsNewModal from "./WhatsNewModal";
 
 const TOUR_SKIPPED_KEY = "WRI_TOUR_SKIPPED";
 const TOUR_COMPLETED_KEY = "WRI_TOUR_COMPLETED";
@@ -67,16 +67,6 @@ const WelcomeTour: FC<IProps> = ({ tourId, tourSteps, onFinish, onStart, onDontS
     closeModal(ModalId.WELCOME_MODAL);
   }, [closeModal, TOUR_SKIPPED_STORAGE_KEY]);
 
-  const handleModalConfirm = useCallback(() => {
-    if (!isLg) {
-      setIsNavOpen?.(true);
-    }
-    setNavLinksDisabled?.(true);
-    setModalInteracted(true);
-    closeModal(ModalId.WELCOME_MODAL);
-    setTourEnabled(true);
-  }, [closeModal, isLg, setIsNavOpen, setNavLinksDisabled]);
-
   const handleDontShowAgain = useCallback(() => {
     if (user?.uuid) {
       localStorage.setItem(TOUR_COMPLETED_STORAGE_KEY, "true");
@@ -93,11 +83,7 @@ const WelcomeTour: FC<IProps> = ({ tourId, tourSteps, onFinish, onStart, onDontS
       const isCompleted = localStorage.getItem(TOUR_COMPLETED_STORAGE_KEY) === "true";
 
       if (hasWelcomeModal && !isSkipped && !isCompleted && !modalInteracted) {
-        openModal(
-          ModalId.WELCOME_MODAL,
-          <WelcomeModal onSkip={handleSkip} onConfirm={handleModalConfirm} onDontShowAgain={handleDontShowAgain} />,
-          true
-        );
+        openModal(ModalId.WELCOME_MODAL, <WhatsNewModal onSkip={handleSkip} onFinish={handleDontShowAgain} />, true);
       } else if (!hasWelcomeModal && !isSkipped && !isCompleted && !modalInteracted) {
         setTourEnabled(true);
       }

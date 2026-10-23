@@ -127,7 +127,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
     deletedAuditPolygonUuids != null
       ? { polygonUuids: deletedAuditPolygonUuids }
       : type === "sites"
-      ? { siteUuid: entityModel.uuid }
+      ? { siteUuids: [entityModel.uuid] }
       : { projectUuid: entityModel.uuid }
   );
 

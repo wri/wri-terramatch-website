@@ -161,14 +161,14 @@ const Table = <T extends BaseRow>({
 
   const handlePageChange = useCallback(
     (page: number) => {
-      scrollToHeaderPendingRef.current = page === totalPages;
+      scrollToHeaderPendingRef.current = page !== currentPage;
       if (controlledOnPageChange != null) {
         controlledOnPageChange(page);
         return;
       }
       setCurrentPage(page);
     },
-    [controlledOnPageChange, setCurrentPage, totalPages]
+    [controlledOnPageChange, currentPage, setCurrentPage]
   );
 
   useHeightTransition(wrapperRef, dataByPage, height == null, findHorizontalScrollContainer);
