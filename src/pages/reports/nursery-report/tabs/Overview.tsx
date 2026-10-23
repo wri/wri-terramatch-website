@@ -123,9 +123,12 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
     <PageContent>
       {EditModals}
       <Flex gap={7} className="flex-col">
-        <Flex gap={7}>
+        <Flex gap={7} className="mobile:flex-col">
           {!report.nothingToReport && (
-            <Flex gap={5} className={classNames(isTerrafundFramework ? "flex-row" : "flex-col", "flex-[2]")}>
+            <Flex
+              gap={5}
+              className={classNames(isTerrafundFramework ? "flex-row mobile:flex-col" : "flex-col", "flex-[2]")}
+            >
               <PageItem
                 title={t("Key Indicators and Insights")}
                 buttonProps={{
@@ -217,7 +220,7 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
           <AboutPageItem
             type="nursery-report"
             className="flex-row gap-14"
-            contentClassName="flex-row gap-14"
+            contentClassName="flex-row gap-14 mobile:flex-col mobile:gap-5"
             descriptionMaxWidth="65%"
             isNothingToReport={report?.nothingToReport!}
           />
