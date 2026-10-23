@@ -1,7 +1,7 @@
 import type { Map as MapboxMap, MapMouseEvent } from "mapbox-gl";
 
 type PopupCloser = () => void;
-export type PopupKind = "POLYGON" | "MEDIA";
+export type PopupKind = "POLYGON" | "MEDIA" | "PROJECT";
 
 const closersByMap = new WeakMap<MapboxMap, Map<PopupKind, PopupCloser>>();
 

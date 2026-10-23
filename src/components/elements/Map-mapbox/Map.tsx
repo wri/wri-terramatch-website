@@ -125,6 +125,7 @@ export interface BaseMapProps {
   overlapPolygons?: OverlapPolygonPoint[];
   crossSiteOverlapPolygons?: CrossSiteOverlapPolygon[];
   projectMarkers?: ProjectMarkerPoint[];
+  onViewProjectPolygons?: (projectUuid: string) => void;
   autoEditPolygon?: boolean;
   onPolygonTilesLoadingChange?: (value: boolean) => void;
   alwaysShowPhotosOnMap?: boolean;
@@ -266,6 +267,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     overlapPolygons,
     crossSiteOverlapPolygons,
     projectMarkers,
+    onViewProjectPolygons,
     onPolygonTilesLoadingChange,
     alwaysShowPhotosOnMap,
     hideMediaPopupActions,
@@ -616,7 +618,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     overlapPolygons: overlapPolygonsWithExternal
   });
 
-  useMapProjectMarkers({ map, styleReady, styleVersion, projectMarkers });
+  useMapProjectMarkers({ map, styleReady, styleVersion, projectMarkers, onViewProjectPolygons });
 
   const { handleEditPolygon, onSaveEdit, onCancelEdit } = useMapDraw({
     map,
