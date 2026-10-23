@@ -26,6 +26,8 @@ const SelectValueText = Select.ValueText as ChakraSlot;
 const SelectPositioner = Select.Positioner as ChakraSlot;
 const SelectContent = Select.Content as ChakraSlot;
 const SelectItem = Select.Item as ChakraSlot;
+const SelectItemGroup = Select.ItemGroup as ChakraSlot;
+const SelectItemGroupLabel = Select.ItemGroupLabel as ChakraSlot;
 const SelectItemIndicator = Select.ItemIndicator as ChakraSlot;
 
 const HighLevelSelector: FC<HighLevelSelectorProps> = ({
@@ -130,6 +132,8 @@ const HighLevelSelector: FC<HighLevelSelectorProps> = ({
       <SelectorMenu
         Content={SelectContent}
         Item={SelectItem}
+        ItemGroup={SelectItemGroup}
+        ItemGroupLabel={SelectItemGroupLabel}
         ItemIndicator={SelectItemIndicator}
         Positioner={SelectPositioner}
         contentProps={keyboardFocus.menuContentProps}
