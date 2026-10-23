@@ -172,9 +172,10 @@ export const useGetEditEntityHandler = ({
         open={openReviewInProgressModal}
         onOpenChange={open => setOpenReviewInProgressModal(open)}
         title={t("Review in Progress")}
+        contentLayout="custom"
         content={
-          <Flex flexDirection="column" gap={2} alignItems="center">
-            <WarningIcon boxSize={10} color="warning.500" />
+          <Flex gap={2} alignItems="flex-start" pt={2}>
+            <WarningIcon boxSize={4} color="warning.500" mt={0.5} flexShrink={0} />
             <Text textStyle="400" color="neutral.900">
               {t(
                 "While we review your {entityName}, it is closed for editing. A Reviewer will either approve this {entityName} or request more information. If you have any questions or have critical changes to make in the meantime, please contact {email} with the details.",
