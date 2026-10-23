@@ -4,7 +4,7 @@ import { CalendarDate } from "@internationalized/date";
 import { useT } from "@transifex/react";
 import { FC, useEffect, useMemo, useState } from "react";
 
-import { getReportStatusOptions } from "@/constants/options/status";
+import { getReportStatusOptions, getUpdateStatusFilterOptions } from "@/constants/options/status";
 import { useDate } from "@/hooks/useDate";
 import FilterCard from "@/redesignComponents/containers/FilterPanel/FilterPanelElements/FilterCards";
 import IndexFilterDrawer from "@/redesignComponents/containers/FilterPanel/IndexFilterDrawer";
@@ -80,6 +80,7 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
   const { format } = useDate();
   const [draftFilters, setDraftFilters] = useState<ReportFilterState>(filters);
   const statusOptions = useMemo(() => getReportStatusOptions(t), [t]);
+  const updateStatusOptions = useMemo(() => getUpdateStatusFilterOptions(t), [t]);
   const reportTypeOptions = useMemo(() => {
     const options = entityProfile
       ? getEntityProfileReportTypeOptions(t)
@@ -111,6 +112,10 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
       const option = statusOptions.find(item => item.value === status);
       tags.push({ id: `status-${status}`, label: option?.title ?? status });
     });
+    draftFilters.updateStatuses.forEach(updateStatus => {
+      const option = updateStatusOptions.find(item => item.value === updateStatus);
+      tags.push({ id: `update-${updateStatus}`, label: option?.title ?? updateStatus });
+    });
 
     const periodLabel = formatReportPeriodLabel(draftFilters, format);
     if (periodLabel != null) {
@@ -118,7 +123,7 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
     }
 
     return tags;
-  }, [draftFilters, entityProfile, format, reportTypeLabels, source, statusOptions]);
+  }, [draftFilters, entityProfile, format, reportTypeLabels, source, statusOptions, updateStatusOptions]);
 
   const dueDateValue = useMemo<DateValue[]>(() => {
     const from = isoStringToDateValue(draftFilters.dueDateFrom);
@@ -159,6 +164,13 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
     }));
   };
 
+  const handleUpdateStatusChange = (value: string, { checked }: CheckboxChange) => {
+    setDraftFilters(current => ({
+      ...current,
+      updateStatuses: setArrayValue(current.updateStatuses, value, checked === true)
+    }));
+  };
+
   const handleDueDateChange = (dates: DateValue[]) => {
     setDraftFilters(current => ({
       ...current,
@@ -191,6 +203,14 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
       setDraftFilters(current => ({
         ...current,
         statuses: current.statuses.filter(status => status !== value)
+      }));
+      return;
+    }
+    if (id.startsWith("update-")) {
+      const value = id.replace("update-", "");
+      setDraftFilters(current => ({
+        ...current,
+        updateStatuses: current.updateStatuses.filter(updateStatus => updateStatus !== value)
       }));
       return;
     }
@@ -232,6 +252,19 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
             value={String(option.value)}
             checked={draftFilters.statuses.includes(String(option.value))}
             onCheckedChange={(change: CheckboxChange) => handleStatusChange(String(option.value), change)}
+          >
+            {option.title}
+          </Checkbox>
+        ))}
+      </FilterCard>
+      <FilterCard label={t("Updates")}>
+        {updateStatusOptions.map(option => (
+          <Checkbox
+            key={String(option.value)}
+            name={`report-update-${option.value}`}
+            value={String(option.value)}
+            checked={draftFilters.updateStatuses.includes(String(option.value))}
+            onCheckedChange={(change: CheckboxChange) => handleUpdateStatusChange(String(option.value), change)}
           >
             {option.title}
           </Checkbox>

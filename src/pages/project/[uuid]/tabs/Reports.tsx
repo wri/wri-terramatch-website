@@ -74,7 +74,11 @@ const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
     filters.reportTypes.length !== defaultReportTypes.length ||
     defaultReportTypes.some(type => !filters.reportTypes.includes(type));
   const hasReportSubset =
-    hasActiveSearch || hasUserReportTypeFilter || filters.statuses.length > 0 || hasActivePeriodFilter;
+    hasActiveSearch ||
+    hasUserReportTypeFilter ||
+    filters.statuses.length > 0 ||
+    filters.updateStatuses.length > 0 ||
+    hasActivePeriodFilter;
 
   const periodOptions = useMemo(
     () => getReportPeriodOptions(getSectionReportingPeriods(progressSections), additionalSections),

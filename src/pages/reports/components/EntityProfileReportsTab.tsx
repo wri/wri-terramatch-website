@@ -48,7 +48,7 @@ const EntityProfileReportsContent: FC<EntityProfileReportsContentProps> = ({ sou
 
   const hasActivePeriodFilter =
     filters.dueDateFrom !== "" || filters.dueDateTo !== "" || filters.dueMonth !== "" || filters.dueYear !== "";
-  const hasReportSubset = filters.statuses.length > 0 || hasActivePeriodFilter;
+  const hasReportSubset = filters.statuses.length > 0 || filters.updateStatuses.length > 0 || hasActivePeriodFilter;
 
   // A site / nursery's reports all belong to one project, so the project level accordion is skipped
   // and the reporting periods are listed directly.

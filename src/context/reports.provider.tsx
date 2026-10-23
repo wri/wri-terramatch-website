@@ -7,6 +7,7 @@ export type ReportsFilterValues = {
   dueYear: string;
   reportTypes: string[];
   statuses: string[];
+  updateStatuses: string[];
 };
 
 export type ReportsFilters = React.Dispatch<React.SetStateAction<ReportsFilterValues>>;
@@ -24,7 +25,8 @@ const EMPTY_FILTERS: ReportsFilterValues = {
   dueMonth: "",
   dueYear: "",
   reportTypes: [],
-  statuses: []
+  statuses: [],
+  updateStatuses: []
 };
 
 const ReportsContext = createContext<ReportsType | undefined>(undefined);
