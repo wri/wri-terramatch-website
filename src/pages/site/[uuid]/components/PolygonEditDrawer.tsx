@@ -468,6 +468,11 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                             return;
                           }
 
+                          if (!isCreateMode && hasUnsavedChangesRef.current?.() === false) {
+                            onClose();
+                            return;
+                          }
+
                           if (activeTab !== "edit" || saveEditContent == null) {
                             void handleSave(onClose);
                             return;
