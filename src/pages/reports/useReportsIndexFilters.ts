@@ -22,6 +22,7 @@ type ReportFilterCriteria = {
   reportTypes: string[];
   reportTypesSpanSections: boolean;
   statuses: string[];
+  updateStatuses: string[];
   dueDateFrom: string;
   dueDateTo: string;
   dueMonth: string;
@@ -35,13 +36,26 @@ const matchesSearchQuery = (values: Array<string | null | undefined>, query: str
   return values.some(value => value?.toLocaleLowerCase().includes(query));
 };
 
-const matchesTypeAndStatus = (
-  report: { type: string; status: string },
-  { reportTypes, statuses }: Pick<ReportFilterCriteria, "reportTypes" | "statuses">
+const matchesStatuses = (
+  report: { status: string; updateRequestStatus: string | null },
+  { statuses, updateStatuses }: Pick<ReportFilterCriteria, "statuses" | "updateStatuses">
 ) => {
-  if (reportTypes.length > 0 && !reportTypes.includes(report.type)) return false;
   if (statuses.length > 0 && !statuses.includes(report.status)) return false;
+  if (
+    updateStatuses.length > 0 &&
+    (report.updateRequestStatus == null || !updateStatuses.includes(report.updateRequestStatus))
+  ) {
+    return false;
+  }
   return true;
+};
+
+const matchesTypeAndStatus = (
+  report: { type: string; status: string; updateRequestStatus: string | null },
+  criteria: Pick<ReportFilterCriteria, "reportTypes" | "statuses" | "updateStatuses">
+) => {
+  if (criteria.reportTypes.length > 0 && !criteria.reportTypes.includes(report.type)) return false;
+  return matchesStatuses(report, criteria);
 };
 
 const matchesDueDateRange = (dueAt: string | null | undefined, dueDateFrom: string, dueDateTo: string) => {
@@ -74,6 +88,7 @@ const toFilterCriteria = (
   reportTypes: filters.reportTypes,
   reportTypesSpanSections,
   statuses: filters.statuses,
+  updateStatuses: filters.updateStatuses,
   dueDateFrom: filters.dueDateFrom,
   dueDateTo: filters.dueDateTo,
   dueMonth: filters.dueMonth,
@@ -96,7 +111,7 @@ const matchesAdditionalReport = (report: AdditionalReport, criteria: ReportFilte
   ) {
     return false;
   }
-  if (criteria.statuses.length > 0 && !criteria.statuses.includes(report.status)) return false;
+  if (!matchesStatuses(report, criteria)) return false;
 
   if (criteria.reportTypes.length > 0 && !criteria.reportTypes.includes(report.type)) {
     const hasAdditionalType = criteria.reportTypes.some(type => ADDITIONAL_REPORT_TYPES.includes(type));

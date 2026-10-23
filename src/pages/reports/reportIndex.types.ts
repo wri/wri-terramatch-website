@@ -1,3 +1,4 @@
+import type { EntityUpdateStatusValue } from "@/components/extensive/EntityIndex/EntityUpdateStatus";
 import { NurseryLightDto, ProjectLightDto, SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import type { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 
@@ -15,7 +16,7 @@ export type ReportsIndexReport = {
   type: ReportsIndexReportType;
   status: ReportsIndexStatus;
   nothingToReport: boolean;
-  updateRequestStatus: string | null;
+  updateRequestStatus: EntityUpdateStatusValue | null;
   completion: number | null;
   updatedAt: string;
   reportTitle: string | null;
@@ -51,7 +52,7 @@ type AdditionalReportBase = {
   type: AdditionalReportType;
   status: ReportsIndexStatus;
   nothingToReport: boolean;
-  updateRequestStatus: string | null;
+  updateRequestStatus: EntityUpdateStatusValue | null;
   completion: number | null;
   updatedAt: string;
   organisationName: string | null;

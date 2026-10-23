@@ -212,7 +212,11 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
     filters.reportTypes.length !== defaultReportTypes.length ||
     defaultReportTypes.some(type => !filters.reportTypes.includes(type));
   const hasReportSubset =
-    hasActiveSearch || hasUserReportTypeFilter || filters.statuses.length > 0 || hasActivePeriodFilter;
+    hasActiveSearch ||
+    hasUserReportTypeFilter ||
+    filters.statuses.length > 0 ||
+    filters.updateStatuses.length > 0 ||
+    hasActivePeriodFilter;
 
   // Built from the unfiltered sections so refining by a period never shrinks the list of periods
   // still on offer. In the "All Projects" view, the BE leaves the due date filters off its list of

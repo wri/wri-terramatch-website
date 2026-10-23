@@ -2,6 +2,7 @@ import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/re
 import { useT } from "@transifex/react";
 import { FC, useCallback, useMemo } from "react";
 
+import EntityUpdateStatus from "@/components/extensive/EntityIndex/EntityUpdateStatus";
 import { useDate } from "@/hooks/useDate";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
@@ -51,29 +52,38 @@ const ReportsIndexTable: FC<{
     () => [
       {
         key: "name",
-        label: t("Report Name"),
-        width: "52%"
+        label: t("Report Name")
       },
       {
         key: "type",
         label: t("Report Type"),
         sortable: true,
-        sortValue: row => getReportTypeSortValue((row as ReportsIndexReport).type)
+        sortValue: row => getReportTypeSortValue((row as ReportsIndexReport).type),
+        width: "fit-content"
       },
       {
         key: "status",
         label: t("Status"),
         sortable: true,
-        sortValue: row => getReportStatusSortValue((row as ReportsIndexReport).status)
+        sortValue: row => getReportStatusSortValue((row as ReportsIndexReport).status),
+        width: "10.75rem"
+      },
+      {
+        key: "updateRequestStatus",
+        label: t("Updates"),
+        sortable: true,
+        width: "11rem"
       },
       {
         key: "updatedAt",
-        label: t("Last Updated"),
-        sortable: true
+        label: t("Latest Update"),
+        sortable: true,
+        width: "11rem"
       },
       {
         key: "actions",
-        label: ""
+        label: "",
+        width: "4.6875rem"
       }
     ],
     [t]
@@ -118,6 +128,9 @@ const ReportsIndexTable: FC<{
             ) : (
               <TagSubmission state={report.status} size="small" />
             )}
+          </ChakraTableCell>
+          <ChakraTableCell {...context?.getCellProps("updateRequestStatus")}>
+            <EntityUpdateStatus status={report.updateRequestStatus} />
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("updatedAt")}>
             {report.status === "due" ? (

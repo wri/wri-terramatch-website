@@ -3,6 +3,7 @@ import { useT } from "@transifex/react";
 import { startCase } from "lodash";
 import { FC, useCallback, useMemo } from "react";
 
+import EntityUpdateStatus from "@/components/extensive/EntityIndex/EntityUpdateStatus";
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import { useDate } from "@/hooks/useDate";
@@ -27,7 +28,7 @@ import ReportsIndexEditButton from "./ReportsIndexEditButton";
 const getColumns = (type: AdditionalReportType, t: ReturnType<typeof useT>): TableColumn[] => {
   if (type === "financial-report") {
     return [
-      { key: "name", label: t("Report Name"), width: "18.0625rem" },
+      { key: "name", label: t("Report Name"), width: "13.5rem" },
       { key: "dueAt", label: t("Due Date"), sortable: true, width: "8.75rem" },
       { key: "currency", label: t("Local Currency"), width: "11.25rem" },
       { key: "financialYearStart", label: t("Financial Year Start"), sortable: true, width: "12.1875rem" },
@@ -38,29 +39,31 @@ const getColumns = (type: AdditionalReportType, t: ReturnType<typeof useT>): Tab
         width: "12.5rem",
         sortValue: row => getReportStatusSortValue((row as AdditionalReport).status)
       },
-      { key: "updatedAt", label: t("Last Updated"), sortable: true, width: "9.375rem" },
+      { key: "updateRequestStatus", label: t("Updates"), sortable: true, width: "12.5rem" },
+      { key: "updatedAt", label: t("Latest Update"), sortable: true, width: "9.375rem" },
       { key: "actions", label: "", width: "8.125rem" }
     ];
   }
 
   if (type === "srp-report") {
     return [
-      { key: "name", label: t("Report Name"), width: "25.25rem" },
-      { key: "dueAt", label: t("Due Date"), sortable: true, width: "15.625rem" },
+      { key: "name", label: t("Report Name"), width: "17.25rem" },
+      { key: "dueAt", label: t("Due Date"), sortable: true, width: "12.5rem" },
       {
         key: "status",
         label: t("Status"),
         sortable: true,
-        width: "15.625rem",
+        width: "12.5rem",
         sortValue: row => getReportStatusSortValue((row as AdditionalReport).status)
       },
-      { key: "updatedAt", label: t("Last Updated"), sortable: true, width: "15.625rem" },
+      { key: "updateRequestStatus", label: t("Updates"), sortable: true, width: "15.625rem" },
+      { key: "updatedAt", label: t("Latest Update"), sortable: true, width: "12.5rem" },
       { key: "actions", label: "", width: "8.125rem" }
     ];
   }
 
   return [
-    { key: "name", label: t("Report Name"), width: "21.375rem" },
+    { key: "name", label: t("Report Name"), width: "13rem" },
     { key: "dateOfDisturbance", label: t("Date of Disturbance"), sortable: true, width: "12.5rem" },
     { key: "sitesAffected", label: t("Sites Affected"), sortable: true, width: "9.6875rem" },
     {
@@ -70,8 +73,9 @@ const getColumns = (type: AdditionalReportType, t: ReturnType<typeof useT>): Tab
       width: "11.875rem",
       sortValue: row => getReportStatusSortValue((row as AdditionalReport).status)
     },
+    { key: "updateRequestStatus", label: t("Updates"), sortable: true, width: "12.5rem" },
     { key: "intensity", label: t("Intensity"), sortable: true, width: "7.5rem" },
-    { key: "updatedAt", label: t("Last Updated"), sortable: true, width: "9.1875rem" },
+    { key: "updatedAt", label: t("Latest Update"), sortable: true, width: "9.1875rem" },
     { key: "actions", label: "", width: "8.125rem" }
   ];
 };
@@ -190,6 +194,9 @@ const AdditionalReportsTable: FC<AdditionalReportsTableProps> = ({
             ) : (
               <TagSubmission state={report.status} size="small" />
             )}
+          </ChakraTableCell>
+          <ChakraTableCell {...context?.getCellProps("updateRequestStatus")}>
+            <EntityUpdateStatus status={report.updateRequestStatus} />
           </ChakraTableCell>
 
           {report.type === "disturbance-report" && (
