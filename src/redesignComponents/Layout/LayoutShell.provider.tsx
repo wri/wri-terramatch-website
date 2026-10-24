@@ -1,41 +1,48 @@
 import { createContext, FC, ReactNode, useCallback, useContext, useMemo, useState } from "react";
 
 type LayoutShellContextValue = {
+  isSidebarCollapsed: boolean;
+  setSidebarCollapsed: (collapsed: boolean) => void;
   isSidebarCollapseDisabled: boolean;
   setSidebarCollapseDisabled: (disabled: boolean) => void;
-  isBulkActionToolbarVisible: boolean;
-  setBulkActionToolbarVisible: (visible: boolean) => void;
+  pageResetKey: number;
+  resetPage: () => void;
 };
 
 const defaultLayoutShellContextValue: LayoutShellContextValue = {
+  isSidebarCollapsed: false,
+  setSidebarCollapsed: () => {},
   isSidebarCollapseDisabled: false,
   setSidebarCollapseDisabled: () => {},
-  isBulkActionToolbarVisible: false,
-  setBulkActionToolbarVisible: () => {}
+  pageResetKey: 0,
+  resetPage: () => {}
 };
 
 const LayoutShellContext = createContext<LayoutShellContextValue>(defaultLayoutShellContextValue);
 
 export const LayoutShellProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isSidebarCollapseDisabled, setIsSidebarCollapseDisabled] = useState(false);
-  const [isBulkActionToolbarVisible, setIsBulkActionToolbarVisible] = useState(false);
+  const [pageResetKey, setPageResetKey] = useState(0);
 
   const setSidebarCollapseDisabled = useCallback((disabled: boolean) => {
     setIsSidebarCollapseDisabled(disabled);
   }, []);
 
-  const setBulkActionToolbarVisible = useCallback((visible: boolean) => {
-    setIsBulkActionToolbarVisible(visible);
+  const resetPage = useCallback(() => {
+    setPageResetKey(key => key + 1);
   }, []);
 
   const value = useMemo(
     () => ({
+      isSidebarCollapsed,
+      setSidebarCollapsed,
       isSidebarCollapseDisabled,
       setSidebarCollapseDisabled,
-      isBulkActionToolbarVisible,
-      setBulkActionToolbarVisible
+      pageResetKey,
+      resetPage
     }),
-    [isSidebarCollapseDisabled, setSidebarCollapseDisabled, isBulkActionToolbarVisible, setBulkActionToolbarVisible]
+    [isSidebarCollapsed, isSidebarCollapseDisabled, setSidebarCollapseDisabled, pageResetKey, resetPage]
   );
 
   return <LayoutShellContext.Provider value={value}>{children}</LayoutShellContext.Provider>;

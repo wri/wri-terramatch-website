@@ -29,7 +29,6 @@ const renderToolbarAction = ({
   ...buttonProps
 }: BulkToolbarAction): ReactElement => {
   const isDisabledTooltip = tooltip != null && buttonProps.disabled === true;
-
   const button = (
     <Button
       {...buttonProps}

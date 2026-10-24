@@ -1484,3 +1484,60 @@ export type UpdateResearchTreeCountData = {
 export type UpdateResearchTreeCountBody = {
   data: UpdateResearchTreeCountData;
 };
+
+export type ProjectMapEntryDto = {
+  /**
+   * UUID of the project.
+   */
+  uuid: string;
+  /**
+   * Project name.
+   */
+  name: string | null;
+  /**
+   * Latitude of the project centroid (average of its polygon centroids). Null when the project has no polygons.
+   */
+  lat: number | null;
+  /**
+   * Longitude of the project centroid (average of its polygon centroids). Null when the project has no polygons.
+   */
+  long: number | null;
+  /**
+   * Framework key of the project.
+   */
+  frameworkKey:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "terrafund-3"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora-1"
+    | "wcb"
+    | "barka-fund"
+    | null;
+  /**
+   * Project country codes (GADM level 0).
+   */
+  level0Project: string[] | null;
+  /**
+   * Cohort of the project.
+   */
+  cohort: string | null;
+  /**
+   * Number of active polygons across the project's sites.
+   */
+  polygonCount: number;
+};
+
+export type ProjectMapIndexDto = {
+  /**
+   * Every project that matches the requested filters, including projects without a centroid.
+   */
+  projects: ProjectMapEntryDto[];
+  /**
+   * Number of projects in the projects array.
+   */
+  total: number;
+};

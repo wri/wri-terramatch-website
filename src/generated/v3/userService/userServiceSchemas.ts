@@ -713,7 +713,6 @@ export type UserDto = {
    * Currently just calculated by appending lastName to firstName.
    */
   fullName: string | null;
-  primaryRole: string;
   roles: string[];
   /**
    * @example person@foocorp.net
@@ -860,6 +859,19 @@ export type UserTaskDto = {
   associations: UserTaskAssociation[];
 };
 
+export type NotificationDto = {
+  uuid: string;
+  projectUuid?: string | null;
+  projectName?: string | null;
+  summary: string | null;
+  category: "project-reporting" | "financial-reporting" | "applications" | "polygons";
+  unread: boolean;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+};
+
 /**
  * CONSTANTS
  */
@@ -868,6 +880,18 @@ export type Roles = {
    * @example {"admin-super":"Super Admin","admin-ppc":"PPC Admin","admin-terrafund":"TerraFund Admin","admin-hbf":"HBF Admin","admin-epa-ghana-pilot":"EPA Ghana Pilot Admin","admin-fundo-flora":"Fundo Flora Admin","admin-wcb":"WCB Admin","admin-barka-fund":"Barka Fund Admin","project-developer":"Project Developer","project-manager":"Project Manager","greenhouse-service-account":"Greenhouse Service Account","research-service-account":"Research Service Account","government":"Government","funder":"Funder"}
    */
   ROLE_NAMES: Record<string, any>;
+  /**
+   * The only roles that may be combined with other roles; all other roles must be held alone.
+   *
+   * @example admin-barka-fund
+   * @example admin-epa-ghana-pilot
+   * @example admin-fundo-flora
+   * @example admin-hbf
+   * @example admin-ppc
+   * @example admin-terrafund
+   * @example admin-wcb
+   */
+  COMBINABLE_ROLES: string[];
 };
 
 /**
@@ -882,7 +906,7 @@ export type Frameworks = {
 
 export type UserUpdateAttributes = {
   /**
-   * Organisation UUID
+   * Organisation UUID if set to null (instead of simply being absent from the payload), the existing organisation association will be removed.
    *
    * @format uuid
    */
@@ -922,7 +946,7 @@ export type UserUpdateAttributes = {
    */
   locale?: "en-US" | "es-MX" | "fr-FR" | "pt-BR" | null;
   /**
-   * Replaces the user's full set of roles
+   * Replaces the user's full set of roles. Only framework admin roles (admin-barka-fund, admin-epa-ghana-pilot, admin-fundo-flora, admin-hbf, admin-ppc, admin-terrafund, admin-wcb) may be combined; any other role must be the user's only role.
    */
   roles?: (
     | "admin-super"
@@ -1020,11 +1044,15 @@ export type UserAssociationDto = {
   status: "pending" | "approved" | "rejected" | null;
   isManager: boolean;
   organisationName: string;
-  roleName: string | null;
+  roles: string[];
   phoneNumber: string | null;
   jobRole: string | null;
   lastLoggedInAt: string | null;
   associatedType: string;
+  /**
+   * True while an organisation invite has been sent but not yet accepted (the user has not signed up yet). Organisation members only; the FE shows these as Awaiting Response.
+   */
+  invitePending?: boolean;
 };
 
 export type UserAssociationCreateAttributes = {
@@ -1032,6 +1060,18 @@ export type UserAssociationCreateAttributes = {
    * Email address to associate with the project.
    */
   emailAddress: string;
+  /**
+   * First name of the invited user.
+   *
+   * @maxLength 255
+   */
+  firstName?: string;
+  /**
+   * Last name of the invited user.
+   *
+   * @maxLength 255
+   */
+  lastName?: string;
   /**
    * Flag to createa a manager or not
    */
@@ -1093,6 +1133,18 @@ export type OrganisationInviteRequestDto = {
    * @maxLength 255
    */
   emailAddress: string;
+  /**
+   * First name of the invited user.
+   *
+   * @maxLength 255
+   */
+  firstName?: string;
+  /**
+   * Last name of the invited user.
+   *
+   * @maxLength 255
+   */
+  lastName?: string;
   /**
    * Optional callback URL base for the signup link in the email.
    */

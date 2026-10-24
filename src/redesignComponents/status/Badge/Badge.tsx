@@ -1,4 +1,4 @@
-import { Box, type BoxProps } from "@chakra-ui/react";
+import { type BoxProps, Box } from "@chakra-ui/react";
 import { Badge as WriBadge } from "@worldresources/wri-design-systems";
 import type { ComponentProps, FC } from "react";
 

@@ -20,6 +20,7 @@ interface EntitySetUpSectionProps {
   type: SupportedEntity;
   entityTitle?: string;
   reportTitle?: string;
+  disabled?: boolean;
 }
 
 const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({
@@ -28,7 +29,8 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({
   onEditStep,
   type,
   entityTitle,
-  reportTitle
+  reportTitle,
+  disabled = false
 }) => {
   const t = useT();
   const { defaultValues, steps, isReady, fieldsProvider, feedbackFields, feedbackBaselineValues } = useEntityFormSetup(
@@ -56,7 +58,7 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({
         hasUnresolvedFeedbackInStep(fieldsProvider, step.id, feedbackFields, defaultValues, feedbackBaselineValues);
       return {
         index: index + 1,
-        status: hasUnresolvedFeedback ? "error" : stepStatusToBadge(valid),
+        status: disabled ? "disabled" : hasUnresolvedFeedback ? "error" : stepStatusToBadge(valid),
         label: step.title ?? "",
         actions: (
           <Button
@@ -76,7 +78,7 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({
         }
       };
     });
-  }, [t, steps, defaultValues, handleStepEdit, fieldsProvider, feedbackFields, feedbackBaselineValues]);
+  }, [t, steps, defaultValues, handleStepEdit, fieldsProvider, feedbackFields, feedbackBaselineValues, disabled]);
 
   const allStepsCompleted = useMemo(() => {
     if (!steps.length) return false;

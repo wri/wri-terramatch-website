@@ -1,4 +1,4 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC } from "react";
 
@@ -17,7 +17,7 @@ const DateRange: FC<DateRangeProps> = ({ startDate, endDate, startDateLabel = "S
   const t = useT();
 
   return (
-    <Flex gap={2} className="items-center">
+    <Flex gap={2} className="items-center mobile:flex-col mobile:items-start">
       <Flex gap={1} className="items-center">
         <CalendarIcon boxSize={"0.875rem"} color="neutral.700" />
         <Text textStyle="300" color="neutral.900" lineHeight="normal">
@@ -27,7 +27,9 @@ const DateRange: FC<DateRangeProps> = ({ startDate, endDate, startDateLabel = "S
           {startDate}
         </Text>
       </Flex>
-      <SeparatorDot />
+      <Box className="flex mobile:hidden">
+        <SeparatorDot />
+      </Box>
       <Flex gap={1} className="items-center">
         <CalendarIcon boxSize={"0.875rem"} color="neutral.700" />
         <Text textStyle="300" color="neutral.900" lineHeight="normal">
