@@ -22,11 +22,19 @@ const ContactSupport: FC<ContactSupportProps> = ({
   const mailtoHref = `mailto:${email}?subject=${encodeURIComponent(subject)}`;
 
   return (
-    <Flex alignItems="flex-start" gap={2} backgroundColor="primary.100" padding={2} borderRadius={1}>
+    <Flex
+      alignItems="flex-start"
+      gap={2}
+      backgroundColor="primary.100"
+      padding={2}
+      borderRadius={1}
+      width="fit-content"
+      maxWidth="full"
+    >
       <Flex paddingTop="3px" flexShrink={0}>
         <ContactSupportIcon boxSize={5} />
       </Flex>
-      <Text color="neutral.900" textStyle="300" flex={1}>
+      <Text color="neutral.900" textStyle="300" minWidth={0}>
         {message}{" "}
         <Button
           as="a"
