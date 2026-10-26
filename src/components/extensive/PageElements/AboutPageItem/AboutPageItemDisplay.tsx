@@ -93,7 +93,7 @@ const AboutPageItemDisplay: FC<AboutPageItemDisplayProps> = ({
                 size="small"
                 rightIcon={<ChevronRightIcon />}
                 key={link.title}
-                className="justify-start truncate !whitespace-nowrap mobile:max-w-full mobile:[text-wrap:auto]"
+                className="justify-start truncate !whitespace-nowrap mobile:!h-auto mobile:max-w-full mobile:!whitespace-normal mobile:text-left"
                 onClick={() => {
                   onboardingAnalytics?.trackLinkClick(link.title, link.url);
                   window.open(link.url, "_blank");
