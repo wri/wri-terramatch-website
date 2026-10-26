@@ -12,6 +12,7 @@ import {
 } from "@/connections/UserAssociation";
 import { UserAssociationDto } from "@/generated/v3/userService/userServiceSchemas";
 import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
+import { type ActionStatusTagState } from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag.type";
 import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
 import CustomTableCell from "@/redesignComponents/dataDisplay/Table/components/TableCell";
 import Table, {
@@ -26,6 +27,8 @@ import {
   DeleteIcon,
   DisallowedIcon,
   InformationRequiredIcon,
+  PendingIcon,
+  RefreshIcon,
   RejectedIcon,
   UserAddIcon
 } from "@/redesignComponents/foundations/Icons";
@@ -75,13 +78,12 @@ const toTeamMemberRow = (
   roleName: user.roles.find(role => ROLE_LABELS[role] != null)
 });
 
-const STATUS_TAG_CONFIG: Record<AssociationStatus, { state: "attention" | "success" | "warning"; iconColor: string }> =
-  {
-    requested: { state: "attention", iconColor: "warning.500" },
-    approved: { state: "success", iconColor: "success.500" },
-    invited: { state: "attention", iconColor: "neutral.500" },
-    rejected: { state: "warning", iconColor: "error.500" }
-  };
+const STATUS_TAG_CONFIG: Record<AssociationStatus, { state: ActionStatusTagState; iconColor: string }> = {
+  requested: { state: "attention", iconColor: "warning.500" },
+  approved: { state: "success", iconColor: "success.500" },
+  invited: { state: "neutral-light", iconColor: "neutral.500" },
+  rejected: { state: "warning", iconColor: "error.500" }
+};
 
 const TeamTabContent: FC = () => {
   const t = useT();
@@ -92,7 +94,6 @@ const TeamTabContent: FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResetKey, setSearchResetKey] = useState(0);
   const [selectedStatus, setSelectedStatus] = useState<AssociationStatus | null>(null);
-  const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [rowAction, setRowAction] = useState<RowActionState | null>(null);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const isSubmittingRef = useRef(false);
@@ -136,29 +137,18 @@ const TeamTabContent: FC = () => {
     [t]
   );
 
-  const roleOptions = useMemo(
-    () =>
-      Object.keys(ROLE_LABELS).map(role => ({
-        label: t(ROLE_LABELS[role]),
-        value: role,
-        onClick: () => setSelectedRole(role)
-      })),
-    [t]
-  );
-
   const teamMembers = useMemo(() => {
     const queryValue = searchQuery.trim().toLowerCase();
 
     return allMembers.filter(member => {
       if (selectedStatus != null && member.associationStatus !== selectedStatus) return false;
-      if (selectedRole != null && member.roleName !== selectedRole) return false;
       if (queryValue.length === 0) return true;
 
       return [member.fullName, member.emailAddress, member.roleName, member.status]
         .filter((value): value is string => value != null)
         .some(value => value.toLowerCase().includes(queryValue));
     });
-  }, [allMembers, searchQuery, selectedRole, selectedStatus]);
+  }, [allMembers, searchQuery, selectedStatus]);
 
   const { selectedRows, selectedRowIds, setSelectedRowIds, handleRowSelected, onAllItemsSelected } = useTableSelection(
     true,
@@ -244,6 +234,8 @@ const TeamTabContent: FC = () => {
               ? InformationRequiredIcon
               : member.associationStatus === "rejected"
               ? RejectedIcon
+              : member.associationStatus === "invited"
+              ? PendingIcon
               : CheckApprovedIcon;
 
           return (
@@ -261,8 +253,18 @@ const TeamTabContent: FC = () => {
         label: "",
         width: "214px",
         cell: (member: TeamMemberRow) => {
-          // Invited members have no actions until the reminder endpoint exists.
-          if (member.associationStatus === "invited") return null;
+          if (member.associationStatus === "invited") {
+            return (
+              <ActionCell
+                buttonSecondary={{
+                  children: t("Send Reminder"),
+                  leftIcon: <RefreshIcon boxSize={3} />,
+                  size: "small",
+                  variant: "secondary"
+                }}
+              />
+            );
+          }
 
           if (member.associationStatus === "requested") {
             return (
@@ -356,7 +358,6 @@ const TeamTabContent: FC = () => {
         classNameContentLeft="min-w-0"
         onClearFilters={() => {
           setSelectedStatus(null);
-          setSelectedRole(null);
           setSearchQuery("");
           setSearchResetKey(key => key + 1);
         }}
@@ -365,12 +366,6 @@ const TeamTabContent: FC = () => {
             mainActionLabel: selectedStatus == null ? t("Status") : t(STATUS_LABELS[selectedStatus]),
             mainActionOnClick: () => setSelectedStatus(null),
             otherActions: statusOptions,
-            variant: "secondary"
-          },
-          {
-            mainActionLabel: selectedRole == null ? t("Role") : t(ROLE_LABELS[selectedRole]),
-            mainActionOnClick: () => setSelectedRole(null),
-            otherActions: roleOptions,
             variant: "secondary"
           }
         ]}
@@ -384,7 +379,7 @@ const TeamTabContent: FC = () => {
           resetKey: searchResetKey
         }}
         button={{ children: t("Add Team Member"), leftIcon: <UserAddIcon />, onClick: handleInvite }}
-        showClearFilters={selectedStatus != null || selectedRole != null || searchQuery.length > 0}
+        showClearFilters={selectedStatus != null || searchQuery.length > 0}
       />
       <InviteTeamMemberModal
         organisationUUID={organisationUuid}
