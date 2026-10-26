@@ -4,7 +4,9 @@ import { ProjectMapEntryDto } from "@/generated/v3/researchService/researchServi
 
 /** Projects without polygons have no centroid; they stay selectable in the picker but get no marker. */
 export const toProjectMarkerPoints = (projects: ProjectMapEntryDto[]): ProjectMarkerPoint[] =>
-  projects.flatMap(({ uuid, lat, long }) => (lat == null || long == null ? [] : [{ uuid, lat, lng: long }]));
+  projects.flatMap(project =>
+    project.lat == null || project.long == null ? [] : [{ project, lat: project.lat, lng: project.long }]
+  );
 
 const SINGLE_MARKER_PADDING_DEGREES = 0.5;
 

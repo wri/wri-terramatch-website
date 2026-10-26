@@ -1,21 +1,39 @@
 import { Map as MapboxMap } from "mapbox-gl";
 import { MutableRefObject, useEffect } from "react";
 
-import { addProjectMarkerLayer, ProjectMarkerPoint, removeProjectMarkerLayer } from "../layers/projectMarkerLayer";
+import { ProjectMarkerPoint, removeProjectMarkerLayer, upsertProjectMarkerLayer } from "../layers/projectMarkerLayer";
 
 type UseMapProjectMarkersParams = {
   map: MutableRefObject<MapboxMap | null>;
   styleReady: boolean;
   styleVersion: number;
   projectMarkers?: ProjectMarkerPoint[];
+  onViewProjectPolygons?: (projectUuid: string) => void;
 };
 
-export function useMapProjectMarkers({ map, styleReady, styleVersion, projectMarkers }: UseMapProjectMarkersParams) {
+export function useMapProjectMarkers({
+  map,
+  styleReady,
+  styleVersion,
+  projectMarkers,
+  onViewProjectPolygons
+}: UseMapProjectMarkersParams) {
+  useEffect(
+    () => () => {
+      const mapInstance = map.current;
+      if (mapInstance != null) removeProjectMarkerLayer(mapInstance);
+    },
+    [map]
+  );
+
   useEffect(() => {
     const mapInstance = map.current;
-    if (mapInstance == null || !styleReady || projectMarkers == null) return;
+    if (mapInstance == null || !styleReady) return;
 
-    addProjectMarkerLayer(mapInstance, projectMarkers);
-    return () => removeProjectMarkerLayer(mapInstance);
-  }, [map, projectMarkers, styleReady, styleVersion]);
+    if (projectMarkers == null) {
+      removeProjectMarkerLayer(mapInstance);
+    } else {
+      upsertProjectMarkerLayer(mapInstance, projectMarkers, onViewProjectPolygons);
+    }
+  }, [map, onViewProjectPolygons, projectMarkers, styleReady, styleVersion]);
 }

@@ -19,9 +19,15 @@ type PolygonReviewMapProps = {
   projects: ProjectMapEntryDto[];
   selectedProject: ProjectMapEntryDto | null;
   hasLoadFailure: boolean;
+  onViewProjectPolygons: (projectUuid: string) => void;
 };
 
-const PolygonReviewMap: FC<PolygonReviewMapProps> = ({ projects, selectedProject, hasLoadFailure }) => {
+const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
+  projects,
+  selectedProject,
+  hasLoadFailure,
+  onViewProjectPolygons
+}) => {
   const t = useT();
   const mapFunctions = useBaseMap();
   const projectUuid = selectedProject?.uuid;
@@ -62,6 +68,7 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({ projects, selectedProject
           mapFunctions={mapFunctions}
           bbox={bbox}
           projectMarkers={projectMarkers}
+          onViewProjectPolygons={onViewProjectPolygons}
           mapIndexPolygons={mapIndexPolygons}
           showLegend
           disabledPolygonPanel
