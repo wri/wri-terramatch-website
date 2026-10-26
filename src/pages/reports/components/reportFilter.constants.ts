@@ -11,6 +11,7 @@ export type ReportTypeOption =
 export type ReportFilterState = {
   reportTypes: ReportTypeOption[];
   statuses: string[];
+  updateStatuses: string[];
   dueDateFrom: string;
   dueDateTo: string;
   dueMonth: string;
@@ -20,6 +21,7 @@ export type ReportFilterState = {
 export const EMPTY_REPORT_FILTERS: ReportFilterState = {
   reportTypes: [],
   statuses: [],
+  updateStatuses: [],
   dueDateFrom: "",
   dueDateTo: "",
   dueMonth: "",

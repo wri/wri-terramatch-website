@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 
-import { indexNurseryConnection, useFullProject } from "@/connections/Entity";
+import { indexNurseryConnection } from "@/connections/Entity";
 import type { ProjectNurseriesMetaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useInfinitePages } from "@/hooks/useConnection";
 
-import { getSeedlingsGoal, toNurseryIndexRows } from "./nurseryIndex.utils";
+import { toNurseryIndexRows } from "./nurseryIndex.utils";
 
 const NURSERY_PAGE_SIZE = 100;
 
@@ -35,7 +35,6 @@ export const useNurseryProjectRows = (
   );
 
   const nurseries = useInfinitePages(indexNurseryConnection, { enabled, filter }, NURSERY_PAGE_SIZE);
-  const [goalLoaded, { data: fullProject }] = useFullProject({ id: meta.uuid, enabled });
 
   const rows = useMemo(
     () => toNurseryIndexRows(nurseries.data, { uuid: meta.uuid, frameworkKey: meta.frameworkKey }),
@@ -49,7 +48,6 @@ export const useNurseryProjectRows = (
     loadingMore: nurseries.loadingMore,
     loadMore: nurseries.loadMore,
     loadFailure: nurseries.loadFailure,
-    goalLoaded,
-    goal: getSeedlingsGoal(fullProject?.lightResource === false ? fullProject : undefined)
+    goal: meta.seedlingsGrownGoalTotal
   };
 };

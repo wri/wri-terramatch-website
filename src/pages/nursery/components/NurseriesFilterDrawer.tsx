@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import { type FC, useEffect, useMemo, useState } from "react";
 
-import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
+import { getStatusOptions, getUpdateStatusFilterOptions } from "@/constants/options/status";
 import FilterCard from "@/redesignComponents/containers/FilterPanel/FilterPanelElements/FilterCards";
 import IndexFilterDrawer from "@/redesignComponents/containers/FilterPanel/IndexFilterDrawer";
 import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
@@ -30,13 +30,7 @@ const NurseriesFilterDrawer: FC<NurseriesFilterDrawerProps> = ({
 }) => {
   const t = useT();
   const statusOptions = useMemo(() => getStatusOptions(t), [t]);
-  const updateOptions = useMemo(
-    () =>
-      getChangeRequestStatusOptions(t).map(option =>
-        option.value === "approved" ? { ...option, title: t("Complete") } : option
-      ),
-    [t]
-  );
+  const updateOptions = useMemo(() => getUpdateStatusFilterOptions(t), [t]);
   const [draftStatuses, setDraftStatuses] = useState(statuses);
   const [draftUpdates, setDraftUpdates] = useState(updates);
 

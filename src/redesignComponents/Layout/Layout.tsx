@@ -7,6 +7,7 @@ import { useMyOrg } from "@/connections/Organisation";
 import { useMyUser } from "@/connections/User";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import LayoutChromeScale from "@/styles/LayoutChromeScale";
+import { getSidebarCollapsed, setSidebarCollapsed } from "@/utils/sidebarCollapsedState";
 import { userHasNurseries } from "@/utils/userAccessUtils";
 
 import { NurseryIcon } from "../foundations/Icons/NavigationSections/NurseryIcon";
@@ -30,7 +31,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
   // so the side menu must highlight the same first level.
   const profileOpenedFromProject = router.pathname === "/site/[uuid]" && router.query.origin !== "sites";
   const nurseryOpenedFromProject = router.pathname === "/nursery/[uuid]" && router.query.origin !== "nurseries";
-  const { isSidebarCollapsed, setSidebarCollapsed, isSidebarCollapseDisabled, pageResetKey } = useLayoutShell();
+  const { isSidebarCollapseDisabled, pageResetKey } = useLayoutShell();
   const [, myOrg] = useMyOrg();
   const [, { user: myUser }] = useMyUser();
   const data = useNavbarData();
@@ -116,7 +117,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
           >
             <Flex className="[zoom:var(--layout-chrome-zoom,1)]">
               <SideNavigation
-                collapsed={isSidebarCollapsed}
+                collapsed={getSidebarCollapsed()}
                 onCollapsedChange={setSidebarCollapsed}
                 isCollapsedDisabled={isSidebarCollapseDisabled}
                 groups={sideNavigationGroups}

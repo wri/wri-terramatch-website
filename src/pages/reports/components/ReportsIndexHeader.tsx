@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { useCreateDisturbanceReport } from "@/connections/Entity";
-import { getReportStatusOptions } from "@/constants/options/status";
+import { getReportStatusOptions, getUpdateStatusFilterOptions } from "@/constants/options/status";
 import { useReportsContext } from "@/context/reports.provider";
 import { useDate } from "@/hooks/useDate";
 import { useReportsIndexAnalytics } from "@/hooks/useReportsIndexAnalytics";
@@ -53,6 +53,7 @@ type ReportsIndexHeaderProps = {
   availableReportTypes?: ReportTypeOption[];
   showSearchInput?: boolean;
   addDisturbanceReportDisabled?: boolean;
+  showViewSelector?: boolean;
 };
 
 const getSearchPlaceholder = (
@@ -82,7 +83,8 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
   entityProfile = false,
   availableReportTypes,
   showSearchInput = false,
-  addDisturbanceReportDisabled = false
+  addDisturbanceReportDisabled = false,
+  showViewSelector = true
 }) => {
   const t = useT();
   const router = useRouter();
@@ -100,6 +102,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const selectedFilters = filtersByTab[activeTab] ?? EMPTY_REPORT_FILTERS;
   const statusOptions = useMemo(() => getReportStatusOptions(t), [t]);
+  const updateStatusOptions = useMemo(() => getUpdateStatusFilterOptions(t), [t]);
 
   const updateActiveFilters = useCallback(
     (next: ReportFilterState) => {
@@ -159,6 +162,18 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
       });
     }
 
+    if (selectedFilters.updateStatuses.length > 0) {
+      labels.push({
+        label: selectedFilters.updateStatuses.map(
+          updateStatus => updateStatusOptions.find(item => item.value === updateStatus)?.title ?? updateStatus
+        ),
+        category: t("Updates"),
+        onRemove: () => {
+          updateActiveFilters({ ...selectedFilters, updateStatuses: [] });
+        }
+      });
+    }
+
     const periodLabel = formatReportPeriodLabel(selectedFilters, format);
     if (periodLabel != null) {
       const isDateRange = getReportPeriodControl(activeTab, selectedFilters.reportTypes) === "date-range";
@@ -172,7 +187,17 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
     }
 
     return labels;
-  }, [activeTab, entityProfile, format, selectedFilters, source, statusOptions, t, updateActiveFilters]);
+  }, [
+    activeTab,
+    entityProfile,
+    format,
+    selectedFilters,
+    source,
+    statusOptions,
+    t,
+    updateActiveFilters,
+    updateStatusOptions
+  ]);
 
   const applyFilters = useCallback(
     (filters: ReportFilterState) => {
@@ -268,15 +293,17 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
             />
           }
           contentRight={
-            <HighLevelSelector
-              label={t("View:")}
-              items={viewItems}
-              value={viewValue}
-              emptyMessage={t("No results found")}
-              width="25rem"
-              className="mobile:!w-full"
-              onChange={onViewChange}
-            />
+            showViewSelector ? (
+              <HighLevelSelector
+                label={t("View:")}
+                items={viewItems}
+                value={viewValue}
+                emptyMessage={t("No results found")}
+                width="25rem"
+                className="mobile:!w-full"
+                onChange={onViewChange}
+              />
+            ) : undefined
           }
         />
       )}

@@ -11,6 +11,18 @@ export const getIsoYear = (value: string | null | undefined): string | undefined
   return year != null && ISO_YEAR.test(year) ? year : undefined;
 };
 
+/**
+ * A due date is a calendar day. Its day, month and year come from the ISO text, so the day shown is the one stored
+ * whatever timezone the browser is in.
+ */
+export const toDueDate = (value: string | null | undefined): Date | undefined => {
+  const year = getIsoYear(value);
+  const month = getIsoMonth(value);
+  const day = Number(value?.slice(8, 10));
+  if (year == null || month == null || !(day >= 1 && day <= 31)) return undefined;
+  return new Date(Number(year), Number(month) - 1, day);
+};
+
 export const getIsoMonth = (value: string | null | undefined): string | undefined => {
   if (getIsoYear(value) == null) return undefined;
   const month = Number(value?.slice(5, 7));

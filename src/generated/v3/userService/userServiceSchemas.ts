@@ -1049,6 +1049,10 @@ export type UserAssociationDto = {
   jobRole: string | null;
   lastLoggedInAt: string | null;
   associatedType: string;
+  /**
+   * True while an organisation invite has been sent but not yet accepted (the user has not signed up yet). Organisation members only; the FE shows these as Awaiting Response.
+   */
+  invitePending?: boolean;
 };
 
 export type UserAssociationCreateAttributes = {

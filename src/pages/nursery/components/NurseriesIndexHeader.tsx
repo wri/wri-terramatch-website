@@ -4,7 +4,7 @@ import classNames from "classnames";
 import { useRouter } from "next/router";
 import { FC, useMemo, useState } from "react";
 
-import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
+import { getStatusOptions, getUpdateStatusFilterOptions } from "@/constants/options/status";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import HighLevelSelector from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector";
@@ -25,9 +25,9 @@ type NurseriesIndexHeaderProps = {
   addNurseryHref?: string;
   onApplyFilters: (statuses: string[], updates: string[]) => void;
   onViewChange: (value: string) => void;
-  onViewOpenChange?: (open: boolean) => void;
   onQueryChange: (query: string) => void;
   embeddedInProject?: boolean;
+  showViewSelector?: boolean;
 };
 
 const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
@@ -39,21 +39,15 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
   addNurseryHref,
   onApplyFilters,
   onViewChange,
-  onViewOpenChange,
   onQueryChange,
-  embeddedInProject = false
+  embeddedInProject = false,
+  showViewSelector = true
 }) => {
   const t = useT();
   const router = useRouter();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const statusOptions = useMemo(() => getStatusOptions(t), [t]);
-  const updateOptions = useMemo(
-    () =>
-      getChangeRequestStatusOptions(t).map(option =>
-        option.value === "approved" ? { ...option, title: t("Complete") } : option
-      ),
-    [t]
-  );
+  const updateOptions = useMemo(() => getUpdateStatusFilterOptions(t), [t]);
   const activeFilterLabels = useMemo<SelectedFilter[]>(
     () => [
       ...(statuses.length === 0
@@ -110,16 +104,17 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
             title={t("Nurseries")}
             actions={
               <Flex gap={4} alignItems="center">
-                <HighLevelSelector
-                  label={t("View:")}
-                  items={viewItems}
-                  value={viewValue}
-                  emptyMessage={t("No projects found")}
-                  width="25rem"
-                  className="mobile:!w-full"
-                  onChange={onViewChange}
-                  onOpenChange={onViewOpenChange}
-                />
+                {showViewSelector && (
+                  <HighLevelSelector
+                    label={t("View:")}
+                    items={viewItems}
+                    value={viewValue}
+                    emptyMessage={t("No projects found")}
+                    width="25rem"
+                    className="mobile:!w-full"
+                    onChange={onViewChange}
+                  />
+                )}
                 <Button size="small" {...addNurseryButton} />
               </Flex>
             }

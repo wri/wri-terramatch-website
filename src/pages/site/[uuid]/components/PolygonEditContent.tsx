@@ -592,7 +592,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         const savedPolygon = await finalizeSuccessfulSave(updatedPolygon, {
           geometryChanged,
           refetchVersionsList: true,
-          clearsValidation: true,
+          clearsValidation: updatedPolygon.validationStatus == null,
           previousPolygonUuid,
           closeOnSave: options?.closeOnSave
         });

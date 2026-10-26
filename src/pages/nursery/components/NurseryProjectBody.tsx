@@ -37,27 +37,18 @@ const NurseryProjectBody: FC<NurseryProjectBodyProps> = ({
 
   return (
     <Flex p={4} bg="neutral.100" gap={5} flexDirection="column" data-table-scroll-anchor>
-      {!nurseries.goalLoaded ? (
-        <Flex minHeight="3rem" alignItems="center" gap={3}>
-          <LoadingIcon boxSize={5} className="animate-spin" color="primary.700" />
-          <Text textStyle="400" color="neutral.800">
-            {t("Loading seedlings goal...")}
-          </Text>
-        </Flex>
-      ) : (
-        <MetricCard
-          className="w-fit min-w-[16rem]"
-          goal={nurseries.goal}
-          icon={<SeedlingsIcon />}
-          progress={meta.seedlingsGrownTotal}
-          title={t("Seedlings Grown")}
-          tooltipContent={t(SEEDLINGS_GROWN_TOOLTIP)}
-          variant="progressBar"
-          color="secondary.600"
-          selection={selectedRows.length > 0 ? selectedSeedlings : undefined}
-          filtered={isFiltered ? meta.seedlingsGrownMatching : undefined}
-        />
-      )}
+      <MetricCard
+        className="w-fit min-w-[16rem]"
+        goal={nurseries.goal}
+        icon={<SeedlingsIcon />}
+        progress={meta.seedlingsGrownTotal}
+        title={t("Seedlings Grown")}
+        tooltipContent={t(SEEDLINGS_GROWN_TOOLTIP)}
+        variant="progressBar"
+        color="secondary.600"
+        selection={selectedRows.length > 0 ? selectedSeedlings : undefined}
+        filtered={isFiltered ? meta.seedlingsGrownMatching : undefined}
+      />
       {!nurseries.loaded ? (
         <Flex minHeight="3rem" alignItems="center" gap={3}>
           <LoadingIcon boxSize={5} className="animate-spin" color="primary.700" />

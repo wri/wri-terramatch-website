@@ -50,6 +50,22 @@ export const Open: Story = {
   }
 };
 
+export const Grouped: Story = {
+  args: {
+    defaultOpen: true,
+    defaultValue: "all",
+    label: "View:",
+    items: [
+      { label: "All", value: "all" },
+      { label: "Project Name 1", value: "project-1", group: "Projects" },
+      { label: "Project Name 2", value: "project-2", group: "Projects" },
+      { label: "Project Name 3", value: "project-3", group: "Projects" },
+      { label: "Organization Name 1", value: "organization-1", group: "Organizations" },
+      { label: "Organization Name 2", value: "organization-2", group: "Organizations" }
+    ]
+  }
+};
+
 export const Disabled: Story = {
   args: {
     defaultValue: "label-1",

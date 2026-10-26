@@ -17,8 +17,6 @@ export type SiteIndexQuery = {
   /** Only this project, for the project's sites tab. */
   projectUuid?: string;
   enabled: boolean;
-  /** Set once the view dropdown has been opened; the project catalog is only loaded then. */
-  catalogRequested?: boolean;
   /** Bumped after a bulk action, so the lists and counts are fetched again. */
   reloadNonce: number;
 };
@@ -33,7 +31,6 @@ export const useSiteIndexData = ({
   updateFilters,
   projectUuid,
   enabled,
-  catalogRequested = false,
   reloadNonce
 }: SiteIndexQuery) => {
   const updateRequestStatuses = useMemo(() => toSiteIndexUpdateRequestStatuses(updateFilters), [updateFilters]);
@@ -58,12 +55,9 @@ export const useSiteIndexData = ({
   // On the all-projects page the total comes from a count request. On a single project the meta already has the
   // matching count, so that request is skipped.
   const [countLoaded, { data: counts }] = useSiteCounts(filter, enabled && projectUuid == null);
-  // The project list for the view dropdown and the add-site link. Only needed on the "All Projects" page.
-  // The project list for the view dropdown and the add-site link. Loaded only once the dropdown opens, or when a
-  // project is selected (the label and the add-site link need it).
-  const [, projectRows] = useAllPages(indexProjectConnection, {
-    enabled: enabled && (catalogRequested || projectUuid != null)
-  });
+  // The project list for the view dropdown and the add-site link. It is always loaded, because a user with a
+  // single project is sent straight to that project's view and needs to know the count up front.
+  const [, projectRows] = useAllPages(indexProjectConnection, { enabled });
 
   const metas = metaList.data;
   const projects = useMemo(

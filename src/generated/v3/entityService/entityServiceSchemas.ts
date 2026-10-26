@@ -1450,6 +1450,10 @@ export type SiteLightDto = {
    * Workdays for this site: demographic workdays from approved reports due on or after the demographics cutoff, plus self-reported workdays from approved reports due before it.
    */
   combinedWorkdayCount: number;
+  /**
+   * PPC estimated trees restored from approved site reports: tree species planted × parent project survival rate + seeds planted × parent project direct seeding survival rate + sum of ANR estimates (numTreesRegenerating) on reports.
+   */
+  treesRestoredPpc: number;
   totalSiteReports: number;
   /**
    * @format date-time
@@ -1692,6 +1696,10 @@ export type ProjectNurseriesMetaDto = {
    * Seedlings grown across the nurseries that match the filters
    */
   seedlingsGrownMatching: number;
+  /**
+   * Seedlings goal for the project: the Tree Species (Nursery) amounts across all approved nurseries in the project
+   */
+  seedlingsGrownGoalTotal: number;
 };
 
 export type ProjectSitesMetaDto = {
@@ -1727,6 +1735,14 @@ export type ProjectSitesMetaDto = {
    * Workdays across the approved sites that match the filters
    */
   workdaysMatching: number;
+  /**
+   * Trees restored (PPC estimate) across the approved sites that match the filters
+   */
+  treesRestoredPpcMatching: number;
+  /**
+   * Sum of the natural regeneration (ANR) goals entered per site, across all approved sites in the project
+   */
+  aNatRegenerationGoalTotal: number;
 };
 
 export type FileDownloadDto = {
@@ -2039,6 +2055,10 @@ export type SiteFullDto = {
    * Workdays for this site: demographic workdays from approved reports due on or after the demographics cutoff, plus self-reported workdays from approved reports due before it.
    */
   combinedWorkdayCount: number;
+  /**
+   * PPC estimated trees restored from approved site reports: tree species planted × parent project survival rate + seeds planted × parent project direct seeding survival rate + sum of ANR estimates (numTreesRegenerating) on reports.
+   */
+  treesRestoredPpc: number;
   totalSiteReports: number;
   /**
    * @format date-time
@@ -2060,10 +2080,6 @@ export type SiteFullDto = {
   overdueSiteReportsTotal: number;
   selfReportedWorkdayCount: number;
   regeneratedTreesCount: number;
-  /**
-   * PPC estimated trees restored from approved site reports: tree species planted × parent project survival rate + seeds planted × parent project direct seeding survival rate + sum of ANR estimates (numTreesRegenerating) on reports.
-   */
-  treesRestoredPpc: number;
   /**
    * Sum of tree species amounts for collection 'anr' across approved site reports for this site
    */

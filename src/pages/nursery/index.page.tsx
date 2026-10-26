@@ -1,7 +1,7 @@
 import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import Head from "next/head";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import IndexLoadingRow from "@/components/extensive/EntityIndex/IndexLoadingRow";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
@@ -22,7 +22,6 @@ const NurseriesIndexContent: FC = () => {
   const t = useT();
   const { clearSelection } = useNurseriesSelectionActions();
   const [reloadNonce, setReloadNonce] = useState(0);
-  const [viewMenuOpened, setViewMenuOpened] = useState(false);
   const [statuses, setStatuses] = useState<string[]>([]);
   const [updates, setUpdates] = useState<string[]>([]);
   const {
@@ -46,9 +45,9 @@ const NurseriesIndexContent: FC = () => {
     updates,
     projectUuid: selectedProjectUuid,
     enabled: hasHydratedQuery,
-    catalogRequested: viewMenuOpened,
     reloadNonce
   });
+  const singleProjectUuid = projects.length === 1 ? projects[0].uuid : undefined;
 
   const viewItems = useMemo(
     () => [
@@ -71,6 +70,10 @@ const NurseriesIndexContent: FC = () => {
       ? undefined
       : `/entity/nurseries/create/${selectedProject.frameworkKey}?parent_name=projects&parent_uuid=${selectedProject.uuid}`;
 
+  useEffect(() => {
+    if (singleProjectUuid != null && viewValue !== singleProjectUuid) handleViewChange(singleProjectUuid);
+  }, [handleViewChange, singleProjectUuid, viewValue]);
+
   const handleApplyFilters = useCallback(
     (nextStatuses: string[], nextUpdates: string[]) => {
       clearSelection();
@@ -91,7 +94,7 @@ const NurseriesIndexContent: FC = () => {
         addNurseryHref={addNurseryHref}
         onApplyFilters={handleApplyFilters}
         onViewChange={handleViewChange}
-        onViewOpenChange={open => open && setViewMenuOpened(true)}
+        showViewSelector={singleProjectUuid == null}
         onQueryChange={setQuery}
       />
       <PageContent className="h-auto flex-1 px-2 py-0">
