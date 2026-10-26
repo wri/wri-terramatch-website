@@ -306,6 +306,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
   const sitePolygonUuid = polygon?.uuid ?? "";
   const geometryPolygonUuid = polygon?.polygonUuid ?? "";
+  const polygonStatus = polygon?.status ?? undefined;
   const isCreateMode = polygon?.primaryUuid == null || polygon.primaryUuid === "";
   const isPolygonSubmittable = isSitePolygonSubmittable(polygon);
   const submitTooltip = getSingleSitePolygonSubmitTooltip(polygon, t);
@@ -662,7 +663,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     setEditPolygon({
       isOpen: shouldMapEditPolygon,
       uuid: shouldMapEditPolygon ? geometryPolygonUuid : "",
-      primaryUuid: shouldMapEditPolygon ? primaryUuid : undefined
+      primaryUuid: shouldMapEditPolygon ? primaryUuid : undefined,
+      status: shouldMapEditPolygon ? polygonStatus : undefined
     });
 
     if (!shouldMapEditPolygon) {
@@ -673,6 +675,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     geometryPolygonUuid,
     isCreateMode,
     onSuppressMapSelectionHighlightChange,
+    polygonStatus,
     primaryUuid,
     setEditPolygon,
     setIsUserDrawingEnabled,

@@ -1,7 +1,7 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { useT } from "@transifex/react";
 import { Map as MapboxMap } from "mapbox-gl";
-import { MutableRefObject, useCallback, useEffect, useRef } from "react";
+import { MutableRefObject, useCallback, useEffect, useMemo, useRef } from "react";
 
 import { pruneBoundingBoxesCache } from "@/connections/BoundingBox";
 import { loadListPolygonVersions } from "@/connections/PolygonVersion";
@@ -33,7 +33,7 @@ import {
 } from "../interactions/draw";
 import { removePopups } from "../interactions/popups";
 import { DashboardGetProjectsData, PolygonFromMapState } from "../Map.d";
-import { applyMapDrawStatusStyles, isPolygonDrawStatus, PolygonDrawStatus } from "../mapStyle";
+import { applyMapDrawStatusStyles, isPolygonDrawStatus } from "../mapStyle";
 import { applyPolygonNeighborDimming } from "./polygonEditFocusStyle";
 import { filterPolygonFromLayers } from "./useMapLayers";
 
@@ -86,6 +86,28 @@ export function useMapDraw({
   const isApplyingGeometryUndoRef = useRef(false);
   const editSessionRef = useRef(0);
   const latestPolygonFromMapRef = useLatestRef(polygonFromMap);
+
+  const editDrawStatus = useMemo(() => {
+    const rawStatus =
+      polygonFromMap?.status ??
+      sitePolygonData?.find(polygon => polygon.polygonUuid === polygonFromMap?.uuid)?.status ??
+      statusSelectedPolygon;
+    return isPolygonDrawStatus(rawStatus) ? rawStatus : undefined;
+  }, [polygonFromMap?.status, polygonFromMap?.uuid, sitePolygonData, statusSelectedPolygon]);
+
+  useEffect(() => {
+    const currentMap = map.current;
+    if (currentMap == null || polygonFromMap?.isOpen !== true || isUserDrawingEnabled || editDrawStatus == null) {
+      return;
+    }
+
+    const applyEditStatusStyles = () => applyMapDrawStatusStyles(currentMap, editDrawStatus);
+    applyEditStatusStyles();
+    currentMap.on("styledata", applyEditStatusStyles);
+    return () => {
+      currentMap.off("styledata", applyEditStatusStyles);
+    };
+  }, [editDrawStatus, isUserDrawingEnabled, map, polygonFromMap?.isOpen]);
 
   const serializeGeometry = useCallback((geometry: GeoJSON.Geometry | null | undefined) => {
     return geometry == null ? "" : JSON.stringify(geometry);
@@ -309,9 +331,6 @@ export function useMapDraw({
 
     const isProjectPolygon = isProjectPitchesEntityName(polygonFromMap?.entityName ?? "");
     const projectPitchUuid = polygonFromMap?.projectPitchUuid;
-    const rawStatus =
-      sitePolygonData?.find(polygon => polygon.polygonUuid === polygonuuid)?.status ?? statusSelectedPolygon;
-    const polygonStatus: PolygonDrawStatus | undefined = isPolygonDrawStatus(rawStatus) ? rawStatus : undefined;
 
     try {
       const geometry = await fetchPolygonGeometry(polygonuuid, true, isProjectPolygon ? projectPitchUuid : undefined);
@@ -344,7 +363,7 @@ export function useMapDraw({
           currentGeometry: geometry,
           isDirty: false
         });
-        addGeojsonToDraw(geometry, polygonuuid, () => {}, draw.current, map.current, polygonStatus);
+        addGeojsonToDraw(geometry, polygonuuid, () => {}, draw.current, map.current, editDrawStatus);
       }
     } catch (error) {
       Log.error("Error fetching polygon geometry:", error);
@@ -362,8 +381,7 @@ export function useMapDraw({
     polygonFromMap?.entityName,
     polygonFromMap?.projectPitchUuid,
     polygonsData,
-    sitePolygonData,
-    statusSelectedPolygon,
+    editDrawStatus,
     formMap
   ]);
 
