@@ -29,6 +29,7 @@ import type {
   DashboardPopupContext,
   EditPolygonState,
   MobilePopupData,
+  OverviewPolygonPopup,
   PolygonEntityScope,
   PolygonFromMapState,
   SetPolygonFromMap,
@@ -52,7 +53,7 @@ type UseMapPopupsParams = {
   editPolygon: EditPolygonState;
   setMobilePopupData: (v: MobilePopupData) => void;
   dashboardContext?: DashboardPopupContext | null;
-  overviewPolygonPopup?: boolean;
+  overviewPolygonPopup?: OverviewPolygonPopup;
   polygonFromMap?: Pick<PolygonFromMapState, "isOpen"> | null;
 };
 

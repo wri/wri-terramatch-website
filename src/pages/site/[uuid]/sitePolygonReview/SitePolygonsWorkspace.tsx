@@ -1,4 +1,3 @@
-import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { ComponentProps, FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -24,6 +23,7 @@ import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer
 import { setPolygonTableHoveredUuid, useSyncPolygonTableSelectionStore } from "@/context/polygonTableInteraction.store";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 
@@ -696,29 +696,6 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
             onClearFilters={handleClearPolygonFilters}
           />
         </SitePolygonsHeader>
-        <PolygonBulkActionToolbar
-          visible={hasPolygonSelection && !isDeletedAuditView}
-          itemCount={selectedRows.length}
-          isBulkEditDrawerOpen={showBulkEditDrawer}
-          isAdminReview={isAdminReview}
-          submitLabel={bulkToolbarSubmitLabel}
-          polygons={selectedRows}
-          selectedGeometryPolygonUuids={selectedGeometryPolygonUuids}
-          isDownloading={isDownloadingSelectedPolygons}
-          isValidating={isValidatingPolygons}
-          onCancel={clearBulkTableSelection}
-          onClearSelection={clearBulkTableSelection}
-          onDelete={handleOpenDeletePolygonModal}
-          onDownload={handleBulkDownloadClick}
-          onEdit={handleBulkEditDetails}
-          onRunValidation={runValidationWithResultsModal}
-          onSubmit={handleOpenSubmitPolygonsModal}
-          onOpenApproveModal={handleOpenApprovePolygonModal}
-          onOpenRequestInformationModal={handleOpenRequestInformationModal}
-          isOverlapFixAction={hasSelectedOverlapFailure}
-          canAutoFixOverlap={hasFixableSelectedOverlap}
-          isSubmitDisabled={isBulkSubmitDisabled}
-        />
         <SitePolygonModals
           siteUuid={site.uuid}
           isEditPolygonOpen={isEditPolygonOpen}
@@ -818,12 +795,10 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           />
         )}
         {shouldShowNoResults ? (
-          <Box>
-            <Text textStyle="400-bold">{t("No results found")}</Text>
-            <Text textStyle="400">
-              {t("We couldn’t find any site areas matching your search. Try a different keyword.")}
-            </Text>
-          </Box>
+          <NoResults
+            title={t("No results found")}
+            description={t("We couldn’t find any site areas matching your search. Try a different keyword.")}
+          />
         ) : (
           <>
             {!isDeletedAuditView && (
@@ -862,6 +837,29 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
             />
           </>
         )}
+        <PolygonBulkActionToolbar
+          visible={hasPolygonSelection && !isDeletedAuditView}
+          itemCount={selectedRows.length}
+          isBulkEditDrawerOpen={showBulkEditDrawer}
+          isAdminReview={isAdminReview}
+          submitLabel={bulkToolbarSubmitLabel}
+          polygons={selectedRows}
+          selectedGeometryPolygonUuids={selectedGeometryPolygonUuids}
+          isDownloading={isDownloadingSelectedPolygons}
+          isValidating={isValidatingPolygons}
+          onCancel={clearBulkTableSelection}
+          onClearSelection={clearBulkTableSelection}
+          onDelete={handleOpenDeletePolygonModal}
+          onDownload={handleBulkDownloadClick}
+          onEdit={handleBulkEditDetails}
+          onRunValidation={runValidationWithResultsModal}
+          onSubmit={handleOpenSubmitPolygonsModal}
+          onOpenApproveModal={handleOpenApprovePolygonModal}
+          onOpenRequestInformationModal={handleOpenRequestInformationModal}
+          isOverlapFixAction={hasSelectedOverlapFailure}
+          canAutoFixOverlap={hasFixableSelectedOverlap}
+          isSubmitDisabled={isBulkSubmitDisabled}
+        />
       </PageContent>
     </>
   );

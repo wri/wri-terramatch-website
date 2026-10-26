@@ -125,6 +125,10 @@ const SharedDetails: FC<SharedDetailsProps> = ({
     entityStatus: entityStatus ?? "draft",
     updateRequestStatus: updateRequestStatus!,
     feedback: entity.feedback,
+    reportOwner:
+      entityName === "financial-reports" && "organisationUuid" in entity
+        ? { uuid: entity.organisationUuid, name: entity.organisationName }
+        : null,
     useInformationRequiredModal: true
   });
 

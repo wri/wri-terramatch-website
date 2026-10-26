@@ -31,9 +31,10 @@ import LatestImagesSectionTab from "./LatestImagesSection";
 interface ProjectOverviewTabProps {
   project: ProjectFullDto;
   onViewSites?: () => void;
+  onViewNurseries?: () => void;
 }
 
-const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) => {
+const ProjectOverviewTab = ({ project, onViewSites, onViewNurseries }: ProjectOverviewTabProps) => {
   const router = useRouter();
   const t = useT();
   const { framework } = useFrameworkContext();
@@ -112,7 +113,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         rightIcon: <ChevronRightIcon boxSize={4} />,
         className: "!text-theme-neutral-100",
         children: t("Add Sites"),
-        onClick: () => goToTab("sites")
+        onClick: () => onViewSites?.()
       }
     ];
 
@@ -124,12 +125,12 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         rightIcon: <ChevronRightIcon boxSize={4} />,
         className: "!text-theme-neutral-100",
         children: t("Add Nurseries"),
-        onClick: () => goToTab("nurseries")
+        onClick: () => onViewNurseries?.()
       });
     }
 
     return buttons;
-  }, [goToTab, hideNurseries, t]);
+  }, [hideNurseries, onViewNurseries, onViewSites, t]);
 
   const [projectMapIndexLoaded, { data: projectMapIndex }] = useSitePolygonMapIndex({
     entityName: "projects",
@@ -181,7 +182,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
             size: "small",
             children: t("View Sites"),
             rightIcon: <ChevronRightIcon />,
-            onClick: onViewSites ?? (() => goToTab("sites"))
+            onClick: onViewSites ?? (() => void router.push(`/project/${project.uuid}?tab=sites`))
           }}
           downloadButtonProps={{
             variant: "secondary",

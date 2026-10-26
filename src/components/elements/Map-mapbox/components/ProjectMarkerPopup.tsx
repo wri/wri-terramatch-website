@@ -1,6 +1,6 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, ReactNode, useCallback, useRef, useState } from "react";
+import { FC, ReactNode, useCallback, useRef } from "react";
 
 import { ProjectMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -37,25 +37,19 @@ const MetricRow: FC<{ icon: ReactNode; label: string; value: string }> = ({ icon
 const ProjectMarkerPopup: FC<ProjectMarkerPopupProps> = ({ project, onClose, onViewProjectPolygons }) => {
   const t = useT();
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const [open, setOpen] = useState(true);
   const { uuid, name, sumNumTrees, sumCalcArea, polygonCount, latestQaCycle, latestQaStatus } = project;
-
-  const closePopup = useCallback(() => {
-    setOpen(false);
-    onClose();
-  }, [onClose]);
 
   const handleOpenChange = useCallback(
     (nextOpen: boolean) => {
-      if (!nextOpen) closePopup();
+      if (!nextOpen) onClose();
     },
-    [closePopup]
+    [onClose]
   );
 
   const viewProjectPolygons = useCallback(() => {
-    closePopup();
+    onClose();
     onViewProjectPolygons(uuid);
-  }, [closePopup, onViewProjectPolygons, uuid]);
+  }, [onClose, onViewProjectPolygons, uuid]);
 
   const title = name != null && name !== "" ? name : t("Unnamed Project");
 
@@ -70,9 +64,8 @@ const ProjectMarkerPopup: FC<ProjectMarkerPopupProps> = ({ project, onClose, onV
       />
       <MapPopUp
         anchorRef={triggerRef}
-        open={open}
+        open
         onOpenChange={handleOpenChange}
-        closeOnOutsideClick
         placement="right"
         header={
           <Text textStyle="400-bold" color="neutral.900">

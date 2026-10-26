@@ -49,8 +49,7 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
   });
   const projectPolygons = polygonMapIndex?.polygons;
 
-  // The polygon tile layers are only added once a project's polygons arrive, so landing on the page loads no
-  // polygon tiles. Clearing the project afterwards must pass an empty list to hide the layers that stay on the map.
+  // Once the polygon layers are added, an empty list is needed to hide them when the project is cleared.
   const [hasPolygonLayers, setHasPolygonLayers] = useState(false);
   if (projectPolygons != null && !hasPolygonLayers) setHasPolygonLayers(true);
 
@@ -64,9 +63,8 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
     () => getProjectMarkersBbox(toProjectMarkerPoints(selectedProject != null ? [selectedProject] : projects)),
     [projects, selectedProject]
   );
-  // The bounding box endpoint takes a single site, so a multi-site selection keeps the project's extent.
   const polygonsBbox = useBoundingBox(
-    projectUuid == null ? {} : siteUuids.length === 1 ? { siteUuid: siteUuids[0] } : { projectUuid }
+    projectUuid == null ? {} : siteUuids.length > 0 ? { siteUuids } : { projectUuid }
   );
   const bbox = (projectUuid != null ? polygonsBbox : undefined) ?? markersBbox;
 

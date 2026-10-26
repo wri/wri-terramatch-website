@@ -1,12 +1,10 @@
 import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo } from "react";
 
 import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
-import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import useCollectionsTotal, { CollectionsTotalProps } from "@/components/extensive/TrackingCollapseGrid/hooks";
 import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
@@ -16,14 +14,16 @@ import FrameworkProvider, { Framework, toFramework, useFrameworkContext } from "
 import { MapAreaProvider } from "@/context/mapArea.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { SiteFullDto, SiteReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useReportBreadcrumbs } from "@/hooks/useReportBreadcrumbs";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { SuffixButtonConfig } from "@/pages/project/[uuid]/index.page";
+import { withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import Details from "@/pages/reports/site-report/tabs/Details";
 import Overview from "@/pages/reports/site-report/tabs/Overview";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
-import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
@@ -66,7 +66,9 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
 
   const navigateToTab = useCallback(
     (tab: string) => {
-      router.push(`/reports/site-report/${siteReportUUID}?tab=${tab}`, undefined, { shallow: true });
+      router.push(withReportOrigin(`/reports/site-report/${siteReportUUID}?tab=${tab}`, router.query), undefined, {
+        shallow: true
+      });
     },
     [router, siteReportUUID]
   );
@@ -148,6 +150,20 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
 
   const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "overview";
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
+  const breadcrumbs = useReportBreadcrumbs(
+    {
+      label: t("Site Report {window}: {siteName}", {
+        window: getShortPeriodLabel(taskTitle ?? "", true),
+        siteName: site?.name
+      }),
+      link: `/reports/site-report/${siteReportUUID}`
+    },
+    "site",
+    {
+      project: { uuid: siteReport.projectUuid, name: siteReport.projectName },
+      site: { uuid: siteReport.siteUuid, name: siteReport.siteName }
+    }
+  );
   const suffixButtons: SuffixButtonConfig[] = useMemo(
     () => [
       { key: "site-profile", labelKey: t("Site Profile") },
@@ -167,33 +183,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
         title={headerReportTitle}
         dueAt={taskDueAt ?? siteReport.dueAt}
         entityName="site-report"
-        breadcrumbs={[
-          {
-            label: t("Projects"),
-            link: "/my-projects",
-            icon: <ProjectIcon className="!text-theme-primary-900" />
-          },
-          {
-            label: siteReport.projectName ?? t("Project"),
-            link: `/project/${siteReport.projectUuid}`
-          },
-          {
-            label: t("Sites"),
-            link: `/project/${siteReport.projectUuid ?? ""}?tab=sites`
-          },
-          {
-            label: siteReport.siteName ?? t("Site"),
-            link: `/site/${siteReport.siteUuid ?? ""}`
-          },
-          {
-            label: t("Reports"),
-            link: `/site/${siteReport.siteUuid ?? ""}?tab=completed-tasks`
-          },
-          {
-            label: t("Site Report - {window}", { window: getShortPeriodLabel(taskTitle ?? "", true) }),
-            link: `/reports/site-report/${siteReportUUID}`
-          }
-        ]}
+        breadcrumbs={breadcrumbs}
         suffix={
           <Flex gap={1.5} alignItems="center">
             {suffixButtons.map((button, index) => (
@@ -224,7 +214,6 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
         }}
       />
       <div className="flex flex-1">{activeTabItem.renderBody()}</div>
-      <PageFooter />
     </>
   );
 };
@@ -242,8 +231,7 @@ const SiteReportDetailPage = () => {
         label: t("Site report not found"),
         type: "error",
         placement: "bottom",
-        duration: 5000,
-        maxWidth: "auto"
+        duration: 5000
       });
     }
   });

@@ -1,5 +1,5 @@
 import type { FeatureCollection, Point as GeoJsonPoint } from "geojson";
-import { Map as MapboxMap, MapMouseEvent, Marker, SymbolLayerSpecification } from "mapbox-gl";
+import { GeoJSONSource, Map as MapboxMap, MapMouseEvent, Marker, SymbolLayerSpecification } from "mapbox-gl";
 import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
@@ -22,10 +22,25 @@ export type ProjectMarkerPoint = {
   lng: number;
 };
 
+type ViewProjectPolygons = (projectUuid: string) => void;
+
+type ProjectTooltip = {
+  uuid: string;
+  close: () => void;
+};
+
 type ProjectMarkerHandlers = {
-  click: (e: MapMouseEvent) => void;
+  markerClick: (e: MapMouseEvent) => void;
+  mapClick: (e: MapMouseEvent) => void;
   enter: () => void;
   leave: () => void;
+};
+
+type ProjectMarkerState = {
+  pointsByUuid: Map<string, ProjectMarkerPoint>;
+  onViewProjectPolygons?: ViewProjectPolygons;
+  tooltip: ProjectTooltip | null;
+  handlers: ProjectMarkerHandlers;
 };
 
 const PROJECT_MARKER_ID = LAYERS_NAMES.PROJECT_MARKERS;
@@ -44,8 +59,7 @@ const PROJECT_MARKER_LAYER: SymbolLayerSpecification = {
 
 let projectMarkerImage: ImageData | null = null;
 
-const projectMarkerHandlers = new WeakMap<MapboxMap, ProjectMarkerHandlers>();
-const projectTooltipClosers = new WeakMap<MapboxMap, () => void>();
+const projectMarkerStates = new WeakMap<MapboxMap, ProjectMarkerState>();
 
 // Matches the design-system PointMarker "md" icon variant: 2.5rem circle at 80% opacity.
 const getProjectMarkerImage = (): ImageData => {
@@ -73,92 +87,114 @@ const toFeatureCollection = (points: ProjectMarkerPoint[]): FeatureCollection<Ge
   }))
 });
 
-const closeProjectTooltip = (map: MapboxMap): void => {
-  const close = projectTooltipClosers.get(map);
-  projectTooltipClosers.delete(map);
-  close?.();
-};
-
-const openProjectTooltip = (
-  map: MapboxMap,
-  point: ProjectMarkerPoint,
-  onViewProjectPolygons: (projectUuid: string) => void
-): void => {
-  closeProjectTooltip(map);
+const openProjectTooltip = (map: MapboxMap, state: ProjectMarkerState, point: ProjectMarkerPoint): void => {
+  state.tooltip?.close();
 
   const element = document.createElement("div");
   element.style.pointerEvents = "none";
+  element.addEventListener("click", e => e.stopPropagation());
   const root = createRoot(element);
   const marker = new Marker({ element }).setLngLat([point.lng, point.lat]).addTo(map);
 
-  const close = () => {
-    projectTooltipClosers.delete(map);
-    clearActivePopup(map, "PROJECT");
-    marker.remove();
-    queueMicrotask(() => root.unmount());
+  const tooltip: ProjectTooltip = {
+    uuid: point.project.uuid,
+    close: () => {
+      if (state.tooltip !== tooltip) return;
+      state.tooltip = null;
+      clearActivePopup(map, "PROJECT");
+      marker.remove();
+      queueMicrotask(() => root.unmount());
+    }
   };
-  projectTooltipClosers.set(map, close);
-  setActivePopup(map, "PROJECT", () => closeProjectTooltip(map));
+  state.tooltip = tooltip;
+  setActivePopup(map, "PROJECT", tooltip.close);
 
   root.render(
     createElement(
       PopupProviders,
       null,
-      createElement(ProjectMarkerPopup, { project: point.project, onClose: close, onViewProjectPolygons })
+      createElement(ProjectMarkerPopup, {
+        project: point.project,
+        onClose: tooltip.close,
+        onViewProjectPolygons: uuid => state.onViewProjectPolygons?.(uuid)
+      })
     )
   );
 };
 
-const removeProjectMarkerHandlers = (map: MapboxMap): void => {
-  const handlers = projectMarkerHandlers.get(map);
-  if (handlers == null) return;
-
-  map.off("click", PROJECT_MARKER_ID, handlers.click);
-  map.off("mouseenter", PROJECT_MARKER_ID, handlers.enter);
-  map.off("mouseleave", PROJECT_MARKER_ID, handlers.leave);
-  handlers.leave();
-  projectMarkerHandlers.delete(map);
-};
-
-const addProjectMarkerHandlers = (
-  map: MapboxMap,
-  points: ProjectMarkerPoint[],
-  onViewProjectPolygons: (projectUuid: string) => void
-): void => {
-  const pointsByUuid = new Map(points.map(point => [point.project.uuid, point]));
-  const handlers: ProjectMarkerHandlers = {
-    click: e => {
-      e.preventDefault();
-      const uuid = e.features?.[0]?.properties?.uuid;
-      const point = typeof uuid === "string" ? pointsByUuid.get(uuid) : undefined;
-      if (point != null) openProjectTooltip(map, point, onViewProjectPolygons);
-    },
-    enter: () => map.getCanvas().style.setProperty("cursor", "pointer"),
-    leave: () => map.getCanvas().style.removeProperty("cursor")
+const createProjectMarkerState = (map: MapboxMap): ProjectMarkerState => {
+  const state: ProjectMarkerState = {
+    pointsByUuid: new Map(),
+    tooltip: null,
+    handlers: {
+      markerClick: e => {
+        e.preventDefault();
+        if (state.onViewProjectPolygons == null) return;
+        const uuid = e.features?.[0]?.properties?.uuid;
+        const point = typeof uuid === "string" ? state.pointsByUuid.get(uuid) : undefined;
+        if (point != null) openProjectTooltip(map, state, point);
+      },
+      mapClick: e => {
+        if (!e.defaultPrevented) state.tooltip?.close();
+      },
+      enter: () => {
+        if (state.onViewProjectPolygons != null) map.getCanvas().style.setProperty("cursor", "pointer");
+      },
+      leave: () => map.getCanvas().style.removeProperty("cursor")
+    }
   };
 
-  map.on("click", PROJECT_MARKER_ID, handlers.click);
-  map.on("mouseenter", PROJECT_MARKER_ID, handlers.enter);
-  map.on("mouseleave", PROJECT_MARKER_ID, handlers.leave);
-  projectMarkerHandlers.set(map, handlers);
+  map.on("click", PROJECT_MARKER_ID, state.handlers.markerClick);
+  map.on("click", state.handlers.mapClick);
+  map.on("mouseenter", PROJECT_MARKER_ID, state.handlers.enter);
+  map.on("mouseleave", PROJECT_MARKER_ID, state.handlers.leave);
+  return state;
 };
 
-export const addProjectMarkerLayer = (
+export const upsertProjectMarkerLayer = (
   map: MapboxMap,
   points: ProjectMarkerPoint[],
-  onViewProjectPolygons: (projectUuid: string) => void
+  onViewProjectPolygons?: ViewProjectPolygons
 ): void => {
+  let state = projectMarkerStates.get(map);
+  if (state == null) {
+    state = createProjectMarkerState(map);
+    projectMarkerStates.set(map, state);
+  }
+  state.pointsByUuid = new Map(points.map(point => [point.project.uuid, point]));
+  state.onViewProjectPolygons = onViewProjectPolygons;
+  if (state.tooltip != null && (onViewProjectPolygons == null || !state.pointsByUuid.has(state.tooltip.uuid))) {
+    state.tooltip.close();
+  }
+
+  if (!isStyleAlive(map)) return;
+
+  const data = toFeatureCollection(points);
+  const source = map.getSource<GeoJSONSource>(PROJECT_MARKER_ID);
+  if (source != null) {
+    source.setData(data);
+    return;
+  }
+
   if (!map.hasImage(PROJECT_MARKER_IMAGE_NAME)) {
     map.addImage(PROJECT_MARKER_IMAGE_NAME, getProjectMarkerImage(), { pixelRatio: CIRCLE_ICON_MARKER_PIXEL_RATIO });
   }
-  map.addSource(PROJECT_MARKER_ID, { type: "geojson", data: toFeatureCollection(points), promoteId: "uuid" });
+  map.addSource(PROJECT_MARKER_ID, { type: "geojson", data, promoteId: "uuid" });
   map.addLayer(PROJECT_MARKER_LAYER);
-  addProjectMarkerHandlers(map, points, onViewProjectPolygons);
 };
 
 export const removeProjectMarkerLayer = (map: MapboxMap): void => {
-  removeProjectMarkerHandlers(map);
-  closeProjectTooltip(map);
+  const state = projectMarkerStates.get(map);
+  if (state != null) {
+    map.off("click", PROJECT_MARKER_ID, state.handlers.markerClick);
+    map.off("click", state.handlers.mapClick);
+    map.off("mouseenter", PROJECT_MARKER_ID, state.handlers.enter);
+    map.off("mouseleave", PROJECT_MARKER_ID, state.handlers.leave);
+    state.handlers.leave();
+    state.tooltip?.close();
+    projectMarkerStates.delete(map);
+  }
+
   if (!isStyleAlive(map)) return;
   if (map.getLayer(PROJECT_MARKER_ID) != null) map.removeLayer(PROJECT_MARKER_ID);
   if (map.getSource(PROJECT_MARKER_ID) != null) map.removeSource(PROJECT_MARKER_ID);

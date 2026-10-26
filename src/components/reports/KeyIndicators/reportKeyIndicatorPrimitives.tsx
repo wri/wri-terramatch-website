@@ -11,7 +11,8 @@ export type MetricTooltipContent = {
   tooltip: string;
 };
 
-export const REPORT_METRIC_CARD_CLASS = "flex-[0_0_calc((100%_-_0.75rem)_/_2)] lg:flex-[0_0_calc((100%_-_1.5rem)_/_2)]";
+export const REPORT_METRIC_CARD_CLASS =
+  "flex-[0_0_calc((100%_-_0.75rem)_/_2)] lg:flex-[0_0_calc((100%_-_1.5rem)_/_2)] mobile:flex-[1_1_100%]";
 
 const REPORT_KEY_INDICATOR_BY_FRAMEWORK: Partial<Record<Framework, ReportKeyIndicatorFramework>> = {
   [Framework.PPC]: "ppc",

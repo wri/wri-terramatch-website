@@ -1,6 +1,7 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
+import type { ParsedUrlQuery } from "querystring";
 import { useRef, useState } from "react";
 
 import EntityInformationRequiredModal from "@/components/extensive/EntityInformationRequiredModal";
@@ -8,12 +9,17 @@ import { type StatusBarStatus, getStatusProps } from "@/components/extensive/Ent
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormEntity } from "@/connections/Form";
+import { useMyOrg } from "@/connections/Organisation";
 import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
 import { getEntityEditPageLink, getEntityEditPathSegment, v3EntityName } from "@/helpers/entity";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
 import { WarningIcon } from "@/redesignComponents/foundations/Icons/Function/WarningIcon";
 import { EntityName, SingularEntityName } from "@/types/common";
+import { appendQueryParams } from "@/utils/appendQueryParams";
+import { isReportOwnedByOtherOrg, ReportOwner } from "@/utils/reportOwnership";
 
 interface GetEditEntityHandlerArgs {
   entityUUID: string;
@@ -25,6 +31,10 @@ interface GetEditEntityHandlerArgs {
   feedback?: string | null;
   useStatusModal?: boolean;
   useInformationRequiredModal?: boolean;
+  /** Report origin (from / profile / origin) to carry into the edit form; defaults to the current page query. */
+  originQuery?: ParsedUrlQuery;
+  /** Organisation that owns the report; members of other organisations get a View Only modal instead of editing. */
+  reportOwner?: ReportOwner | null;
 }
 
 /**
@@ -40,13 +50,19 @@ export const useGetEditEntityHandler = ({
   useStatusModal = false,
   entityTitle,
   reportTitle,
-  useInformationRequiredModal = false
+  useInformationRequiredModal = false,
+  originQuery,
+  reportOwner
 }: GetEditEntityHandlerArgs) => {
   const t = useT();
   const router = useRouter();
   const [stepId, setStepId] = useState<string | null | undefined>(undefined);
   const [openStatusModal, setOpenStatusModal] = useState(false);
   const [openReviewInProgressModal, setOpenReviewInProgressModal] = useState(false);
+  const [openViewOnlyModal, setOpenViewOnlyModal] = useState(false);
+  const [, myOrg] = useMyOrg();
+  const isAdmin = useIsAdmin();
+  const isOwnedByOtherOrg = isReportOwnedByOtherOrg(reportOwner, myOrg?.organisationId, isAdmin);
   const [openConfirmEditModal, setOpenConfirmEditModal] = useState(false);
   const pendingStepId = useRef<string | null | undefined>(undefined);
   const { getReadableEntityName } = useGetReadableEntityName();
@@ -91,18 +107,16 @@ export const useGetEditEntityHandler = ({
   );
 
   const goToEditForm = (targetStepId?: string | null) => {
-    if (targetStepId != null) {
-      router.push(
-        `/entity/${editEntityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(targetStepId)}`
-      );
-      return;
-    }
-
-    router.push(`/entity/${editEntityName}/edit/${entityUUID}?mode=edit`);
+    const editHref = `/entity/${editEntityName}/edit/${entityUUID}`;
+    const editParams = targetStepId != null ? { [STEP_QUERY_PARAM]: targetStepId } : { mode: "edit" };
+    // Keep the report's origin (from / profile / origin) so the edit form and its breadcrumbs can return to it.
+    router.push(withReportOrigin(appendQueryParams(editHref, editParams), originQuery ?? router.query));
   };
 
   const handleEdit = (stepId?: string | null) => {
-    if (entityStatus === "due") {
+    if (isOwnedByOtherOrg) {
+      setOpenViewOnlyModal(true);
+    } else if (entityStatus === "due") {
       goToEditForm(stepId);
       return;
     } else if (awaitingApproval) {
@@ -123,12 +137,45 @@ export const useGetEditEntityHandler = ({
   const EditModals = (
     <>
       <ModalConfirmation
+        open={openViewOnlyModal}
+        onOpenChange={open => setOpenViewOnlyModal(open)}
+        title={t("View Only")}
+        content={
+          <Flex flexDirection="column" gap={2} alignItems="center">
+            <Text textStyle="400" color="neutral.900">
+              {t(
+                "This {entityName} belongs to {organizationName} and can only be edited or submitted by members of that organization. You can still view and download it. If you have questions or need changes made, please contact {email}.",
+                {
+                  entityName: getReadableEntityName(entityName as EntityName | SingularEntityName, true),
+                  organizationName: reportOwner?.name ?? "",
+                  email: (
+                    <a href="mailto:info@terramatch.org" className="text-primary-500 underline">
+                      info@terramatch.org
+                    </a>
+                  )
+                }
+              )}
+            </Text>
+          </Flex>
+        }
+        buttonsCancel={[
+          {
+            id: "cancel",
+            className: "w-fit",
+            variant: "secondary",
+            children: t("Close"),
+            onClick: () => setOpenViewOnlyModal(false)
+          }
+        ]}
+      />
+      <ModalConfirmation
         open={openReviewInProgressModal}
         onOpenChange={open => setOpenReviewInProgressModal(open)}
         title={t("Review in Progress")}
+        contentLayout="custom"
         content={
-          <Flex flexDirection="column" gap={2} alignItems="center">
-            <WarningIcon boxSize={10} color="warning.500" />
+          <Flex gap={2} alignItems="flex-start" pt={2}>
+            <WarningIcon boxSize={4} color="warning.500" mt={0.5} flexShrink={0} />
             <Text textStyle="400" color="neutral.900">
               {t(
                 "While we review your {entityName}, it is closed for editing. A Reviewer will either approve this {entityName} or request more information. If you have any questions or have critical changes to make in the meantime, please contact {email} with the details.",
@@ -201,15 +248,13 @@ export const useGetEditEntityHandler = ({
             onClick: () => {
               setOpenConfirmEditModal(false);
               const stepId = pendingStepId.current;
-              if (stepId != null) {
-                router.push(
-                  `/entity/${editEntityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(stepId)}`
-                );
-              } else if (entityStatus === "approved") {
-                router.push(getEntityEditPageLink(entityName, entityUUID));
-              } else {
-                router.push(`/entity/${editEntityName}/edit/${entityUUID}?mode=edit`);
-              }
+              const editHref =
+                stepId != null
+                  ? appendQueryParams(`/entity/${editEntityName}/edit/${entityUUID}`, { [STEP_QUERY_PARAM]: stepId })
+                  : entityStatus === "approved"
+                  ? getEntityEditPageLink(entityName, entityUUID)
+                  : appendQueryParams(`/entity/${editEntityName}/edit/${entityUUID}`, { mode: "edit" });
+              router.push(withReportOrigin(editHref, originQuery ?? router.query));
             }
           }
         ]}
