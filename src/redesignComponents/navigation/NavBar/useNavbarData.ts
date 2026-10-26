@@ -66,7 +66,7 @@ export const useNavbarData = (): NavbarData => {
       isActive: isRouteActive(currentPath, item.url),
       onClick: () => router.push(item.url)
     })),
-    ...(isLoggedIn ? [{ label: t("What’s new"), onClick: openWhatsNewModal }] : [])
+    ...(isLoggedIn ? [{ label: t("What’s New"), onClick: openWhatsNewModal }] : [])
   ];
 
   const handleLogout = () => {
