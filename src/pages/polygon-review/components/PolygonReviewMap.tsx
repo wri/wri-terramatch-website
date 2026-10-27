@@ -77,12 +77,14 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
       >
         <LoadingMap loading={projectUuid != null && projectPolygons == null && polygonLoadFailure == null} />
         <MapContainer
+          championsMap
           mapFunctions={mapFunctions}
           bbox={bbox}
           projectMarkers={projectMarkers}
           onViewProjectPolygons={onViewProjectPolygons}
           mapIndexPolygons={mapIndexPolygons}
           showLegend
+          hideMediaOnMap
           disabledPolygonPanel
           className="h-full w-full flex-1 !rounded-[0.25rem_0.25rem_0_0]"
         />
