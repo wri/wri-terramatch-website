@@ -4,7 +4,9 @@ import { useSiteIndex } from "@/connections/Entity";
 
 import { SiteFilterOption } from "../../site/[uuid]/components/polygonFilter.constants";
 
-// The API's page size cap. The combobox filters options client side, so it needs every site in one page.
+// The API's page size cap. The combobox only filters the options it's given, so a project with more sites only
+// offers its first 100 by name.
+// TODO TM-4043: search sites on the server once the design-system Combobox can request results as the user types.
 const SITE_OPTIONS_PAGE_SIZE = 100;
 
 /** The project's sites as Site filter options, sorted by name. Undefined until they're loaded. */
