@@ -251,7 +251,9 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
         )}
       </Flex>
       <Flex gap={2} alignItems="center">
-        <ProgressBar progress={progressValue} color={color} width={widthProgressBar} className="min-w-[5rem]" />
+        {hideGoal ? null : (
+          <ProgressBar progress={progressValue} color={color} width={widthProgressBar} className="min-w-[5rem]" />
+        )}
         <Flex gap={1} alignItems="center">
           <Flex gap={1} className="items-center">
             <Text textStyle="400-bold" color="neutral.900">

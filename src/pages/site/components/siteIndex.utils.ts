@@ -156,6 +156,6 @@ export const buildProjectMetrics = (
   return {
     treesGrowing: metric(combinedTreesProgress, treesGoal),
     areaRestored: metric(restoredAreaProgress, restoredAreaGoal),
-    workdays: metric(project?.combinedWorkdayCount ?? project?.workdayCount, project?.jobsCreatedGoal)
+    workdays: metric(project?.combinedWorkdayCount ?? project?.workdayCount, null)
   };
 };
