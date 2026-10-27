@@ -21,6 +21,8 @@ export interface NavbarLinkItem {
   isActive?: boolean;
 }
 
+const ROUTES_WITHOUT_WHATS_NEW = ["/organization/assign", "/organization/status/pending"];
+
 const LANGUAGES: Array<{ value: ValidLocale; label: string }> = [
   { value: "en-US", label: "English" },
   { value: "es-MX", label: "Spanish" },
@@ -59,6 +61,7 @@ export const useNavbarData = (): NavbarData => {
   const rawNavItems = (isLoggedIn ? privateNavItems : publicNavItems).filter(item => item.visibility);
 
   const currentPath = router.asPath.split(/[?#]/)[0];
+  const showWhatsNew = isLoggedIn && !ROUTES_WITHOUT_WHATS_NEW.includes(router.pathname);
   const navLinks: NavbarLinkItem[] = [
     ...rawNavItems.map(item => ({
       label: item.title,
@@ -66,7 +69,7 @@ export const useNavbarData = (): NavbarData => {
       isActive: isRouteActive(currentPath, item.url),
       onClick: () => router.push(item.url)
     })),
-    ...(isLoggedIn ? [{ label: t("What’s New"), onClick: openWhatsNewModal }] : [])
+    ...(showWhatsNew ? [{ label: t("What’s New"), onClick: openWhatsNewModal }] : [])
   ];
 
   const handleLogout = () => {
