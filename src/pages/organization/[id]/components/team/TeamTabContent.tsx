@@ -28,7 +28,6 @@ import {
   DisallowedIcon,
   InformationRequiredIcon,
   PendingIcon,
-  RefreshIcon,
   RejectedIcon,
   UserAddIcon
 } from "@/redesignComponents/foundations/Icons";
@@ -36,6 +35,7 @@ import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/T
 import { showToast } from "@/redesignComponents/status/Toast/showToast";
 
 import InviteTeamMemberModal from "../InviteTeamMemberModal";
+import InviteReminderCell from "./InviteReminderCell";
 import TeamBulkActionToolbar from "./TeamBulkActionToolbar";
 import TeamMemberActionModal, { type TeamMemberAction } from "./TeamMemberActionModal";
 
@@ -254,16 +254,7 @@ const TeamTabContent: FC = () => {
         width: "214px",
         cell: (member: TeamMemberRow) => {
           if (member.associationStatus === "invited") {
-            return (
-              <ActionCell
-                buttonSecondary={{
-                  children: t("Send Reminder"),
-                  leftIcon: <RefreshIcon boxSize={3} />,
-                  size: "small",
-                  variant: "secondary"
-                }}
-              />
-            );
+            return <InviteReminderCell organisationUuid={organisationUuid} userUuid={member.id} />;
           }
 
           if (member.associationStatus === "requested") {
@@ -318,7 +309,7 @@ const TeamTabContent: FC = () => {
         }
       }
     ],
-    [isMobile, openRowAction, t]
+    [isMobile, openRowAction, organisationUuid, t]
   );
 
   const renderRow = useCallback(

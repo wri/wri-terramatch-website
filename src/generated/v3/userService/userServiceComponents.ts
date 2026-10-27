@@ -2056,6 +2056,97 @@ export const inviteOrganisationUser = new V3ApiEndpoint<
   {}
 >("/userAssociations/v3/{model}/{uuid}/invite", "POST");
 
+export type CreateOrganisationInviteReminderPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * The model type to associate users with
+   */
+  model: "projects" | "organisations";
+  /**
+   * UUID of the user whose association is being updated
+   *
+   * @example 123e4567-e89b-12d3-a456-426614174000
+   */
+  userUuid: string;
+};
+
+export type CreateOrganisationInviteReminderError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type CreateOrganisationInviteReminderResponse = {
+  meta?: {
+    /**
+     * @example organisationInvites
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example organisationInvites
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.OrganisationInviteDto;
+  };
+};
+
+export type CreateOrganisationInviteReminderVariables = {
+  body?: Schemas.OrganisationInviteReminderRequestDto;
+  pathParams: CreateOrganisationInviteReminderPathParams;
+};
+
+export const createOrganisationInviteReminder = new V3ApiEndpoint<
+  CreateOrganisationInviteReminderResponse,
+  CreateOrganisationInviteReminderError,
+  CreateOrganisationInviteReminderVariables,
+  {}
+>("/userAssociations/v3/{model}/{uuid}/{userUuid}/reminders", "POST");
+
 export type AcceptProjectInvitePathParams = {
   model: string;
 };
@@ -2155,6 +2246,7 @@ export const operationsByTag = {
     deleteUserAssociation,
     updateUserAssociation,
     inviteOrganisationUser,
+    createOrganisationInviteReminder,
     acceptProjectInvite
   }
 };

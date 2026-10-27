@@ -36,9 +36,17 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
     [selectedMembers]
   );
 
-  const hasPendingMembers = pendingMembers.length > 0;
-  const hasApprovedMembers = approvedMembers.length > 0;
-  const hasRejectedMembers = rejectedMembers.length > 0;
+  // Each action applies to the whole selection: if any selected member is not eligible, the action is disabled.
+  // Tooltip copy for the disabled state is pending design, so none is shown yet.
+  const canAccept =
+    selectedCount > 0 &&
+    selectedMembers.every(
+      member => member.associationStatus === "requested" || member.associationStatus === "rejected"
+    );
+  const canReject = selectedCount > 0 && selectedMembers.every(member => member.associationStatus === "requested");
+  const canRemove =
+    selectedCount > 0 &&
+    selectedMembers.every(member => member.associationStatus === "approved" || member.associationStatus === "rejected");
 
   useEffect(() => {
     setSidebarCollapseDisabled(visible);
@@ -49,37 +57,33 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
   }, [setSidebarCollapseDisabled, visible]);
 
   const actions = useMemo<BulkToolbarAction[]>(
-    () =>
-      hasPendingMembers && (hasApprovedMembers || hasRejectedMembers)
-        ? [{ id: "reject", tone: "danger", children: t("Reject"), onClick: () => setModalAction("reject") }]
-        : [],
-    [hasApprovedMembers, hasPendingMembers, hasRejectedMembers, t]
+    () => [
+      {
+        id: "accept",
+        children: t("Accept"),
+        disabled: !canAccept,
+        onClick: () => setModalAction("approve")
+      },
+      {
+        id: "reject",
+        tone: "danger",
+        children: t("Reject"),
+        disabled: !canReject,
+        onClick: () => setModalAction("reject")
+      }
+    ],
+    [canAccept, canReject, t]
   );
 
-  const destructiveAction = useMemo<BulkToolbarAction>(() => {
-    if (hasApprovedMembers || hasRejectedMembers) {
-      return {
-        id: "remove",
-        tone: "danger",
-        children: t("Remove"),
-        onClick: () => setModalAction("remove")
-      };
-    }
-
-    return {
-      id: "reject",
+  const destructiveAction = useMemo<BulkToolbarAction>(
+    () => ({
+      id: "remove",
       tone: "danger",
-      children: t("Reject"),
-      onClick: () => setModalAction("reject")
-    };
-  }, [hasApprovedMembers, hasRejectedMembers, t]);
-
-  const primaryAction = useMemo(
-    () =>
-      hasPendingMembers || hasRejectedMembers
-        ? { children: t("Accept"), onClick: () => setModalAction("approve") }
-        : undefined,
-    [hasPendingMembers, hasRejectedMembers, t]
+      children: t("Remove"),
+      disabled: !canRemove,
+      onClick: () => setModalAction("remove")
+    }),
+    [canRemove, t]
   );
 
   const modalMembers = useMemo(() => {
@@ -187,7 +191,6 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
         cancelAction={{ children: t("Cancel"), onClick: onCancel }}
         deleteAction={destructiveAction}
         actions={actions}
-        primaryAction={primaryAction}
       />
       <TeamMemberActionModal
         action={modalAction}

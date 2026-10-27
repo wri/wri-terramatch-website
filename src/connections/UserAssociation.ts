@@ -2,6 +2,7 @@ import { createSelector } from "reselect";
 
 import {
   acceptProjectInvite,
+  createOrganisationInviteReminder,
   createUserAssociation,
   CreateUserAssociationPathParams,
   deleteUserAssociation,
@@ -87,6 +88,56 @@ const inviteOrganisationConnection: Connection<InviteOrganisationUserConnection,
 };
 
 export const useInviteOrganisationUser = connectionHook(inviteOrganisationConnection);
+
+type OrganisationInviteReminderConnection = {
+  sendReminder: () => void;
+  isSending: boolean;
+  sendFailure: PendingError | undefined;
+};
+
+type OrganisationInviteReminderProps = {
+  organisationUuid: string;
+  userUuid: string;
+};
+
+const organisationInviteReminderConnection: Connection<
+  OrganisationInviteReminderConnection,
+  OrganisationInviteReminderProps
+> = {
+  selector: selectorCache(
+    ({ organisationUuid, userUuid }) => `${organisationUuid}:${userUuid}`,
+    ({ organisationUuid, userUuid }) => {
+      const pathParams = { model: "organisations" as const, uuid: organisationUuid, userUuid };
+      return createSelector(
+        [
+          createOrganisationInviteReminder.isFetchingSelector({ pathParams }),
+          createOrganisationInviteReminder.fetchFailedSelector({ pathParams })
+        ],
+        (isSending, sendFailure) => {
+          const sendReminder = () => {
+            if (sendFailure != null) {
+              ApiSlice.clearPending(
+                resolveUrl(createOrganisationInviteReminder.url, { pathParams }),
+                createOrganisationInviteReminder.method
+              );
+            }
+            createOrganisationInviteReminder.fetch({
+              pathParams,
+              body: { callbackUrl: `${window.location.origin}/auth/signup` }
+            });
+          };
+          return {
+            sendReminder,
+            isSending: isSending ?? false,
+            sendFailure: sendFailure ?? undefined
+          };
+        }
+      );
+    }
+  )
+};
+
+export const useOrganisationInviteReminder = connectionHook(organisationInviteReminderConnection);
 
 export const acceptProjectInviteByToken = async (token: string): Promise<void> => {
   const pathParams = { model: "projects" as const };
