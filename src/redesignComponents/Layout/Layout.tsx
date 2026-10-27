@@ -1,4 +1,5 @@
 import { Box, Flex } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 import { FC, Fragment, PropsWithChildren } from "react";
@@ -27,6 +28,7 @@ const FOOTER_CLASS_NAME = "mt-auto shrink-0 [zoom:var(--layout-chrome-zoom,1)]";
 const ROUTES_WITHOUT_SIDE_NAVIGATION = ["/organization/assign", "/organization/status/pending"];
 
 const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
+  const t = useT();
   const router = useRouter();
   // Breadcrumbs of a site / nursery profile start at Projects unless the profile was opened from its own list,
   // so the side menu must highlight the same first level.
@@ -115,7 +117,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
                   onCollapsedChange={setSidebarCollapsed}
                   isCollapsedDisabled={isSidebarCollapseDisabled}
                   groups={sideNavigationGroups}
-                  title="Management Panel"
+                  title={t("Management Panel")}
                 />
               </Flex>
             </Flex>
