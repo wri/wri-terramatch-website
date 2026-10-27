@@ -8,6 +8,13 @@ import Modal from "@/redesignComponents/containers/Modal/Modal";
 import { NewTabIcon } from "@/redesignComponents/foundations/Icons";
 import CarouselNavigation from "@/redesignComponents/navigation/CarouselNavigation/CarouselNavigation";
 
+const MODAL_HEIGHT = "min(45rem, 80vh)";
+
+const VIDEO_CONTAINER_CSS = {
+  containerType: "size",
+  "@container (max-height: 7.5rem)": { "& > video": { display: "none" } }
+};
+
 type WhatsNewUpdate = {
   media: string;
   title: string;
@@ -77,6 +84,7 @@ const WhatsNewModal: FC<WhatsNewModalProps> = ({ onSkip, onFinish }) => {
       open
       onClose={onSkip}
       width="40rem"
+      height={MODAL_HEIGHT}
       contentPadding={false}
       header={
         <Text textStyle="400-bold" color="neutral.800">
@@ -84,18 +92,20 @@ const WhatsNewModal: FC<WhatsNewModalProps> = ({ onSkip, onFinish }) => {
         </Text>
       }
       content={
-        <Flex direction="column" gap={5} px={6} py={5} bg="primary.100">
-          <video
-            key={media}
-            src={media}
-            aria-label={title}
-            className="aspect-video w-full rounded-lg border border-theme-neutral-300 object-cover"
-            autoPlay
-            loop
-            muted
-            playsInline
-          />
-          <Flex direction="column" align="flex-start" gap={2} minH="8.5rem">
+        <Flex direction="column" gap={5} h="full" px={6} py={5} bg="primary.100">
+          <Flex flex={1} minH={0} align="center" justify="center" css={VIDEO_CONTAINER_CSS}>
+            <video
+              key={media}
+              src={media}
+              aria-label={title}
+              className="max-h-full max-w-full rounded-lg border border-theme-neutral-300"
+              autoPlay
+              loop
+              muted
+              playsInline
+            />
+          </Flex>
+          <Flex direction="column" align="flex-start" gap={2} minH="8.5rem" flexShrink={0}>
             <Text as="h2" textStyle="700-bold" color="neutral.800">
               {title}
             </Text>
