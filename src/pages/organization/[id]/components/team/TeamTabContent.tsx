@@ -1,4 +1,4 @@
-import { Box, TableCell, TableRow } from "@chakra-ui/react";
+import { Flex, TableCell, TableRow } from "@chakra-ui/react";
 import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import { Checkbox } from "@worldresources/wri-design-systems";
@@ -343,7 +343,7 @@ const TeamTabContent: FC = () => {
   );
 
   return (
-    <Box paddingX={6} paddingTop={3} paddingBottom={8} minHeight="644px" width="100%">
+    <Flex direction="column" paddingX={6} paddingTop={3} paddingBottom={8} minHeight="644px" width="100%">
       <ToolbarTable
         className="mb-7 mt-3 !px-0"
         classNameContentLeft="min-w-0"
@@ -388,6 +388,7 @@ const TeamTabContent: FC = () => {
         renderRow={renderRow}
         pageSize={10}
         loading={!approvedLoaded || !pendingLoaded || !rejectedLoaded}
+        className="mb-8"
       />
 
       <TeamBulkActionToolbar
@@ -417,7 +418,7 @@ const TeamTabContent: FC = () => {
           void handleConfirmRowAction();
         }}
       />
-    </Box>
+    </Flex>
   );
 };
 
