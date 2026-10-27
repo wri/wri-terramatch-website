@@ -24,6 +24,8 @@ import { useLayoutShell } from "./LayoutShell.provider";
 
 const FOOTER_CLASS_NAME = "mt-auto shrink-0 [zoom:var(--layout-chrome-zoom,1)]";
 
+const ROUTES_WITHOUT_SIDE_NAVIGATION = ["/organization/assign", "/organization/status/pending"];
+
 const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
   const router = useRouter();
   // Breadcrumbs of a site / nursery profile start at Projects unless the profile was opened from its own list,
@@ -37,6 +39,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
   const isAdmin = useIsAdmin();
   const showNurseries = userHasNurseries(myUser);
   const showLoggedInFooter = router.pathname === "/home";
+  const showSideNavigation = !ROUTES_WITHOUT_SIDE_NAVIGATION.includes(router.pathname);
 
   const sideNavigationGroups: SideNavigationGroup[] = [
     {
@@ -101,20 +104,22 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
       </Box>
       {data.isLoggedIn ? (
         <Box className="grid min-h-0 flex-1 grid-cols-[auto_minmax(0,1fr)] grid-rows-[1fr_auto] overflow-auto [container-type:size]">
-          <Flex
-            display={{ base: "none", md: "flex" }}
-            className="sticky top-0 col-start-1 row-span-2 row-start-1 h-[100cqh] self-start"
-          >
-            <Flex className="[zoom:var(--layout-chrome-zoom,1)]">
-              <SideNavigation
-                collapsed={getSidebarCollapsed()}
-                onCollapsedChange={setSidebarCollapsed}
-                isCollapsedDisabled={isSidebarCollapseDisabled}
-                groups={sideNavigationGroups}
-                title="Management Panel"
-              />
+          {showSideNavigation && (
+            <Flex
+              display={{ base: "none", md: "flex" }}
+              className="sticky top-0 col-start-1 row-span-2 row-start-1 h-[100cqh] self-start"
+            >
+              <Flex className="[zoom:var(--layout-chrome-zoom,1)]">
+                <SideNavigation
+                  collapsed={getSidebarCollapsed()}
+                  onCollapsedChange={setSidebarCollapsed}
+                  isCollapsedDisabled={isSidebarCollapseDisabled}
+                  groups={sideNavigationGroups}
+                  title="Management Panel"
+                />
+              </Flex>
             </Flex>
-          </Flex>
+          )}
           <Flex
             as="main"
             className={classNames(

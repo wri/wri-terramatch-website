@@ -21,6 +21,8 @@ export interface NavbarLinkItem {
   isActive?: boolean;
 }
 
+const ROUTES_WITHOUT_NAV_LINKS = ["/organization/assign", "/organization/status/pending"];
+
 const LANGUAGES: Array<{ value: ValidLocale; label: string }> = [
   { value: "en-US", label: "English" },
   { value: "es-MX", label: "Spanish" },
@@ -59,15 +61,18 @@ export const useNavbarData = (): NavbarData => {
   const rawNavItems = (isLoggedIn ? privateNavItems : publicNavItems).filter(item => item.visibility);
 
   const currentPath = router.asPath.split(/[?#]/)[0];
-  const navLinks: NavbarLinkItem[] = [
-    ...rawNavItems.map(item => ({
-      label: item.title,
-      href: item.url,
-      isActive: isRouteActive(currentPath, item.url),
-      onClick: () => router.push(item.url)
-    })),
-    ...(isLoggedIn ? [{ label: t("What’s New"), onClick: openWhatsNewModal }] : [])
-  ];
+  const hideNavLinks = ROUTES_WITHOUT_NAV_LINKS.includes(router.pathname);
+  const navLinks: NavbarLinkItem[] = hideNavLinks
+    ? []
+    : [
+        ...rawNavItems.map(item => ({
+          label: item.title,
+          href: item.url,
+          isActive: isRouteActive(currentPath, item.url),
+          onClick: () => router.push(item.url)
+        })),
+        ...(isLoggedIn ? [{ label: t("What’s new"), onClick: openWhatsNewModal }] : [])
+      ];
 
   const handleLogout = () => {
     removeAccessToken();
