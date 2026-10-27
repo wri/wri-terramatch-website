@@ -2,7 +2,7 @@ import { Flex, Link, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useMemo, useState } from "react";
 
-import { zendeskSupportLink } from "@/constants/links";
+import { guideNavigation } from "@/constants/links";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import { NewTabIcon } from "@/redesignComponents/foundations/Icons";
@@ -53,7 +53,7 @@ const useWhatsNewUpdates = (): WhatsNewUpdate[] => {
         description: t(
           "You can use the filters to narrow reports by type, status or reporting period, so you can quickly find what you need."
         ),
-        link: { label: t("Learn more"), href: zendeskSupportLink }
+        link: { label: t("Learn more"), href: guideNavigation }
       }
     ],
     [t]
