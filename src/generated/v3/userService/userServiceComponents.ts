@@ -622,6 +622,50 @@ export const organisationExportCsv = new V3ApiEndpoint<
   {}
 >("/organisations/v3/organisations/export", "GET");
 
+export type OrganisationExportPathParams = {
+  uuid: string;
+};
+
+export type OrganisationExportError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type OrganisationExportVariables = {
+  pathParams: OrganisationExportPathParams;
+};
+
+export const organisationExport = new V3ApiEndpoint<
+  undefined,
+  OrganisationExportError,
+  OrganisationExportVariables,
+  {}
+>("/organisations/v3/organisations/{uuid}/export", "GET");
+
 export type OrganisationShowPathParams = {
   uuid: string;
 };
@@ -2098,6 +2142,7 @@ export const operationsByTag = {
     organisationIndex,
     organisationCreation,
     organisationExportCsv,
+    organisationExport,
     organisationShow,
     organisationUpdate,
     organisationDelete

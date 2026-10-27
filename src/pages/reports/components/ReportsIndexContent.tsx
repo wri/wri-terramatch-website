@@ -5,7 +5,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { indexProjectConnection } from "@/connections/Entity";
-import { useReportsContext } from "@/context/reports.provider";
+import { useReportsTabFilters } from "@/context/reports.provider";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useAllPages } from "@/hooks/useConnection";
 import { InfiniteScrollSentinel } from "@/hooks/useInfiniteScrollSentinel";
@@ -46,11 +46,12 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
   const SOURCE = "project" as const;
   const t = useT();
   const router = useRouter();
-  const { filters } = useReportsContext();
   const viewFromQuery = typeof router.query.view === "string" ? router.query.view : undefined;
   const uuidFromQuery = typeof router.query.uuid === "string" ? router.query.uuid : undefined;
   const tabFromQuery = typeof router.query.tab === "string" ? router.query.tab : undefined;
   const activeTab: ReportsIndexTab = isReportsIndexTab(tabFromQuery) ? tabFromQuery : "progress-reports";
+  // Read for the tab being rendered, so a tab switch never shows the other tab's filters.
+  const filters = useReportsTabFilters(activeTab);
   const [query, setQuery] = useState("");
   const [viewValue, setViewValue] = useState(
     viewFromQuery === ALL_PROJECTS_VIEW_VALUE ? ALL_PROJECTS_VIEW_VALUE : project.uuid
@@ -113,7 +114,11 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
     hasMore: allProjectsHasMore,
     loadingMore: allProjectsLoadingMore,
     loadMore: allProjectsLoadMore
-  } = useAllProjectsReportsData({ query, enabled: isAllProjectsView && activeTab === "progress-reports" });
+  } = useAllProjectsReportsData({
+    query,
+    filters,
+    enabled: isAllProjectsView && activeTab === "progress-reports"
+  });
   const {
     sections: additionalSections,
     loading: additionalLoading,
@@ -127,7 +132,7 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
   );
 
   const { filteredProgressSections, filteredAdditionalSections, progressReportCount, additionalReportCount } =
-    useReportsIndexFilters({ progressSections, additionalSections, query });
+    useReportsIndexFilters({ progressSections, additionalSections, query, filters });
 
   const reportTypeFromQuery = typeof router.query.reportType === "string" ? router.query.reportType : undefined;
   const indexHref = getReportsIndexUrl(SOURCE, project.uuid, {
@@ -393,6 +398,7 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
                       key={meta.uuid}
                       meta={meta}
                       query={query}
+                      filters={filters}
                       defaultOpen={index === 0}
                       openResetKey={accordionOpenResetKey}
                       expandForPeriodFilter={hasActivePeriodFilter}
