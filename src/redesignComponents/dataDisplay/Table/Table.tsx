@@ -8,7 +8,7 @@ import PaginationTable from "@/redesignComponents/navigation/Pagination/Paginati
 import { findHorizontalScrollContainer } from "./findHorizontalScrollContainer";
 import { scrollToElementTop, TABLE_SCROLL_ANCHOR_ATTRIBUTE } from "./scrollToElementTop";
 import { getTableWrapperStyles } from "./tableStyles";
-import { type BaseRow, type SortColumn, DEFAULT_CURRENT_PAGE } from "./tableUtils";
+import { type BaseRow, type SortColumn, DEFAULT_CURRENT_PAGE, MIN_PAGE_SIZE_OPTION } from "./tableUtils";
 import { useHeightTransition } from "./useHeightTransition";
 import { useTablePagination, useTablePaginationState } from "./useTablePagination";
 import { useTableSelection } from "./useTableSelection";
@@ -302,8 +302,7 @@ const Table = <T extends BaseRow>({
   }, []);
 
   const useCompactPagination = paginationVariant !== "default";
-  const hasMultiplePages = pageSize != null && actualTotalItems > pageSize;
-  const shouldShowPaginationControls = showPagination && actualTotalItems > 0 && hasMultiplePages;
+  const shouldShowPaginationControls = showPagination && actualTotalItems > MIN_PAGE_SIZE_OPTION;
   const shouldShowItemCountText = showItemCount && shouldShowPaginationControls && !useCompactPagination;
   const showLoadingAbovePagination = Boolean(loading && loadingText);
   const showInTablePagination = shouldShowPaginationControls && !useCompactPagination && !showLoadingAbovePagination;
@@ -312,7 +311,7 @@ const Table = <T extends BaseRow>({
   return (
     <Box
       ref={setWrapperRef}
-      css={getTableWrapperStyles(selectable, dataByPage, pageSize, actualTotalItems, css)}
+      css={getTableWrapperStyles(selectable, dataByPage, actualTotalItems, css)}
       className={className}
       {...(height != null ? { height } : {})}
     >
