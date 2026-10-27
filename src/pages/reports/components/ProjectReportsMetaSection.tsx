@@ -1,6 +1,7 @@
 import sumBy from "lodash/sumBy";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
+import { ReportsFilterValues } from "@/context/reports.provider";
 import { ProjectReportMetaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import { AdditionalReportsEntitySection, ReportsIndexProjectSection } from "../reportIndex.types";
@@ -14,6 +15,7 @@ const NO_ADDITIONAL_SECTIONS: AdditionalReportsEntitySection[] = [];
 type ProjectReportsMetaSectionProps = {
   meta: ProjectReportMetaDto;
   query: string;
+  filters: ReportsFilterValues;
   defaultOpen: boolean;
   openResetKey: string;
   expandForPeriodFilter: boolean;
@@ -30,6 +32,7 @@ type ProjectReportsMetaSectionProps = {
 const ProjectReportsMetaSection: FC<ProjectReportsMetaSectionProps> = ({
   meta,
   query,
+  filters,
   defaultOpen,
   openResetKey,
   expandForPeriodFilter,
@@ -51,7 +54,8 @@ const ProjectReportsMetaSection: FC<ProjectReportsMetaSectionProps> = ({
   const { filteredProgressSections } = useReportsIndexFilters({
     progressSections: sections,
     additionalSections: NO_ADDITIONAL_SECTIONS,
-    query
+    query,
+    filters
   });
 
   const section = useMemo(

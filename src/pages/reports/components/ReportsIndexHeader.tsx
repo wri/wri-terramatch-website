@@ -89,16 +89,12 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
   const t = useT();
   const router = useRouter();
   const { format } = useDate();
-  const { setFilters } = useReportsContext();
+  const { filtersByTab, setFiltersByTab } = useReportsContext();
   const searchPlaceholder = getSearchPlaceholder(t, source, activeTab, entityProfile);
   const { trackFilterApplied, trackDisturbanceReportClicked } = useReportsIndexAnalytics();
 
   const reportTypeFromQuery = typeof router.query.reportType === "string" ? router.query.reportType : undefined;
 
-  const [filtersByTab, setFiltersByTab] = useState<Record<string, ReportFilterState>>(() => ({
-    "progress-reports": getInitialProgressFilters(source, reportTypeFromQuery),
-    "additional-reports": EMPTY_REPORT_FILTERS
-  }));
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const selectedFilters = filtersByTab[activeTab] ?? EMPTY_REPORT_FILTERS;
   const statusOptions = useMemo(() => getReportStatusOptions(t), [t]);
@@ -108,7 +104,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
     (next: ReportFilterState) => {
       setFiltersByTab(current => ({ ...current, [activeTab]: next }));
     },
-    [activeTab]
+    [activeTab, setFiltersByTab]
   );
 
   useEffect(() => {
@@ -116,11 +112,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
       "progress-reports": getInitialProgressFilters(source, reportTypeFromQuery),
       "additional-reports": EMPTY_REPORT_FILTERS
     });
-  }, [reportTypeFromQuery, source, sourceUuid]);
-
-  useEffect(() => {
-    setFilters(filtersByTab[activeTab] ?? EMPTY_REPORT_FILTERS);
-  }, [activeTab, filtersByTab, setFilters]);
+  }, [reportTypeFromQuery, setFiltersByTab, source, sourceUuid]);
 
   const { create: createDisturbanceReport, isCreating: disturbanceReportCreating } = useCreateDisturbanceReport(
     {},
