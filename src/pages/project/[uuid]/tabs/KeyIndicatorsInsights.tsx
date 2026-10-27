@@ -34,7 +34,9 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
   const isFundoFlora = project.frameworkKey === Framework.FF_1;
   const treesRegeneratedProgress = isFundoFlora ? project.treesRegeneratingSpeciesCount : treesFromReportsAnr;
   const seedlingsGrownProgress = isFundoFlora ? project.treesSeedlingsGrownCount : project.seedsPlantedCount ?? 0;
-  const treesGrownGoal = project.treesGrownGoal ?? 0;
+  const treesGrownGoal = isFundoFlora ? project.treesPlantedGoal : project.treesGrownGoal ?? 0;
+  const seedlingsGrownGoal = isFundoFlora ? project.treesSeedlingsGoal : project.seedsGrownGoal ?? 0;
+  const jobsCreatedGoal = isFundoFlora ? project.fullTimeJobsGoal : project.jobsCreatedGoal ?? 0;
   const t = useT();
   const totalHectaresRestored = project.totalHectaresRestoredSum ?? 0;
   const totalHectaresRestoredGoal = project.totalHectaresRestoredGoal ?? 0;
@@ -95,7 +97,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         <MetricCard
           title={t(`${keyIndicatorsTooltipContentItem?.saplingsRestored.title}`)}
           progress={seedlingsGrownProgress}
-          goal={project.seedsGrownGoal ?? 0}
+          goal={seedlingsGrownGoal}
           variant="donutChart"
           icon={<SeedlingsIcon />}
           color="secondary.600"
@@ -174,7 +176,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         <MetricCard
           title={t(`${keyIndicatorsTooltipContentItem?.jobsCreated.title}`)}
           progress={project.totalJobsCreated}
-          goal={project.jobsCreatedGoal ?? 0}
+          goal={jobsCreatedGoal}
           variant="donutChart"
           icon={<JobsIcon />}
           type="jobsCreated"
