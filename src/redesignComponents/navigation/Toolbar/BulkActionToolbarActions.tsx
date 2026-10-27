@@ -45,7 +45,7 @@ const renderToolbarAction = ({
   return (
     <Flex alignItems="center" gap={0.5}>
       {isDisabledTooltip ? (
-        <Tooltip content={wrapToolbarInfoTooltipContent(tooltip)} position="top">
+        <Tooltip content={wrapToolbarInfoTooltipContent(tooltip)} position="top" preserveFocusOnChild>
           <span className="inline-flex">{button}</span>
         </Tooltip>
       ) : (

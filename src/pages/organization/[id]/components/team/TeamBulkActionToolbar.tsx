@@ -9,6 +9,8 @@ import { showToast } from "@/redesignComponents/status/Toast/showToast";
 
 import TeamMemberActionModal, { type TeamBulkMember, type TeamMemberAction } from "./TeamMemberActionModal";
 
+type AssociationStatus = TeamBulkMember["associationStatus"];
+
 type TeamBulkActionToolbarProps = {
   organisationUuid: string;
   selectedMembers: TeamBulkMember[];
@@ -37,7 +39,6 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
   );
 
   // Each action applies to the whole selection: if any selected member is not eligible, the action is disabled.
-  // Tooltip copy for the disabled state is pending design, so none is shown yet.
   const canAccept =
     selectedCount > 0 &&
     selectedMembers.every(
@@ -47,6 +48,49 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
   const canRemove =
     selectedCount > 0 &&
     selectedMembers.every(member => member.associationStatus === "approved" || member.associationStatus === "rejected");
+
+  const getDisabledTooltip = (
+    eligibleStatuses: AssociationStatus[],
+    messages: Partial<Record<AssociationStatus, string>>,
+    mixedMessage: string
+  ) => {
+    const statuses = Array.from(new Set(selectedMembers.map(member => member.associationStatus)));
+    const hasBlockingCause = statuses.some(status => !eligibleStatuses.includes(status) && messages[status] != null);
+    if (!hasBlockingCause) return undefined;
+    if (statuses.length === 1) return messages[statuses[0]];
+    return mixedMessage;
+  };
+
+  const acceptTooltip = getDisabledTooltip(
+    ["requested", "rejected"],
+    {
+      invited: t("This user has a pending invitation to the organization."),
+      approved: t("This user is already an accepted member of the organization.")
+    },
+    t(
+      "One or more selected users can’t be accepted because they have a pending invitation or are already accepted members of the organization."
+    )
+  );
+  const rejectTooltip = getDisabledTooltip(
+    ["requested"],
+    {
+      invited: t("This user has a pending invitation to the organization."),
+      approved: t("This user is already an accepted member of the organization.")
+    },
+    t(
+      "One or more selected users can’t be rejected because they have a pending invitation or are already accepted members of the organization."
+    )
+  );
+  const removeTooltip = getDisabledTooltip(
+    ["approved", "rejected"],
+    {
+      invited: t("This user has a pending invitation to the organization."),
+      requested: t("This user has a pending request to join the organization.")
+    },
+    t(
+      "One or more selected users can’t be removed because they have a pending invitation or a pending request to join the organization."
+    )
+  );
 
   useEffect(() => {
     setSidebarCollapseDisabled(visible);
@@ -62,6 +106,7 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
         id: "accept",
         children: t("Accept"),
         disabled: !canAccept,
+        tooltip: acceptTooltip,
         onClick: () => setModalAction("approve")
       },
       {
@@ -69,10 +114,11 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
         tone: "danger",
         children: t("Reject"),
         disabled: !canReject,
+        tooltip: rejectTooltip,
         onClick: () => setModalAction("reject")
       }
     ],
-    [canAccept, canReject, t]
+    [acceptTooltip, canAccept, canReject, rejectTooltip, t]
   );
 
   const destructiveAction = useMemo<BulkToolbarAction>(
@@ -81,9 +127,10 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
       tone: "danger",
       children: t("Remove"),
       disabled: !canRemove,
+      tooltip: removeTooltip,
       onClick: () => setModalAction("remove")
     }),
-    [canRemove, t]
+    [canRemove, removeTooltip, t]
   );
 
   const modalMembers = useMemo(() => {
