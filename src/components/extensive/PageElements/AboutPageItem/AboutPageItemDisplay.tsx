@@ -64,7 +64,7 @@ const AboutPageItemDisplay: FC<AboutPageItemDisplayProps> = ({
     <PageItem title={aboutSection.header} className={className} flexProps={flexProps}>
       <Flex
         className={twMerge(
-          "rounded-1 min-h-0 gap-2 bg-theme-neutral-100 p-5",
+          "rounded-1 bg-theme-neutral-100 min-h-0 gap-2 p-5",
           isNothingToReport ? "flex mobile:flex-col" : "flex-col",
           contentClassName
         )}
@@ -99,7 +99,7 @@ const AboutPageItemDisplay: FC<AboutPageItemDisplayProps> = ({
                   window.open(link.url, "_blank");
                 }}
               >
-                {t(link.title)}
+                <Text truncate={true}>{t(link.title)}</Text>
               </Button>
             ))}
           </Flex>
