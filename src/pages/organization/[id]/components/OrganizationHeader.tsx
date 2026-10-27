@@ -1,19 +1,28 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useMemo } from "react";
+import { useRouter } from "next/router";
+import { FC, useCallback, useEffect, useMemo } from "react";
 import Twemoji from "react-twemoji";
 
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useGadmOptions } from "@/connections/Gadm";
 import { useOrganisationMediaByCollection } from "@/connections/Organisation";
 import { useOrganisationUserAssociations } from "@/connections/UserAssociation";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
+import { useModalContext } from "@/context/modal.provider";
+import { organisationExport } from "@/generated/v3/userService/userServiceComponents";
 import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
+import { useDownloadToastMessages } from "@/hooks/translation/useDownloadToastMessages";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { countryCodeToFlag } from "@/redesignComponents/content/headers/PageHeaders/ProjectHeader/projectHeader.utils";
 import { ProfileImage } from "@/redesignComponents/content/Images/ProfileImage/ProfileImage";
 import { DownloadIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 import Avatar from "@/redesignComponents/navigation/Avatar/Avatar";
+import { runWithDownloadToast } from "@/utils/downloadToast";
+import Log from "@/utils/log";
 import { formatOptionsList } from "@/utils/options";
+
+import OrganizationEditModal from "./edit/OrganizationEditModal";
 
 export type OrganizationHeaderProps = {
   organization?: OrganisationFullDto;
@@ -21,7 +30,41 @@ export type OrganizationHeaderProps = {
 
 const OrganizationHeader: FC<OrganizationHeaderProps> = ({ organization }) => {
   const t = useT();
+  const { query } = useRouter();
+  const { openModal } = useModalContext();
   const countryOptions = useGadmOptions({ level: 0 });
+  const downloadToastMessages = useDownloadToastMessages();
+
+  const showEditOrgModal = useCallback(
+    () => openModal(ModalId.ORGANIZATION_EDIT_MODAL, <OrganizationEditModal organization={organization} />),
+    [openModal, organization]
+  );
+
+  useEffect(() => {
+    if (query.modal === "edit") {
+      showEditOrgModal();
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query.edit]);
+
+  const downloadProfile = useCallback(async () => {
+    if (organization == null) return;
+
+    try {
+      await runWithDownloadToast(
+        {
+          downloading: t("Downloading Organisation Profile"),
+          complete: downloadToastMessages.complete,
+          error: downloadToastMessages.error
+        },
+        () => organisationExport.downloadFile({ pathParams: { uuid: organization.uuid } }),
+        "exportToast"
+      );
+    } catch (error) {
+      Log.error("Error exporting organisation profile", error);
+    }
+  }, [downloadToastMessages, organization, t]);
 
   const [, { media: logoMedia }] = useOrganisationMediaByCollection({
     organisationUuid: organization?.uuid ?? "",
@@ -75,10 +118,10 @@ const OrganizationHeader: FC<OrganizationHeaderProps> = ({ organization }) => {
           </Text>
 
           <Flex gap={3}>
-            <Button variant="secondary" size="small" leftIcon={<EditIcon />}>
+            <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={showEditOrgModal}>
               {t("Edit")}
             </Button>
-            <Button variant="secondary" size="small" leftIcon={<DownloadIcon />}>
+            <Button variant="secondary" size="small" leftIcon={<DownloadIcon />} onClick={downloadProfile}>
               {t("Download")}
             </Button>
           </Flex>
