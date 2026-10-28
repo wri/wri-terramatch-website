@@ -25,20 +25,22 @@ const renderToolbarAction = ({
   className,
   infoTooltip,
   tooltip,
+  variant = "borderless",
   id: _id,
   ...buttonProps
 }: BulkToolbarAction): ReactElement => {
   const isDisabledTooltip = tooltip != null && buttonProps.disabled === true;
+  const isBorderless = variant === "borderless";
   const button = (
     <Button
       {...buttonProps}
       className={twMerge(
-        tone === "danger" ? BORDERLESS_DANGER_CLASS : BORDERLESS_NEUTRAL_CLASS,
-        BORDERLESS_DISABLED_CLASS,
+        isBorderless && (tone === "danger" ? BORDERLESS_DANGER_CLASS : BORDERLESS_NEUTRAL_CLASS),
+        isBorderless && BORDERLESS_DISABLED_CLASS,
         className,
         isDisabledTooltip && "pointer-events-none"
       )}
-      variant="borderless"
+      variant={variant}
     />
   );
 
