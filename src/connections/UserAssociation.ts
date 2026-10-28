@@ -240,3 +240,16 @@ export const updateOrganisationUserStatuses = async (
   ApiSlice.pruneIndex("associatedUsers", "");
   if (failure != null) throw failure;
 };
+
+// Sends the requests in parallel. Each row's reminder cell watches the pending store for its own user, and those
+// requests share that store, so the cells only report the reminders they started themselves (see InviteReminderCell).
+export const sendOrganisationInviteReminders = async (organisationUuid: string, userUuids: string[]): Promise<void> => {
+  await Promise.all(
+    userUuids.map(userUuid =>
+      createOrganisationInviteReminder.fetchParallel({
+        pathParams: { model: "organisations", uuid: organisationUuid, userUuid },
+        body: { callbackUrl: `${window.location.origin}/auth/signup` }
+      })
+    )
+  );
+};
