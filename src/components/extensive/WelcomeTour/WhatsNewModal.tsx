@@ -1,8 +1,9 @@
 import { Flex, Link, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { useRouter } from "next/router";
 import { FC, useMemo, useState } from "react";
 
-import { guideNavigation } from "@/constants/links";
+import { guideNavigation, guideNavigationFr } from "@/constants/links";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import { NewTabIcon } from "@/redesignComponents/foundations/Icons";
@@ -22,8 +23,14 @@ type WhatsNewUpdate = {
   link?: { label: string; href: string };
 };
 
+const GUIDE_NAVIGATION_BY_LOCALE: Record<string, string> = {
+  "fr-FR": guideNavigationFr
+};
+
 const useWhatsNewUpdates = (): WhatsNewUpdate[] => {
   const t = useT();
+  const { locale } = useRouter();
+  const guideNavigationHref = GUIDE_NAVIGATION_BY_LOCALE[locale ?? ""] ?? guideNavigation;
   return useMemo(
     () => [
       {
@@ -60,10 +67,10 @@ const useWhatsNewUpdates = (): WhatsNewUpdate[] => {
         description: t(
           "You can use the filters to narrow reports by type, status or reporting period, so you can quickly find what you need."
         ),
-        link: { label: t("Learn more"), href: guideNavigation }
+        link: { label: t("Learn more"), href: guideNavigationHref }
       }
     ],
-    [t]
+    [t, guideNavigationHref]
   );
 };
 
@@ -98,7 +105,7 @@ const WhatsNewModal: FC<WhatsNewModalProps> = ({ onSkip, onFinish }) => {
               key={media}
               src={media}
               aria-label={title}
-              className="max-h-full max-w-full rounded-lg border border-theme-neutral-300"
+              className="border-theme-neutral-300 max-h-full max-w-full rounded-lg border"
               autoPlay
               loop
               muted
