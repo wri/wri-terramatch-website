@@ -16,7 +16,7 @@ const BORDERLESS_DANGER_CLASS = "!px-1.5 !text-theme-error-300";
 const BORDERLESS_DISABLED_CLASS = "disabled:!text-theme-neutral-400 disabled:!opacity-100";
 
 type BulkActionToolbarActionsProps = {
-  deleteAction: BulkToolbarAction;
+  deleteAction?: BulkToolbarAction;
   actions: BulkToolbarAction[];
 };
 
@@ -64,12 +64,13 @@ const BulkActionToolbarActions = memo(function BulkActionToolbarActions({
   deleteAction,
   actions
 }: BulkActionToolbarActionsProps) {
+  const items = deleteAction != null ? [deleteAction, ...actions] : actions;
+
   return (
     <Flex alignItems="center" gap={2} flexWrap="wrap">
-      {renderToolbarAction(deleteAction)}
-      {actions.map(action => (
+      {items.map((action, index) => (
         <Fragment key={action.id}>
-          <SimpleDivider className={ACTION_DIVIDER_CLASS} />
+          {index > 0 && <SimpleDivider className={ACTION_DIVIDER_CLASS} />}
           {renderToolbarAction(action)}
         </Fragment>
       ))}
