@@ -6,3 +6,5 @@ export const termsAndConditionsLink =
 export const privacyPolicyLink = "https://terramatchsupport.zendesk.com/hc/en-us/articles/20742615289627";
 export const guideNavigation =
   "https://terramatchsupport.zendesk.com/hc/en-us/articles/57198720172827-Guide-to-the-TerraMatch-Navigation";
+export const guideNavigationFr =
+  "https://terramatchsupport.zendesk.com/hc/fr-fr/articles/57198720172827-Guide-de-Navigation-de-TerraMatch";
