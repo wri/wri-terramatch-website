@@ -105,7 +105,7 @@ const WhatsNewModal: FC<WhatsNewModalProps> = ({ onSkip, onFinish }) => {
               key={media}
               src={media}
               aria-label={title}
-              className="border-theme-neutral-300 max-h-full max-w-full rounded-lg border"
+              className="max-h-full max-w-full rounded-lg border border-theme-neutral-300"
               autoPlay
               loop
               muted
