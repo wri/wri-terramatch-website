@@ -39,7 +39,7 @@ import {
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
 import type { SiteIndexProject, SiteIndexSite } from "./siteIndex.types";
-import { getSiteDetailUrl, isSiteApproved, SITE_INDEX_ATTENTION_STATUSES } from "./siteIndex.utils";
+import { getSiteDetailUrl, isSiteApproved, siteRequiresAttention } from "./siteIndex.utils";
 import { useSiteTableSelection } from "./SiteIndexSelection.provider";
 import { isSiteEditable } from "./siteIndexSubmit";
 import { type SiteProjectFilters, useSiteProjectRows } from "./useSiteProjectRows";
@@ -422,10 +422,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
   );
 
   const sites = useSiteProjectRows(meta, filters, loadRequested);
-  const attentionCount = useMemo(
-    () => sites.rows.filter(site => SITE_INDEX_ATTENTION_STATUSES.has(site.status)).length,
-    [sites.rows]
-  );
+  const attentionCount = useMemo(() => sites.rows.filter(siteRequiresAttention).length, [sites.rows]);
   const frameworkKey = toFramework(meta.frameworkKey);
 
   return (

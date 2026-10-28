@@ -42,7 +42,10 @@ const NurseryProjectSection: FC<NurseryProjectSectionProps> = ({
 
   const nurseries = useNurseryProjectRows(meta, filters, loadRequested);
   const attentionCount = useMemo(
-    () => nurseries.rows.filter(nursery => nursery.status === "information-required").length,
+    () =>
+      nurseries.rows.filter(
+        nursery => nursery.status === "information-required" || nursery.updateRequestStatus === "information-required"
+      ).length,
     [nurseries.rows]
   );
 
