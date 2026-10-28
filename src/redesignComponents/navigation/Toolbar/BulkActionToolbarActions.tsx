@@ -72,7 +72,7 @@ const BulkActionToolbarActions = memo(function BulkActionToolbarActions({
     <Flex alignItems="center" gap={2} flexWrap="wrap">
       {items.map((action, index) => (
         <Fragment key={action.id}>
-          {index > 0 && <SimpleDivider className={ACTION_DIVIDER_CLASS} />}
+          {index > 0 && action.variant !== "primary" && <SimpleDivider className={ACTION_DIVIDER_CLASS} />}
           {renderToolbarAction(action)}
         </Fragment>
       ))}
