@@ -1,7 +1,7 @@
 import { Flex, Link, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useRef, useState } from "react";
 
 import { guideNavigation, guideNavigationFr } from "@/constants/links";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -85,11 +85,14 @@ const WhatsNewModal: FC<WhatsNewModalProps> = ({ onSkip, onFinish }) => {
   const [current, setCurrent] = useState(0);
   const { media, title, description, link } = updates[current];
   const isLast = current === updates.length - 1;
+  const contentRef = useRef<HTMLDivElement>(null);
+  const getInitialFocusEl = useCallback(() => contentRef.current, []);
 
   return (
     <Modal
       open
       onClose={onSkip}
+      initialFocusEl={getInitialFocusEl}
       width="40rem"
       height={MODAL_HEIGHT}
       contentPadding={false}
@@ -99,13 +102,23 @@ const WhatsNewModal: FC<WhatsNewModalProps> = ({ onSkip, onFinish }) => {
         </Text>
       }
       content={
-        <Flex direction="column" gap={5} h="full" px={6} py={5} bg="primary.100">
+        <Flex
+          ref={contentRef}
+          tabIndex={-1}
+          direction="column"
+          gap={5}
+          h="full"
+          px={6}
+          py={5}
+          bg="primary.100"
+          className="outline-none"
+        >
           <Flex flex={1} minH={0} align="center" justify="center" css={VIDEO_CONTAINER_CSS}>
             <video
               key={media}
               src={media}
               aria-label={title}
-              className="max-h-full max-w-full rounded-lg border border-theme-neutral-300"
+              className="border-theme-neutral-300 max-h-full max-w-full rounded-lg border"
               autoPlay
               loop
               muted
