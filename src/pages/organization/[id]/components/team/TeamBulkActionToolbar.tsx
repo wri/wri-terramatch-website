@@ -105,6 +105,7 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
 
   const acceptAction: BulkToolbarAction = {
     id: "accept",
+    variant: "primary",
     children: t("Accept"),
     disabled: !isEnabled(ACCEPT_STATUSES),
     tooltip: getMixedTooltip(
@@ -152,9 +153,9 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
   };
 
   const actions = [
-    ...(isShown(ACCEPT_STATUSES) ? [acceptAction] : []),
     ...(isShown(REJECT_STATUSES) ? [rejectAction] : []),
-    ...(isShown(SEND_REMINDER_STATUSES) ? [sendReminderAction] : [])
+    ...(isShown(SEND_REMINDER_STATUSES) ? [sendReminderAction] : []),
+    ...(isShown(ACCEPT_STATUSES) ? [acceptAction] : [])
   ];
 
   const modalMembers = useMemo(() => {
