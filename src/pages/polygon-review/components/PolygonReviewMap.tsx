@@ -5,7 +5,7 @@ import LoadingMap from "@/components/elements/Map-mapbox/components/LoadingMap";
 import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { useBoundingBox } from "@/connections/BoundingBox";
-import { useSitePolygonMapIndex } from "@/connections/SitePolygons";
+import { SitePolygonMapIndexFilter, useSitePolygonMapIndex } from "@/connections/SitePolygons";
 import { ProjectMapEntryDto, SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
@@ -18,13 +18,21 @@ const NO_POLYGONS: SitePolygonMapEntryDto[] = [];
 type PolygonReviewMapProps = {
   projects: ProjectMapEntryDto[];
   selectedProject: ProjectMapEntryDto | null;
+  siteUuids: string[];
+  polygonFilter: SitePolygonMapIndexFilter;
   hasLoadFailure: boolean;
   onViewProjectPolygons: (projectUuid: string) => void;
 };
 
+/**
+ * Shows the project markers until a project is picked, then the project's polygons that match the Level 2 filters.
+ * Polygons come from the GeoServer tiles filtered by the project's map index, so only the sparse index is fetched.
+ */
 const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
   projects,
   selectedProject,
+  siteUuids,
+  polygonFilter,
   hasLoadFailure,
   onViewProjectPolygons
 }) => {
@@ -35,6 +43,8 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
   const [, { data: polygonMapIndex, loadFailure: polygonLoadFailure }] = useSitePolygonMapIndex({
     entityName: "projects",
     entityUuid: projectUuid,
+    siteUuids,
+    filter: polygonFilter,
     enabled: projectUuid != null
   });
   const projectPolygons = polygonMapIndex?.polygons;
@@ -53,7 +63,9 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
     () => getProjectMarkersBbox(toProjectMarkerPoints(selectedProject != null ? [selectedProject] : projects)),
     [projects, selectedProject]
   );
-  const polygonsBbox = useBoundingBox(projectUuid != null ? { projectUuid } : {});
+  const polygonsBbox = useBoundingBox(
+    projectUuid == null ? {} : siteUuids.length > 0 ? { siteUuids } : { projectUuid }
+  );
   const bbox = (projectUuid != null ? polygonsBbox : undefined) ?? markersBbox;
 
   return (
@@ -65,12 +77,14 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
       >
         <LoadingMap loading={projectUuid != null && projectPolygons == null && polygonLoadFailure == null} />
         <MapContainer
+          championsMap
           mapFunctions={mapFunctions}
           bbox={bbox}
           projectMarkers={projectMarkers}
           onViewProjectPolygons={onViewProjectPolygons}
           mapIndexPolygons={mapIndexPolygons}
           showLegend
+          hideMediaOnMap
           disabledPolygonPanel
           className="h-full w-full flex-1 !rounded-[0.25rem_0.25rem_0_0]"
         />

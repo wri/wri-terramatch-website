@@ -131,7 +131,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     setPolygonSearch,
     setPolygonFilters,
     handleClearPolygonFilters
-  } = useSitePolygonFilters({ siteUuid: site.uuid, t });
+  } = useSitePolygonFilters({ t });
 
   const {
     pageNumber: tablePageNumber,

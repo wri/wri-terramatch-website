@@ -25,7 +25,11 @@ export const formatSubmissionCycleDisplay = (values: SubmissionCycleOption[]): s
 export type PolygonSubmissionStatus = PolygonStatus;
 export type PolygonValidationStatus = "not_checked" | "failed" | "partial" | "passed";
 
+export type SiteFilterOption = { label: string; value: string };
+
 export type PolygonFilterState = {
+  /** Only used where the polygons span several sites (the project-level Polygon Review page). */
+  siteUuids: string[];
   polygonStatus: PolygonSubmissionStatus[];
   validationStatus: PolygonValidationStatus[];
   plantStartFrom: string;
@@ -39,6 +43,7 @@ export type PolygonFilterState = {
 };
 
 export const EMPTY_POLYGON_FILTERS: PolygonFilterState = {
+  siteUuids: [],
   polygonStatus: [],
   validationStatus: [],
   plantStartFrom: "",

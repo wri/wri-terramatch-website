@@ -6,20 +6,21 @@ import { useSubmissionStatusLabels } from "@/hooks/translation/useSubmissionStat
 import { useTargetLandUseLabels } from "@/hooks/translation/useTargetLandUseLabels";
 import { useValidationStatusLabels } from "@/hooks/translation/useValidationStatusLabels";
 import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
-import { trackPolygonFilterCleared } from "@/utils/polygonAnalytics";
 
 import {
   EMPTY_POLYGON_FILTERS,
   PolygonFilterState,
+  SiteFilterOption,
   SUBMISSION_CYCLE_LABELS
 } from "../components/polygonFilter.constants";
 
 type UseSitePolygonFiltersParams = {
-  siteUuid: string;
   t: (key: string, params?: Record<string, unknown>) => string;
+  /** Labels the selected sites; only needed where the Site filter is shown. */
+  siteOptions?: SiteFilterOption[];
 };
 
-export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersParams) => {
+export const useSitePolygonFilters = ({ t, siteOptions }: UseSitePolygonFiltersParams) => {
   const submissionStatusLabels = useSubmissionStatusLabels();
   const validationStatusLabels = useValidationStatusLabels();
   const restorationPracticeLabels = useRestorationPracticeLabels();
@@ -60,11 +61,10 @@ export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersPara
   }, [debouncedPolygonSearch, polygonFilters]);
 
   const handleClearPolygonFilters = useCallback(() => {
-    trackPolygonFilterCleared({ siteUuid });
     setPolygonFilters(EMPTY_POLYGON_FILTERS);
     setPolygonSearch("");
     setDebouncedPolygonSearch("");
-  }, [siteUuid]);
+  }, []);
 
   const activeFilterLabels = useMemo<SelectedFilter[]>(() => {
     const labels: SelectedFilter[] = [];
@@ -77,6 +77,15 @@ export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersPara
           }
         }
       ];
+    }
+    if (polygonFilters.siteUuids.length > 0) {
+      labels.push({
+        label: polygonFilters.siteUuids.map(uuid => siteOptions?.find(({ value }) => value === uuid)?.label ?? uuid),
+        onRemove: () => {
+          setPolygonFilters(current => ({ ...current, siteUuids: [] }));
+        },
+        category: t("Site")
+      });
     }
     if (polygonFilters.polygonStatus.length > 0) {
       labels.push({
@@ -151,6 +160,7 @@ export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersPara
   }, [
     polygonFilters,
     restorationPracticeLabels,
+    siteOptions,
     submissionStatusLabels,
     t,
     targetLandUseLabels,
