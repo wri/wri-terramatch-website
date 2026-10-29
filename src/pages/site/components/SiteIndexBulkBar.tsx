@@ -43,6 +43,7 @@ const SiteIndexBulkBar: FC<SiteIndexBulkBarProps> = ({ onSitesChanged }) => {
     entityUUID: editSite?.id ?? "",
     entityStatus: editSite?.status ?? "draft",
     updateRequestStatus: editSite?.updateRequestStatus ?? null,
+    feedback: editSite?.feedback ?? null,
     useInformationRequiredModal: true
   });
 

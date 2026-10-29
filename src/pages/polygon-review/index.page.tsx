@@ -28,7 +28,6 @@ import PolygonReviewMetrics from "./components/PolygonReviewMetrics";
 import PolygonReviewToolbar from "./components/PolygonReviewToolbar";
 import ProjectContextPicker from "./components/ProjectContextPicker";
 import { useProjectPolygonMetrics } from "./hooks/useProjectPolygonMetrics";
-import { useProjectSiteOptions } from "./hooks/useProjectSiteOptions";
 import {
   EMPTY_PROJECT_CONTEXT_FILTERS,
   filterProjects,
@@ -52,8 +51,7 @@ const toTableRow = (polygon: SitePolygonLightDto, t: (key: string) => string): P
 
 /**
  * Polygon Review index. No polygon data loads until a project is picked in the Level 1 project context filter;
- * clearing that filter returns the page to its initial (unscoped) state. The Level 2 polygon filters belong to the
- * selected project, so picking another project resets them.
+ * clearing that filter returns the page to its initial (unscoped) state.
  */
 const PolygonReviewIndexPage: FC = () => {
   const t = useT();
@@ -67,7 +65,6 @@ const PolygonReviewIndexPage: FC = () => {
 
   const columns = useMemo(() => buildPolygonTableColumns(t, { showEntityColumns: true }), [t]);
 
-  const siteOptions = useProjectSiteOptions(selectedProjectUuid ?? undefined);
   const {
     polygonFilters,
     sitePolygonFilter,
@@ -75,13 +72,13 @@ const PolygonReviewIndexPage: FC = () => {
     setPolygonSearch,
     setPolygonFilters,
     handleClearPolygonFilters
-  } = useSitePolygonFilters({ t, siteOptions });
+  } = useSitePolygonFilters({ t });
   const [searchResetKey, setSearchResetKey] = useState(0);
   const clearPolygonFilters = useCallback(() => {
     handleClearPolygonFilters();
     setSearchResetKey(current => current + 1);
   }, [handleClearPolygonFilters]);
-  const siteUuids = polygonFilters.siteUuids;
+  const siteUuids = useMemo(() => polygonFilters.sites.map(({ value }) => value), [polygonFilters.sites]);
   const hasLevel2Filters = !isEmpty(sitePolygonFilter) || siteUuids.length > 0;
 
   const { pageNumber, pageSize, sortField, sortDirection, setPageNumber, handlePageSizeChange, handleSortChange } =
@@ -173,12 +170,11 @@ const PolygonReviewIndexPage: FC = () => {
         <PageContent className="bg-theme-neutral-100">
           <Flex direction="column" gap={4}>
             <PolygonReviewToolbar
-              isProjectSelected={selectedProject != null}
+              projectUuid={selectedProject?.uuid}
               matchingPolygonCount={selectedProject != null ? indexTotal : undefined}
               projectPolygonCount={hasLevel2Filters ? metrics.project?.polygonCount : undefined}
               polygonFilters={polygonFilters}
               activeFilterLabels={activeFilterLabels}
-              siteOptions={siteOptions}
               searchResetKey={searchResetKey}
               onSearchChange={setPolygonSearch}
               onApplyFilters={setPolygonFilters}

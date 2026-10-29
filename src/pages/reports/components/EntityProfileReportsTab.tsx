@@ -5,7 +5,7 @@ import { twMerge } from "tailwind-merge";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { useLightProject } from "@/connections/Entity";
-import { ReportsProvider, useReportsContext } from "@/context/reports.provider";
+import { ReportsProvider, useReportsContext, useReportsTabFilters } from "@/context/reports.provider";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getReportPeriodOptions, getSectionReportingPeriods } from "@/pages/reports/reportPeriodFilter";
 import ReportProfileOriginProvider from "@/pages/reports/ReportProfileOrigin.provider";
@@ -38,12 +38,14 @@ interface EntityProfileReportsContentProps extends Omit<EntityProfileReportsTabP
 
 const EntityProfileReportsContent: FC<EntityProfileReportsContentProps> = ({ source, entityUuid, project }) => {
   const t = useT();
-  const { filters, searchTerm, setSearchTerm } = useReportsContext();
+  const { searchTerm, setSearchTerm } = useReportsContext();
+  const filters = useReportsTabFilters("progress-reports");
   const { sections, loading, error } = useReportsIndexData(project, source, entityUuid);
   const { filteredProgressSections, progressReportCount } = useReportsIndexFilters({
     progressSections: sections,
     additionalSections: [],
-    query: searchTerm
+    query: searchTerm,
+    filters
   });
 
   const hasActivePeriodFilter =

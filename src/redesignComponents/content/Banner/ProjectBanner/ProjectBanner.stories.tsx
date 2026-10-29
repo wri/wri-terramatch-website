@@ -169,7 +169,10 @@ const mockProject = {
   projectQaStatus3: null,
   projectQaStatus4: null,
   projectQaStatus5: null,
-  treesSeedlingsGrownCount: 0
+  treesSeedlingsGrownCount: 0,
+  treesPlantedGoal: 0,
+  treesSeedlingsGoal: 0,
+  fullTimeJobsGoal: 0
 } as ProjectFullDto;
 
 const baseArgs: ProjectBannerProps = {

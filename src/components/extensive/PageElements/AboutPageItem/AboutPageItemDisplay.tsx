@@ -99,7 +99,7 @@ const AboutPageItemDisplay: FC<AboutPageItemDisplayProps> = ({
                   window.open(link.url, "_blank");
                 }}
               >
-                {t(link.title)}
+                <Text truncate={true}>{t(link.title)}</Text>
               </Button>
             ))}
           </Flex>

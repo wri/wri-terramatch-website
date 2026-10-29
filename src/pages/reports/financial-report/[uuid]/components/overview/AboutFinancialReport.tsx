@@ -83,7 +83,7 @@ const AboutFinancialReport: FC<AboutFinancialReportProps> = ({ layout, isEnterpr
               className="justify-start truncate !whitespace-nowrap mobile:max-w-full mobile:[text-wrap:auto]"
               onClick={() => window.open(href, "_blank")}
             >
-              {label}
+              <Text truncate={true}>{t({ label })}</Text>
             </Button>
           ))}
         </Flex>
