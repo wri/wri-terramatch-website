@@ -17,6 +17,7 @@ const NurseryIndexEditButton: FC<{ nursery: NurseryIndexRow }> = ({ nursery }) =
     entityUUID: nursery.uuid,
     entityStatus: nursery.status ?? "draft",
     updateRequestStatus: nursery.updateRequestStatus,
+    feedback: nursery.feedback,
     useInformationRequiredModal: true
   });
 
