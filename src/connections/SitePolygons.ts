@@ -48,14 +48,10 @@ export type PolygonStatus = Required<SitePolygonsIndexQueryParams>["polygonStatu
 export type PolygonEntityScopeProps = {
   entityName?: "projects" | "sites";
   entityUuid?: string;
-  /** Narrows a project scope to some of its sites. Ignored for a site scope. */
   siteUuids?: string[];
 };
 
-/**
- * The scope props are the only source of `projectId[]` / `siteId[]`: the connection filters omit both keys, because
- * lodash `merge` would combine a filter array with a scope array index by index.
- */
+// Filters can't set these keys: lodash `merge` would combine their arrays with the scope's index by index.
 type PolygonScopedFilter<Query> = Omit<Query, "projectId[]" | "siteId[]">;
 
 const polygonEntityScopeVariables = ({ entityName, entityUuid, siteUuids }: PolygonEntityScopeProps) => {

@@ -10,17 +10,14 @@ import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.
 import {
   EMPTY_POLYGON_FILTERS,
   PolygonFilterState,
-  SiteFilterOption,
   SUBMISSION_CYCLE_LABELS
 } from "../components/polygonFilter.constants";
 
 type UseSitePolygonFiltersParams = {
   t: (key: string, params?: Record<string, unknown>) => string;
-  /** Labels the selected sites; only needed where the Site filter is shown. */
-  siteOptions?: SiteFilterOption[];
 };
 
-export const useSitePolygonFilters = ({ t, siteOptions }: UseSitePolygonFiltersParams) => {
+export const useSitePolygonFilters = ({ t }: UseSitePolygonFiltersParams) => {
   const submissionStatusLabels = useSubmissionStatusLabels();
   const validationStatusLabels = useValidationStatusLabels();
   const restorationPracticeLabels = useRestorationPracticeLabels();
@@ -78,11 +75,11 @@ export const useSitePolygonFilters = ({ t, siteOptions }: UseSitePolygonFiltersP
         }
       ];
     }
-    if (polygonFilters.siteUuids.length > 0) {
+    if (polygonFilters.sites.length > 0) {
       labels.push({
-        label: polygonFilters.siteUuids.map(uuid => siteOptions?.find(({ value }) => value === uuid)?.label ?? uuid),
+        label: polygonFilters.sites.map(({ label }) => label),
         onRemove: () => {
-          setPolygonFilters(current => ({ ...current, siteUuids: [] }));
+          setPolygonFilters(current => ({ ...current, sites: [] }));
         },
         category: t("Site")
       });
@@ -160,7 +157,6 @@ export const useSitePolygonFilters = ({ t, siteOptions }: UseSitePolygonFiltersP
   }, [
     polygonFilters,
     restorationPracticeLabels,
-    siteOptions,
     submissionStatusLabels,
     t,
     targetLandUseLabels,

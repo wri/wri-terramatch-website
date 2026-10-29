@@ -11,27 +11,21 @@ import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDiv
 import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
 
-import { PolygonFilterState, SiteFilterOption } from "../../site/[uuid]/components/polygonFilter.constants";
+import { PolygonFilterState } from "../../site/[uuid]/components/polygonFilter.constants";
 import PolygonFilterDrawer from "../../site/[uuid]/components/PolygonFilterDrawer";
 
 type PolygonReviewToolbarProps = {
-  isProjectSelected: boolean;
+  projectUuid?: string;
   polygonFilters: PolygonFilterState;
   activeFilterLabels: SelectedFilter[];
-  siteOptions?: SiteFilterOption[];
   onApplyFilters: (filters: PolygonFilterState) => void;
   onClearFilters: () => void;
 };
 
-/**
- * Polygon search, Level 2 filters and polygon actions. Search and filters unlock once a Level 1 project is selected;
- * the actions stay disabled until the project-scoped workspace lands.
- */
 const PolygonReviewToolbar: FC<PolygonReviewToolbarProps> = ({
-  isProjectSelected,
+  projectUuid,
   polygonFilters,
   activeFilterLabels,
-  siteOptions,
   onApplyFilters,
   onClearFilters
 }) => {
@@ -45,7 +39,7 @@ const PolygonReviewToolbar: FC<PolygonReviewToolbarProps> = ({
         className="!px-0"
         search={{ placeholder: t("Search polygons"), options: [] }}
         selectedFilters={activeFilterLabels}
-        lockedMessage={isProjectSelected ? undefined : t("Select a project to search and filter polygons")}
+        lockedMessage={projectUuid != null ? undefined : t("Select a project to search and filter polygons")}
         showClearFilters={activeFilterLabels.length > 0}
         onClearFilters={onClearFilters}
         onClickFilterButton={openFilterDrawer}
@@ -90,7 +84,7 @@ const PolygonReviewToolbar: FC<PolygonReviewToolbarProps> = ({
       <PolygonFilterDrawer
         open={isFilterDrawerOpen}
         filters={polygonFilters}
-        siteOptions={siteOptions}
+        siteFilterProjectUuid={projectUuid}
         onApplyFilters={onApplyFilters}
         onClearFilters={onClearFilters}
         onOpenChange={setIsFilterDrawerOpen}

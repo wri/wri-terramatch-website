@@ -17,7 +17,6 @@ import PolygonReviewEmptyState from "./components/PolygonReviewEmptyState";
 import PolygonReviewMap from "./components/PolygonReviewMap";
 import PolygonReviewToolbar from "./components/PolygonReviewToolbar";
 import ProjectContextPicker from "./components/ProjectContextPicker";
-import { useProjectSiteOptions } from "./hooks/useProjectSiteOptions";
 import {
   EMPTY_PROJECT_CONTEXT_FILTERS,
   filterProjects,
@@ -27,8 +26,7 @@ import {
 
 /**
  * Polygon Review index. No polygon data loads until a project is picked in the Level 1 project context filter;
- * clearing that filter returns the page to its initial (unscoped) state. The Level 2 polygon filters belong to the
- * selected project, so picking another project resets them.
+ * clearing that filter returns the page to its initial (unscoped) state.
  */
 const PolygonReviewIndexPage: FC = () => {
   const t = useT();
@@ -42,9 +40,9 @@ const PolygonReviewIndexPage: FC = () => {
 
   const columns = useMemo(() => buildPolygonTableColumns(t, { showEntityColumns: true }), [t]);
 
-  const siteOptions = useProjectSiteOptions(selectedProjectUuid ?? undefined);
   const { polygonFilters, sitePolygonFilter, activeFilterLabels, setPolygonFilters, handleClearPolygonFilters } =
-    useSitePolygonFilters({ t, siteOptions });
+    useSitePolygonFilters({ t });
+  const siteUuids = useMemo(() => polygonFilters.sites.map(({ value }) => value), [polygonFilters.sites]);
 
   const projects = useMemo(() => sortProjectsByName(mapIndex?.projects ?? []), [mapIndex]);
   const filteredProjects = useMemo(() => filterProjects(projects, filters), [filters, projects]);
@@ -101,17 +99,16 @@ const PolygonReviewIndexPage: FC = () => {
         <PageContent className="bg-theme-neutral-100">
           <Flex direction="column" gap={4}>
             <PolygonReviewToolbar
-              isProjectSelected={selectedProject != null}
+              projectUuid={selectedProject?.uuid}
               polygonFilters={polygonFilters}
               activeFilterLabels={activeFilterLabels}
-              siteOptions={siteOptions}
               onApplyFilters={setPolygonFilters}
               onClearFilters={handleClearPolygonFilters}
             />
             <PolygonReviewMap
               projects={filteredProjects}
               selectedProject={selectedProject}
-              siteUuids={polygonFilters.siteUuids}
+              siteUuids={siteUuids}
               polygonFilter={sitePolygonFilter}
               hasLoadFailure={loadFailure != null}
               onViewProjectPolygons={selectProject}
