@@ -186,6 +186,7 @@ const SiteProjectRow: FC<SiteProjectRowProps> = ({ site, context, embeddedInProj
     entityUUID: site.id,
     entityStatus: site.status ?? "draft",
     updateRequestStatus: site.updateRequestStatus,
+    feedback: site.feedback,
     useInformationRequiredModal: true
   });
 
