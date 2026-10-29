@@ -1,9 +1,11 @@
 import { Box, Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { Checkbox } from "@worldresources/wri-design-systems";
+import Link from "next/link";
 import { FC, memo, ReactNode, useCallback, useMemo } from "react";
 
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
+import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useTargetLandUseLabels } from "@/hooks/translation/useTargetLandUseLabels";
 import { TreeDistributionType, useTreeDistributionOptions } from "@/hooks/translation/useTreeDistributionOptions";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -53,6 +55,14 @@ export type PolygonTableRow = {
   submissionCycleSort: string;
   source: string;
   disturbanceReportUuid: string | null;
+  entity?: PolygonTableRowEntity;
+};
+
+export type PolygonTableRowEntity = {
+  siteUuid: string | null;
+  siteName: string | null;
+  projectUuid: string | null;
+  projectName: string | null;
 };
 
 type SiteTypeConfig = { icon: ReactNode; label: string };
@@ -136,6 +146,24 @@ const renderTreeDistribution = (
   }
 
   return <Text>{treeDistribution.map(value => labelByValue[value]).join(", ")}</Text>;
+};
+
+const renderEntityLink = (entityName: "projects" | "sites", uuid: string | null, name: string | null) => {
+  if (uuid == null || name == null) {
+    return <Text>—</Text>;
+  }
+
+  return (
+    <Link href={getEntityDetailPageLink(entityName, uuid)} className="block max-w-full truncate">
+      <Text
+        as="span"
+        textStyle="400-bold"
+        className="text-theme-neutral-800 underline decoration-dotted underline-offset-4"
+      >
+        {name}
+      </Text>
+    </Link>
+  );
 };
 
 const renderDisturbance = (disturbanceReportUuid: string | null, viewReportLabel: string) => {
@@ -233,6 +261,16 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
       <TableCell {...context?.getCellProps("validation")}>
         {row.validation != null ? <ValidationTag status={row.validation} /> : <Text>—</Text>}
       </TableCell>
+      {row.entity != null && (
+        <>
+          <TableCell {...context?.getCellProps("siteName")}>
+            {renderEntityLink("sites", row.entity.siteUuid, row.entity.siteName)}
+          </TableCell>
+          <TableCell {...context?.getCellProps("projectName")}>
+            {renderEntityLink("projects", row.entity.projectUuid, row.entity.projectName)}
+          </TableCell>
+        </>
+      )}
       <TableCell {...context?.getCellProps("restorationPracticeSort")}>
         <Flex className="items-center gap-2">{renderRestorationPractice(row.restorationPractice)}</Flex>
       </TableCell>

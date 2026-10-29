@@ -20,6 +20,7 @@ type PolygonReviewMapProps = {
   selectedProject: ProjectMapEntryDto | null;
   siteUuids: string[];
   polygonFilter: SitePolygonMapIndexFilter;
+  selectedPolygonUuids: string[];
   hasLoadFailure: boolean;
   onViewProjectPolygons: (projectUuid: string) => void;
 };
@@ -33,6 +34,7 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
   selectedProject,
   siteUuids,
   polygonFilter,
+  selectedPolygonUuids,
   hasLoadFailure,
   onViewProjectPolygons
 }) => {
@@ -67,6 +69,7 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
     projectUuid == null ? {} : siteUuids.length > 0 ? { siteUuids } : { projectUuid }
   );
   const bbox = (projectUuid != null ? polygonsBbox : undefined) ?? markersBbox;
+  const polygonTableHighlight = useMemo(() => ({ selectedPolygonUuids }), [selectedPolygonUuids]);
 
   return (
     <>
@@ -83,6 +86,7 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
           projectMarkers={projectMarkers}
           onViewProjectPolygons={onViewProjectPolygons}
           mapIndexPolygons={mapIndexPolygons}
+          polygonTableHighlight={polygonTableHighlight}
           showLegend
           hideMediaOnMap
           disabledPolygonPanel
