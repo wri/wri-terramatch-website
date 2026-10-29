@@ -363,6 +363,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
           title={project.name ?? "-"}
           tag={{ state: mapPlantingStatusToProgressState(project.plantingStatus) }}
           organization={project.organisationName ?? "-"}
+          organisationUuid={project.organisationUuid}
           country={formatOptionsList(countryOptions ?? [], project.level0Project ?? [])}
           startDate={formatMonthYear(project.plantingStartDate)}
           endDate={formatMonthYear(project.plantingEndDate)}

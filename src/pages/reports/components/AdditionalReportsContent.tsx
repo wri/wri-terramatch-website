@@ -2,6 +2,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useMemo } from "react";
 
+import { useIsMyOrganisation } from "@/connections/Organisation";
 import { useIndexAccordionOpen } from "@/hooks/useIndexAccordionOpen";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
@@ -101,6 +102,7 @@ const AdditionalReportsEntitySection: FC<{
   onRowRestored
 }) => {
   const t = useT();
+  const isMyOrganisation = useIsMyOrganisation(section.type === "organisation" ? section.id : null);
   const [open, setOpen] = useIndexAccordionOpen({
     defaultOpen,
     resetKey: openResetKey,
@@ -125,7 +127,13 @@ const AdditionalReportsEntitySection: FC<{
               title={
                 sectionName ?? section.name ?? (section.type === "organisation" ? t("Organisation") : t("Project"))
               }
-              titleHref={section.type === "project" ? `/project/${section.id}` : `/organization/${section.id}`}
+              titleHref={
+                section.type === "project"
+                  ? `/project/${section.id}`
+                  : isMyOrganisation
+                  ? `/organization/${section.id}`
+                  : undefined
+              }
               caption={section.type === "organisation" ? t("Organisation") : section.caption}
               open={open}
               statusLabels={
