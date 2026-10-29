@@ -7,6 +7,7 @@ import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
+import { nurseryRequiresAttention } from "../nurseryIndex.utils";
 import { type NurseryProjectFilters, useNurseryProjectRows } from "../useNurseryProjectRows";
 import NurseryProjectBody from "./NurseryProjectBody";
 
@@ -42,10 +43,7 @@ const NurseryProjectSection: FC<NurseryProjectSectionProps> = ({
 
   const nurseries = useNurseryProjectRows(meta, filters, loadRequested);
   const attentionCount = useMemo(
-    () =>
-      nurseries.rows.filter(
-        nursery => nursery.status === "information-required" || nursery.updateRequestStatus === "information-required"
-      ).length,
+    () => nurseries.rows.filter(nursery => nurseryRequiresAttention(nursery)).length,
     [nurseries.rows]
   );
 
