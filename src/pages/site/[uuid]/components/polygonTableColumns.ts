@@ -16,8 +16,8 @@ export const buildPolygonTableColumns = (
   { key: "validation", label: t("Validation"), sortable: true, width: "12.75rem" },
   ...(showEntityColumns
     ? [
-        { key: "siteName", label: t("Site Name"), sortable: true, width: "12.75rem" },
-        { key: "projectName", label: t("Project Name"), sortable: true, width: "12.75rem" }
+        { key: "siteName", label: t("Site Name"), width: "12.75rem" },
+        { key: "projectName", label: t("Project Name"), width: "12.75rem" }
       ]
     : []),
   { key: "restorationPracticeSort", label: t("Restoration Practice"), sortable: true, width: "15.5rem" },

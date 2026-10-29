@@ -16,9 +16,13 @@ import PolygonFilterDrawer from "../../site/[uuid]/components/PolygonFilterDrawe
 
 type PolygonReviewToolbarProps = {
   isProjectSelected: boolean;
+  matchingPolygonCount?: number;
+  projectPolygonCount?: number;
   polygonFilters: PolygonFilterState;
   activeFilterLabels: SelectedFilter[];
   siteOptions?: SiteFilterOption[];
+  searchResetKey: number;
+  onSearchChange: (search: string) => void;
   onApplyFilters: (filters: PolygonFilterState) => void;
   onClearFilters: () => void;
 };
@@ -29,9 +33,13 @@ type PolygonReviewToolbarProps = {
  */
 const PolygonReviewToolbar: FC<PolygonReviewToolbarProps> = ({
   isProjectSelected,
+  matchingPolygonCount,
+  projectPolygonCount,
   polygonFilters,
   activeFilterLabels,
   siteOptions,
+  searchResetKey,
+  onSearchChange,
   onApplyFilters,
   onClearFilters
 }) => {
@@ -43,7 +51,20 @@ const PolygonReviewToolbar: FC<PolygonReviewToolbarProps> = ({
     <>
       <ToolbarTable
         className="!px-0"
-        search={{ placeholder: t("Search polygons"), options: [] }}
+        search={{
+          placeholder: t("Search polygons"),
+          options: [],
+          displayResults: "none",
+          resetKey: searchResetKey,
+          onQueryChange: onSearchChange,
+          count: matchingPolygonCount,
+          label:
+            matchingPolygonCount == null
+              ? undefined
+              : projectPolygonCount == null
+              ? t("polygons")
+              : t("of {total} polygons", { total: projectPolygonCount.toLocaleString("en-US") })
+        }}
         selectedFilters={activeFilterLabels}
         lockedMessage={isProjectSelected ? undefined : t("Select a project to search and filter polygons")}
         showClearFilters={activeFilterLabels.length > 0}
