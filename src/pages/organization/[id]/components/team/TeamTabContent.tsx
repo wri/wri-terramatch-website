@@ -127,6 +127,11 @@ const TeamTabContent: FC = () => {
     [approvedUsers, pendingUsers, rejectedUsers, t]
   );
 
+  const lastMemberId = useMemo(() => {
+    const acceptedMembers = allMembers.filter(member => member.associationStatus === "approved");
+    return acceptedMembers.length === 1 ? acceptedMembers[0].id : null;
+  }, [allMembers]);
+
   const statusOptions = useMemo(
     () =>
       (Object.keys(STATUS_LABELS) as AssociationStatus[]).map(status => ({
@@ -166,10 +171,8 @@ const TeamTabContent: FC = () => {
 
     isSubmittingRef.current = true;
     try {
-      if (rowAction.action === "remove" && rowAction.member.associationStatus === "rejected") {
+      if (rowAction.action === "remove") {
         await bulkDeleteUserAssociations(organisationUuid, [rowAction.member.id], "organisations");
-      } else if (rowAction.action === "remove") {
-        await updateOrganisationUserStatuses(organisationUuid, [rowAction.member.id], "rejected");
       } else {
         await updateOrganisationUserStatuses(
           organisationUuid,
@@ -295,6 +298,8 @@ const TeamTabContent: FC = () => {
             );
           }
 
+          if (member.id === lastMemberId) return null;
+
           return (
             <ActionCell
               buttonSecondary={{
@@ -309,7 +314,7 @@ const TeamTabContent: FC = () => {
         }
       }
     ],
-    [isMobile, openRowAction, organisationUuid, t]
+    [isMobile, lastMemberId, openRowAction, organisationUuid, t]
   );
 
   const renderRow = useCallback(
@@ -398,6 +403,7 @@ const TeamTabContent: FC = () => {
           fullName: member.fullName,
           associationStatus: member.associationStatus
         }))}
+        lastMemberId={lastMemberId}
         onCancel={() => setSelectedRowIds(new Set())}
       />
       <TeamMemberActionModal
