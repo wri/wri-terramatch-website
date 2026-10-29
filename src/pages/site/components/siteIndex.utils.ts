@@ -25,16 +25,6 @@ export const getSiteDetailUrl = (siteUuid: string, fromSiteIndex: boolean, tab?:
 
 export const isSiteApproved = (site: Pick<SiteIndexSite, "status">): boolean => site.status === "approved";
 
-const SITE_INDEX_ATTENTION_STATUSES: ReadonlySet<SiteIndexStatus | SiteIndexUpdate> = new Set([
-  "draft",
-  "information-required",
-  "due"
-]);
-
-export const siteRequiresAttention = (site: Pick<SiteIndexSite, "status" | "update">): boolean =>
-  SITE_INDEX_ATTENTION_STATUSES.has(site.status) ||
-  (site.update != null && SITE_INDEX_ATTENTION_STATUSES.has(site.update));
-
 export const getSiteCreateUrl = (project: Pick<SiteIndexProject, "id" | "frameworkKey">): string =>
   `/entity/sites/create/${project.frameworkKey}?parent_name=projects&parent_uuid=${project.id}`;
 

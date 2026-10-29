@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { FC, memo, useCallback, useMemo, useState } from "react";
+import { FC, memo, useCallback, useState } from "react";
 
 import type { ProjectNurseriesMetaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useIndexAccordionOpen } from "@/hooks/useIndexAccordionOpen";
@@ -7,7 +7,6 @@ import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
-import { nurseryRequiresAttention } from "../nurseryIndex.utils";
 import { type NurseryProjectFilters, useNurseryProjectRows } from "../useNurseryProjectRows";
 import NurseryProjectBody from "./NurseryProjectBody";
 
@@ -42,10 +41,6 @@ const NurseryProjectSection: FC<NurseryProjectSectionProps> = ({
   );
 
   const nurseries = useNurseryProjectRows(meta, filters, loadRequested);
-  const attentionCount = useMemo(
-    () => nurseries.rows.filter(nursery => nurseryRequiresAttention(nursery)).length,
-    [nurseries.rows]
-  );
 
   return (
     <Accordion
@@ -63,8 +58,10 @@ const NurseryProjectSection: FC<NurseryProjectSectionProps> = ({
           open={open}
           statusLabels={
             <>
-              {attentionCount > 0 ? (
-                <TextBadge variant="primary">{t("{count} Require Attention", { count: attentionCount })}</TextBadge>
+              {meta.nurseriesRequiringAttention > 0 ? (
+                <TextBadge variant="primary">
+                  {t("{count} Require Attention", { count: meta.nurseriesRequiringAttention })}
+                </TextBadge>
               ) : null}
             </>
           }
