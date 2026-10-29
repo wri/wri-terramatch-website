@@ -2,7 +2,7 @@ import type { DateValue } from "@ark-ui/react";
 import { Flex } from "@chakra-ui/react";
 import { CalendarDate } from "@internationalized/date";
 import { useT } from "@transifex/react";
-import React, { FC, useEffect, useMemo, useState } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
 import { useRestorationPracticeLabels } from "@/hooks/translation/useRestorationPracticeLabels";
@@ -14,6 +14,7 @@ import { useTargetLandUseOptions } from "@/hooks/translation/useTargetLandUseOpt
 import { useValidationStatusLabels } from "@/hooks/translation/useValidationStatusLabels";
 import { useValidationStatusOptions } from "@/hooks/translation/useValidationStatusOptions";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import SiteFilterCombobox from "@/pages/polygon-review/components/SiteFilterCombobox";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import Drawer from "@/redesignComponents/containers/Drawer/Drawer";
@@ -21,7 +22,6 @@ import FilterPanel from "@/redesignComponents/containers/FilterPanel/FilterPanel
 import FilterCard from "@/redesignComponents/containers/FilterPanel/FilterPanelElements/FilterCards";
 import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
 import Switch from "@/redesignComponents/Forms/Actions/Switch/Switch";
-import Combobox from "@/redesignComponents/Forms/Inputs/Combobox";
 import DateRangeInput from "@/redesignComponents/Forms/Inputs/DateInputs/DateRangeInputs/DateRangeInput";
 import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 
@@ -64,10 +64,7 @@ interface PolygonFilterDrawerProps {
   open?: boolean;
   filters: PolygonFilterState;
   isAdminReview?: boolean;
-  /**
-   * Shows the Site filter when set. The combobox only reads its options on mount, so pass them once they're loaded.
-   */
-  siteOptions?: SiteFilterOption[];
+  siteFilterProjectUuid?: string;
   onApplyFilters: (filters: PolygonFilterState) => void;
   onClearFilters: () => void;
   onOpenChange?: (open: boolean) => void;
@@ -78,7 +75,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
   open,
   filters,
   isAdminReview = false,
-  siteOptions,
+  siteFilterProjectUuid,
   onApplyFilters,
   onClearFilters,
   onOpenChange
@@ -101,7 +98,6 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
     }
   }, [filters, open]);
 
-  // Selected sites already show as tags under the Site combobox, so they're left out of these tags.
   const activeFilters = useMemo(() => {
     const tags: { id: string; label: string }[] = [];
 
@@ -169,9 +165,9 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
     });
   };
 
-  const handleSiteChange = (siteUuids: string[]) => {
-    setDraftFilters(current => ({ ...current, siteUuids }));
-  };
+  const handleSiteChange = useCallback((sites: SiteFilterOption[]) => {
+    setDraftFilters(current => ({ ...current, sites }));
+  }, []);
 
   const handleSubmissionStatusChange = (value: PolygonSubmissionStatus, { checked }: CheckboxChange) => {
     setDraftFilters(current => ({
@@ -276,16 +272,11 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                   />
                 ))}
               </Flex>
-              {siteOptions != null && (
+              {siteFilterProjectUuid != null && (
                 <FilterCard label={t("Site")}>
-                  <Combobox
-                    placeholder={t("Type to search sites")}
-                    size="small"
-                    noMarginBottom
-                    multiple
-                    showSelectedItems
-                    initialItems={siteOptions}
-                    value={draftFilters.siteUuids}
+                  <SiteFilterCombobox
+                    projectUuid={siteFilterProjectUuid}
+                    value={draftFilters.sites}
                     onChange={handleSiteChange}
                   />
                 </FilterCard>
