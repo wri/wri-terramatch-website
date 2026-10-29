@@ -55,7 +55,8 @@ const toReport = (
     updateRequestStatus: report.updateRequestStatus ?? null,
     completion: report.completion,
     updatedAt: report.updatedAt,
-    reportTitle: type === "nursery-report" ? (report as NurseryReportLightDto).reportTitle ?? null : null
+    reportTitle: type === "nursery-report" ? (report as NurseryReportLightDto).reportTitle ?? null : null,
+    feedback: report.feedback ?? null
   };
 };
 
