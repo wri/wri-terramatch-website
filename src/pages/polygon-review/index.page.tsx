@@ -185,6 +185,7 @@ const PolygonReviewIndexPage: FC = () => {
               selectedProject={selectedProject}
               siteUuids={siteUuids}
               polygonFilter={sitePolygonFilter}
+              selectedPolygonUuids={selectedPolygonUuids}
               hasLoadFailure={loadFailure != null}
               onViewProjectPolygons={selectProject}
             />
