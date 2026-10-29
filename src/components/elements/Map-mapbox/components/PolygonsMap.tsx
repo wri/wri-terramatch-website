@@ -159,8 +159,8 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   );
 
   useEffect(() => {
-    const { isOpen, uuid } = editPolygon;
-    setPolygonFromMap({ isOpen, uuid });
+    const { isOpen, uuid, status } = editPolygon;
+    setPolygonFromMap({ isOpen, uuid, status });
     if (isOpen) {
       setSelectedPolygonsInCheckbox([]);
     }

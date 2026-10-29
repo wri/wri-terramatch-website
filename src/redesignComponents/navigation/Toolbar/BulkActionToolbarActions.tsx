@@ -16,7 +16,7 @@ const BORDERLESS_DANGER_CLASS = "!px-1.5 !text-theme-error-300";
 const BORDERLESS_DISABLED_CLASS = "disabled:!text-theme-neutral-400 disabled:!opacity-100";
 
 type BulkActionToolbarActionsProps = {
-  deleteAction: BulkToolbarAction;
+  deleteAction?: BulkToolbarAction;
   actions: BulkToolbarAction[];
 };
 
@@ -25,27 +25,29 @@ const renderToolbarAction = ({
   className,
   infoTooltip,
   tooltip,
+  variant = "borderless",
   id: _id,
   ...buttonProps
 }: BulkToolbarAction): ReactElement => {
   const isDisabledTooltip = tooltip != null && buttonProps.disabled === true;
+  const isBorderless = variant === "borderless";
   const button = (
     <Button
       {...buttonProps}
       className={twMerge(
-        tone === "danger" ? BORDERLESS_DANGER_CLASS : BORDERLESS_NEUTRAL_CLASS,
-        BORDERLESS_DISABLED_CLASS,
+        isBorderless && (tone === "danger" ? BORDERLESS_DANGER_CLASS : BORDERLESS_NEUTRAL_CLASS),
+        isBorderless && BORDERLESS_DISABLED_CLASS,
         className,
         isDisabledTooltip && "pointer-events-none"
       )}
-      variant="borderless"
+      variant={variant}
     />
   );
 
   return (
     <Flex alignItems="center" gap={0.5}>
       {isDisabledTooltip ? (
-        <Tooltip content={wrapToolbarInfoTooltipContent(tooltip)} position="top">
+        <Tooltip content={wrapToolbarInfoTooltipContent(tooltip)} position="top" preserveFocusOnChild>
           <span className="inline-flex">{button}</span>
         </Tooltip>
       ) : (
@@ -64,12 +66,13 @@ const BulkActionToolbarActions = memo(function BulkActionToolbarActions({
   deleteAction,
   actions
 }: BulkActionToolbarActionsProps) {
+  const items = deleteAction != null ? [deleteAction, ...actions] : actions;
+
   return (
     <Flex alignItems="center" gap={2} flexWrap="wrap">
-      {renderToolbarAction(deleteAction)}
-      {actions.map(action => (
+      {items.map((action, index) => (
         <Fragment key={action.id}>
-          <SimpleDivider className={ACTION_DIVIDER_CLASS} />
+          {index > 0 && action.variant !== "primary" && <SimpleDivider className={ACTION_DIVIDER_CLASS} />}
           {renderToolbarAction(action)}
         </Fragment>
       ))}

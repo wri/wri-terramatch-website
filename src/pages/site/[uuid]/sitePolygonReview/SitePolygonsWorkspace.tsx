@@ -439,7 +439,6 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     handleSubmitPolygonsModalChange,
     handleSystemValidationCompleteModalChange,
     isSystemValidationCompleteModalOpen,
-    openPolygonEditDrawerForRow,
     runPolygonValidation,
     runValidationWithResultsModal,
     showValidationResultsModalIfPending,
@@ -503,9 +502,9 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   const handleViewValidationDetails = useCallback(
     (row: PolygonTableRow) => {
       handleSystemValidationCompleteModalChange(false);
-      openPolygonEditDrawerForRow(row);
+      openPolygonEditDrawerByPolygonId(row.id);
     },
-    [handleSystemValidationCompleteModalChange, openPolygonEditDrawerForRow]
+    [handleSystemValidationCompleteModalChange, openPolygonEditDrawerByPolygonId]
   );
 
   const isValidationInProgress = isValidatingPolygons || pendingValidationPolygonUuids.length > 0;

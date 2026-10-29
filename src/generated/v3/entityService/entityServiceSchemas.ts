@@ -1455,6 +1455,7 @@ export type SiteLightDto = {
    */
   treesRestoredPpc: number;
   totalSiteReports: number;
+  feedback: string | null;
   /**
    * @format date-time
    */
@@ -1520,6 +1521,7 @@ export type NurseryLightDto = {
    */
   updatedAt: string;
   projectUuid: string | null;
+  feedback: string | null;
 };
 
 export type FinancialReportLightDto = {
@@ -1929,6 +1931,18 @@ export type ProjectFullDto = {
    */
   treesGrownGoal: number | null;
   jobsCreatedGoal: number | null;
+  /**
+   * Project trees planted goal: sum of the trees-goal 'tree-planting' strategy entries, without the ANR and direct-seeding strategy amounts.
+   */
+  treesPlantedGoal: number;
+  /**
+   * Sum of visible tree species amounts for collection 'nursery-seedling' across all nurseries of this project.
+   */
+  treesSeedlingsGoal: number;
+  /**
+   * Sum of the gender entries of the project's demographics / jobs / full-time tracking (the aggregate full-time jobs goal).
+   */
+  fullTimeJobsGoal: number;
   survivalRate: number | null;
   lastReportedSurvivalRate: number | null;
   landUseTypes: string[] | null;
@@ -2060,6 +2074,7 @@ export type SiteFullDto = {
    */
   treesRestoredPpc: number;
   totalSiteReports: number;
+  feedback: string | null;
   /**
    * @format date-time
    */
@@ -2115,7 +2130,6 @@ export type SiteFullDto = {
   landUseTypes: string[] | null;
   restorationStrategy: string[] | null;
   anrPractices: string[] | null;
-  feedback: string | null;
   feedbackFields: string[] | null;
   detailedInterventionTypes: string[] | null;
   media: MediaDto[];
@@ -2194,11 +2208,11 @@ export type NurseryFullDto = {
    */
   updatedAt: string;
   projectUuid: string | null;
+  feedback: string | null;
   /**
    * When true, report generation is paused for this nursery. Independent of project archival.
    */
   isArchived: boolean;
-  feedback: string | null;
   feedbackFields: string[] | null;
   type: string | null;
   seedlingGrown: number | null;

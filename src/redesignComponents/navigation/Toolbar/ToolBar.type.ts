@@ -28,7 +28,7 @@ export type BulkToolbarAction = IButtonProps & {
 export interface BulkActionToolbarProps {
   selectedCount: number;
   cancelAction: IButtonProps;
-  deleteAction: BulkToolbarAction;
+  deleteAction?: BulkToolbarAction;
   actions?: BulkToolbarAction[];
   primaryAction?: IButtonProps | IMultiActionButtonProps;
   infoTooltip?: ReactNode;
