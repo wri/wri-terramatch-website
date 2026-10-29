@@ -25,10 +25,16 @@ const SEND_REMINDER_STATUSES: AssociationStatus[] = ["invited"];
 type TeamBulkActionToolbarProps = {
   organisationUuid: string;
   selectedMembers: TeamBulkMember[];
+  lastMemberId: string | null;
   onCancel: () => void;
 };
 
-const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUuid, selectedMembers, onCancel }) => {
+const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({
+  organisationUuid,
+  selectedMembers,
+  lastMemberId,
+  onCancel
+}) => {
   const t = useT();
   const { setSidebarCollapseDisabled } = useLayoutShell();
   const [modalAction, setModalAction] = useState<TeamMemberAction | null>(null);
@@ -135,20 +141,30 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
     id: "sendReminder",
     children: t("Send Reminder"),
     disabled: !isEnabled(SEND_REMINDER_STATUSES),
+    tooltip: getMixedTooltip(
+      SEND_REMINDER_STATUSES,
+      ["requested", "approved", "rejected"],
+      t(
+        "One or more selected users can’t be sent a reminder because they have a pending request, are already accepted members, or were rejected"
+      )
+    ),
     onClick: handleSendReminders
   };
+  const containsLastMember = selectedMembers.some(member => member.id === lastMemberId);
   const removeAction: BulkToolbarAction = {
     id: "remove",
     tone: "danger",
     children: t("Remove"),
-    disabled: !isEnabled(REMOVE_STATUSES),
-    tooltip: getMixedTooltip(
-      REMOVE_STATUSES,
-      ["invited", "requested"],
-      t(
-        "One or more selected users can’t be removed because they have a pending invitation or a pending request to join the organization."
-      )
-    ),
+    disabled: !isEnabled(REMOVE_STATUSES) || containsLastMember,
+    tooltip: containsLastMember
+      ? t("This user is the only member of the organization and can’t be removed.")
+      : getMixedTooltip(
+          REMOVE_STATUSES,
+          ["invited", "requested"],
+          t(
+            "One or more selected users can’t be removed because they have a pending invitation or a pending request to join the organization."
+          )
+        ),
     onClick: () => setModalAction("remove")
   };
 
@@ -169,9 +185,8 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
     if (isSubmittingRef.current || modalAction == null) return;
 
     if (modalAction === "remove") {
-      const approvedIds = approvedMembers.map(member => member.id);
-      const rejectedIds = rejectedMembers.map(member => member.id);
-      if (approvedIds.length === 0 && rejectedIds.length === 0) {
+      const memberIds = [...approvedMembers, ...rejectedMembers].map(member => member.id);
+      if (memberIds.length === 0) {
         setModalAction(null);
         onCancel();
         return;
@@ -185,12 +200,7 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
 
       isSubmittingRef.current = true;
       try {
-        if (approvedIds.length > 0) {
-          await updateOrganisationUserStatuses(organisationUuid, approvedIds, "rejected");
-        }
-        if (rejectedIds.length > 0) {
-          await bulkDeleteUserAssociations(organisationUuid, rejectedIds, "organisations");
-        }
+        await bulkDeleteUserAssociations(organisationUuid, memberIds, "organisations");
         showToast({
           label: t("Team member removed"),
           type: "success",
