@@ -1691,6 +1691,10 @@ export type ProjectNurseriesMetaDto = {
    */
   nurseriesMatching: number;
   /**
+   * Number of nurseries that match the filters with a status or update request status of "draft" or "information-required"
+   */
+  nurseriesRequiringAttention: number;
+  /**
    * Seedlings grown across all nurseries in the project
    */
   seedlingsGrownTotal: number;
@@ -1717,6 +1721,10 @@ export type ProjectSitesMetaDto = {
    * Number of sites in the project that match the filters
    */
   sitesMatching: number;
+  /**
+   * Number of sites that match the filters with a status or update request status of "draft" or "information-required"
+   */
+  sitesRequiringAttention: number;
   /**
    * Trees planted across all sites in the project
    */

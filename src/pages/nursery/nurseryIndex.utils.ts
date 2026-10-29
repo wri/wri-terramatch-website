@@ -35,12 +35,6 @@ export const toNurseryIndexStatus = (status: string | null | undefined): Nursery
   return "draft";
 };
 
-const NURSERY_INDEX_ATTENTION_STATUSES: ReadonlySet<string> = new Set(["draft", "information-required"]);
-
-export const nurseryRequiresAttention = (nursery: Pick<NurseryIndexRow, "status" | "updateRequestStatus">): boolean =>
-  (nursery.status != null && NURSERY_INDEX_ATTENTION_STATUSES.has(nursery.status)) ||
-  (nursery.updateRequestStatus != null && NURSERY_INDEX_ATTENTION_STATUSES.has(nursery.updateRequestStatus));
-
 export const toNurseryIndexRows = (
   nurseries: NurseryLightDto[],
   project?: Pick<ProjectLightDto, "uuid" | "frameworkKey">
