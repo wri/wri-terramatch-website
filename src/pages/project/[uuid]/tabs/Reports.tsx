@@ -5,7 +5,7 @@ import { FC, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
-import { ReportsProvider, useReportsContext } from "@/context/reports.provider";
+import { ReportsProvider, useReportsContext, useReportsTabFilters } from "@/context/reports.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import AdditionalReportsContent from "@/pages/reports/components/AdditionalReportsContent";
 import ProjectReportsSection from "@/pages/reports/components/ProjectReportsSection";
@@ -49,7 +49,8 @@ interface ReportsTabProps {
 
 const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
   const t = useT();
-  const { filters, searchTerm, setSearchTerm } = useReportsContext();
+  const { searchTerm, setSearchTerm } = useReportsContext();
+  const filters = useReportsTabFilters("progress-reports");
   const {
     sections: progressSections,
     loading: progressLoading,
@@ -61,7 +62,13 @@ const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
     error: additionalError
   } = useAdditionalReportsData(project, true, project.organisationUuid, "project");
   const { filteredProgressSections, filteredAdditionalSections, progressReportCount, additionalReportCount } =
-    useReportsIndexFilters({ progressSections, additionalSections, query: searchTerm, reportTypesSpanSections: true });
+    useReportsIndexFilters({
+      progressSections,
+      additionalSections,
+      query: searchTerm,
+      filters,
+      reportTypesSpanSections: true
+    });
 
   const loading = progressLoading || additionalLoading;
   const error = progressError || additionalError;

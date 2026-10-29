@@ -1,12 +1,20 @@
 import { Flex, Link, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useMemo, useState } from "react";
+import { useRouter } from "next/router";
+import { FC, useCallback, useMemo, useRef, useState } from "react";
 
-import { zendeskSupportLink } from "@/constants/links";
+import { guideNavigation, guideNavigationFr } from "@/constants/links";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import { NewTabIcon } from "@/redesignComponents/foundations/Icons";
 import CarouselNavigation from "@/redesignComponents/navigation/CarouselNavigation/CarouselNavigation";
+
+const MODAL_HEIGHT = "min(45rem, 80vh)";
+
+const VIDEO_CONTAINER_CSS = {
+  containerType: "size",
+  "@container (max-height: 7.5rem)": { "& > video": { display: "none" } }
+};
 
 type WhatsNewUpdate = {
   media: string;
@@ -15,8 +23,14 @@ type WhatsNewUpdate = {
   link?: { label: string; href: string };
 };
 
+const GUIDE_NAVIGATION_BY_LOCALE: Record<string, string> = {
+  "fr-FR": guideNavigationFr
+};
+
 const useWhatsNewUpdates = (): WhatsNewUpdate[] => {
   const t = useT();
+  const { locale } = useRouter();
+  const guideNavigationHref = GUIDE_NAVIGATION_BY_LOCALE[locale ?? ""] ?? guideNavigation;
   return useMemo(
     () => [
       {
@@ -53,10 +67,10 @@ const useWhatsNewUpdates = (): WhatsNewUpdate[] => {
         description: t(
           "You can use the filters to narrow reports by type, status or reporting period, so you can quickly find what you need."
         ),
-        link: { label: t("Learn more"), href: zendeskSupportLink }
+        link: { label: t("Learn more"), href: guideNavigationHref }
       }
     ],
-    [t]
+    [t, guideNavigationHref]
   );
 };
 
@@ -71,12 +85,16 @@ const WhatsNewModal: FC<WhatsNewModalProps> = ({ onSkip, onFinish }) => {
   const [current, setCurrent] = useState(0);
   const { media, title, description, link } = updates[current];
   const isLast = current === updates.length - 1;
+  const contentRef = useRef<HTMLDivElement>(null);
+  const getInitialFocusEl = useCallback(() => contentRef.current, []);
 
   return (
     <Modal
       open
       onClose={onSkip}
+      initialFocusEl={getInitialFocusEl}
       width="40rem"
+      height={MODAL_HEIGHT}
       contentPadding={false}
       header={
         <Text textStyle="400-bold" color="neutral.800">
@@ -84,18 +102,30 @@ const WhatsNewModal: FC<WhatsNewModalProps> = ({ onSkip, onFinish }) => {
         </Text>
       }
       content={
-        <Flex direction="column" gap={5} px={6} py={5} bg="primary.100">
-          <video
-            key={media}
-            src={media}
-            aria-label={title}
-            className="aspect-video w-full rounded-lg border border-theme-neutral-300 object-cover"
-            autoPlay
-            loop
-            muted
-            playsInline
-          />
-          <Flex direction="column" align="flex-start" gap={2} minH="8.5rem">
+        <Flex
+          ref={contentRef}
+          tabIndex={-1}
+          direction="column"
+          gap={5}
+          h="full"
+          px={6}
+          py={5}
+          bg="primary.100"
+          className="outline-none"
+        >
+          <Flex flex={1} minH={0} align="center" justify="center" css={VIDEO_CONTAINER_CSS}>
+            <video
+              key={media}
+              src={media}
+              aria-label={title}
+              className="max-h-full max-w-full rounded-lg border border-theme-neutral-300"
+              autoPlay
+              loop
+              muted
+              playsInline
+            />
+          </Flex>
+          <Flex direction="column" align="flex-start" gap={2} minH="8.5rem" flexShrink={0}>
             <Text as="h2" textStyle="700-bold" color="neutral.800">
               {title}
             </Text>

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { projectReportsMetaIndexConnection, useReportCounts } from "@/connections/Entity";
-import { ReportsFilterValues, useReportsContext } from "@/context/reports.provider";
+import { ReportsFilterValues } from "@/context/reports.provider";
 import { ReportCountsGetQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
 import { useInfinitePages } from "@/hooks/useConnection";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -22,6 +22,16 @@ const REPORT_STATUSES: string[] = [
 ] satisfies ReportStatus[];
 const isReportStatus = (status: string): status is ReportStatus => REPORT_STATUSES.includes(status);
 
+type UpdateRequestStatus = NonNullable<ReportCountsGetQueryParams["updateRequestStatuses"]>[number];
+const UPDATE_REQUEST_STATUSES: string[] = [
+  "approved",
+  "draft",
+  "information-required",
+  "pending-approval"
+] satisfies UpdateRequestStatus[];
+const isUpdateRequestStatus = (status: string): status is UpdateRequestStatus =>
+  UPDATE_REQUEST_STATUSES.includes(status);
+
 type ReportType = NonNullable<ReportCountsGetQueryParams["reportTypes"]>[number];
 // Disturbance, SRP and financial reports are listed in the Additional Reports tab, so they are never counted here.
 const PROGRESS_REPORT_TYPES: ReportType[] = ["nurseryReports", "projectReports", "siteReports"];
@@ -29,6 +39,7 @@ const PROGRESS_REPORT_TYPES: ReportType[] = ["nurseryReports", "projectReports",
 const toReportsQuery = ({
   reportTypes,
   statuses,
+  updateStatuses,
   dueDateFrom,
   dueDateTo,
   dueMonth,
@@ -38,6 +49,7 @@ const toReportsQuery = ({
     ? reportTypes.filter(isProgressReportType).map(type => REPORT_INDEX_TYPE_TO_ENTITY[type])
     : PROGRESS_REPORT_TYPES,
   statuses: statuses.length === 0 ? undefined : statuses.filter(isReportStatus),
+  updateRequestStatuses: updateStatuses.length === 0 ? undefined : updateStatuses.filter(isUpdateRequestStatus),
   dueDateFrom: dueDateFrom === "" ? undefined : dueDateFrom,
   dueDateTo: dueDateTo === "" ? undefined : dueDateTo,
   ...getDueDateQuery(dueMonth, dueYear)
@@ -45,6 +57,7 @@ const toReportsQuery = ({
 
 type AllProjectsReportsDataArgs = {
   query: string;
+  filters: ReportsFilterValues;
   enabled: boolean;
 };
 
@@ -53,8 +66,7 @@ type AllProjectsReportsDataArgs = {
  * count for the "All Projects" view. The reports themselves are only loaded (via
  * useReportsIndexData) once a given project is opened.
  */
-export const useAllProjectsReportsData = ({ query, enabled }: AllProjectsReportsDataArgs) => {
-  const { filters } = useReportsContext();
+export const useAllProjectsReportsData = ({ query, filters, enabled }: AllProjectsReportsDataArgs) => {
   const [search, setSearch] = useState("");
   const updateSearch = useDebounce(setSearch);
   useEffect(() => updateSearch(query.trim()), [query, updateSearch]);

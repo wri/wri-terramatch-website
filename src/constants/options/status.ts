@@ -56,16 +56,16 @@ export const getStatusOptions = (t: typeof useT | Function = (t: string) => t) =
       title: t("Draft")
     },
     {
-      value: "approved",
-      title: t("Approved")
-    },
-    {
       value: "pending-approval",
       title: t("Pending Approval")
     },
     {
       value: "information-required",
       title: t("Information Required")
+    },
+    {
+      value: "approved",
+      title: t("Approved")
     }
   ] as Option[];
 export const getPolygonOptions = (t: typeof useT | Function = (t: string) => t) =>
