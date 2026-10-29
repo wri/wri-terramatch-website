@@ -107,7 +107,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
 
           <Flex className="min-w-[0] items-center gap-4 mobile:w-full">
             {filters != null && filters.length > 0 ? (
-              <Flex className="text-14 flex-wrap items-center gap-3 text-theme-neutral-900">
+              <Flex className="text-14 text-theme-neutral-900 flex-wrap items-center gap-3">
                 {t("Filter by:")}
 
                 {filters.map((filter, index) => (
@@ -128,9 +128,9 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
               </Button>
             )}
             {isLocked && (
-              <Flex className="items-center gap-1">
+              <Flex className="items-center gap-1.5">
                 <LockIcon boxSize="0.875rem" color="neutral.700" />
-                <Text textStyle="200" color="neutral.700">
+                <Text textStyle="300" color="neutral.700">
                   {lockedMessage}
                 </Text>
               </Flex>
