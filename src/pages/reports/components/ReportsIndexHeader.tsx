@@ -3,7 +3,6 @@ import classNames from "classnames";
 import { useRouter } from "next/router";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
-import { useCreateDisturbanceReport } from "@/connections/Entity";
 import { getReportStatusOptions, getUpdateStatusFilterOptions } from "@/constants/options/status";
 import { useReportsContext } from "@/context/reports.provider";
 import { useDate } from "@/hooks/useDate";
@@ -18,9 +17,8 @@ import Toolbar from "@/redesignComponents/navigation/Toolbar/Toolbar";
 import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
-import ApiSlice from "@/store/apiSlice";
 
-import { ALL_PROJECTS_VIEW_VALUE, getReportsIndexUrl } from "../reportIndex.utils";
+import { ALL_PROJECTS_VIEW_VALUE, getReportsIndexUrl, withReportsIndexReturn } from "../reportIndex.utils";
 import { ReportPeriodOptions } from "../reportPeriodFilter";
 import {
   clearReportPeriodFilters,
@@ -40,6 +38,7 @@ type ReportsIndexHeaderProps = {
   source: "project" | "site" | "nursery";
   sourceUuid: string;
   projectUuid: string;
+  projectFrameworkKey: string | null;
   reportCount: number;
   viewValue: string;
   viewItems: HighLevelSelectorItem[];
@@ -72,6 +71,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
   source,
   sourceUuid,
   projectUuid,
+  projectFrameworkKey,
   reportCount,
   viewValue,
   viewItems,
@@ -114,19 +114,16 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
     });
   }, [reportTypeFromQuery, setFiltersByTab, source, sourceUuid]);
 
-  const { create: createDisturbanceReport, isCreating: disturbanceReportCreating } = useCreateDisturbanceReport(
-    {},
-    useCallback(
-      ({ uuid }) => {
-        ApiSlice.pruneCache("disturbanceReports");
-        void router.replace(
-          `/entity/disturbance-reports/create/framework?entity_uuid=${uuid}&from=${encodeURIComponent(indexHref)}`
-        );
-      },
-      [indexHref, router]
-    ),
-    "Failed to create disturbance report"
-  );
+  // The report is only created once the user continues from the introduction, so cancelling it leaves no draft behind.
+  const openDisturbanceReportIntro = useCallback(() => {
+    if (projectFrameworkKey == null) return;
+    void router.push(
+      withReportsIndexReturn(
+        `/entity/disturbance-reports/create/${projectFrameworkKey}?parent_uuid=${projectUuid}`,
+        indexHref
+      )
+    );
+  }, [indexHref, projectFrameworkKey, projectUuid, router]);
 
   const activeFilterLabels = useMemo<SelectedFilter[]>(() => {
     const labels: SelectedFilter[] = [];
@@ -256,10 +253,10 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
             <Button
               size="small"
               leftIcon={<PlusIcon boxSize="0.625rem" />}
-              disabled={disturbanceReportCreating || addDisturbanceReportDisabled}
+              disabled={addDisturbanceReportDisabled || projectFrameworkKey == null}
               onClick={() => {
                 trackDisturbanceReportClicked();
-                createDisturbanceReport({ parentUuid: projectUuid });
+                openDisturbanceReportIntro();
               }}
             >
               {t("Add Disturbance Report")}
@@ -326,10 +323,10 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
             : {
                 size: "small",
                 leftIcon: <PlusIcon boxSize="0.625rem" />,
-                disabled: disturbanceReportCreating || addDisturbanceReportDisabled,
+                disabled: addDisturbanceReportDisabled || projectFrameworkKey == null,
                 onClick: () => {
                   trackDisturbanceReportClicked();
-                  createDisturbanceReport({ parentUuid: projectUuid });
+                  openDisturbanceReportIntro();
                 },
                 children: t("Add Disturbance Report")
               }

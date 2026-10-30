@@ -108,6 +108,7 @@ const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
         source="project"
         sourceUuid={project.uuid}
         projectUuid={project.uuid}
+        projectFrameworkKey={project.frameworkKey}
         reportCount={progressReportCount + additionalReportCount}
         viewValue="project"
         viewItems={[]}

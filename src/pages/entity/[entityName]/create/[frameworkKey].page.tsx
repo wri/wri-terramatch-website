@@ -8,9 +8,10 @@ import WizardFormIntro from "@/components/extensive/WizardForm/WizardFormIntro";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useCreateNursery, useCreateProject, useCreateSite } from "@/connections/Entity";
+import { useCreateDisturbanceReport, useCreateNursery, useCreateProject, useCreateSite } from "@/connections/Entity";
 import { FormEntity, useForm } from "@/connections/Form";
 import {
+  DisturbanceReportFullDto,
   EntityCreateAttributes,
   NurseryFullDto,
   ProjectCreateAttributes,
@@ -29,12 +30,17 @@ import Log from "@/utils/log";
 
 const useCreateEntity = (
   entityName: FormEntity,
-  onSuccess: (data: ProjectFullDto | SiteFullDto | NurseryFullDto) => void,
+  onSuccess: (data: ProjectFullDto | SiteFullDto | NurseryFullDto | DisturbanceReportFullDto) => void,
   failureMessage?: string
 ) => {
   const { create: createProject, isCreating: projectCreating } = useCreateProject({}, onSuccess, failureMessage);
   const { create: createSite, isCreating: siteCreating } = useCreateSite({}, onSuccess, failureMessage);
   const { create: createNursery, isCreating: nurseryCreating } = useCreateNursery({}, onSuccess, failureMessage);
+  const { create: createDisturbanceReport, isCreating: disturbanceReportCreating } = useCreateDisturbanceReport(
+    {},
+    onSuccess,
+    failureMessage
+  );
 
   if (entityName === "projects") {
     return { createEntity: createProject, isCreating: projectCreating };
@@ -42,6 +48,8 @@ const useCreateEntity = (
     return { createEntity: createSite, isCreating: siteCreating };
   } else if (entityName === "nurseries") {
     return { createEntity: createNursery, isCreating: nurseryCreating };
+  } else if (entityName === "disturbanceReports") {
+    return { createEntity: createDisturbanceReport, isCreating: disturbanceReportCreating };
   } else {
     Log.warn("useCreateEntity: Invalid entityName", { entityName });
     return {};
@@ -55,7 +63,7 @@ const useCreateEntity = (
  * or
  *    entity_uuid: providing entity_uuid will bypass creation of a new entity and takes user directly to next page
  *
- * entityName: projects/sites/nurseries/project-reports/site-reports/nursery-reports
+ * entityName: projects/sites/nurseries/disturbance-reports/project-reports/site-reports/nursery-reports
  */
 const EntityIntroPage = () => {
   const t = useT();
