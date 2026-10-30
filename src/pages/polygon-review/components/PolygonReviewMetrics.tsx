@@ -15,6 +15,7 @@ type PolygonReviewMetricsProps = {
 
 const PolygonReviewMetrics: FC<PolygonReviewMetricsProps> = ({ project, filtered, selected }) => {
   const t = useT();
+  const progressLabel = project == null ? "-" : undefined;
 
   return (
     <Flex className="items-center gap-4 mobile:w-full mobile:flex-col">
@@ -24,6 +25,7 @@ const PolygonReviewMetrics: FC<PolygonReviewMetricsProps> = ({ project, filtered
         variant="medium"
         title={t("Trees Planted")}
         progress={project?.treesPlanted ?? 0}
+        progressLabel={progressLabel}
         goal={0}
         filtered={filtered === undefined ? undefined : filtered?.treesPlanted ?? null}
         selection={selected === undefined ? undefined : selected?.treesPlanted ?? null}
@@ -36,6 +38,7 @@ const PolygonReviewMetrics: FC<PolygonReviewMetricsProps> = ({ project, filtered
         variant="medium"
         title={t("Restoration Area")}
         progress={project?.restorationAreaHa ?? 0}
+        progressLabel={progressLabel}
         goal={0}
         progressSuffix="ha"
         filtered={filtered === undefined ? undefined : filtered?.restorationAreaHa ?? null}

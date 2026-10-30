@@ -201,50 +201,56 @@ const PolygonReviewIndexPage: FC = () => {
               hasLoadFailure={loadFailure != null}
               onViewProjectPolygons={selectProject}
             />
-            {selectedProject != null && (
-              <PolygonReviewMetrics project={metrics.project} filtered={metrics.filtered} selected={metrics.selected} />
-            )}
             <Flex
               direction="column"
-              gap={3}
+              gap={5}
               bg="neutral.100"
               borderRadius="0.25rem"
               paddingX={4}
               paddingTop={4}
               paddingBottom={7}
             >
-              <PolygonReviewTableActions />
-              {selectedProject == null ? (
-                <Flex
-                  direction="column"
-                  overflow="hidden"
-                  borderWidth="0.125rem"
-                  borderColor="neutral.300"
-                  borderRadius="0.25rem"
-                  bg="neutral.100"
-                >
-                  <Table data={[]} columns={columns} selectable showPagination={false} />
-                  <PolygonReviewEmptyState onSelectProject={openPicker} />
-                </Flex>
-              ) : (
-                <SitePolygonTableSection
-                  tableContainerRef={tableContainerRef}
-                  isSitePolygonsLoading={!polygonsLoaded}
-                  polygonRows={polygonRows}
-                  columns={columns}
-                  selectedRows={selectedRows}
-                  loadingLabel={t("Loading polygons...")}
-                  onAllItemsSelected={onAllItemsSelected}
-                  onClearHover={clearTableHover}
-                  onRowSelected={handleRowSelected}
-                  totalItems={indexTotal ?? 0}
-                  currentPage={pageNumber}
-                  pageSize={pageSize}
-                  onPageChange={setPageNumber}
-                  onPageSizeChange={handlePageSizeChange}
-                  onSortChange={handleSortChange}
+              {selectedProject != null && (
+                <PolygonReviewMetrics
+                  project={metrics.project}
+                  filtered={metrics.filtered}
+                  selected={metrics.selected}
                 />
               )}
+              <Flex direction="column" gap={3}>
+                <PolygonReviewTableActions />
+                {selectedProject == null ? (
+                  <Flex
+                    direction="column"
+                    overflow="hidden"
+                    borderWidth="0.125rem"
+                    borderColor="neutral.300"
+                    borderRadius="0.25rem"
+                    bg="neutral.100"
+                  >
+                    <Table data={[]} columns={columns} selectable showPagination={false} />
+                    <PolygonReviewEmptyState onSelectProject={openPicker} />
+                  </Flex>
+                ) : (
+                  <SitePolygonTableSection
+                    tableContainerRef={tableContainerRef}
+                    isSitePolygonsLoading={!polygonsLoaded}
+                    polygonRows={polygonRows}
+                    columns={columns}
+                    selectedRows={selectedRows}
+                    loadingLabel={t("Loading polygons...")}
+                    onAllItemsSelected={onAllItemsSelected}
+                    onClearHover={clearTableHover}
+                    onRowSelected={handleRowSelected}
+                    totalItems={indexTotal ?? 0}
+                    currentPage={pageNumber}
+                    pageSize={pageSize}
+                    onPageChange={setPageNumber}
+                    onPageSizeChange={handlePageSizeChange}
+                    onSortChange={handleSortChange}
+                  />
+                )}
+              </Flex>
             </Flex>
           </Flex>
         </PageContent>
