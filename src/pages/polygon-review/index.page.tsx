@@ -14,7 +14,9 @@ import type { SitePolygonLightDto } from "@/generated/v3/researchService/researc
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
+import { PolygonsIcon } from "@/redesignComponents/foundations/Icons";
 import Layout from "@/redesignComponents/Layout/Layout";
+import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 
 import { buildPolygonTableColumns } from "../site/[uuid]/components/polygonTableColumns";
 import type { PolygonTableRow } from "../site/[uuid]/components/PolygonTableRow";
@@ -25,6 +27,7 @@ import { useSitePolygonFilters } from "../site/[uuid]/hooks/useSitePolygonFilter
 import PolygonReviewEmptyState from "./components/PolygonReviewEmptyState";
 import PolygonReviewMap from "./components/PolygonReviewMap";
 import PolygonReviewMetrics from "./components/PolygonReviewMetrics";
+import PolygonReviewTableActions from "./components/PolygonReviewTableActions";
 import PolygonReviewToolbar from "./components/PolygonReviewToolbar";
 import ProjectContextPicker from "./components/ProjectContextPicker";
 import { useProjectPolygonMetrics } from "./hooks/useProjectPolygonMetrics";
@@ -150,8 +153,17 @@ const PolygonReviewIndexPage: FC = () => {
 
   return (
     <Layout>
+      <ToolbarObject
+        className="sticky top-0 z-20 !px-6"
+        breadcrumbs={{
+          linkRouter: router,
+          links: [{ icon: <PolygonsIcon />, label: t("Polygons"), link: "/polygon-review" }]
+        }}
+      />
       <PageHeader
         title={t("Polygon Review")}
+        className="!bg-theme-neutral-100 !pb-0 !pt-1 mobile:flex-col mobile:items-start mobile:gap-4"
+        classNameActions="mobile:w-full"
         actions={
           <ProjectContextPicker
             open={isPickerOpen}
@@ -167,7 +179,7 @@ const PolygonReviewIndexPage: FC = () => {
         }
       />
       <MapAreaProvider>
-        <PageContent className="bg-theme-neutral-100">
+        <PageContent className="bg-theme-neutral-200">
           <Flex direction="column" gap={4}>
             <PolygonReviewToolbar
               projectUuid={selectedProject?.uuid}
@@ -189,24 +201,32 @@ const PolygonReviewIndexPage: FC = () => {
               hasLoadFailure={loadFailure != null}
               onViewProjectPolygons={selectProject}
             />
-            {selectedProject == null ? (
-              <Flex
-                direction="column"
-                borderWidth="1px"
-                borderColor="neutral.300"
-                borderRadius="0.25rem"
-                bg="neutral.100"
-              >
-                <Table data={[]} columns={columns} selectable showPagination={false} />
-                <PolygonReviewEmptyState onSelectProject={openPicker} />
-              </Flex>
-            ) : (
-              <>
-                <PolygonReviewMetrics
-                  project={metrics.project}
-                  filtered={metrics.filtered}
-                  selected={metrics.selected}
-                />
+            {selectedProject != null && (
+              <PolygonReviewMetrics project={metrics.project} filtered={metrics.filtered} selected={metrics.selected} />
+            )}
+            <Flex
+              direction="column"
+              gap={3}
+              bg="neutral.100"
+              borderRadius="0.25rem"
+              paddingX={4}
+              paddingTop={4}
+              paddingBottom={7}
+            >
+              <PolygonReviewTableActions />
+              {selectedProject == null ? (
+                <Flex
+                  direction="column"
+                  overflow="hidden"
+                  borderWidth="0.125rem"
+                  borderColor="neutral.300"
+                  borderRadius="0.25rem"
+                  bg="neutral.100"
+                >
+                  <Table data={[]} columns={columns} selectable showPagination={false} />
+                  <PolygonReviewEmptyState onSelectProject={openPicker} />
+                </Flex>
+              ) : (
                 <SitePolygonTableSection
                   tableContainerRef={tableContainerRef}
                   isSitePolygonsLoading={!polygonsLoaded}
@@ -224,8 +244,8 @@ const PolygonReviewIndexPage: FC = () => {
                   onPageSizeChange={handlePageSizeChange}
                   onSortChange={handleSortChange}
                 />
-              </>
-            )}
+              )}
+            </Flex>
           </Flex>
         </PageContent>
       </MapAreaProvider>

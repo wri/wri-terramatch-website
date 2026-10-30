@@ -5,7 +5,7 @@ import { FC, ReactNode, useCallback, useRef } from "react";
 import { ProjectMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import QaStatusTag from "@/redesignComponents/actions/Tags/QaStatusTag/QaStatusTag";
-import { AreaHectaresIcon, PolygonsIcon, TreeCircleIcon } from "@/redesignComponents/foundations/Icons";
+import { AreaHectaresCircleIcon, JobsCircleIcon, TreeCircleIcon } from "@/redesignComponents/foundations/Icons";
 import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
 
 import {
@@ -20,8 +20,10 @@ export type ProjectMarkerPopupProps = {
   onViewProjectPolygons: (projectUuid: string) => void;
 };
 
+const METRIC_ROW_PROPS = { minHeight: "2.8125rem", paddingX: 3, paddingY: 2 } as const;
+
 const MetricRow: FC<{ icon: ReactNode; label: string; value: string }> = ({ icon, label, value }) => (
-  <Flex alignItems="center" justifyContent="space-between" gap={8}>
+  <Flex alignItems="center" justifyContent="space-between" gap={8} {...METRIC_ROW_PROPS}>
     <Flex alignItems="center" gap={2}>
       {icon}
       <Text color="neutral.700" textStyle="400" textWrap="nowrap">
@@ -73,40 +75,23 @@ const ProjectMarkerPopup: FC<ProjectMarkerPopupProps> = ({ project, onClose, onV
           </Text>
         }
         content={
-          <Flex padding="0.75rem" direction="column" gap={4} minWidth="20rem">
+          <Flex direction="column" width="18.75rem" paddingBottom={1}>
             <MetricRow
               icon={<TreeCircleIcon boxSize={6} />}
               label={t("Trees planted")}
               value={formatTreesPlantedForPopup(sumNumTrees)}
             />
             <MetricRow
-              icon={
-                <Flex
-                  h={6}
-                  w={6}
-                  alignItems="center"
-                  justifyContent="center"
-                  borderColor="secondary.500"
-                  borderWidth="1px"
-                  backgroundColor="secondary.300"
-                  borderRadius="full"
-                >
-                  <AreaHectaresIcon boxSize={3.5} color="secondary.800" />
-                </Flex>
-              }
+              icon={<AreaHectaresCircleIcon boxSize={6} />}
               label={t("Restoration area")}
               value={t("{area} ha", { area: formatAreaHectaresForPopup(sumCalcArea) })}
             />
             <MetricRow
-              icon={
-                <Flex h={6} w={6} alignItems="center" justifyContent="center">
-                  <PolygonsIcon boxSize={4} color="neutral.800" />
-                </Flex>
-              }
+              icon={<JobsCircleIcon boxSize={6} />}
               label={t("Polygons")}
               value={polygonCount.toLocaleString()}
             />
-            <Flex alignItems="center" justifyContent="space-between" gap={8}>
+            <Flex alignItems="center" justifyContent="space-between" gap={8} {...METRIC_ROW_PROPS}>
               <Text color="neutral.700" textStyle="400" textWrap="nowrap">
                 {latestQaCycle != null ? t("QA · Cycle {cycle}", { cycle: latestQaCycle }) : t("QA")}
               </Text>

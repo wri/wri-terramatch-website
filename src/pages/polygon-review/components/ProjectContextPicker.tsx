@@ -142,11 +142,13 @@ const ProjectContextPicker: FC<ProjectContextPickerProps> = ({ open, onOpenChang
       <PopoverTrigger
         {...getControlStyles(false)}
         display="flex"
-        alignItems="center"
+        alignItems="flex-end"
         gap={2}
-        height="2.5rem"
-        width="18rem"
+        width="25rem"
+        maxWidth="100%"
         paddingX={2}
+        paddingTop={1}
+        paddingBottom={2}
         cursor="pointer"
       >
         <SelectorFolderIcon disabled={false} />
