@@ -59,14 +59,9 @@ const AppMenu = () => {
       <div className={classNames({ "Sidebar-active": hash === "site" })}>
         <FilterClearMenuItem resourceName={modules.site.ResourceName} />
       </div>
-      <Menu.Item
-        to="#"
-        primaryText="Polygons"
-        leftIcon={<PolygonsIcon boxSize={6} />}
-        onClick={() => {
-          window.location.href = "/polygon-review";
-        }}
-      />
+      <div className={classNames({ "Sidebar-active": hash === "polygons" })}>
+        <Menu.Item to="/polygons" primaryText="Polygons" leftIcon={<PolygonsIcon boxSize={6} />} />
+      </div>
       <div className={classNames({ "Sidebar-active": hash === "nursery" })}>
         <FilterClearMenuItem resourceName={modules.nursery.ResourceName} />
       </div>
