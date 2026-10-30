@@ -365,6 +365,7 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
         source={SOURCE}
         sourceUuid={project.uuid}
         projectUuid={(selectedAdditionalProject ?? project).uuid}
+        projectFrameworkKey={(selectedAdditionalProject ?? project).frameworkKey}
         reportCount={reportCount}
         viewValue={headerViewValue}
         viewItems={viewItems}
