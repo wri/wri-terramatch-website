@@ -21,7 +21,7 @@ export interface NavbarLinkItem {
   isActive?: boolean;
 }
 
-const ROUTES_WITHOUT_WHATS_NEW = ["/organization/assign", "/organization/status/pending"];
+const ROUTES_WITHOUT_WHATS_NEW = ["/organization/assign", "/organization/status/pending", "/auth/signup/confirm"];
 
 const LANGUAGES: Array<{ value: ValidLocale; label: string }> = [
   { value: "en-US", label: "English" },
