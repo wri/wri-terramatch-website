@@ -55,17 +55,6 @@ type ReportsIndexHeaderProps = {
   showViewSelector?: boolean;
 };
 
-const getSearchPlaceholder = (
-  t: ReturnType<typeof useT>,
-  source: ReportsIndexHeaderProps["source"],
-  activeTab: string,
-  entityProfile: boolean
-) => {
-  if (entityProfile && source === "site") return t("Search sites");
-  if (entityProfile && source === "nursery") return t("Search nurseries");
-  return activeTab === "progress-reports" ? t("Search reports") : t("Search");
-};
-
 const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
   activeTab,
   source,
@@ -90,7 +79,6 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
   const router = useRouter();
   const { format } = useDate();
   const { filtersByTab, setFiltersByTab } = useReportsContext();
-  const searchPlaceholder = getSearchPlaceholder(t, source, activeTab, entityProfile);
   const { trackFilterApplied, trackDisturbanceReportClicked } = useReportsIndexAnalytics();
 
   const reportTypeFromQuery = typeof router.query.reportType === "string" ? router.query.reportType : undefined;
@@ -303,7 +291,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
           onQueryChange == null
             ? undefined
             : {
-                placeholder: searchPlaceholder,
+                placeholder: t("Search"),
                 options: [],
                 displayResults: "none",
                 count: reportCount,
