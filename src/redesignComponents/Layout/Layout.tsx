@@ -25,7 +25,12 @@ import { useLayoutShell } from "./LayoutShell.provider";
 
 const FOOTER_CLASS_NAME = "mt-auto shrink-0 [zoom:var(--layout-chrome-zoom,1)]";
 
-const ROUTES_WITHOUT_SIDE_NAVIGATION = ["/organization/assign", "/organization/create", "/organization/status/pending"];
+const ROUTES_WITHOUT_SIDE_NAVIGATION = [
+  "/organization/assign",
+  "/organization/create",
+  "/organization/status/pending",
+  "/auth/signup/confirm"
+];
 
 const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
   const t = useT();
