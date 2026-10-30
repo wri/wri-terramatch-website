@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { FC } from "react";
 
 import { useIsMyOrganisation } from "@/connections/Organisation";
@@ -14,7 +15,12 @@ const OrganisationName: FC<OrganisationNameProps> = ({ organisationUuid, name, c
   const isMyOrganisation = useIsMyOrganisation(organisationUuid);
 
   return (
-    <Button variant="borderless" size="small" className={className} onClick={isMyOrganisation ? onClick : undefined}>
+    <Button
+      variant="borderless"
+      size="small"
+      className={classNames("hover:!bg-transparent", !isMyOrganisation && "!cursor-default", className)}
+      onClick={isMyOrganisation ? onClick : undefined}
+    >
       {name}
     </Button>
   );
