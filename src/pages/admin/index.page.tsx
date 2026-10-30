@@ -9,6 +9,7 @@ import AppLayout from "@/admin/components/AppLayout";
 import { theme } from "@/admin/components/theme";
 import { sectionTitle } from "@/admin/modules/aboutSections/util";
 import { PolygonOptionalAttributes } from "@/admin/modules/reportingFramework/components/PolygonOptionalAttributes";
+import PolygonReviewIndexLauncher from "@/admin/sitePolygonReview/PolygonReviewIndexLauncher";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMyUser } from "@/connections/User";
 import { LoadingProvider } from "@/context/loaderAdmin.provider";
@@ -195,6 +196,7 @@ const AdminPanel: FC = () => {
             path={`${modules.reportingFramework.ResourceName}/:frameworkKey/optional-attributes`}
             element={<PolygonOptionalAttributes />}
           />
+          <Route path="polygons" element={<PolygonReviewIndexLauncher />} />
         </CustomRoutes>
       </Admin>
     </LoadingProvider>
