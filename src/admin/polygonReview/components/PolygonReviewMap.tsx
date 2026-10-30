@@ -7,10 +7,10 @@ import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { SitePolygonMapIndexFilter, useSitePolygonMapIndex } from "@/connections/SitePolygons";
 import { ProjectMapEntryDto, SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 
-import { SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS } from "../../site/[uuid]/constants/sitePolygonMapSizing";
 import { getProjectMarkersBbox, toProjectMarkerPoints } from "../utils/projectMarkers";
 
 const NO_POLYGONS: SitePolygonMapEntryDto[] = [];

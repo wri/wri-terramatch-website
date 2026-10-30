@@ -1,11 +1,10 @@
 import { useT } from "@transifex/react";
 import { FC, useCallback, useState } from "react";
 
+import { PolygonFilterState } from "@/pages/site/[uuid]/components/polygonFilter.constants";
+import PolygonFilterDrawer from "@/pages/site/[uuid]/components/PolygonFilterDrawer";
 import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
-
-import { PolygonFilterState } from "../../site/[uuid]/components/polygonFilter.constants";
-import PolygonFilterDrawer from "../../site/[uuid]/components/PolygonFilterDrawer";
 
 type PolygonReviewToolbarProps = {
   projectUuid?: string;

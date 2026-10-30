@@ -2,8 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 
 import { useSiteIndex } from "@/connections/Entity";
 import { useDebounce } from "@/hooks/useDebounce";
-
-import { SiteFilterOption } from "../../site/[uuid]/components/polygonFilter.constants";
+import { SiteFilterOption } from "@/pages/site/[uuid]/components/polygonFilter.constants";
 
 const SITE_SEARCH_PAGE_SIZE = 50;
 const SITE_SEARCH_DEBOUNCE_MS = 300;

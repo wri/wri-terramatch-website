@@ -1,4 +1,5 @@
 import SummarizeIcon from "@mui/icons-material/Summarize";
+import { Toast as WRIToast } from "@worldresources/wri-design-systems";
 import { FC } from "react";
 import { Admin, CustomRoutes, Resource } from "react-admin";
 import { Route } from "react-router-dom";
@@ -9,9 +10,11 @@ import AppLayout from "@/admin/components/AppLayout";
 import { theme } from "@/admin/components/theme";
 import { sectionTitle } from "@/admin/modules/aboutSections/util";
 import { PolygonOptionalAttributes } from "@/admin/modules/reportingFramework/components/PolygonOptionalAttributes";
+import PolygonReviewPage from "@/admin/polygonReview/PolygonReviewPage";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMyUser } from "@/connections/User";
 import { LoadingProvider } from "@/context/loaderAdmin.provider";
+import NavbarProvider from "@/context/navbar.provider";
 import { AboutSectionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import LoginPage from "@/pages/auth/login/index.page";
 
@@ -194,6 +197,18 @@ const AdminPanel: FC = () => {
           <Route
             path={`${modules.reportingFramework.ResourceName}/:frameworkKey/optional-attributes`}
             element={<PolygonOptionalAttributes />}
+          />
+        </CustomRoutes>
+        {/* Polygon review renders the redesign layout instead of the react-admin one. */}
+        <CustomRoutes noLayout>
+          <Route
+            path="polygon-review"
+            element={
+              <NavbarProvider>
+                <WRIToast />
+                <PolygonReviewPage />
+              </NavbarProvider>
+            }
           />
         </CustomRoutes>
       </Admin>

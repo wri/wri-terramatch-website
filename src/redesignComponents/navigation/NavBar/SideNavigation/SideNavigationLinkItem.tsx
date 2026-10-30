@@ -49,6 +49,14 @@ const SideNavigationLinkItem: FC<SideNavigationLinkItemProps> = ({
   const { resetPage } = useLayoutShell();
 
   const handleLinkClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    const [hrefPath, hrefHash] = href.split("#");
+    if (hrefHash != null && hrefPath === router.pathname) {
+      // react-admin's hash router doesn't observe Next's pushState, so do a native hash navigation instead.
+      event.preventDefault();
+      window.location.hash = hrefHash;
+      return;
+    }
+
     if (router.pathname !== href.split("?")[0]) return;
     event.preventDefault();
     resetPage();

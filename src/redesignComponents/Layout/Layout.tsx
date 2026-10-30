@@ -77,7 +77,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
         ...(isAdmin
           ? [
               {
-                href: "/polygon-review",
+                href: "/admin#/polygon-review",
                 icon: <PolygonsIcon boxSize={4} />,
                 label: "Polygons"
               }

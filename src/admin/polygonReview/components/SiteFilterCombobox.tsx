@@ -2,10 +2,10 @@ import { useT } from "@transifex/react";
 import { uniqBy } from "lodash";
 import { FC, useCallback, useMemo } from "react";
 
+import { SiteFilterOption } from "@/pages/site/[uuid]/components/polygonFilter.constants";
 import Combobox from "@/redesignComponents/Forms/Inputs/Combobox";
 import { isNotNull } from "@/utils/array";
 
-import { SiteFilterOption } from "../../site/[uuid]/components/polygonFilter.constants";
 import { useProjectSiteSearch } from "../hooks/useProjectSiteSearch";
 
 type SiteFilterComboboxProps = {

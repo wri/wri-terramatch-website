@@ -11,6 +11,12 @@ import { useMyUser } from "@/connections/User";
 import { MapAreaProvider } from "@/context/mapArea.provider";
 import { setPolygonTableHoveredUuid, useSyncPolygonTableSelectionStore } from "@/context/polygonTableInteraction.store";
 import type { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { buildPolygonTableColumns } from "@/pages/site/[uuid]/components/polygonTableColumns";
+import type { PolygonTableRow } from "@/pages/site/[uuid]/components/PolygonTableRow";
+import { mapSitePolygonToTableRow } from "@/pages/site/[uuid]/components/polygonTableRow.utils";
+import SitePolygonTableSection from "@/pages/site/[uuid]/components/SitePolygonTableSection";
+import { usePolygonTablePaging } from "@/pages/site/[uuid]/hooks/usePolygonTablePaging";
+import { useSitePolygonFilters } from "@/pages/site/[uuid]/hooks/useSitePolygonFilters";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
@@ -18,12 +24,6 @@ import { PolygonsIcon } from "@/redesignComponents/foundations/Icons";
 import Layout from "@/redesignComponents/Layout/Layout";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 
-import { buildPolygonTableColumns } from "../site/[uuid]/components/polygonTableColumns";
-import type { PolygonTableRow } from "../site/[uuid]/components/PolygonTableRow";
-import { mapSitePolygonToTableRow } from "../site/[uuid]/components/polygonTableRow.utils";
-import SitePolygonTableSection from "../site/[uuid]/components/SitePolygonTableSection";
-import { usePolygonTablePaging } from "../site/[uuid]/hooks/usePolygonTablePaging";
-import { useSitePolygonFilters } from "../site/[uuid]/hooks/useSitePolygonFilters";
 import PolygonReviewEmptyState from "./components/PolygonReviewEmptyState";
 import PolygonReviewMap from "./components/PolygonReviewMap";
 import PolygonReviewMetrics from "./components/PolygonReviewMetrics";
@@ -157,7 +157,7 @@ const PolygonReviewIndexPage: FC = () => {
         className="sticky top-0 z-20 !px-6"
         breadcrumbs={{
           linkRouter: router,
-          links: [{ icon: <PolygonsIcon />, label: t("Polygons"), link: "/polygon-review" }]
+          links: [{ icon: <PolygonsIcon />, label: t("Polygons"), link: "/admin#/polygon-review" }]
         }}
       />
       <PageHeader
