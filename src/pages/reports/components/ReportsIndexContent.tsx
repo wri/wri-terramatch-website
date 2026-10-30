@@ -57,7 +57,7 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
     viewFromQuery === ALL_PROJECTS_VIEW_VALUE ? ALL_PROJECTS_VIEW_VALUE : project.uuid
   );
   const { clearSelection } = useReportsSelectionActions();
-  const [, projects] = useAllPages(indexProjectConnection, {});
+  const [projectsLoaded, projects] = useAllPages(indexProjectConnection, {});
   const isSingleProject = projects?.length === 1;
   useEffect(() => {
     if (isSingleProject && viewValue !== project.uuid) setViewValue(project.uuid);
@@ -80,7 +80,7 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
   const isKnownProjectView = viewValue === project.uuid || (projects ?? []).some(item => item.uuid === viewValue);
   const isOrganisationView =
     organisationViewItems.some(item => item.value === viewValue) ||
-    (viewFromQuery === viewValue && viewValue !== ALL_PROJECTS_VIEW_VALUE && !isKnownProjectView);
+    (projectsLoaded && viewFromQuery === viewValue && viewValue !== ALL_PROJECTS_VIEW_VALUE && !isKnownProjectView);
   const isAllProjectsView = viewValue === ALL_PROJECTS_VIEW_VALUE || isOrganisationView;
   const isSwitchingProject = !isAllProjectsView && viewValue !== project.uuid;
   const selectedAdditionalProject =
@@ -137,7 +137,10 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
   const reportTypeFromQuery = typeof router.query.reportType === "string" ? router.query.reportType : undefined;
   const indexHref = getReportsIndexUrl(SOURCE, project.uuid, {
     tab: activeTab,
-    view: viewValue === ALL_PROJECTS_VIEW_VALUE || isOrganisationView ? viewValue : undefined,
+    view:
+      viewValue === ALL_PROJECTS_VIEW_VALUE || isOrganisationView || activeTab === "additional-reports"
+        ? viewValue
+        : undefined,
     reportType: reportTypeFromQuery
   });
 
