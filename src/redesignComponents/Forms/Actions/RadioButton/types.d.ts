@@ -1,3 +1,4 @@
+import type { SystemStyleObject } from "@chakra-ui/react";
 import type { Radio as WriRadio, RadioGroup as WriRadioGroup } from "@worldresources/wri-design-systems";
 import type { ComponentProps, ReactNode } from "react";
 
@@ -16,4 +17,5 @@ export type RadioOption = {
 export type RadioButtonGroupProps = RadioGroupProps & {
   options: RadioOption[];
   color?: string;
+  css?: SystemStyleObject;
 };

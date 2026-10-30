@@ -49,6 +49,7 @@ export type PolygonFromMapState = {
   isOpen: boolean;
   entityName?: string;
   projectPitchUuid?: string;
+  status?: string;
 };
 
 export type SetPolygonFromMap = React.Dispatch<React.SetStateAction<PolygonFromMapState>>;
@@ -62,6 +63,7 @@ export type EditPolygonState = {
   isOpen: boolean;
   uuid: string;
   primaryUuid?: string;
+  status?: string;
 };
 
 /** Groups the three dashboard-specific props that always travel together. */
@@ -90,7 +92,7 @@ export type PopupComponentProps = {
   dashboardMode?: string;
   /** When true, map uses the champions (non-admin) layout and controls. */
   championsMap?: boolean;
-  overviewPolygonPopup?: boolean;
+  overviewPolygonPopup?: OverviewPolygonPopup;
 };
 
 /** Data shape passed to setMobilePopupData; mirrors PopupComponentProps minus the live Popup instance. */
@@ -108,3 +110,6 @@ export interface MapFunctions {
   setStyleLoaded: (value: boolean) => void;
   handleTrashDelete: () => void;
 }
+
+/** Compact popup used by overview maps; leave unset for the full polygon popup. */
+export type OverviewPolygonPopup = "attributes" | "site-summary";

@@ -31,9 +31,10 @@ import LatestImagesSectionTab from "./LatestImagesSection";
 interface ProjectOverviewTabProps {
   project: ProjectFullDto;
   onViewSites?: () => void;
+  onViewNurseries?: () => void;
 }
 
-const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) => {
+const ProjectOverviewTab = ({ project, onViewSites, onViewNurseries }: ProjectOverviewTabProps) => {
   const router = useRouter();
   const t = useT();
   const { framework } = useFrameworkContext();
@@ -56,7 +57,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
 
   const monitoringPartners = useMemo(() => {
     return associatedUsers
-      ?.filter(user => user.roleName === "project-developer")
+      ?.filter(user => user.roles.includes("project-developer"))
       ?.slice(0, 3)
       .map(user => ({
         id: user.uuid,
@@ -66,7 +67,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   }, [associatedUsers]);
   const projectManagers = useMemo(() => {
     return associatedUsers
-      ?.filter(user => user.roleName === "project-manager")
+      ?.filter(user => user.roles.includes("project-manager"))
       .map(user => ({
         id: user.uuid,
         name: user.fullName
@@ -112,7 +113,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         rightIcon: <ChevronRightIcon boxSize={4} />,
         className: "!text-theme-neutral-100",
         children: t("Add Sites"),
-        onClick: () => goToTab("sites")
+        onClick: () => onViewSites?.()
       }
     ];
 
@@ -124,12 +125,12 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         rightIcon: <ChevronRightIcon boxSize={4} />,
         className: "!text-theme-neutral-100",
         children: t("Add Nurseries"),
-        onClick: () => goToTab("nurseries")
+        onClick: () => onViewNurseries?.()
       });
     }
 
     return buttons;
-  }, [goToTab, hideNurseries, t]);
+  }, [hideNurseries, onViewNurseries, onViewSites, t]);
 
   const [projectMapIndexLoaded, { data: projectMapIndex }] = useSitePolygonMapIndex({
     entityName: "projects",
@@ -181,7 +182,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
             size: "small",
             children: t("View Sites"),
             rightIcon: <ChevronRightIcon />,
-            onClick: onViewSites ?? (() => goToTab("sites"))
+            onClick: onViewSites ?? (() => void router.push(`/project/${project.uuid}?tab=sites`))
           }}
           downloadButtonProps={{
             variant: "secondary",

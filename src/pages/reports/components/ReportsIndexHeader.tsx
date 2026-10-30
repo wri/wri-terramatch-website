@@ -1,0 +1,338 @@
+import { useT } from "@transifex/react";
+import classNames from "classnames";
+import { useRouter } from "next/router";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
+
+import { getReportStatusOptions, getUpdateStatusFilterOptions } from "@/constants/options/status";
+import { useReportsContext } from "@/context/reports.provider";
+import { useDate } from "@/hooks/useDate";
+import { useReportsIndexAnalytics } from "@/hooks/useReportsIndexAnalytics";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
+import HighLevelSelector from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector";
+import type { HighLevelSelectorItem } from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector.types";
+import { PlusIcon, ReportsIcon } from "@/redesignComponents/foundations/Icons";
+import TabBar from "@/redesignComponents/navigation/TabBar/TabBar";
+import Toolbar from "@/redesignComponents/navigation/Toolbar/Toolbar";
+import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
+import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
+import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
+
+import { ALL_PROJECTS_VIEW_VALUE, getReportsIndexUrl, withReportsIndexReturn } from "../reportIndex.utils";
+import { ReportPeriodOptions } from "../reportPeriodFilter";
+import {
+  clearReportPeriodFilters,
+  EMPTY_REPORT_FILTERS,
+  formatReportPeriodLabel,
+  getInitialProgressFilters,
+  getReportPeriodControl,
+  getReportTypeLabels,
+  hasReportTypeFilter,
+  ReportFilterState,
+  ReportTypeOption
+} from "./reportFilter.constants";
+import ReportsFilterDrawer from "./ReportsFilterDrawer";
+
+type ReportsIndexHeaderProps = {
+  activeTab: string;
+  source: "project" | "site" | "nursery";
+  sourceUuid: string;
+  projectUuid: string;
+  projectFrameworkKey: string | null;
+  reportCount: number;
+  viewValue: string;
+  viewItems: HighLevelSelectorItem[];
+  periodOptions: ReportPeriodOptions;
+  onTabChange: (tab: string) => void;
+  onViewChange: (value: string) => void;
+  /** Omit to hide the search box, e.g. on a single site / nursery profile where searching adds nothing. */
+  onQueryChange?: (query: string) => void;
+  indexHref: string;
+  entityProfile?: boolean;
+  availableReportTypes?: ReportTypeOption[];
+  showSearchInput?: boolean;
+  addDisturbanceReportDisabled?: boolean;
+  showViewSelector?: boolean;
+};
+
+const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
+  activeTab,
+  source,
+  sourceUuid,
+  projectUuid,
+  projectFrameworkKey,
+  reportCount,
+  viewValue,
+  viewItems,
+  periodOptions,
+  onTabChange,
+  onViewChange,
+  onQueryChange,
+  indexHref,
+  entityProfile = false,
+  availableReportTypes,
+  showSearchInput = false,
+  addDisturbanceReportDisabled = false,
+  showViewSelector = true
+}) => {
+  const t = useT();
+  const router = useRouter();
+  const { format } = useDate();
+  const { filtersByTab, setFiltersByTab } = useReportsContext();
+  const { trackFilterApplied, trackDisturbanceReportClicked } = useReportsIndexAnalytics();
+
+  const reportTypeFromQuery = typeof router.query.reportType === "string" ? router.query.reportType : undefined;
+
+  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+  const selectedFilters = filtersByTab[activeTab] ?? EMPTY_REPORT_FILTERS;
+  const statusOptions = useMemo(() => getReportStatusOptions(t), [t]);
+  const updateStatusOptions = useMemo(() => getUpdateStatusFilterOptions(t), [t]);
+
+  const updateActiveFilters = useCallback(
+    (next: ReportFilterState) => {
+      setFiltersByTab(current => ({ ...current, [activeTab]: next }));
+    },
+    [activeTab, setFiltersByTab]
+  );
+
+  useEffect(() => {
+    setFiltersByTab({
+      "progress-reports": getInitialProgressFilters(source, reportTypeFromQuery),
+      "additional-reports": EMPTY_REPORT_FILTERS
+    });
+  }, [reportTypeFromQuery, setFiltersByTab, source, sourceUuid]);
+
+  // The report is only created once the user continues from the introduction, so cancelling it leaves no draft behind.
+  const openDisturbanceReportIntro = useCallback(() => {
+    if (projectFrameworkKey == null) return;
+    void router.push(
+      withReportsIndexReturn(
+        `/entity/disturbance-reports/create/${projectFrameworkKey}?parent_uuid=${projectUuid}`,
+        indexHref
+      )
+    );
+  }, [indexHref, projectFrameworkKey, projectUuid, router]);
+
+  const activeFilterLabels = useMemo<SelectedFilter[]>(() => {
+    const labels: SelectedFilter[] = [];
+
+    if (hasReportTypeFilter(source, entityProfile) && selectedFilters.reportTypes.length > 0) {
+      labels.push({
+        label: selectedFilters.reportTypes.map(type => getReportTypeLabels(t)[type]),
+        category: t("Report Type"),
+        onRemove: () => {
+          updateActiveFilters({ ...selectedFilters, reportTypes: [] });
+        }
+      });
+    }
+
+    if (selectedFilters.statuses.length > 0) {
+      labels.push({
+        label: selectedFilters.statuses.map(status => {
+          const option = statusOptions.find(item => item.value === status);
+          return option?.title ?? status;
+        }),
+        category: t("Status"),
+        onRemove: () => {
+          updateActiveFilters({ ...selectedFilters, statuses: [] });
+        }
+      });
+    }
+
+    if (selectedFilters.updateStatuses.length > 0) {
+      labels.push({
+        label: selectedFilters.updateStatuses.map(
+          updateStatus => updateStatusOptions.find(item => item.value === updateStatus)?.title ?? updateStatus
+        ),
+        category: t("Updates"),
+        onRemove: () => {
+          updateActiveFilters({ ...selectedFilters, updateStatuses: [] });
+        }
+      });
+    }
+
+    const periodLabel = formatReportPeriodLabel(selectedFilters, format);
+    if (periodLabel != null) {
+      const isDateRange = getReportPeriodControl(activeTab, selectedFilters.reportTypes) === "date-range";
+      labels.push({
+        label: periodLabel,
+        category: isDateRange ? t("Due Date") : t("Time Period"),
+        onRemove: () => {
+          updateActiveFilters(clearReportPeriodFilters(selectedFilters));
+        }
+      });
+    }
+
+    return labels;
+  }, [
+    activeTab,
+    entityProfile,
+    format,
+    selectedFilters,
+    source,
+    statusOptions,
+    t,
+    updateActiveFilters,
+    updateStatusOptions
+  ]);
+
+  const applyFilters = useCallback(
+    (filters: ReportFilterState) => {
+      const hasDateFilter =
+        filters.dueDateFrom !== "" || filters.dueDateTo !== "" || filters.dueMonth !== "" || filters.dueYear !== "";
+      if (hasDateFilter) {
+        trackFilterApplied({
+          filterField: "due_date",
+          filterValue: formatReportPeriodLabel(filters, format) ?? "",
+          isDefaultFilter: false,
+          dateDimension:
+            getReportPeriodControl(activeTab, filters.reportTypes) === "date-range" ? "disturbance_date" : "due_date"
+        });
+      }
+      updateActiveFilters(filters);
+    },
+    [activeTab, format, trackFilterApplied, updateActiveFilters]
+  );
+
+  const clearFilters = useCallback(() => {
+    updateActiveFilters(EMPTY_REPORT_FILTERS);
+    // On an entity profile tab the filters are local; never navigate away to the reports index.
+    if (entityProfile) return;
+    if (source === "project") {
+      if (router.query.reportType == null) return;
+      const query = { ...router.query };
+      delete query.reportType;
+      void router.replace({ pathname: router.pathname, query }, undefined, { shallow: true });
+      return;
+    }
+
+    void router.replace(
+      getReportsIndexUrl("project", projectUuid, {
+        tab: activeTab === "additional-reports" ? "additional-reports" : undefined,
+        view: viewValue === ALL_PROJECTS_VIEW_VALUE ? ALL_PROJECTS_VIEW_VALUE : undefined
+      })
+    );
+  }, [activeTab, entityProfile, projectUuid, router, source, updateActiveFilters, viewValue]);
+
+  return (
+    <>
+      {!entityProfile && (
+        <ToolbarObject
+          className="sticky top-0 z-20 !px-6"
+          breadcrumbs={{
+            linkRouter: router,
+            links: [
+              {
+                icon: <ReportsIcon />,
+                label: t("Reports"),
+                link: "#"
+              }
+            ]
+          }}
+        />
+      )}
+
+      {/* Disturbance reports belong to the project, so they aren't offered from a site / nursery profile. */}
+      {!entityProfile && (
+        <PageHeader
+          className="!bg-theme-neutral-100 !px-6"
+          title={!entityProfile ? t("Reports") : null}
+          actions={
+            <Button
+              size="small"
+              leftIcon={<PlusIcon boxSize="0.625rem" />}
+              disabled={addDisturbanceReportDisabled || projectFrameworkKey == null}
+              onClick={() => {
+                trackDisturbanceReportClicked();
+                openDisturbanceReportIntro();
+              }}
+            >
+              {t("Add Disturbance Report")}
+            </Button>
+          }
+        />
+      )}
+      {!entityProfile && (
+        <Toolbar
+          className="sticky top-11 z-10 items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-2 pt-5"
+          classNameContentLeft="min-w-0"
+          classNameContentRight="mt-[-1.25rem]"
+          contentLeft={
+            <TabBar
+              key={activeTab}
+              variant="transparent"
+              defaultValue={activeTab}
+              tabs={[
+                { value: "progress-reports", label: t("Progress Reports") },
+                { value: "additional-reports", label: t("Additional Reports") }
+              ]}
+              onTabClick={onTabChange}
+            />
+          }
+          contentRight={
+            showViewSelector ? (
+              <HighLevelSelector
+                label={t("View:")}
+                items={viewItems}
+                value={viewValue}
+                emptyMessage={t("No results found")}
+                width="25rem"
+                className="mobile:!w-full"
+                onChange={onViewChange}
+              />
+            ) : undefined
+          }
+        />
+      )}
+      <ToolbarTable
+        className={classNames("!px-6 !pb-6 !pt-5", entityProfile ? "!bg-theme-neutral-100" : "!bg-theme-neutral-200 ")}
+        classNameContentLeft="flex-1"
+        search={
+          onQueryChange == null
+            ? undefined
+            : {
+                placeholder: t("Search"),
+                options: [],
+                displayResults: "none",
+                count: reportCount,
+                label: t("Reports"),
+                onQueryChange
+              }
+        }
+        showSearchInput={showSearchInput}
+        classNameContentSearch="w-[19rem]"
+        selectedFilters={activeFilterLabels}
+        showClearFilters={activeFilterLabels.length > 0}
+        onClickFilterButton={() => setIsFilterDrawerOpen(true)}
+        onClearFilters={clearFilters}
+        button={
+          !entityProfile || source !== "project"
+            ? undefined
+            : {
+                size: "small",
+                leftIcon: <PlusIcon boxSize="0.625rem" />,
+                disabled: addDisturbanceReportDisabled || projectFrameworkKey == null,
+                onClick: () => {
+                  trackDisturbanceReportClicked();
+                  openDisturbanceReportIntro();
+                },
+                children: t("Add Disturbance Report")
+              }
+        }
+      />
+      <ReportsFilterDrawer
+        open={isFilterDrawerOpen}
+        activeTab={activeTab}
+        filters={selectedFilters}
+        periodOptions={periodOptions}
+        onApplyFilters={applyFilters}
+        onOpenChange={setIsFilterDrawerOpen}
+        source={source}
+        entityProfile={entityProfile}
+        availableReportTypes={availableReportTypes}
+      />
+    </>
+  );
+};
+
+export default ReportsIndexHeader;

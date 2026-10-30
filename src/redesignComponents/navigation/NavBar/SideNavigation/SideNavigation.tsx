@@ -1,5 +1,4 @@
 import { Button, Flex, Text } from "@chakra-ui/react";
-import { useT } from "@transifex/react";
 import classNames from "classnames";
 import React, { FC, useEffect, useState } from "react";
 
@@ -12,10 +11,11 @@ import SideNavigationItem from "./SideNavigationItem";
 const EXPANDED_WIDTH_CLASS = "w-56";
 const COLLAPSED_WIDTH_CLASS = "w-12";
 
-interface SideNavigationLink {
+export interface SideNavigationLink {
   icon: React.ReactNode;
   label: string;
   href?: string;
+  activePaths?: string[];
   notificationValue?: number;
   onAddClick?: () => void;
   MenuItems?: MenuItemOption[];
@@ -24,11 +24,12 @@ interface SideNavigationLink {
     label: string;
     onAddClick?: () => void;
     href: string;
+    activePaths?: string[];
     MenuItems?: MenuItemOption[];
   }[];
 }
 
-interface SideNavigationGroup {
+export interface SideNavigationGroup {
   id: string;
   links: SideNavigationLink[];
 }
@@ -37,12 +38,18 @@ interface SideNavigationProps {
   title: string;
   groups: SideNavigationGroup[];
   collapsed?: boolean;
+  onCollapsedChange?: (collapsed: boolean) => void;
   isCollapsedDisabled?: boolean;
 }
 
-const SideNavigation: FC<SideNavigationProps> = ({ title, groups, collapsed = false, isCollapsedDisabled = false }) => {
+const SideNavigation: FC<SideNavigationProps> = ({
+  title,
+  groups,
+  collapsed = false,
+  onCollapsedChange,
+  isCollapsedDisabled = false
+}) => {
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
-  const t = useT();
 
   useEffect(() => {
     if (isCollapsedDisabled) {
@@ -52,6 +59,7 @@ const SideNavigation: FC<SideNavigationProps> = ({ title, groups, collapsed = fa
 
   const handleCollapse = () => {
     setIsCollapsed(!isCollapsed);
+    onCollapsedChange?.(!isCollapsed);
   };
 
   const shellTransition = "overflow-hidden transition-[width] duration-300 ease-in-out motion-reduce:transition-none";
@@ -67,7 +75,7 @@ const SideNavigation: FC<SideNavigationProps> = ({ title, groups, collapsed = fa
       <Button
         className={classNames(
           "flex min-h-0 items-center justify-start px-4 py-3.5 transition-[gap] duration-300 ease-in-out motion-reduce:transition-none",
-          isCollapsed ? "gap-0" : "gap-2"
+          isCollapsed ? "gap-0" : "gap-4"
         )}
         color="neutral.100"
         onClick={handleCollapse}
@@ -77,12 +85,12 @@ const SideNavigation: FC<SideNavigationProps> = ({ title, groups, collapsed = fa
           textStyle="400-bold"
           className={classNames(isCollapsed ? "max-w-0 opacity-0" : "max-w-[12.5rem] opacity-100")}
         >
-          {t(title)}
+          {title}
         </Text>
         <ChevronRightIcon
           boxSize={4}
           className={classNames(
-            "shrink-0 transition-transform duration-300 ease-in-out motion-reduce:transition-none",
+            "flex-[1] shrink-0 transition-transform duration-300 ease-in-out motion-reduce:transition-none",
             isCollapsed ? "rotate-0" : "rotate-180"
           )}
         />
@@ -102,6 +110,7 @@ const SideNavigation: FC<SideNavigationProps> = ({ title, groups, collapsed = fa
                 icon={link.icon}
                 label={link.label}
                 href={link.href}
+                activePaths={link.activePaths}
                 notificationValue={link.notificationValue}
                 onAddClick={link.onAddClick}
                 MenuItems={link.MenuItems}

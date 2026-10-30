@@ -15,7 +15,7 @@ interface INavbarItems {
   private: INavbarItem[];
 }
 
-export const getNavbarItems = (t: typeof useT, myOrg?: MyOrganisationConnection): INavbarItems => {
+export const getNavbarItems = (t: typeof useT, myOrg?: MyOrganisationConnection, isAdmin = false): INavbarItems => {
   const { userStatus, organisation } = myOrg ?? {};
   const { status } = organisation ?? {};
   const visibility = Boolean(organisation && status !== "rejected" && status !== "draft" && userStatus !== "pending");
@@ -28,7 +28,7 @@ export const getNavbarItems = (t: typeof useT, myOrg?: MyOrganisationConnection)
         visibility: true
       },
       {
-        title: t("Dashboards"),
+        title: t("Dashboard"),
         url: "/dashboard",
         visibility: true
       },
@@ -45,25 +45,12 @@ export const getNavbarItems = (t: typeof useT, myOrg?: MyOrganisationConnection)
         visibility
       },
       {
-        title: t("Opportunities"),
-        url: "/opportunities",
-        visibility,
-        tourTarget: tourSelectors.OPPORTUNITIES
+        title: t("Dashboard"),
+        url: isAdmin ? "/dashboard" : "/dashboard/learn-more",
+        visibility: true
       },
       {
-        title: t("My projects"),
-        url: "/my-projects",
-        visibility,
-        tourTarget: tourSelectors.PROJECTS
-      },
-      {
-        title: t("My Organization"),
-        url: myOrg?.organisationId ? `/organization/${myOrg?.organisationId}` : "/",
-        visibility,
-        tourTarget: tourSelectors.ORGANIZATION
-      },
-      {
-        title: t("Help Center"),
+        title: t("Support"),
         url: zendeskSupportLink,
         visibility: true,
         tourTarget: tourSelectors.HELP

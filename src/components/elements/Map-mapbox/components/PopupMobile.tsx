@@ -38,7 +38,7 @@ export const PopupMobile: React.FC<MobilePopupProps> = ({ event, onClose, varian
 
   const handleLearnMore = () => {
     if (layerName === LAYERS_NAMES.CENTROIDS && itemUuid != null) {
-      const projectCountry = projectFullDto?.country;
+      const projectCountry = projectFullDto?.level0Project?.[0];
       if (projectCountry != null) {
         setFilters?.(prev => ({
           ...prev,

@@ -71,6 +71,37 @@ export const useKeyIndicatorsTooltipContent = () => {
       }
     },
     {
+      frameworks: ["fundo-flora-1"],
+      treesRestored: {
+        title: t("Trees Planted"),
+        content: t("This is the sum of trees planted, as reported by this project across all of this project’s sites.")
+      },
+      treesRegenerated: {
+        title: t("Trees Regenerated"),
+        content: t(
+          "This is the sum of trees growing due to assisted natural regeneration interventions, as reported by this project across all of this project’s sites."
+        )
+      },
+      saplingsRestored: {
+        title: t("Seedlings Grown"),
+        content: t(
+          "This is the sum of seedlings grown in nurseries, as reported by this project across all of this project’s nurseries."
+        )
+      },
+      treesToBeRestored: {
+        title: "",
+        content: ""
+      },
+      hectaresRestored: {
+        title: t("Area Restored (ha)"),
+        content: t("Number of hectares within approved polygons for this project")
+      },
+      jobsCreated: {
+        title: t("Jobs Created"),
+        content: t("This is the sum of CLT and non-CLT jobs reported created by this project.")
+      }
+    },
+    {
       frameworks: ["hbf"],
       treesRestored: {
         title: t("Saplings Growing"),

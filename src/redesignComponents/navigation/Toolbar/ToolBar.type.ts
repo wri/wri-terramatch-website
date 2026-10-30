@@ -28,7 +28,7 @@ export type BulkToolbarAction = IButtonProps & {
 export interface BulkActionToolbarProps {
   selectedCount: number;
   cancelAction: IButtonProps;
-  deleteAction: BulkToolbarAction;
+  deleteAction?: BulkToolbarAction;
   actions?: BulkToolbarAction[];
   primaryAction?: IButtonProps | IMultiActionButtonProps;
   infoTooltip?: ReactNode;
@@ -88,7 +88,7 @@ export type SelectedFilter =
   | { category?: string; label: string | string[]; onRemove?: () => void };
 
 export interface ToolbarTableProps {
-  search: SearchProps;
+  search?: SearchProps;
   filters?: IMultiActionButtonProps[];
   onClearFilters: () => void;
   button?: IButtonProps;
@@ -99,6 +99,7 @@ export interface ToolbarTableProps {
   selectedFilters?: SelectedFilter[];
   classNameContentLeft?: string;
   classNameContentSearch?: string;
+  showSearchInput?: boolean;
 }
 
 export interface ViewToolbarProps {

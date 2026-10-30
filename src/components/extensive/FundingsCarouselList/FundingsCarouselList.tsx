@@ -16,7 +16,7 @@ type FundingCarouselListProps = {
 const FundingCarouselList: FC<FundingCarouselListProps> = props => (
   <div className={props.className}>
     {props.title != null && (
-      <Text variant="text-36-bold" className="mx-auto mb-4 max-w-[82vw] text-center">
+      <Text variant="text-36-bold" className="mx-auto mb-4 max-w-[calc(100%-2.1875rem)] text-center">
         {props.title}
       </Text>
     )}

@@ -2,7 +2,6 @@ import type { DateValue } from "@ark-ui/react";
 import { Flex, Text } from "@chakra-ui/react";
 import { CalendarDate } from "@internationalized/date";
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import { format } from "date-fns";
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -45,6 +44,7 @@ import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { DownloadIcon, RefreshIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/FloatingActionToolbar";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 import { trackPolygonDownloaded, trackPolygonStatusChanged } from "@/utils/polygonAnalytics";
@@ -130,7 +130,7 @@ type PolygonEditAccordionSection = "details" | "optional-attributes" | "monitori
 const isoStringToDateValue = (value: string | null | undefined): DateValue[] => {
   if (value == null || value === "") return [];
   const [year, month, day] = value.split("T")[0].split("-").map(Number);
-  if (!year || !month || !day) return [];
+  if (![year, month, day].every(part => Number.isFinite(part) && part > 0)) return [];
   return [new CalendarDate(year, month, day)];
 };
 
@@ -245,7 +245,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       showPolygonCompleteToast(label);
       return;
     }
-    showToast({ label, type: "warning", placement: "bottom", duration: 5000, maxWidth: "auto" });
+    showToast({ label, type: "warning", placement: "bottom", duration: 5000 });
   }, []);
   const {
     polygonGeometryEdit,
@@ -306,6 +306,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
   const sitePolygonUuid = polygon?.uuid ?? "";
   const geometryPolygonUuid = polygon?.polygonUuid ?? "";
+  const polygonStatus = polygon?.status ?? undefined;
   const isCreateMode = polygon?.primaryUuid == null || polygon.primaryUuid === "";
   const isPolygonSubmittable = isSitePolygonSubmittable(polygon);
   const submitTooltip = getSingleSitePolygonSubmitTooltip(polygon, t);
@@ -592,7 +593,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         const savedPolygon = await finalizeSuccessfulSave(updatedPolygon, {
           geometryChanged,
           refetchVersionsList: true,
-          clearsValidation: true,
+          clearsValidation: updatedPolygon.validationStatus == null,
           previousPolygonUuid,
           closeOnSave: options?.closeOnSave
         });
@@ -662,7 +663,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     setEditPolygon({
       isOpen: shouldMapEditPolygon,
       uuid: shouldMapEditPolygon ? geometryPolygonUuid : "",
-      primaryUuid: shouldMapEditPolygon ? primaryUuid : undefined
+      primaryUuid: shouldMapEditPolygon ? primaryUuid : undefined,
+      status: shouldMapEditPolygon ? polygonStatus : undefined
     });
 
     if (!shouldMapEditPolygon) {
@@ -673,6 +675,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     geometryPolygonUuid,
     isCreateMode,
     onSuppressMapSelectionHighlightChange,
+    polygonStatus,
     primaryUuid,
     setEditPolygon,
     setIsUserDrawingEnabled,

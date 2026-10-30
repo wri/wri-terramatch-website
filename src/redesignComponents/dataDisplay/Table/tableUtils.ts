@@ -33,6 +33,7 @@ export type RowData = BaseRow & {
 
 export const DEFAULT_TOTAL_ITEMS = 100;
 export const DEFAULT_PAGE_SIZE = 10;
+export const MIN_PAGE_SIZE_OPTION = 10;
 export const DEFAULT_CURRENT_PAGE = 1;
 
 export type SortColumn = {
@@ -58,17 +59,27 @@ export const calculatePaginationRange = (currentPage: number, pageSize: number) 
   return { startRange, endRange };
 };
 
-export const sortData = <T extends BaseRow>(data: T[], sortColumn: SortColumn | null): T[] => {
+export const sortData = <T extends BaseRow>(
+  data: T[],
+  sortColumn: SortColumn | null,
+  getSortValue?: (row: T, key: string) => unknown,
+  customKeys?: ReadonlySet<string>
+): T[] => {
   if (sortColumn == null || sortColumn.key === "") {
     return [...data];
   }
 
   const { key, order } = sortColumn;
   const isDesc = order === "desc";
+  const isCustom = customKeys?.has(key) === true;
 
   return [...data].sort((a, b) => {
-    const aVal = (a as Record<string, unknown>)[key];
-    const bVal = (b as Record<string, unknown>)[key];
+    const aVal = getSortValue != null ? getSortValue(a, key) : (a as Record<string, unknown>)[key];
+    const bVal = getSortValue != null ? getSortValue(b, key) : (b as Record<string, unknown>)[key];
+
+    if (isCustom && typeof aVal === "number" && typeof bVal === "number") {
+      return isDesc ? bVal - aVal : aVal - bVal;
+    }
 
     if (typeof aVal === "string" || typeof bVal === "string") {
       const aStr = aVal == null ? "" : String(aVal);

@@ -363,11 +363,12 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
           title={project.name ?? "-"}
           tag={{ state: mapPlantingStatusToProgressState(project.plantingStatus) }}
           organization={project.organisationName ?? "-"}
-          country={formatOptionsList(countryOptions ?? [], project.country ?? [])}
+          organisationUuid={project.organisationUuid}
+          country={formatOptionsList(countryOptions ?? [], project.level0Project ?? [])}
           startDate={formatMonthYear(project.plantingStartDate)}
           endDate={formatMonthYear(project.plantingEndDate)}
           description={projectDescription == null || projectDescription.length === 0 ? undefined : projectDescription}
-          countryFlag={countryCodeToFlag(project.country)}
+          countryFlag={countryCodeToFlag(project.level0Project)}
         />
       </Flex>
 
