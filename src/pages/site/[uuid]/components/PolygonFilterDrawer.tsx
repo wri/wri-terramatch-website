@@ -13,7 +13,6 @@ import { useTargetLandUseLabels } from "@/hooks/translation/useTargetLandUseLabe
 import { useTargetLandUseOptions } from "@/hooks/translation/useTargetLandUseOptions";
 import { useValidationStatusLabels } from "@/hooks/translation/useValidationStatusLabels";
 import { useValidationStatusOptions } from "@/hooks/translation/useValidationStatusOptions";
-import { useIsAdmin } from "@/hooks/useIsAdmin";
 import SiteFilterCombobox from "@/pages/polygon-review/components/SiteFilterCombobox";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
@@ -90,7 +89,6 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
   const restorationPracticeLabels = useRestorationPracticeLabels();
   const targetLandUseLabels = useTargetLandUseLabels();
   const [draftFilters, setDraftFilters] = useState<PolygonFilterState>(filters);
-  const isAdmin = useIsAdmin();
 
   useEffect(() => {
     if (open === true) {
@@ -244,15 +242,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
   );
 
   return (
-    <Drawer
-      trapFocus={false}
-      trigger={trigger}
-      open={open}
-      onOpenChange={onOpenChange}
-      maxW="22rem"
-      paddingTop={isAdmin ? 12 : 0}
-      maxH={isAdmin ? "calc(100vh - 3rem)" : "100vh"}
-    >
+    <Drawer trapFocus={false} trigger={trigger} open={open} onOpenChange={onOpenChange} maxW="22rem">
       {({ onClose }) => (
         <FilterPanel
           title={t("Filters")}
