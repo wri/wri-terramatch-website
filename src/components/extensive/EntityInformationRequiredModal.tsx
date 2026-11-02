@@ -7,6 +7,7 @@ import { FC } from "react";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormEntity } from "@/connections/Form";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
+import { withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
 import { InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
 import { EntityName, SingularEntityName } from "@/types/common";
@@ -41,7 +42,10 @@ const EntityInformationRequiredModal: FC<EntityInformationRequiredModalProps> = 
 
     handleClose();
     router.push(
-      `/entity/${kebabCase(entityName)}/edit/${entityUuid}?${STEP_QUERY_PARAM}=${encodeURIComponent(targetStepId)}`
+      withReportOrigin(
+        `/entity/${kebabCase(entityName)}/edit/${entityUuid}?${STEP_QUERY_PARAM}=${encodeURIComponent(targetStepId)}`,
+        router.query
+      )
     );
   };
 

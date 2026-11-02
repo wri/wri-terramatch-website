@@ -1,19 +1,21 @@
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
+import { format, isValid } from "date-fns";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo } from "react";
 
 import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
-import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullDisturbanceReport } from "@/connections/Entity";
 import FrameworkProvider from "@/context/framework.provider";
-import { DisturbanceReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { MapAreaProvider } from "@/context/mapArea.provider";
+import { DisturbanceReportFullDto, DisturbanceReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useReportBreadcrumbs } from "@/hooks/useReportBreadcrumbs";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import { withReportOrigin } from "@/pages/reports/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
-import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import DisturbanceReportBanner from "@/redesignComponents/content/Banner/DisturbanceReportBanner/DisturbanceReportBanner";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
@@ -31,17 +33,37 @@ type DisturbanceReportContentProps = {
   disturbanceReport: DisturbanceReportFullDto;
 };
 
+export const getDisturbanceEntry = (
+  type: string,
+  report: DisturbanceReportFullDto | DisturbanceReportLightDto
+): string => {
+  return report?.entries?.find(entry => entry.name === type)?.value ?? "";
+};
+
+export const disturbanceReportTitle = (report: DisturbanceReportFullDto | DisturbanceReportLightDto): string => {
+  const disturbanceType = getDisturbanceEntry("disturbance-type", report);
+  const startDate = new Date(getDisturbanceEntry("disturbance-start-date", report));
+  const dateSuffix = isValid(startDate) ? ` - ${format(startDate, "MM/yyyy")}` : "";
+  let generalTitle = "Disturbance Report";
+  if (["climatic", "ecological"].includes(disturbanceType)) return `Environmental ${generalTitle}${dateSuffix}`;
+  if (disturbanceType == "manmade") return `Manmade ${generalTitle}${dateSuffix}`;
+
+  return `${generalTitle}${dateSuffix}`;
+};
+
 const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturbanceReport }) => {
   const t = useT();
   const router = useRouter();
   const disturbanceReportUUID = disturbanceReport.uuid;
-  const currentTab = (router.query.tab as string) ?? "report-data";
-
-  const headerReportTitle = disturbanceReport.projectName + " - " + disturbanceReport.title;
+  const currentTab = (router.query.tab as string) ?? "overview";
 
   const navigateToTab = useCallback(
     (tab: string) => {
-      router.push(`/reports/disturbance-report/${disturbanceReportUUID}?tab=${tab}`, undefined, { shallow: true });
+      router.push(
+        withReportOrigin(`/reports/disturbance-report/${disturbanceReportUUID}?tab=${tab}`, router.query),
+        undefined,
+        { shallow: true }
+      );
     },
     [router, disturbanceReportUUID]
   );
@@ -49,9 +71,15 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
   const tabItems = useMemo<TabItem[]>(
     () => [
       {
-        key: "report-data",
-        title: t("Report Data"),
-        renderBody: () => <DisturbanceReportOverviewTab report={disturbanceReport} />
+        key: "overview",
+        title: t("Overview"),
+        renderBody: () => (
+          <DisturbanceReportOverviewTab
+            report={disturbanceReport}
+            onViewDetails={() => navigateToTab("details")}
+            onViewGallery={() => navigateToTab("gallery")}
+          />
+        )
       },
       {
         key: "details",
@@ -79,12 +107,12 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
         renderBody: () => <AuditLog disturbanceReport={disturbanceReport} />
       }
     ],
-    [disturbanceReport, t]
+    [disturbanceReport, navigateToTab, t]
   );
 
   const visibleTabItems = useMemo(() => {
     if (disturbanceReport.nothingToReport) {
-      return tabItems.filter(item => item.key === "report-data");
+      return tabItems.filter(item => item.key === "overview");
     }
 
     return tabItems;
@@ -99,52 +127,33 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
     [visibleTabItems]
   );
 
-  const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "report-data";
+  const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "overview";
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
+  const breadcrumbs = useReportBreadcrumbs(
+    { label: disturbanceReportTitle(disturbanceReport), link: `/reports/disturbance-report/${disturbanceReportUUID}` },
+    "project",
+    { project: { uuid: disturbanceReport.projectUuid, name: disturbanceReport.projectName } }
+  );
 
   return (
     <>
       <ResponsiveTypography />
       <Head>
-        <title>{disturbanceReport.projectName + " - " + disturbanceReport.title}</title>
+        <title>{disturbanceReportTitle(disturbanceReport)}</title>
       </Head>
-      <ReportBanner
+      <DisturbanceReportBanner
         report={disturbanceReport}
-        title={headerReportTitle}
-        dueAt={disturbanceReport.dueAt}
-        entityName="disturbance-report"
-        breadcrumbs={[
-          {
-            label: t("Projects"),
-            link: "/my-projects",
-            icon: <ProjectIcon className="!text-theme-primary-900" />
-          },
-          {
-            label: disturbanceReport.projectName ?? t("Project"),
-            link: `/project/${disturbanceReport.projectUuid}`
-          },
-          {
-            label: t("Reports"),
-            link: `/project/${disturbanceReport.projectUuid}?tab=reporting-tasks`
-          },
-          {
-            label: t("Disturbance Reports"),
-            link: `/project/${disturbanceReport.projectUuid}?tab=reporting-tasks&subTab=disturbance-reports`
-          },
-          {
-            label: t("Disturbance Report"),
-            link: `/reports/disturbance-report/${disturbanceReportUUID}`
-          }
-        ]}
+        title={disturbanceReportTitle(disturbanceReport)}
+        breadcrumbs={breadcrumbs}
         suffix={
           disturbanceReport.projectUuid != null ? (
             <Button
               variant="borderless"
               size="small"
               className="underline underline-offset-2"
-              onClick={() => router.push(`/project/${disturbanceReport.projectUuid}?tab=sites`)}
+              onClick={() => router.push(`/project/${disturbanceReport.projectUuid}`)}
             >
-              {t("Sites")}
+              {t("Project Profile")}
             </Button>
           ) : null
         }
@@ -159,7 +168,6 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
         }}
       />
       <div className="flex flex-1">{activeTabItem.renderBody()}</div>
-      <PageFooter />
     </>
   );
 };
@@ -177,17 +185,18 @@ const DisturbanceReportDetailPage = () => {
         label: t("Disturbance report not found"),
         type: "error",
         placement: "bottom",
-        duration: 5000,
-        maxWidth: "auto"
+        duration: 5000
       });
     }
   });
 
   return (
     <FrameworkProvider frameworkKey={disturbanceReport?.frameworkKey}>
-      <LoadingContainer loading={!isLoaded}>
-        {disturbanceReport == null ? null : <DisturbanceReportContent disturbanceReport={disturbanceReport} />}
-      </LoadingContainer>
+      <MapAreaProvider>
+        <LoadingContainer loading={!isLoaded}>
+          {disturbanceReport == null ? null : <DisturbanceReportContent disturbanceReport={disturbanceReport} />}
+        </LoadingContainer>
+      </MapAreaProvider>
     </FrameworkProvider>
   );
 };

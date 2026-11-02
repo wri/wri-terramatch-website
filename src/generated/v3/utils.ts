@@ -92,24 +92,23 @@ const normalizeArrayQueryKeys = (queryParams?: FetchParams | null): FetchParams 
 export const getStableQuery = (queryParams?: FetchParams, replaceEmptyBrackets = true) => {
   if (queryParams == null) return "";
 
-  const keys = Object.keys(queryParams);
-  if (keys.length === 0) return "";
-
-  // qs will gleefully stringify null and undefined values as `key=` if you leave the key in place.
-  // For our implementation, we never want to send the empty key to the server in the query, so
-  // delete any keys that have such a value.
-  for (const key of keys) {
-    if (queryParams[key] == null) delete queryParams[key];
-  }
+  // The normalized params are built in a copy: the caller's object is often a memoized connection
+  // prop, and mutating it breaks deep equality checks against other copies of the same props.
+  const normalized: FetchParams = {};
   for (const [key, value] of Object.entries(queryParams)) {
-    // Copy the array in case the original is read only.
-    if (Array.isArray(value)) queryParams[key] = [...value].sort() as FetchParamValue[] | FetchParams[];
-    if (value instanceof Date) {
-      (queryParams as Record<string, unknown>)[key] = value.toISOString();
-    }
+    // qs will gleefully stringify null and undefined values as `key=` if you leave the key in place.
+    // For our implementation, we never want to send the empty key to the server in the query, so
+    // skip any keys that have such a value.
+    if (value == null) continue;
+
+    normalized[key] = Array.isArray(value)
+      ? ([...value].sort() as FetchParamValue[] | FetchParams[])
+      : value instanceof Date
+      ? value.toISOString()
+      : value;
   }
 
-  const query = qs.stringify(normalizeArrayQueryKeys(queryParams), {
+  const query = qs.stringify(normalizeArrayQueryKeys(normalized), {
     arrayFormat: "indices",
     sort: (a, b) => a.localeCompare(b)
   });
@@ -160,6 +159,9 @@ export type WithFormData<Attributes> = Attributes & { formData: FormData };
 type RequestBody = {
   data?: { type: ResourceType; attributes?: Dictionary<unknown> };
 };
+
+// After this long, a file download falls back to the direct link instead of waiting on the blob.
+const FILE_DOWNLOAD_TIMEOUT = 2 * 60 * 1000; // in ms
 
 export class V3ApiEndpoint<
   TResponse = unknown,
@@ -261,8 +263,18 @@ export class V3ApiEndpoint<
 
       // avoid importing the FileDownloadDto due to circular dependency
       const downloadUrl = data.attributes.url as string;
-      const fileName = downloadUrl.split("/").pop();
-      downloadFileUrl(downloadUrl, fileName ?? defaultFileName);
+      const fileName = downloadUrl.split("/").pop() ?? defaultFileName;
+      // Fetching the file and saving it as a local blob (the same way polygon downloads work) means
+      // the caller's promise only resolves once the file is in hand, and avoids Safari's "allow
+      // downloads" prompt for a cross-origin link clicked outside a user gesture.
+      try {
+        const fileResponse = await fetch(downloadUrl, { signal: AbortSignal.timeout(FILE_DOWNLOAD_TIMEOUT) });
+        if (!fileResponse.ok) throw new Error(`File download failed with status ${fileResponse.status}`);
+        await downloadFileBlob(await fileResponse.blob(), fileName);
+      } catch (error) {
+        Log.warn("Unable to fetch file download as blob, falling back to direct link", error);
+        downloadFileUrl(downloadUrl, fileName);
+      }
       return;
     }
 

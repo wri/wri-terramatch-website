@@ -927,7 +927,7 @@ export const groupProjectsByCountry = (projects: DashboardProjectsLightDto[]) =>
 
   const countryGroups = projects.reduce(
     (acc, project) => {
-      const country = project.country;
+      const country = project.level0Project?.[0];
       if (country == null) return acc;
 
       if (!acc[country]) {

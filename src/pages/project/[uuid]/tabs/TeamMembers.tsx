@@ -6,7 +6,6 @@ import { FC, useCallback, useMemo, useState } from "react";
 
 import { bulkDeleteUserAssociations, useUserAssociations } from "@/connections/UserAssociation";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { UserAssociationDto } from "@/generated/v3/userService/userServiceSchemas";
 import { getThemedColor } from "@/lib/theme";
 import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
 import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
@@ -50,6 +49,8 @@ export const TEAM_MEMBER_ROLE_CHOICES = [
   }
 ];
 
+const TEAM_MEMBER_ROLES = ["project-developer", "project-manager"];
+
 const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
   const t = useT();
   const isMobile = useMediaQuery("(max-width: 1200px)");
@@ -88,26 +89,26 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
 
   const teamMembers = useMemo(() => {
     const all =
-      associatedUsers
-        ?.filter(member => {
-          const role = member?.roleName?.toLowerCase();
-          const isValidRole = role && ["project-manager", "project-developer"].includes(role);
-          const matchesSelectedRole = !selectedRole || role === selectedRole.toLowerCase();
-          return isValidRole && matchesSelectedRole;
-        })
-        .map((member, index) => ({
-          ...member,
-          id: member.uuid,
-          roleName: member.roleName ?? "",
-          //TODO: replace with actual image once it is implemented
-          // Every listed user is already a project member; pending invites live in v2_project_invites.
-          status: "Accepted"
-        })) ?? [];
+      associatedUsers?.flatMap(member => {
+        const roleName = member.roles.find(role => TEAM_MEMBER_ROLES.includes(role));
+        if (roleName == null || (selectedRole != null && roleName !== selectedRole)) return [];
+
+        return [
+          {
+            ...member,
+            id: member.uuid,
+            roleName,
+            //TODO: replace with actual image once it is implemented
+            // Every listed user is already a project member; pending invites live in v2_project_invites.
+            status: "Accepted"
+          }
+        ];
+      }) ?? [];
 
     const q = searchQuery.trim().toLowerCase();
     if (q.length === 0) return all;
     return all?.filter(member => {
-      const includes = (key: keyof UserAssociationDto) =>
+      const includes = (key: keyof typeof member) =>
         typeof member?.[key] === "string" && (member?.[key] as string).toLowerCase().includes(q);
 
       return (

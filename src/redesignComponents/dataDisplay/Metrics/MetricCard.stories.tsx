@@ -190,6 +190,8 @@ export const AllVariants: Story = {
         tooltipContent="This is a tooltip"
         color="secondary.600"
         className="col-span-2"
+        selection={400}
+        filtered={200}
       />
       <MetricCard
         title="Stat label"

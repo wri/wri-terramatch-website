@@ -52,7 +52,9 @@ export type ReportsIndexEventName =
   | "index_search_used"
   | "index_row_action_clicked"
   | "index_selection_changed"
-  | "index_bulk_action_submitted";
+  | "index_bulk_action_submitted"
+  | "attention_count_displayed"
+  | "add_disturbance_report_clicked";
 
 export type Ga4EntityType = "project" | "site" | "nursery" | "unknown";
 

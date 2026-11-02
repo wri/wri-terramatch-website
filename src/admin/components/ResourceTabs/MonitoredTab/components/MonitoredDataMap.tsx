@@ -25,7 +25,7 @@ const MonitoredDataMap = ({
   const mapFunctions = useBaseMap();
   const [loading, setLoading] = useState(false);
 
-  const entityBbox = useBoundingBox(entityName === "sites" ? { siteUuid: entityUuid } : { projectUuid: entityUuid });
+  const entityBbox = useBoundingBox(entityName === "sites" ? { siteUuids: [entityUuid] } : { projectUuid: entityUuid });
 
   const [mapIndexLoaded, { data: mapIndex }] = useSitePolygonMapIndex({
     entityName: entityName as "sites" | "projects",

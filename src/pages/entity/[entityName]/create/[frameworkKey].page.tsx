@@ -8,9 +8,10 @@ import WizardFormIntro from "@/components/extensive/WizardForm/WizardFormIntro";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useCreateNursery, useCreateProject, useCreateSite } from "@/connections/Entity";
+import { useCreateDisturbanceReport, useCreateNursery, useCreateProject, useCreateSite } from "@/connections/Entity";
 import { FormEntity, useForm } from "@/connections/Form";
 import {
+  DisturbanceReportFullDto,
   EntityCreateAttributes,
   NurseryFullDto,
   ProjectCreateAttributes,
@@ -21,18 +22,25 @@ import { singularEntityName, v3EntityName } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { useGetReportingFrameworkFormKey } from "@/hooks/useGetFormKey";
 import { useReportEntityDueAt } from "@/hooks/useReportEntityDueAt";
+import { getReportsIndexHrefFromQuery, withReportsIndexReturn } from "@/pages/reports/reportIndex.utils";
+import ApiSlice from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import { resolveFormIntroDeadline } from "@/utils/formIntroDeadline";
 import Log from "@/utils/log";
 
 const useCreateEntity = (
   entityName: FormEntity,
-  onSuccess: (data: ProjectFullDto | SiteFullDto | NurseryFullDto) => void,
+  onSuccess: (data: ProjectFullDto | SiteFullDto | NurseryFullDto | DisturbanceReportFullDto) => void,
   failureMessage?: string
 ) => {
   const { create: createProject, isCreating: projectCreating } = useCreateProject({}, onSuccess, failureMessage);
   const { create: createSite, isCreating: siteCreating } = useCreateSite({}, onSuccess, failureMessage);
   const { create: createNursery, isCreating: nurseryCreating } = useCreateNursery({}, onSuccess, failureMessage);
+  const { create: createDisturbanceReport, isCreating: disturbanceReportCreating } = useCreateDisturbanceReport(
+    {},
+    onSuccess,
+    failureMessage
+  );
 
   if (entityName === "projects") {
     return { createEntity: createProject, isCreating: projectCreating };
@@ -40,6 +48,8 @@ const useCreateEntity = (
     return { createEntity: createSite, isCreating: siteCreating };
   } else if (entityName === "nurseries") {
     return { createEntity: createNursery, isCreating: nurseryCreating };
+  } else if (entityName === "disturbanceReports") {
+    return { createEntity: createDisturbanceReport, isCreating: disturbanceReportCreating };
   } else {
     Log.warn("useCreateEntity: Invalid entityName", { entityName });
     return {};
@@ -53,7 +63,7 @@ const useCreateEntity = (
  * or
  *    entity_uuid: providing entity_uuid will bypass creation of a new entity and takes user directly to next page
  *
- * entityName: projects/sites/nurseries/project-reports/site-reports/nursery-reports
+ * entityName: projects/sites/nurseries/disturbance-reports/project-reports/site-reports/nursery-reports
  */
 const EntityIntroPage = () => {
   const t = useT();
@@ -65,6 +75,7 @@ const EntityIntroPage = () => {
   //Allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
   const parentUUID = router.query.parent_uuid as string;
   const entityUUID = router.query.entity_uuid as string | undefined;
+  const from = getReportsIndexHrefFromQuery(router.query.from);
 
   const formUUID = entityUUID == null ? useGetReportingFrameworkFormKey(frameworkKey, entityName) : undefined;
   const [, { data: frameworkForm }] = useForm({ id: formUUID ?? undefined, enabled: formUUID != null });
@@ -81,13 +92,27 @@ const EntityIntroPage = () => {
   );
   const { createEntity, isCreating } = useCreateEntity(
     v3EntityName(entityName) as FormEntity,
-    useCallback(({ uuid }) => router.replace(`/entity/${entityName}/edit/${uuid}`), [entityName, router]),
+    useCallback(
+      ({ uuid }) => {
+        ApiSlice.pruneIndex(v3EntityName(entityName) as FormEntity);
+        router.replace(withReportsIndexReturn(`/entity/${entityName}/edit/${uuid}`, from));
+      },
+      [entityName, from, router]
+    ),
     `Failed to create ${kebabCase(singularEntityName(entityName)).replace("-", " ")}`
   );
 
+  const handleCancel = useCallback(() => {
+    if (entityName === "disturbance-reports" && from != null) {
+      void router.replace(from);
+      return;
+    }
+    router.back();
+  }, [entityName, from, router]);
+
   const handleContinue = useCallback(() => {
     if (entityUUID != null) {
-      router.push(`/entity/${entityName}/edit/${entityUUID}`);
+      router.push(withReportsIndexReturn(`/entity/${entityName}/edit/${entityUUID}`, from));
     } else {
       if (entityName === "projects") {
         (createEntity as (attributes: ProjectCreateAttributes) => void)({
@@ -100,10 +125,10 @@ const EntityIntroPage = () => {
         });
       }
     }
-  }, [createEntity, entityName, entityUUID, formUUID, parentUUID, router]);
+  }, [createEntity, entityName, entityUUID, formUUID, from, parentUUID, router]);
 
   return (
-    <BackgroundLayout>
+    <BackgroundLayout className="overflow-auto">
       <ContentLayout>
         <LoadingContainer loading={!form}>
           {form == null ? null : (
@@ -125,7 +150,7 @@ const EntityIntroPage = () => {
               }}
               backButtonProps={{
                 children: t("Cancel"),
-                onClick: () => router.back()
+                onClick: handleCancel
               }}
             />
           )}

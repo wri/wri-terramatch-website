@@ -56,16 +56,16 @@ export const getStatusOptions = (t: typeof useT | Function = (t: string) => t) =
       title: t("Draft")
     },
     {
-      value: "approved",
-      title: t("Approved")
-    },
-    {
       value: "pending-approval",
       title: t("Pending Approval")
     },
     {
       value: "information-required",
       title: t("Information Required")
+    },
+    {
+      value: "approved",
+      title: t("Approved")
     }
   ] as Option[];
 export const getPolygonOptions = (t: typeof useT | Function = (t: string) => t) =>
@@ -110,6 +110,12 @@ export const getChangeRequestStatusOptions = (t: typeof useT | Function = (t: st
       title: t("Approved")
     }
   ] as Option[];
+
+/** Options for the "Updates" index filters, where an approved change request reads as "Complete". */
+export const getUpdateStatusFilterOptions = (t: typeof useT | Function = (t: string) => t) =>
+  getChangeRequestStatusOptions(t).map(option =>
+    option.value === "approved" ? { ...option, title: t("Complete") } : option
+  );
 
 export const getNothingReportOptions = (t: typeof useT | Function = (t: string) => t) =>
   [

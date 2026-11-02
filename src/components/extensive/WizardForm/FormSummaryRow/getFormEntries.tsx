@@ -46,7 +46,9 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
 
   const bboxParams =
     type === "sites"
-      ? { siteUuid: record?.uuid }
+      ? record?.uuid != null
+        ? { siteUuids: [record.uuid] }
+        : {}
       : entityType === "projects"
       ? { projectUuid: uuid }
       : entityType === "project-pitches"

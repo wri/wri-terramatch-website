@@ -25,6 +25,7 @@ import { LoginDto, UserTaskDto } from "@/generated/v3/userService/userServiceSch
 import { resolveUrl } from "@/generated/v3/utils";
 import { __TEST_HYDRATE__, AppStore } from "@/store/store";
 import { first } from "@/utils/array";
+import { clearSidebarCollapsed } from "@/utils/sidebarCollapsedState";
 
 export type PendingError = {
   statusCode: number;
@@ -441,6 +442,7 @@ authListenerMiddleware.startListening({
     if (!isLogin(action.payload)) return;
     const { token } = (action.payload.document.data as JsonApiResource).attributes as LoginDto;
     setAccessToken(token);
+    clearSidebarCollapsed();
   }
 });
 

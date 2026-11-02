@@ -1,7 +1,7 @@
 import { SimpleGrid } from "@chakra-ui/react";
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { CheckApprovedIcon, InformationRequiredIcon, WarningIcon } from "@/redesignComponents/foundations/Icons";
+import { CheckApprovedIcon, InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
 
 import InlineMessage from "./InlineMessage";
 
@@ -52,8 +52,7 @@ export const Success: Story = {
     label: "Success",
     caption: "caption",
     variant: "success",
-    actionLabel: "Label",
-    icon: <CheckApprovedIcon />
+    actionLabel: "Label"
   }
 };
 
@@ -62,8 +61,7 @@ export const Warning: Story = {
     label: "Warning",
     caption: "caption",
     variant: "warning",
-    actionLabel: "Label",
-    icon: <WarningIcon />
+    actionLabel: "Label"
   }
 };
 
@@ -125,8 +123,7 @@ export const LabelOnly: Story = {
   args: {
     variant: "success",
     label: "Profile updated",
-    size: "small",
-    icon: <CheckApprovedIcon />
+    size: "small"
   }
 };
 
@@ -151,20 +148,8 @@ export const AllVariants: Story = {
         caption="Informational message on grey background."
         size="large"
       />
-      <InlineMessage
-        variant="success"
-        icon={<CheckApprovedIcon />}
-        label="Success"
-        caption="The operation completed successfully."
-        size="large"
-      />
-      <InlineMessage
-        variant="warning"
-        icon={<WarningIcon />}
-        label="Warning"
-        caption="Please review before proceeding."
-        size="large"
-      />
+      <InlineMessage variant="success" label="Success" caption="The operation completed successfully." size="large" />
+      <InlineMessage variant="warning" label="Warning" caption="Please review before proceeding." size="large" />
       <InlineMessage
         icon={<InformationRequiredIcon />}
         variant="error"

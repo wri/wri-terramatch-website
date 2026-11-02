@@ -1,8 +1,8 @@
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 
 import { useFullSite } from "@/connections/Entity";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import Log from "@/utils/log";
 
 export const useSitePageLoad = (siteUUID: string | undefined) => {
@@ -19,8 +19,7 @@ export const useSitePageLoad = (siteUUID: string | undefined) => {
         type: "error",
         id: "site-not-found",
         placement: "bottom",
-        duration: 5000,
-        maxWidth: "auto"
+        duration: 5000
       });
     }
   });

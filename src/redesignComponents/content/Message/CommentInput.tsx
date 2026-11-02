@@ -1,6 +1,5 @@
 import { Box, Flex, Image, Text, Textarea } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -13,6 +12,7 @@ import CloseButton from "@/redesignComponents/actions/Buttons/CloseButton/CloseB
 import IconButton from "@/redesignComponents/actions/Buttons/IconButton/IconButton";
 import { AttachFileIcon, SendIcon } from "@/redesignComponents/foundations/Icons";
 import Avatar from "@/redesignComponents/navigation/Avatar/Avatar";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
@@ -203,8 +203,7 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
           label: t("Failed to upload files. Your comment was added but files may be missing."),
           type: "error",
           placement: "bottom",
-          duration: 5000,
-          maxWidth: "auto"
+          duration: 5000
         });
         Log.error("Error uploading files after comment creation", uploadError);
         resetAuditInput();

@@ -21,8 +21,8 @@ const AdminPanel: FC = () => {
   const [, { user }] = useMyUser();
   if (user == null) return null;
 
-  const canCreate = user.primaryRole === "admin-super";
-  const isAdmin = user.primaryRole.includes("admin");
+  const canCreate = user.roles.includes("admin-super");
+  const isAdmin = user.roles.some(role => role.includes("admin"));
   return (
     <LoadingProvider>
       <Admin

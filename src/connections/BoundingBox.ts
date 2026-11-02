@@ -13,7 +13,7 @@ import ApiSlice from "@/store/apiSlice";
 const hasValidParams = ({
   polygonUuid,
   polygonUuids,
-  siteUuid,
+  siteUuids,
   projectUuid,
   landscapes,
   country,
@@ -21,7 +21,7 @@ const hasValidParams = ({
 }: BoundingBoxGetQueryParams = {}): boolean =>
   !isEmpty(polygonUuid) ||
   !isEmpty(polygonUuids) ||
-  !isEmpty(siteUuid) ||
+  !isEmpty(siteUuids) ||
   !isEmpty(projectUuid) ||
   !isEmpty(landscapes) ||
   !isEmpty(country) ||

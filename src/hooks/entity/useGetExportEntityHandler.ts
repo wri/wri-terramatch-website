@@ -10,6 +10,11 @@ import { EntityName, SingularEntityName } from "@/types/common";
 import { runWithDownloadToast } from "@/utils/downloadToast";
 import Log from "@/utils/log";
 
+/** startCase mangles acronyms (e.g. "srp-report" becomes "Srp Report"), so those labels are set explicitly. */
+const ENTITY_LABEL_OVERRIDES: Record<string, string> = {
+  "srp-report": "SRP Report"
+};
+
 /**
  * To get entity export handler
  */
@@ -21,7 +26,8 @@ export const useGetExportEntityHandler = (entity: EntityName | SingularEntityNam
   const handleExport = useCallback(async () => {
     setLoading(true);
 
-    const entityLabel = startCase(singularEntityName(entity as EntityName | SingularEntityName));
+    const singularName = singularEntityName(entity as EntityName | SingularEntityName);
+    const entityLabel = ENTITY_LABEL_OVERRIDES[singularName] ?? startCase(singularName);
 
     try {
       await runWithDownloadToast(

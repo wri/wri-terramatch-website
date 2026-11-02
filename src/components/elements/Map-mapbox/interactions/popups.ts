@@ -23,6 +23,7 @@ import type {
   EditPolygonState,
   LayerType,
   MobilePopupData,
+  OverviewPolygonPopup,
   PolygonEntityScope,
   PopupComponentProps,
   SetPolygonFromMap,
@@ -111,7 +112,7 @@ export type PopupHandlerOptions = {
   /** Tracks the polygonUuid shown in the currently open popup so it can be closed when deleted. */
   setActivePopupPolygonUuid?: (uuid: string | null) => void;
   championsMap?: boolean;
-  overviewPolygonPopup?: boolean;
+  overviewPolygonPopup?: OverviewPolygonPopup;
 };
 
 type OpenPolygonPopupParams = {

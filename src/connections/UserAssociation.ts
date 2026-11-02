@@ -2,13 +2,15 @@ import { createSelector } from "reselect";
 
 import {
   acceptProjectInvite,
+  createOrganisationInviteReminder,
   createUserAssociation,
   CreateUserAssociationPathParams,
   deleteUserAssociation,
   getUserAssociation,
   GetUserAssociationPathParams,
   GetUserAssociationQueryParams,
-  inviteOrganisationUser
+  inviteOrganisationUser,
+  updateUserAssociation
 } from "@/generated/v3/userService/userServiceComponents";
 import {
   OrganisationInviteRequestDto,
@@ -25,6 +27,8 @@ import { connectionHook } from "./util/connectionShortcuts";
 
 export type InviteOrganisationUserParams = {
   emailAddress: string;
+  firstName: string;
+  lastName: string;
   callbackUrl?: string;
 };
 
@@ -63,6 +67,8 @@ const inviteOrganisationConnection: Connection<InviteOrganisationUserConnection,
             }
             const body = {
               emailAddress: params.emailAddress,
+              firstName: params.firstName,
+              lastName: params.lastName,
               ...(params.callbackUrl != null &&
                 params.callbackUrl !== "" && {
                   callbackUrl: params.callbackUrl
@@ -82,6 +88,56 @@ const inviteOrganisationConnection: Connection<InviteOrganisationUserConnection,
 };
 
 export const useInviteOrganisationUser = connectionHook(inviteOrganisationConnection);
+
+type OrganisationInviteReminderConnection = {
+  sendReminder: () => void;
+  isSending: boolean;
+  sendFailure: PendingError | undefined;
+};
+
+type OrganisationInviteReminderProps = {
+  organisationUuid: string;
+  userUuid: string;
+};
+
+const organisationInviteReminderConnection: Connection<
+  OrganisationInviteReminderConnection,
+  OrganisationInviteReminderProps
+> = {
+  selector: selectorCache(
+    ({ organisationUuid, userUuid }) => `${organisationUuid}:${userUuid}`,
+    ({ organisationUuid, userUuid }) => {
+      const pathParams = { model: "organisations" as const, uuid: organisationUuid, userUuid };
+      return createSelector(
+        [
+          createOrganisationInviteReminder.isFetchingSelector({ pathParams }),
+          createOrganisationInviteReminder.fetchFailedSelector({ pathParams })
+        ],
+        (isSending, sendFailure) => {
+          const sendReminder = () => {
+            if (sendFailure != null) {
+              ApiSlice.clearPending(
+                resolveUrl(createOrganisationInviteReminder.url, { pathParams }),
+                createOrganisationInviteReminder.method
+              );
+            }
+            createOrganisationInviteReminder.fetch({
+              pathParams,
+              body: { callbackUrl: `${window.location.origin}/auth/signup` }
+            });
+          };
+          return {
+            sendReminder,
+            isSending: isSending ?? false,
+            sendFailure: sendFailure ?? undefined
+          };
+        }
+      );
+    }
+  )
+};
+
+export const useOrganisationInviteReminder = connectionHook(organisationInviteReminderConnection);
 
 export const acceptProjectInviteByToken = async (token: string): Promise<void> => {
   const pathParams = { model: "projects" as const };
@@ -128,8 +184,12 @@ const organisationUserAssociationConnection = v3Resource("associatedUsers", getU
 
 export const useOrganisationUserAssociations = connectionHook(organisationUserAssociationConnection);
 
-export const bulkDeleteUserAssociations = async (projectUuid: string, uuids: string[]): Promise<void> => {
-  const variables = { pathParams: { uuid: projectUuid, model: "projects" as const }, queryParams: { uuids } };
+export const bulkDeleteUserAssociations = async (
+  resourceUuid: string,
+  uuids: string[],
+  model: "projects" | "organisations" = "projects"
+): Promise<void> => {
+  const variables = { pathParams: { uuid: resourceUuid, model }, queryParams: { uuids } };
   const failureSelector = deleteUserAssociation.fetchFailedSelector(variables);
   const previousFailure = failureSelector(ApiSlice.currentState);
   if (previousFailure != null) {
@@ -154,7 +214,42 @@ export const bulkDeleteUserAssociations = async (projectUuid: string, uuids: str
       }
     });
   });
+  ApiSlice.pruneCache("associatedUsers");
+  ApiSlice.pruneIndex("associatedUsers", "");
+};
+
+export const updateOrganisationUserStatuses = async (
+  organisationUuid: string,
+  userUuids: string[],
+  status: "approved" | "rejected"
+): Promise<void> => {
+  let failure: unknown;
+  for (const userUuid of userUuids) {
+    try {
+      await updateUserAssociation.fetchAwait({
+        pathParams: { model: "organisations", uuid: organisationUuid, userUuid },
+        body: { data: { type: "associatedUsers", attributes: { status } } }
+      });
+    } catch (error) {
+      failure = error;
+      break;
+    }
+  }
 
   ApiSlice.pruneCache("associatedUsers");
   ApiSlice.pruneIndex("associatedUsers", "");
+  if (failure != null) throw failure;
+};
+
+// Sends the requests in parallel. Each row's reminder cell watches the pending store for its own user, and those
+// requests share that store, so the cells only report the reminders they started themselves (see InviteReminderCell).
+export const sendOrganisationInviteReminders = async (organisationUuid: string, userUuids: string[]): Promise<void> => {
+  await Promise.all(
+    userUuids.map(userUuid =>
+      createOrganisationInviteReminder.fetchParallel({
+        pathParams: { model: "organisations", uuid: organisationUuid, userUuid },
+        body: { callbackUrl: `${window.location.origin}/auth/signup` }
+      })
+    )
+  );
 };

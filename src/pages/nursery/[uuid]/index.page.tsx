@@ -1,22 +1,22 @@
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import { useRouter } from "next/router";
 
 import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
-import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullNursery } from "@/connections/Entity";
 import FrameworkProvider from "@/context/framework.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import NurseryOverviewTab from "@/pages/nursery/[uuid]/tabs/Overview";
+import EntityProfileReportsTab from "@/pages/reports/components/EntityProfileReportsTab";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import NurseryBanner from "@/redesignComponents/content/Banner/NurseryBanner/NurseryBanner";
-import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import { NurseryIcon, ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ProjectResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
+import { getNurseryDetailUrl, NURSERY_INDEX_ORIGIN } from "../nurseryIndex.utils";
 import AuditLog from "./tabs/AuditLog";
-import CompletedReportsTab from "./tabs/CompletedReports";
 import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
 
 const NurseryDetailPage = () => {
@@ -32,15 +32,13 @@ const NurseryDetailPage = () => {
         label: "Nursery not found",
         type: "error",
         placement: "bottom",
-        duration: 5000,
-        maxWidth: "auto"
+        duration: 5000
       });
     }
   });
 
-  const currentTab = (router.query.tab as string) ?? "overview";
-  const isSuffixView = currentTab === "completed-tasks";
-  const activeTab = isSuffixView ? "overview" : currentTab;
+  const activeTab = (router.query.tab as string) ?? "overview";
+  const isFromNurseryIndex = router.query.origin === NURSERY_INDEX_ORIGIN;
 
   const TabItems = [
     { key: "overview", title: t("Overview"), body: <NurseryOverviewTab nursery={nursery!} /> },
@@ -60,10 +58,20 @@ const NurseryDetailPage = () => {
       )
     },
     { key: "progress-and-goals", title: t("Progress & Goals"), body: <GoalsAndProgressTab nursery={nursery!} /> },
-    { key: "audit-log", title: t("Audit Log"), body: <AuditLog nursery={nursery} /> }
+    {
+      key: "reports",
+      title: t("Reports"),
+      body: (
+        <EntityProfileReportsTab
+          source="nursery"
+          entityUuid={nurseryUUID}
+          projectUuid={nursery?.projectUuid ?? null}
+          origin={isFromNurseryIndex ? NURSERY_INDEX_ORIGIN : undefined}
+        />
+      )
+    },
+    { key: "audit-log", title: t("History"), body: <AuditLog nursery={nursery} /> }
   ];
-
-  const suffixContent = isSuffixView && nursery != null ? <CompletedReportsTab nursery={nursery} /> : null;
 
   return (
     <FrameworkProvider frameworkKey={nursery?.frameworkKey}>
@@ -73,20 +81,26 @@ const NurseryDetailPage = () => {
           <>
             <NurseryBanner
               nursery={nursery}
-              breadcrumbs={[
-                {
-                  label: t("Projects"),
-                  link: "/my-projects",
-                  icon: <ProjectIcon className="!text-theme-primary-900" />
-                },
-                { label: nursery.projectName ?? "", link: `/project/${nursery.projectUuid}` },
-                {
-                  label: "Nurseries",
-                  link: `/project/${nursery.projectUuid}?tab=nurseries`
-                },
-                { label: nursery.name ?? "", link: `/nursery/${nursery.uuid}` },
-                ...(isSuffixView ? [{ label: t("Reports"), link: `/nursery/${nursery.uuid}?tab=completed-tasks` }] : [])
-              ]}
+              breadcrumbs={
+                isFromNurseryIndex
+                  ? [
+                      {
+                        label: t("Nurseries"),
+                        link: "/nursery",
+                        icon: <NurseryIcon className="!text-theme-primary-900" />
+                      },
+                      { label: nursery.name ?? "Nursery", link: getNurseryDetailUrl(nursery.uuid, true) }
+                    ]
+                  : [
+                      {
+                        label: t("Projects"),
+                        link: "/my-projects",
+                        icon: <ProjectIcon className="!text-theme-primary-900" />
+                      },
+                      { label: nursery.projectName ?? "", link: `/project/${nursery.projectUuid}` },
+                      { label: nursery.name ?? "Nursery", link: `/nursery/${nursery.uuid}` }
+                    ]
+              }
               suffix={
                 <div className="flex gap-1.5">
                   <div className="flex gap-1.5">
@@ -103,7 +117,11 @@ const NurseryDetailPage = () => {
                       variant="borderless"
                       size="small"
                       className="underline underline-offset-2"
-                      onClick={() => router.push(`/nursery/${nursery.uuid}?tab=completed-tasks`)}
+                      onClick={() =>
+                        router.push(getNurseryDetailUrl(nursery.uuid, isFromNurseryIndex, "reports"), undefined, {
+                          shallow: true
+                        })
+                      }
                     >
                       {t("Nursery Reports")}
                     </Button>
@@ -116,17 +134,20 @@ const NurseryDetailPage = () => {
                     value: item.key,
                     label: item.title
                   })),
-                  defaultValue: isSuffixView ? "__none__" : activeTab,
+                  defaultValue: activeTab,
                   onTabClick: (tabValue: string) => {
-                    router.push(`/nursery/${nurseryUUID}?tab=${tabValue}`, undefined, { shallow: true });
+                    router.push(getNurseryDetailUrl(nurseryUUID, isFromNurseryIndex, tabValue), undefined, {
+                      shallow: true
+                    });
                   }
                 }
               }}
             />
-            <div className="flex flex-1">{suffixContent ?? TabItems.find(item => item.key === activeTab)?.body}</div>
+            <div className="flex flex-1" data-table-scroll-anchor>
+              {TabItems.find(item => item.key === activeTab)?.body}
+            </div>
           </>
         )}
-        <PageFooter />
       </LoadingContainer>
     </FrameworkProvider>
   );

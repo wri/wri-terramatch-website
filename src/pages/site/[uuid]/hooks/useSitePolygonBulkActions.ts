@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { downloadMultiplePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
@@ -10,7 +9,7 @@ import {
   bulkUpdateSitePolygonAttributes,
   bulkUpdateSitePolygonStatus,
   getStatusUpdateCommentCreatedAt,
-  loadSitePolygonByUuid,
+  loadActiveSitePolygonVersion,
   loadSitePolygonMapIndex,
   pruneSitePolygonsCache
 } from "@/connections/SitePolygons";
@@ -22,6 +21,7 @@ import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer
 import { setPolygonTableHoveredUuid } from "@/context/polygonTableInteraction.store";
 import type { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import type { SitePolygonLightDto, ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ApiSlice from "@/store/apiSlice";
 import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
@@ -494,13 +494,14 @@ export const useSitePolygonBulkActions = ({
       });
       const refreshedMapPolygons = mapIndexResponse.data?.polygons ?? [];
 
-      const activePolygonId = params.sitePolygonUuid ?? params.previousPolygonUuid;
-      const updatedPolygon =
-        activePolygonId != null && activePolygonId !== ""
-          ? await loadSitePolygonByUuid({ entityUuid: site.uuid, polygonId: activePolygonId })
-          : undefined;
-
       const clippedGeometryUuids = resolveClippedGeometryUuids(params.clippedVersions ?? [], refreshedMapPolygons);
+      const updatedPolygon = await loadActiveSitePolygonVersion({
+        entityUuid: site.uuid,
+        primaryUuid: params.primaryUuid,
+        versionPolygonUuids: clippedGeometryUuids,
+        polygonId: params.sitePolygonUuid ?? params.previousPolygonUuid
+      });
+
       const currentSiteGeometryUuids = refreshedMapPolygons
         .map(polygon => polygon.polygonUuid ?? polygon.uuid)
         .filter((uuid): uuid is string => uuid != null && uuid !== "");
@@ -940,8 +941,7 @@ export const useSitePolygonBulkActions = ({
           label: t("Could not find selected polygons to download"),
           type: "error",
           placement: "bottom",
-          duration: 5000,
-          maxWidth: "auto"
+          duration: 5000
         });
         return;
       }
@@ -977,8 +977,7 @@ export const useSitePolygonBulkActions = ({
           label: t("Error Downloading Polygon"),
           type: "error",
           placement: "bottom",
-          duration: 5000,
-          maxWidth: "auto"
+          duration: 5000
         });
       } finally {
         setIsDownloadingSelectedPolygons(false);

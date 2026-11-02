@@ -2,6 +2,7 @@ import { useT } from "@transifex/react";
 import { useCallback, useMemo, useRef, useState } from "react";
 
 import { useAuditStatuses } from "@/connections/AuditStatus";
+import { useLightSite } from "@/connections/Entity";
 import {
   closeMapPopupsFromMapPopup,
   isSitePolygonAdminReviewMode,
@@ -20,7 +21,7 @@ import Log from "@/utils/log";
 import { getSingleSitePolygonApproveTooltip, isSitePolygonApprovable } from "@/utils/sitePolygonReview";
 import { getSingleSitePolygonSubmitTooltip, isSitePolygonSubmittable } from "@/utils/sitePolygonSubmit";
 
-import type { PopupComponentProps, TooltipType } from "../../Map.d";
+import type { OverviewPolygonPopup, PopupComponentProps, TooltipType } from "../../Map.d";
 import {
   canNavigateToSitePolygonViewDetails,
   navigateToSitePolygonViewDetails,
@@ -43,7 +44,7 @@ type PolygonPopupChampionsProps = {
   sitePolygon?: SitePolygonMapEntryDto;
   isLoading?: boolean;
   tooltipType?: TooltipType;
-  overviewPolygonPopup?: boolean;
+  overviewPolygonPopup?: OverviewPolygonPopup;
 };
 
 export function PolygonPopupChampions({
@@ -51,7 +52,7 @@ export function PolygonPopupChampions({
   sitePolygon,
   isLoading = false,
   tooltipType,
-  overviewPolygonPopup = false
+  overviewPolygonPopup
 }: PolygonPopupChampionsProps) {
   const t = useT();
   const isAdminReview = isSitePolygonAdminReviewMode();
@@ -66,7 +67,12 @@ export function PolygonPopupChampions({
     entity: "sitePolygons",
     uuid: selectedSitePolygonUuid,
     types: ["comment"],
-    enabled: hasValidSitePolygonUuid && !overviewPolygonPopup
+    enabled: hasValidSitePolygonUuid && overviewPolygonPopup == null
+  });
+
+  const [, { data: site }] = useLightSite({
+    id: siteUuid ?? undefined,
+    enabled: overviewPolygonPopup === "site-summary" && siteUuid != null
   });
 
   const commentsCount = useMemo(() => {
@@ -198,6 +204,7 @@ export function PolygonPopupChampions({
             commentsDisplay={metrics.commentsDisplay}
             validationStatus={metrics.validationStatus}
             overviewPolygonPopup={overviewPolygonPopup}
+            siteName={site?.name ?? undefined}
             restorationPractice={metrics.restorationPractice}
             targetLandUse={metrics.targetLandUse}
           />

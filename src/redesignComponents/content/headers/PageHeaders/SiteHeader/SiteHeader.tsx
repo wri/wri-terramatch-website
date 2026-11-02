@@ -21,6 +21,7 @@ const SiteHeader: FC<SiteHeaderProps> = ({ site }) => {
           <SiteInfo
             site={site}
             organization={site.organisationName ?? "-"}
+            organisationUuid={site.organisationUuid}
             projectName={site.projectName ?? "-"}
             projectUuid={site.projectUuid ?? ""}
             description={site.description ?? ""}
