@@ -36,7 +36,7 @@ import ReportsFilterDrawer from "./ReportsFilterDrawer";
 type ReportsIndexHeaderProps = {
   activeTab: string;
   source: "project" | "site" | "nursery";
-  sourceUuid: string;
+  sourceUuid?: string;
   projectUuid: string;
   projectFrameworkKey: string | null;
   reportCount: number;
