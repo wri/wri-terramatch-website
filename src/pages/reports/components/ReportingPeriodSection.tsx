@@ -42,6 +42,7 @@ type ReportingPeriodSectionProps = {
   allPeriodReports?: ReportsIndexReport[];
   defaultOpen?: boolean;
   openResetKey?: string;
+  storageKey?: string;
   restoreOpen?: boolean;
   expandForPeriodFilter?: boolean;
   metricsReady?: boolean;
@@ -163,6 +164,7 @@ const ReportingPeriodSection: FC<ReportingPeriodSectionProps> = ({
   allPeriodReports,
   defaultOpen = false,
   openResetKey,
+  storageKey,
   restoreOpen,
   expandForPeriodFilter = false,
   metricsReady = true,
@@ -175,7 +177,7 @@ const ReportingPeriodSection: FC<ReportingPeriodSectionProps> = ({
   const t = useT();
   const { format } = useDate();
   const isAdmin = useIsAdmin();
-  const [open, setOpen] = useIndexAccordionOpen({ defaultOpen, resetKey: openResetKey, restoreOpen });
+  const [open, setOpen] = useIndexAccordionOpen({ defaultOpen, resetKey: openResetKey, restoreOpen, storageKey });
   const { trackAttentionDisplayed } = useReportsIndexAnalytics();
 
   useEffect(() => {
