@@ -2,7 +2,7 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { isEmpty } from "lodash";
-import { FC, useCallback, useRef } from "react";
+import { FC, useCallback, useRef, useState } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
@@ -31,6 +31,12 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
 }) => {
   const t = useT();
   const queryRef = useRef("");
+
+  const cacheKey = search?.cacheKey;
+  const [cachedSearchKeys, setCachedSearchKeys] = useState<string[]>([]);
+  if (cacheKey != null && !cachedSearchKeys.includes(cacheKey)) {
+    setCachedSearchKeys([...cachedSearchKeys, cacheKey]);
+  }
 
   const onQueryChange = search?.onQueryChange;
   const onSearchSubmit = search?.onSearchSubmit;
@@ -66,23 +72,27 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
         <Flex className="min-w-0 max-w-full items-center gap-4 mobile:mb-5 mobile:flex-col mobile:items-start mobile:gap-0 mobile:gap-y-4">
           {search != null && (
             <Flex className="w-full min-w-max max-w-max items-center gap-4">
-              {!showSearchInput && (
-                <Box onKeyDown={handleKeyDown} className={classNameContentSearch}>
-                  <Search
-                    key={search.resetKey ?? "search"}
-                    {...({
-                      placeholder: search.placeholder,
-                      disabled: search.disabled,
-                      options: search.options,
-                      resultsMaxHeight: search.resultsMaxHeight,
-                      isLoading: search.isLoading,
-                      displayResults: search.displayResults ?? "none",
-                      onQueryChange: handleQueryChange,
-                      size: "default"
-                    } as SearchProps)}
-                  />
-                </Box>
-              )}
+              {!showSearchInput &&
+                (cacheKey == null ? [search.resetKey ?? "search"] : cachedSearchKeys).map(key => (
+                  <Box
+                    key={key}
+                    onKeyDown={handleKeyDown}
+                    className={classNames(classNameContentSearch, { hidden: cacheKey != null && key !== cacheKey })}
+                  >
+                    <Search
+                      {...({
+                        placeholder: search.placeholder,
+                        disabled: search.disabled,
+                        options: search.options,
+                        resultsMaxHeight: search.resultsMaxHeight,
+                        isLoading: search.isLoading,
+                        displayResults: search.displayResults ?? "none",
+                        onQueryChange: handleQueryChange,
+                        size: "default"
+                      } as SearchProps)}
+                    />
+                  </Box>
+                ))}
 
               <Flex className="items-center gap-1">
                 <Text textStyle="400-bold" color="primary.900">

@@ -296,6 +296,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
                 displayResults: "none",
                 count: reportCount,
                 label: t("Reports"),
+                cacheKey: activeTab,
                 onQueryChange
               }
         }

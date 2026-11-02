@@ -43,13 +43,14 @@ const AdditionalReportGroupSection: FC<{
   group: AdditionalReportGroup;
   defaultOpen: boolean;
   openResetKey?: string;
+  storageKey: string;
   restoreOpen?: boolean;
   indexHref?: string;
   restoreReportId?: string;
   onRowRestored?: () => void;
-}> = ({ group, defaultOpen, openResetKey, restoreOpen, indexHref, restoreReportId, onRowRestored }) => {
+}> = ({ group, defaultOpen, openResetKey, storageKey, restoreOpen, indexHref, restoreReportId, onRowRestored }) => {
   const t = useT();
-  const [open, setOpen] = useIndexAccordionOpen({ defaultOpen, resetKey: openResetKey, restoreOpen });
+  const [open, setOpen] = useIndexAccordionOpen({ defaultOpen, resetKey: openResetKey, restoreOpen, storageKey });
 
   return (
     <Accordion
@@ -103,10 +104,12 @@ const AdditionalReportsEntitySection: FC<{
 }) => {
   const t = useT();
   const isMyOrganisation = useIsMyOrganisation(section.type === "organisation" ? section.id : null);
+  const sectionKey = `${section.type}-${section.id}`;
   const [open, setOpen] = useIndexAccordionOpen({
     defaultOpen,
     resetKey: openResetKey,
-    restoreOpen: restoreGroupId == null ? undefined : section.groups.some(group => group.id === restoreGroupId)
+    restoreOpen: restoreGroupId == null ? undefined : section.groups.some(group => group.id === restoreGroupId),
+    storageKey: sectionKey
   });
   const reports = useMemo(() => section.groups.flatMap(group => group.reports), [section.groups]);
   const attentionCount = useMemo(() => getReportsRequiringAttention(reports), [reports]);
@@ -151,6 +154,7 @@ const AdditionalReportsEntitySection: FC<{
                 group={group}
                 defaultOpen={index === 0}
                 openResetKey={openResetKey}
+                storageKey={`${sectionKey}:${group.id}`}
                 restoreOpen={restoreGroupId == null ? undefined : group.id === restoreGroupId}
                 indexHref={indexHref}
                 restoreReportId={group.id === restoreGroupId ? restoreReportId : undefined}
