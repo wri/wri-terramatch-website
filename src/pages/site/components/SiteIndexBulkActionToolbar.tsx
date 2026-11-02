@@ -65,7 +65,6 @@ const SiteIndexBulkActionToolbar: FC<SiteIndexBulkActionToolbarProps> = ({
       }}
       deleteAction={{
         id: "delete",
-        variant: "negative",
         tone: "danger",
         children: t("Delete"),
         onClick: onDelete,
