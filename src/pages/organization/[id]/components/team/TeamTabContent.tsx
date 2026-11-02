@@ -1,4 +1,4 @@
-import { Box, TableCell, TableRow } from "@chakra-ui/react";
+import { Flex, TableCell, TableRow } from "@chakra-ui/react";
 import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import { Checkbox } from "@worldresources/wri-design-systems";
@@ -28,7 +28,6 @@ import {
   DisallowedIcon,
   InformationRequiredIcon,
   PendingIcon,
-  RefreshIcon,
   RejectedIcon,
   UserAddIcon
 } from "@/redesignComponents/foundations/Icons";
@@ -36,6 +35,7 @@ import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/T
 import { showToast } from "@/redesignComponents/status/Toast/showToast";
 
 import InviteTeamMemberModal from "../InviteTeamMemberModal";
+import InviteReminderCell from "./InviteReminderCell";
 import TeamBulkActionToolbar from "./TeamBulkActionToolbar";
 import TeamMemberActionModal, { type TeamMemberAction } from "./TeamMemberActionModal";
 
@@ -127,6 +127,11 @@ const TeamTabContent: FC = () => {
     [approvedUsers, pendingUsers, rejectedUsers, t]
   );
 
+  const lastMemberId = useMemo(() => {
+    const acceptedMembers = allMembers.filter(member => member.associationStatus === "approved");
+    return acceptedMembers.length === 1 ? acceptedMembers[0].id : null;
+  }, [allMembers]);
+
   const statusOptions = useMemo(
     () =>
       (Object.keys(STATUS_LABELS) as AssociationStatus[]).map(status => ({
@@ -166,10 +171,8 @@ const TeamTabContent: FC = () => {
 
     isSubmittingRef.current = true;
     try {
-      if (rowAction.action === "remove" && rowAction.member.associationStatus === "rejected") {
+      if (rowAction.action === "remove") {
         await bulkDeleteUserAssociations(organisationUuid, [rowAction.member.id], "organisations");
-      } else if (rowAction.action === "remove") {
-        await updateOrganisationUserStatuses(organisationUuid, [rowAction.member.id], "rejected");
       } else {
         await updateOrganisationUserStatuses(
           organisationUuid,
@@ -254,16 +257,7 @@ const TeamTabContent: FC = () => {
         width: "214px",
         cell: (member: TeamMemberRow) => {
           if (member.associationStatus === "invited") {
-            return (
-              <ActionCell
-                buttonSecondary={{
-                  children: t("Send Reminder"),
-                  leftIcon: <RefreshIcon boxSize={3} />,
-                  size: "small",
-                  variant: "secondary"
-                }}
-              />
-            );
+            return <InviteReminderCell organisationUuid={organisationUuid} userUuid={member.id} />;
           }
 
           if (member.associationStatus === "requested") {
@@ -304,6 +298,8 @@ const TeamTabContent: FC = () => {
             );
           }
 
+          if (member.id === lastMemberId) return null;
+
           return (
             <ActionCell
               buttonSecondary={{
@@ -318,7 +314,7 @@ const TeamTabContent: FC = () => {
         }
       }
     ],
-    [isMobile, openRowAction, t]
+    [isMobile, lastMemberId, openRowAction, organisationUuid, t]
   );
 
   const renderRow = useCallback(
@@ -352,7 +348,7 @@ const TeamTabContent: FC = () => {
   );
 
   return (
-    <Box paddingX={6} paddingTop={3} paddingBottom={8} minHeight="644px" width="100%">
+    <Flex direction="column" paddingX={6} paddingTop={3} paddingBottom={8} minHeight="644px" width="100%">
       <ToolbarTable
         className="mb-7 mt-3 !px-0"
         classNameContentLeft="min-w-0"
@@ -397,6 +393,7 @@ const TeamTabContent: FC = () => {
         renderRow={renderRow}
         pageSize={10}
         loading={!approvedLoaded || !pendingLoaded || !rejectedLoaded}
+        className="mb-8"
       />
 
       <TeamBulkActionToolbar
@@ -406,6 +403,7 @@ const TeamTabContent: FC = () => {
           fullName: member.fullName,
           associationStatus: member.associationStatus
         }))}
+        lastMemberId={lastMemberId}
         onCancel={() => setSelectedRowIds(new Set())}
       />
       <TeamMemberActionModal
@@ -426,7 +424,7 @@ const TeamTabContent: FC = () => {
           void handleConfirmRowAction();
         }}
       />
-    </Box>
+    </Flex>
   );
 };
 

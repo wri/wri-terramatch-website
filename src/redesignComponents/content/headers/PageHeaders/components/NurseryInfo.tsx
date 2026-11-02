@@ -11,11 +11,13 @@ import { DownloadIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import DateRange from "./DateRange";
 import DescriptionHeader from "./DescriptionHeader";
+import OrganisationName from "./OrganisationName";
 import SeparatorDot from "./SeparatorDot";
 
 export interface NurseryInfoProps {
   nursery: NurseryFullDto;
   organization: string;
+  organisationUuid?: string | null;
   projectName: string;
   projectUuid: string;
   startDate: string;
@@ -26,6 +28,7 @@ export interface NurseryInfoProps {
 const NurseryInfo: FC<NurseryInfoProps> = ({
   nursery,
   organization,
+  organisationUuid,
   projectName,
   projectUuid,
   startDate,
@@ -67,9 +70,12 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
           {projectName}
         </Button>
         <SeparatorDot />
-        <Button variant="borderless" size="small" className="-ml-2" onClick={() => router.push(`/my-projects`)}>
-          {organization}
-        </Button>
+        <OrganisationName
+          organisationUuid={organisationUuid}
+          name={organization}
+          className="-ml-2"
+          onClick={() => router.push(`/my-projects`)}
+        />
       </Text>
       <DateRange startDate={startDate} endDate={endDate} />
       {description != null ? (

@@ -14,14 +14,19 @@ const findVerticalScrollContainer = (element: HTMLElement): HTMLElement => {
   return document.scrollingElement as HTMLElement;
 };
 
+const getStickyBottom = (element: Element): number => {
+  const { display, position, top } = getComputedStyle(element);
+  if (display === "contents") return Math.max(0, ...Array.from(element.children, getStickyBottom));
+  if (position !== "sticky") return 0;
+  const stickyTop = parseFloat(top);
+  return (Number.isNaN(stickyTop) ? 0 : stickyTop) + element.getBoundingClientRect().height;
+};
+
 const getStickyOffset = (element: HTMLElement, scrollContainer: HTMLElement) => {
   let offset = 0;
   for (let node: HTMLElement | null = element; node != null && node !== scrollContainer; node = node.parentElement) {
     for (let sibling = node.previousElementSibling; sibling != null; sibling = sibling.previousElementSibling) {
-      const { position, top } = getComputedStyle(sibling);
-      if (position !== "sticky") continue;
-      const stickyTop = parseFloat(top);
-      offset = Math.max(offset, (Number.isNaN(stickyTop) ? 0 : stickyTop) + sibling.getBoundingClientRect().height);
+      offset = Math.max(offset, getStickyBottom(sibling));
     }
   }
   return offset;

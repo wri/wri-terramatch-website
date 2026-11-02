@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { ReportsFilterValues, useReportsContext } from "@/context/reports.provider";
+import { ReportsFilterValues } from "@/context/reports.provider";
 
 import {
   AdditionalReport,
@@ -166,6 +166,7 @@ type UseReportsIndexFiltersArgs = {
   progressSections: ReportsIndexProjectSection[];
   additionalSections: AdditionalReportsEntitySection[];
   query: string;
+  filters: ReportsFilterValues;
   reportTypesSpanSections?: boolean;
 };
 
@@ -173,9 +174,9 @@ export const useReportsIndexFilters = ({
   progressSections,
   additionalSections,
   query,
+  filters,
   reportTypesSpanSections = false
 }: UseReportsIndexFiltersArgs) => {
-  const { filters } = useReportsContext();
   const criteria = useMemo(
     () => toFilterCriteria(query, filters, reportTypesSpanSections),
     [query, filters, reportTypesSpanSections]

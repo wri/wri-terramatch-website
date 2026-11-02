@@ -478,6 +478,7 @@ export type ProjectReportLightDto = {
    */
   updatedAt: string;
   pctSurvivalToDate: number | null;
+  feedback: string | null;
 };
 
 export type SiteReportLightDto = {
@@ -553,6 +554,7 @@ export type SiteReportLightDto = {
    */
   totalTreesRegeneratingSpeciesCount: number | null;
   numTreesRegenerating: number | null;
+  feedback: string | null;
 };
 
 export type NurseryReportLightDto = {
@@ -623,6 +625,7 @@ export type NurseryReportLightDto = {
   createdAt: string;
   nothingToReport: boolean | null;
   seedlingsYoungTrees: number | null;
+  feedback: string | null;
 };
 
 export type SrpReportLightDto = {
@@ -678,6 +681,7 @@ export type SrpReportLightDto = {
    * @format date-time
    */
   submittedAt: string | null;
+  feedback: string | null;
 };
 
 export type TaskFullDto = {
@@ -1455,6 +1459,7 @@ export type SiteLightDto = {
    */
   treesRestoredPpc: number;
   totalSiteReports: number;
+  feedback: string | null;
   /**
    * @format date-time
    */
@@ -1520,6 +1525,7 @@ export type NurseryLightDto = {
    */
   updatedAt: string;
   projectUuid: string | null;
+  feedback: string | null;
 };
 
 export type FinancialReportLightDto = {
@@ -1564,6 +1570,7 @@ export type FinancialReportLightDto = {
    * @format date-time
    */
   updatedAt: string;
+  feedback: string | null;
 };
 
 export type DisturbanceReportEntryDto = {
@@ -1652,6 +1659,7 @@ export type DisturbanceReportLightDto = {
    * @format date-time
    */
   disturbanceEndDate: string | null;
+  feedback: string | null;
 };
 
 export type ProjectReportMetaDto = {
@@ -1689,6 +1697,10 @@ export type ProjectNurseriesMetaDto = {
    */
   nurseriesMatching: number;
   /**
+   * Number of nurseries that match the filters with a status or update request status of "draft" or "information-required"
+   */
+  nurseriesRequiringAttention: number;
+  /**
    * Seedlings grown across all nurseries in the project
    */
   seedlingsGrownTotal: number;
@@ -1715,6 +1727,10 @@ export type ProjectSitesMetaDto = {
    * Number of sites in the project that match the filters
    */
   sitesMatching: number;
+  /**
+   * Number of sites that match the filters with a status or update request status of "draft" or "information-required"
+   */
+  sitesRequiringAttention: number;
   /**
    * Trees planted across all sites in the project
    */
@@ -1929,6 +1945,18 @@ export type ProjectFullDto = {
    */
   treesGrownGoal: number | null;
   jobsCreatedGoal: number | null;
+  /**
+   * Project trees planted goal: sum of the trees-goal 'tree-planting' strategy entries, without the ANR and direct-seeding strategy amounts.
+   */
+  treesPlantedGoal: number;
+  /**
+   * Sum of visible tree species amounts for collection 'nursery-seedling' across all nurseries of this project.
+   */
+  treesSeedlingsGoal: number;
+  /**
+   * Sum of the gender entries of the project's demographics / jobs / full-time tracking (the aggregate full-time jobs goal).
+   */
+  fullTimeJobsGoal: number;
   survivalRate: number | null;
   lastReportedSurvivalRate: number | null;
   landUseTypes: string[] | null;
@@ -2060,6 +2088,7 @@ export type SiteFullDto = {
    */
   treesRestoredPpc: number;
   totalSiteReports: number;
+  feedback: string | null;
   /**
    * @format date-time
    */
@@ -2115,7 +2144,6 @@ export type SiteFullDto = {
   landUseTypes: string[] | null;
   restorationStrategy: string[] | null;
   anrPractices: string[] | null;
-  feedback: string | null;
   feedbackFields: string[] | null;
   detailedInterventionTypes: string[] | null;
   media: MediaDto[];
@@ -2194,11 +2222,11 @@ export type NurseryFullDto = {
    */
   updatedAt: string;
   projectUuid: string | null;
+  feedback: string | null;
   /**
    * When true, report generation is paused for this nursery. Independent of project archival.
    */
   isArchived: boolean;
-  feedback: string | null;
   feedbackFields: string[] | null;
   type: string | null;
   seedlingGrown: number | null;
@@ -2425,8 +2453,8 @@ export type NurseryReportFullDto = {
   createdAt: string;
   nothingToReport: boolean | null;
   seedlingsYoungTrees: number | null;
-  projectReportTitle: string | null;
   feedback: string | null;
+  projectReportTitle: string | null;
   feedbackFields: string[] | null;
   interestingFacts: string | null;
   sitePrep: string | null;
@@ -2515,8 +2543,8 @@ export type SiteReportFullDto = {
    */
   totalTreesRegeneratingSpeciesCount: number | null;
   numTreesRegenerating: number | null;
-  projectReportTitle: string | null;
   feedback: string | null;
+  projectReportTitle: string | null;
   feedbackFields: string[] | null;
   title: string | null;
   sharedDriveLink: string | null;
@@ -2695,10 +2723,10 @@ export type FinancialReportFullDto = {
    * @format date-time
    */
   updatedAt: string;
+  feedback: string | null;
   title: string | null;
   completion: number | null;
   nothingToReport: boolean | null;
-  feedback: string | null;
   feedbackFields: string[] | null;
   answers: string | null;
   financialCollection: FinancialIndicatorDto[] | null;
@@ -2768,6 +2796,7 @@ export type DisturbanceReportFullDto = {
    * @format date-time
    */
   disturbanceEndDate: string | null;
+  feedback: string | null;
   title: string | null;
   /**
    * @format date-time
@@ -2779,7 +2808,6 @@ export type DisturbanceReportFullDto = {
   dueAt: string | null;
   completion: number | null;
   nothingToReport: boolean | null;
-  feedback: string | null;
   feedbackFields: string[] | null;
   answers: string | null;
   description: string | null;
@@ -2841,10 +2869,10 @@ export type SrpReportFullDto = {
    * @format date-time
    */
   submittedAt: string | null;
+  feedback: string | null;
   title: string | null;
   nothingToReport: boolean | null;
   frameworkKey: string | null;
-  feedback: string | null;
   feedbackFields: string[] | null;
   answers: string | null;
   restorationPartnersDescription: string | null;

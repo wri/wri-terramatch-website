@@ -299,7 +299,12 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({ 
       });
       setDefaultTab(params?.defaultTab ?? "edit");
       if (polygonUuid != null && polygonUuid !== "") {
-        setEditPolygon({ isOpen: true, uuid: polygonUuid, primaryUuid: primaryUuid ?? undefined });
+        setEditPolygon({
+          isOpen: true,
+          uuid: polygonUuid,
+          primaryUuid: primaryUuid ?? undefined,
+          status: params?.sitePolygon?.status ?? undefined
+        });
       }
       setIsOpen(true);
     },
@@ -330,7 +335,8 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({ 
         setEditPolygon({
           isOpen: true,
           uuid: sitePolygon.polygonUuid,
-          primaryUuid: sitePolygon.primaryUuid ?? undefined
+          primaryUuid: sitePolygon.primaryUuid ?? undefined,
+          status: sitePolygon.status ?? undefined
         });
       }
     },

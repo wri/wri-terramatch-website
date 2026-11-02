@@ -114,7 +114,13 @@ const SrpReportOverviewTab: FC<SrpReportOverviewTabProps> = ({ report, onViewDet
           </PageItem>
         </Flex>
         <PageItem title={t("About SRP Report")} flexProps={{ width: "100%" }}>
-          <Flex direction="column" gap={2} backgroundColor="neutral.100" padding={5} borderRadius={1}>
+          <Flex
+            direction={{ base: "column", lg: "row" }}
+            gap={12}
+            backgroundColor="neutral.100"
+            padding={5}
+            borderRadius={1}
+          >
             <Flex direction="column" gap={5}>
               <Flex direction="column" gap={4}>
                 <Text color="neutral.900" textStyle="300">
@@ -143,7 +149,6 @@ const SrpReportOverviewTab: FC<SrpReportOverviewTabProps> = ({ report, onViewDet
                 subject="Support Request for SRP Report"
               />
             </Flex>
-
             <Flex id="guidance-document" direction="column" gap={2}>
               <Text color="neutral.900" textStyle="500-bold">
                 {t("Helpful Links")}

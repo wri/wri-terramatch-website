@@ -28,7 +28,7 @@ export type BulkToolbarAction = IButtonProps & {
 export interface BulkActionToolbarProps {
   selectedCount: number;
   cancelAction: IButtonProps;
-  deleteAction: BulkToolbarAction;
+  deleteAction?: BulkToolbarAction;
   actions?: BulkToolbarAction[];
   primaryAction?: IButtonProps | IMultiActionButtonProps;
   infoTooltip?: ReactNode;
@@ -78,6 +78,7 @@ export interface SearchProps {
   displayResults?: "none" | "text" | "list" | "custom";
   label?: string;
   resetKey?: string | number;
+  cacheKey?: string;
   onQueryChange?: (query: string) => void;
   onSearchSubmit?: (query: string) => void;
   count?: number;

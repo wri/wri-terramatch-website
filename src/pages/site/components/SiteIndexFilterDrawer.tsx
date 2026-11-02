@@ -61,15 +61,13 @@ const SiteIndexFilterDrawer: FC<SiteIndexFilterDrawerProps> = ({
   const activeFilterTags = useMemo(() => {
     const tags: { id: string; label: string }[] = [];
 
-    draftFilters.forEach(status => {
-      const option = statusOptions.find(item => item.value === status);
-      tags.push({ id: `status-${status}`, label: option?.label ?? status });
-    });
+    statusOptions
+      .filter(option => draftFilters.includes(option.value))
+      .forEach(option => tags.push({ id: `status-${option.value}`, label: option.label }));
 
-    draftUpdateFilters.forEach(update => {
-      const option = updateOptions.find(item => item.value === update);
-      tags.push({ id: `update-${update}`, label: option?.label ?? update });
-    });
+    updateOptions
+      .filter(option => draftUpdateFilters.includes(option.value))
+      .forEach(option => tags.push({ id: `update-${option.value}`, label: option.label }));
 
     return tags;
   }, [draftFilters, draftUpdateFilters, statusOptions, updateOptions]);

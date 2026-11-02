@@ -1,5 +1,4 @@
 import { Button, Flex, Text } from "@chakra-ui/react";
-import { useT } from "@transifex/react";
 import classNames from "classnames";
 import React, { FC, useEffect, useState } from "react";
 
@@ -51,7 +50,6 @@ const SideNavigation: FC<SideNavigationProps> = ({
   isCollapsedDisabled = false
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
-  const t = useT();
 
   useEffect(() => {
     if (isCollapsedDisabled) {
@@ -87,7 +85,7 @@ const SideNavigation: FC<SideNavigationProps> = ({
           textStyle="400-bold"
           className={classNames(isCollapsed ? "max-w-0 opacity-0" : "max-w-[12.5rem] opacity-100")}
         >
-          {t(title)}
+          {title}
         </Text>
         <ChevronRightIcon
           boxSize={4}

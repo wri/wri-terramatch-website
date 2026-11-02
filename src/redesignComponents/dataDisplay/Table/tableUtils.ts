@@ -33,6 +33,7 @@ export type RowData = BaseRow & {
 
 export const DEFAULT_TOTAL_ITEMS = 100;
 export const DEFAULT_PAGE_SIZE = 10;
+export const MIN_PAGE_SIZE_OPTION = 10;
 export const DEFAULT_CURRENT_PAGE = 1;
 
 export type SortColumn = {

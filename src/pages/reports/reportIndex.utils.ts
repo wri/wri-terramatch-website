@@ -1,5 +1,6 @@
 import type { ParsedUrlQuery } from "querystring";
 
+import type { EntityUpdateStatusValue } from "@/components/extensive/EntityIndex/EntityUpdateStatus";
 import type { ReportsFilterValues } from "@/context/reports.provider";
 import type { FeedbackTagProps } from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import type { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
@@ -195,8 +196,15 @@ export const REPORTS_INDEX_ATTENTION_STATUSES: ReadonlySet<TagSubmissionState> =
 
 const REPORTS_INDEX_COMPLETE_STATUSES: ReadonlySet<TagSubmissionState> = new Set(["approved"]);
 
-export const getReportsRequiringAttention = (reports: Array<{ status: TagSubmissionState }>) =>
-  reports.filter(report => REPORTS_INDEX_ATTENTION_STATUSES.has(report.status)).length;
+// A report needs attention when its status or its update request status is due, draft or information-required.
+export const getReportsRequiringAttention = (
+  reports: Array<{ status: TagSubmissionState; updateRequestStatus?: EntityUpdateStatusValue | null }>
+) =>
+  reports.filter(
+    report =>
+      REPORTS_INDEX_ATTENTION_STATUSES.has(report.status) ||
+      (report.updateRequestStatus != null && REPORTS_INDEX_ATTENTION_STATUSES.has(report.updateRequestStatus))
+  ).length;
 
 export const areAllReportsComplete = (reports: Array<{ status: TagSubmissionState }>) =>
   reports.length > 0 && reports.every(report => REPORTS_INDEX_COMPLETE_STATUSES.has(report.status));

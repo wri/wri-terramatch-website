@@ -22,6 +22,7 @@ export interface SiteIndexSite {
   status: SiteIndexStatus;
   update: SiteIndexUpdate | null;
   updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
+  feedback: string | null;
   createdAt: string;
   updatedAt: string;
   plantingStatus: string | null;

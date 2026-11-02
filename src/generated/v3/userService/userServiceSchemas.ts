@@ -1050,7 +1050,7 @@ export type UserAssociationDto = {
   lastLoggedInAt: string | null;
   associatedType: string;
   /**
-   * True while an organisation invite has been sent but not yet accepted (the user has not signed up yet). Organisation members only; the FE shows these as Awaiting Response.
+   * True while an organisation invite has been sent but not yet accepted (the user has not signed up yet). Organisation members only; the FE shows these as Invited.
    */
   invitePending?: boolean;
 };
@@ -1149,6 +1149,13 @@ export type OrganisationInviteRequestDto = {
    * Optional callback URL base for the signup link in the email.
    */
   callbackUrl?: Record<string, any>;
+};
+
+export type OrganisationInviteReminderRequestDto = {
+  /**
+   * Optional callback URL base for the signup link in the reminder email.
+   */
+  callbackUrl?: string;
 };
 
 export type ProjectInviteAcceptanceDto = {

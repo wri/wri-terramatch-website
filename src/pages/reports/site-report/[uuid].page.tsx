@@ -37,6 +37,8 @@ type TabItem = {
   hideForFrameworks?: Framework[];
 };
 
+const NOTHING_TO_REPORT_TABS = ["overview", "audit-log"];
+
 type SiteReportContentProps = {
   siteReport: SiteReportFullDto;
   site?: SiteFullDto;
@@ -124,7 +126,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
       },
       {
         key: "audit-log",
-        title: t("Audit Log"),
+        title: t("History"),
         renderBody: () => <AuditLog siteReport={siteReport} />
       }
     ],
@@ -134,7 +136,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
   const visibleTabItems = useMemo(() => {
     const filtered = tabItems.filter(item => !item.hideForFrameworks?.includes(framework));
     if (siteReport.nothingToReport) {
-      return filtered.filter(item => item.key === "overview");
+      return filtered.filter(item => NOTHING_TO_REPORT_TABS.includes(item.key));
     }
     return filtered;
   }, [tabItems, framework, siteReport.nothingToReport]);

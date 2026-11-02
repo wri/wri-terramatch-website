@@ -5,9 +5,10 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { indexProjectConnection } from "@/connections/Entity";
-import { useReportsContext } from "@/context/reports.provider";
+import { useReportsContext, useReportsTabFilters } from "@/context/reports.provider";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useAllPages } from "@/hooks/useConnection";
+import { IndexAccordionStorageContext } from "@/hooks/useIndexAccordionOpen";
 import { InfiniteScrollSentinel } from "@/hooks/useInfiniteScrollSentinel";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import type { HighLevelSelectorItem } from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector.types";
@@ -46,17 +47,24 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
   const SOURCE = "project" as const;
   const t = useT();
   const router = useRouter();
-  const { filters } = useReportsContext();
   const viewFromQuery = typeof router.query.view === "string" ? router.query.view : undefined;
   const uuidFromQuery = typeof router.query.uuid === "string" ? router.query.uuid : undefined;
   const tabFromQuery = typeof router.query.tab === "string" ? router.query.tab : undefined;
   const activeTab: ReportsIndexTab = isReportsIndexTab(tabFromQuery) ? tabFromQuery : "progress-reports";
-  const [query, setQuery] = useState("");
+  // Read for the tab being rendered, so a tab switch never shows the other tab's filters.
+  const filters = useReportsTabFilters(activeTab);
+  const { queryByTab, setQueryByTab, viewByTab, setViewByTab, accordionStates } = useReportsContext();
+  const query = queryByTab[activeTab] ?? "";
+  const setQuery = useCallback(
+    (nextQuery: string) => setQueryByTab(current => ({ ...current, [activeTab]: nextQuery })),
+    [activeTab, setQueryByTab]
+  );
+  const accordionStorage = useMemo(() => ({ scope: activeTab, states: accordionStates }), [activeTab, accordionStates]);
   const [viewValue, setViewValue] = useState(
     viewFromQuery === ALL_PROJECTS_VIEW_VALUE ? ALL_PROJECTS_VIEW_VALUE : project.uuid
   );
   const { clearSelection } = useReportsSelectionActions();
-  const [, projects] = useAllPages(indexProjectConnection, {});
+  const [projectsLoaded, projects] = useAllPages(indexProjectConnection, {});
   const isSingleProject = projects?.length === 1;
   useEffect(() => {
     if (isSingleProject && viewValue !== project.uuid) setViewValue(project.uuid);
@@ -79,7 +87,7 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
   const isKnownProjectView = viewValue === project.uuid || (projects ?? []).some(item => item.uuid === viewValue);
   const isOrganisationView =
     organisationViewItems.some(item => item.value === viewValue) ||
-    (viewFromQuery === viewValue && viewValue !== ALL_PROJECTS_VIEW_VALUE && !isKnownProjectView);
+    (projectsLoaded && viewFromQuery === viewValue && viewValue !== ALL_PROJECTS_VIEW_VALUE && !isKnownProjectView);
   const isAllProjectsView = viewValue === ALL_PROJECTS_VIEW_VALUE || isOrganisationView;
   const isSwitchingProject = !isAllProjectsView && viewValue !== project.uuid;
   const selectedAdditionalProject =
@@ -113,7 +121,11 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
     hasMore: allProjectsHasMore,
     loadingMore: allProjectsLoadingMore,
     loadMore: allProjectsLoadMore
-  } = useAllProjectsReportsData({ query, enabled: isAllProjectsView && activeTab === "progress-reports" });
+  } = useAllProjectsReportsData({
+    query,
+    filters,
+    enabled: isAllProjectsView && activeTab === "progress-reports"
+  });
   const {
     sections: additionalSections,
     loading: additionalLoading,
@@ -127,12 +139,15 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
   );
 
   const { filteredProgressSections, filteredAdditionalSections, progressReportCount, additionalReportCount } =
-    useReportsIndexFilters({ progressSections, additionalSections, query });
+    useReportsIndexFilters({ progressSections, additionalSections, query, filters });
 
   const reportTypeFromQuery = typeof router.query.reportType === "string" ? router.query.reportType : undefined;
   const indexHref = getReportsIndexUrl(SOURCE, project.uuid, {
     tab: activeTab,
-    view: viewValue === ALL_PROJECTS_VIEW_VALUE || isOrganisationView ? viewValue : undefined,
+    view:
+      viewValue === ALL_PROJECTS_VIEW_VALUE || isOrganisationView || activeTab === "additional-reports"
+        ? viewValue
+        : undefined,
     reportType: reportTypeFromQuery
   });
 
@@ -335,19 +350,24 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
   const handleTabChange = useCallback(
     (tab: string) => {
       clearSelection();
-      setViewValue(ALL_PROJECTS_VIEW_VALUE);
+      const nextView = viewByTab[tab] ?? ALL_PROJECTS_VIEW_VALUE;
+      setViewByTab(current => ({ ...current, [activeTab]: viewValue }));
+      setViewValue(nextView);
       const query = { ...router.query };
-      query.view = ALL_PROJECTS_VIEW_VALUE;
+      if (tab === "progress-reports" && nextView === project.uuid) {
+        delete query.view;
+      } else {
+        query.view = nextView;
+      }
       if (tab === "additional-reports") {
         query.tab = tab;
         delete query.reportType;
       } else {
         delete query.tab;
       }
-      setQuery("");
       void router.replace({ pathname: router.pathname, query }, undefined, { shallow: true });
     },
-    [clearSelection, router]
+    [activeTab, clearSelection, project.uuid, router, setViewByTab, viewByTab, viewValue]
   );
 
   return (
@@ -355,8 +375,8 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
       <ReportsIndexHeader
         activeTab={activeTab}
         source={SOURCE}
-        sourceUuid={project.uuid}
         projectUuid={(selectedAdditionalProject ?? project).uuid}
+        projectFrameworkKey={(selectedAdditionalProject ?? project).frameworkKey}
         reportCount={reportCount}
         viewValue={headerViewValue}
         viewItems={viewItems}
@@ -368,104 +388,109 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
         addDisturbanceReportDisabled={isAllProjectsView}
         showViewSelector={!isSingleProject}
       />
-      <PageContent className="h-auto flex-1 px-2 pt-0 pb-8">
-        {activeTab === "progress-reports" && (
-          <>
-            {(isAllProjectsView ? allProjectsLoading : progressLoading) || isSwitchingProject || !restoreReady ? (
-              <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
-                <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
-                <Text textStyle="400" color="neutral.800">
-                  {t("Loading reports...")}
-                </Text>
-              </Flex>
-            ) : isAllProjectsView ? (
-              allProjectsError ? (
+      <IndexAccordionStorageContext.Provider value={accordionStorage}>
+        <PageContent className="h-auto flex-1 px-2 pt-0 pb-8">
+          {activeTab === "progress-reports" && (
+            <>
+              {(isAllProjectsView ? allProjectsLoading : progressLoading) || isSwitchingProject || !restoreReady ? (
+                <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
+                  <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
+                  <Text textStyle="400" color="neutral.800">
+                    {t("Loading reports...")}
+                  </Text>
+                </Flex>
+              ) : isAllProjectsView ? (
+                allProjectsError ? (
+                  <NoResults
+                    title={t("Reports could not be loaded")}
+                    description={t("Please refresh the page and try again.")}
+                  />
+                ) : allProjectsMetas.length === 0 ? (
+                  <NoResults title={t("No reports found")} description={t("Try changing your search or filters.")} />
+                ) : (
+                  <div className="space-y-4">
+                    {allProjectsMetas.map((meta, index) => (
+                      <ProjectReportsMetaSection
+                        key={meta.uuid}
+                        meta={meta}
+                        query={query}
+                        filters={filters}
+                        defaultOpen={index === 0}
+                        openResetKey={accordionOpenResetKey}
+                        expandForPeriodFilter={hasActivePeriodFilter}
+                        hasReportSubset={hasReportSubset}
+                        indexHref={indexHref}
+                        restoreReportId={
+                          meta.uuid === allProjectsRestoreUuid ? restoreReportId ?? undefined : undefined
+                        }
+                        onRowRestored={handleRowRestored}
+                      />
+                    ))}
+                    <InfiniteScrollSentinel
+                      hasMore={allProjectsHasMore}
+                      loading={allProjectsLoading}
+                      loadingMore={allProjectsLoadingMore}
+                      label={t("Loading reports...")}
+                      resetKey={allProjectsMetas.length}
+                      onLoadMore={allProjectsLoadMore}
+                    />
+                  </div>
+                )
+              ) : progressError ? (
                 <NoResults
                   title={t("Reports could not be loaded")}
                   description={t("Please refresh the page and try again.")}
                 />
-              ) : allProjectsMetas.length === 0 ? (
-                <NoResults title={t("No reports found")} description={t("Try changing your search or filters.")} />
+              ) : filteredProgressSections.length === 0 ? (
+                hasActiveSearch ? (
+                  <NoResults
+                    title={t("No reports found")}
+                    description={t("We couldn’t find any reports matching your search. Try a different keyword.")}
+                  />
+                ) : (
+                  <NoResults title={t("No reports found")} description={t("Try changing your search or filters.")} />
+                )
               ) : (
                 <div className="space-y-4">
-                  {allProjectsMetas.map((meta, index) => (
-                    <ProjectReportsMetaSection
-                      key={meta.uuid}
-                      meta={meta}
-                      query={query}
+                  {filteredProgressSections.map((section, index) => (
+                    <ProjectReportsSection
+                      key={section.id}
+                      section={section}
+                      unfilteredPeriods={unfilteredPeriodsByProjectId.get(section.id)}
                       defaultOpen={index === 0}
                       openResetKey={accordionOpenResetKey}
                       expandForPeriodFilter={hasActivePeriodFilter}
+                      metricsReady={!progressLoading}
                       hasReportSubset={hasReportSubset}
                       indexHref={indexHref}
-                      restoreReportId={meta.uuid === allProjectsRestoreUuid ? restoreReportId ?? undefined : undefined}
+                      restoreSectionId={progressRestore?.sectionId}
+                      restorePeriodId={progressRestore?.periodId}
+                      restoreReportId={restoreReportId ?? undefined}
                       onRowRestored={handleRowRestored}
                     />
                   ))}
-                  <InfiniteScrollSentinel
-                    hasMore={allProjectsHasMore}
-                    loading={allProjectsLoading}
-                    loadingMore={allProjectsLoadingMore}
-                    label={t("Loading reports...")}
-                    resetKey={allProjectsMetas.length}
-                    onLoadMore={allProjectsLoadMore}
-                  />
                 </div>
-              )
-            ) : progressError ? (
-              <NoResults
-                title={t("Reports could not be loaded")}
-                description={t("Please refresh the page and try again.")}
-              />
-            ) : filteredProgressSections.length === 0 ? (
-              hasActiveSearch ? (
-                <NoResults
-                  title={t("No reports found")}
-                  description={t("We couldn’t find any reports matching your search. Try a different keyword.")}
-                />
-              ) : (
-                <NoResults title={t("No reports found")} description={t("Try changing your search or filters.")} />
-              )
-            ) : (
-              <div className="space-y-4">
-                {filteredProgressSections.map((section, index) => (
-                  <ProjectReportsSection
-                    key={section.id}
-                    section={section}
-                    unfilteredPeriods={unfilteredPeriodsByProjectId.get(section.id)}
-                    defaultOpen={index === 0}
-                    openResetKey={accordionOpenResetKey}
-                    expandForPeriodFilter={hasActivePeriodFilter}
-                    metricsReady={!progressLoading}
-                    hasReportSubset={hasReportSubset}
-                    indexHref={indexHref}
-                    restoreSectionId={progressRestore?.sectionId}
-                    restorePeriodId={progressRestore?.periodId}
-                    restoreReportId={restoreReportId ?? undefined}
-                    onRowRestored={handleRowRestored}
-                  />
-                ))}
-              </div>
-            )}
-          </>
-        )}
+              )}
+            </>
+          )}
 
-        {activeTab === "additional-reports" && (
-          <AdditionalReportsContent
-            sections={filteredAdditionalSections}
-            loading={additionalLoading || !restoreReady}
-            error={additionalError}
-            hasActiveSearch={hasActiveSearch}
-            openResetKey={accordionOpenResetKey}
-            indexHref={indexHref}
-            restoreGroupId={additionalRestore?.groupId}
-            restoreReportId={restoreReportId ?? undefined}
-            onRowRestored={handleRowRestored}
-          />
-        )}
+          {activeTab === "additional-reports" && (
+            <AdditionalReportsContent
+              sections={filteredAdditionalSections}
+              loading={additionalLoading || !restoreReady}
+              error={additionalError}
+              hasActiveSearch={hasActiveSearch}
+              openResetKey={accordionOpenResetKey}
+              indexHref={indexHref}
+              restoreGroupId={additionalRestore?.groupId}
+              restoreReportId={restoreReportId ?? undefined}
+              onRowRestored={handleRowRestored}
+            />
+          )}
 
-        <ReportsIndexBulkBar indexHref={indexHref} />
-      </PageContent>
+          <ReportsIndexBulkBar indexHref={indexHref} />
+        </PageContent>
+      </IndexAccordionStorageContext.Provider>
     </>
   );
 };

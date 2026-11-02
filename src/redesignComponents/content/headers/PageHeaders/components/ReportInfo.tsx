@@ -21,6 +21,7 @@ import Avatar from "@/redesignComponents/navigation/Avatar/Avatar";
 import { EntityName, SingularEntityName } from "@/types/common";
 
 import DateRange from "./DateRange";
+import OrganisationName from "./OrganisationName";
 import SeparatorDot from "./SeparatorDot";
 
 export interface ReportInfoProps {
@@ -88,14 +89,12 @@ const ReportInfo: FC<ReportInfoProps> = ({ report, dueAt, entityName }) => {
             <SeparatorDot />
           </>
         )}
-        <Button
-          variant="borderless"
-          size="small"
+        <OrganisationName
+          organisationUuid={report.organisationUuid}
+          name={report.organisationName ?? "—"}
           className={classNames(entityName !== "financial-report" && "projectUuid" in report && "-ml-2")}
           onClick={() => report.organisationUuid != null && router.push(`/organization/${report.organisationUuid}`)}
-        >
-          {report.organisationName ?? "—"}
-        </Button>
+        />
       </Text>
       <DateRange
         startDate={formatMonthYear(dueAt ?? report.dueAt)}

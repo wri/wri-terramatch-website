@@ -148,7 +148,7 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
         classNameContentSearch="w-[19rem] max-w-full"
         search={{
           label: siteCount === 1 ? t("Site") : t("Sites"),
-          placeholder: t("Search sites"),
+          placeholder: t("Search"),
           options: [],
           displayResults: "none",
           onQueryChange,

@@ -20,6 +20,7 @@ const NurseryHeader: FC<NurseryHeaderProps> = ({ nursery }) => (
         <NurseryInfo
           nursery={nursery}
           organization={nursery.organisationName ?? "-"}
+          organisationUuid={nursery.organisationUuid}
           projectName={nursery.projectName ?? "-"}
           projectUuid={nursery.projectUuid ?? ""}
           description={nursery.plantingContribution ?? ""}

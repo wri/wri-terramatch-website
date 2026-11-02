@@ -3198,6 +3198,10 @@ export type ReportCountsGetQueryParams = {
    */
   reportTypes?: ("disturbanceReports" | "nurseryReports" | "projectReports" | "siteReports" | "srpReports")[];
   statuses?: ("due" | "draft" | "pending-approval" | "approved" | "information-required")[];
+  /**
+   * Update request statuses to match. A report with no update request never matches.
+   */
+  updateRequestStatuses?: ("draft" | "pending-approval" | "approved" | "information-required")[];
   projectUuid?: string;
   /**
    * Search term matched against project, site and nursery names. A site or nursery report matches if its site / nursery or project name matches; project-level reports match on project name.
@@ -4075,6 +4079,10 @@ export type EntityReportsMetaIndexQueryParams = {
    */
   reportTypes?: ("disturbanceReports" | "nurseryReports" | "projectReports" | "siteReports" | "srpReports")[];
   statuses?: ("due" | "draft" | "pending-approval" | "approved" | "information-required")[];
+  /**
+   * Update request statuses to match. A report with no update request never matches.
+   */
+  updateRequestStatuses?: ("draft" | "pending-approval" | "approved" | "information-required")[];
   projectUuid?: string;
   /**
    * Search term matched against project, site and nursery names. A site or nursery report matches if its site / nursery or project name matches; project-level reports match on project name.

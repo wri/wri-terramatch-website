@@ -108,14 +108,12 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
         tags.push({ id: `type-${type}`, label: reportTypeLabels[type] });
       });
     }
-    draftFilters.statuses.forEach(status => {
-      const option = statusOptions.find(item => item.value === status);
-      tags.push({ id: `status-${status}`, label: option?.title ?? status });
-    });
-    draftFilters.updateStatuses.forEach(updateStatus => {
-      const option = updateStatusOptions.find(item => item.value === updateStatus);
-      tags.push({ id: `update-${updateStatus}`, label: option?.title ?? updateStatus });
-    });
+    statusOptions
+      .filter(option => draftFilters.statuses.includes(String(option.value)))
+      .forEach(option => tags.push({ id: `status-${option.value}`, label: option.title }));
+    updateStatusOptions
+      .filter(option => draftFilters.updateStatuses.includes(String(option.value)))
+      .forEach(option => tags.push({ id: `update-${option.value}`, label: option.title }));
 
     const periodLabel = formatReportPeriodLabel(draftFilters, format);
     if (periodLabel != null) {

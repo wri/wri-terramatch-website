@@ -3,7 +3,6 @@ import classNames from "classnames";
 import { useRouter } from "next/router";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
-import { useCreateDisturbanceReport } from "@/connections/Entity";
 import { getReportStatusOptions, getUpdateStatusFilterOptions } from "@/constants/options/status";
 import { useReportsContext } from "@/context/reports.provider";
 import { useDate } from "@/hooks/useDate";
@@ -18,9 +17,8 @@ import Toolbar from "@/redesignComponents/navigation/Toolbar/Toolbar";
 import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
-import ApiSlice from "@/store/apiSlice";
 
-import { ALL_PROJECTS_VIEW_VALUE, getReportsIndexUrl } from "../reportIndex.utils";
+import { ALL_PROJECTS_VIEW_VALUE, getReportsIndexUrl, withReportsIndexReturn } from "../reportIndex.utils";
 import { ReportPeriodOptions } from "../reportPeriodFilter";
 import {
   clearReportPeriodFilters,
@@ -38,8 +36,9 @@ import ReportsFilterDrawer from "./ReportsFilterDrawer";
 type ReportsIndexHeaderProps = {
   activeTab: string;
   source: "project" | "site" | "nursery";
-  sourceUuid: string;
+  sourceUuid?: string;
   projectUuid: string;
+  projectFrameworkKey: string | null;
   reportCount: number;
   viewValue: string;
   viewItems: HighLevelSelectorItem[];
@@ -56,22 +55,12 @@ type ReportsIndexHeaderProps = {
   showViewSelector?: boolean;
 };
 
-const getSearchPlaceholder = (
-  t: ReturnType<typeof useT>,
-  source: ReportsIndexHeaderProps["source"],
-  activeTab: string,
-  entityProfile: boolean
-) => {
-  if (entityProfile && source === "site") return t("Search sites");
-  if (entityProfile && source === "nursery") return t("Search nurseries");
-  return activeTab === "progress-reports" ? t("Search reports") : t("Search");
-};
-
 const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
   activeTab,
   source,
   sourceUuid,
   projectUuid,
+  projectFrameworkKey,
   reportCount,
   viewValue,
   viewItems,
@@ -89,16 +78,11 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
   const t = useT();
   const router = useRouter();
   const { format } = useDate();
-  const { setFilters } = useReportsContext();
-  const searchPlaceholder = getSearchPlaceholder(t, source, activeTab, entityProfile);
+  const { filtersByTab, setFiltersByTab } = useReportsContext();
   const { trackFilterApplied, trackDisturbanceReportClicked } = useReportsIndexAnalytics();
 
   const reportTypeFromQuery = typeof router.query.reportType === "string" ? router.query.reportType : undefined;
 
-  const [filtersByTab, setFiltersByTab] = useState<Record<string, ReportFilterState>>(() => ({
-    "progress-reports": getInitialProgressFilters(source, reportTypeFromQuery),
-    "additional-reports": EMPTY_REPORT_FILTERS
-  }));
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const selectedFilters = filtersByTab[activeTab] ?? EMPTY_REPORT_FILTERS;
   const statusOptions = useMemo(() => getReportStatusOptions(t), [t]);
@@ -108,7 +92,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
     (next: ReportFilterState) => {
       setFiltersByTab(current => ({ ...current, [activeTab]: next }));
     },
-    [activeTab]
+    [activeTab, setFiltersByTab]
   );
 
   useEffect(() => {
@@ -116,25 +100,18 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
       "progress-reports": getInitialProgressFilters(source, reportTypeFromQuery),
       "additional-reports": EMPTY_REPORT_FILTERS
     });
-  }, [reportTypeFromQuery, source, sourceUuid]);
+  }, [reportTypeFromQuery, setFiltersByTab, source, sourceUuid]);
 
-  useEffect(() => {
-    setFilters(filtersByTab[activeTab] ?? EMPTY_REPORT_FILTERS);
-  }, [activeTab, filtersByTab, setFilters]);
-
-  const { create: createDisturbanceReport, isCreating: disturbanceReportCreating } = useCreateDisturbanceReport(
-    {},
-    useCallback(
-      ({ uuid }) => {
-        ApiSlice.pruneCache("disturbanceReports");
-        void router.replace(
-          `/entity/disturbance-reports/create/framework?entity_uuid=${uuid}&from=${encodeURIComponent(indexHref)}`
-        );
-      },
-      [indexHref, router]
-    ),
-    "Failed to create disturbance report"
-  );
+  // The report is only created once the user continues from the introduction, so cancelling it leaves no draft behind.
+  const openDisturbanceReportIntro = useCallback(() => {
+    if (projectFrameworkKey == null) return;
+    void router.push(
+      withReportsIndexReturn(
+        `/entity/disturbance-reports/create/${projectFrameworkKey}?parent_uuid=${projectUuid}`,
+        indexHref
+      )
+    );
+  }, [indexHref, projectFrameworkKey, projectUuid, router]);
 
   const activeFilterLabels = useMemo<SelectedFilter[]>(() => {
     const labels: SelectedFilter[] = [];
@@ -264,10 +241,10 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
             <Button
               size="small"
               leftIcon={<PlusIcon boxSize="0.625rem" />}
-              disabled={disturbanceReportCreating || addDisturbanceReportDisabled}
+              disabled={addDisturbanceReportDisabled || projectFrameworkKey == null}
               onClick={() => {
                 trackDisturbanceReportClicked();
-                createDisturbanceReport({ parentUuid: projectUuid });
+                openDisturbanceReportIntro();
               }}
             >
               {t("Add Disturbance Report")}
@@ -314,11 +291,12 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
           onQueryChange == null
             ? undefined
             : {
-                placeholder: searchPlaceholder,
+                placeholder: t("Search"),
                 options: [],
                 displayResults: "none",
                 count: reportCount,
                 label: t("Reports"),
+                cacheKey: activeTab,
                 onQueryChange
               }
         }
@@ -334,10 +312,10 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
             : {
                 size: "small",
                 leftIcon: <PlusIcon boxSize="0.625rem" />,
-                disabled: disturbanceReportCreating || addDisturbanceReportDisabled,
+                disabled: addDisturbanceReportDisabled || projectFrameworkKey == null,
                 onClick: () => {
                   trackDisturbanceReportClicked();
-                  createDisturbanceReport({ parentUuid: projectUuid });
+                  openDisturbanceReportIntro();
                 },
                 children: t("Add Disturbance Report")
               }

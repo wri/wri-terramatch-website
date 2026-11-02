@@ -119,10 +119,10 @@ const Navbar: FC<NavbarProps> = ({
                 disabled={linksDisabled}
                 onClick={() => router.push("/auth/signup")}
               >
-                {t("Create account")}
+                {t("Create Account")}
               </Button>
               <Button variant="primary" size="small" onClick={() => router.push("/auth/login")}>
-                {t("Sign in")}
+                {t("Sign In")}
               </Button>
             </Flex>
           )}

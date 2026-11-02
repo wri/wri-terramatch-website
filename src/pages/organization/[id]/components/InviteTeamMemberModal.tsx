@@ -11,7 +11,7 @@ import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/Button
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { showToast } from "@/redesignComponents/status/Toast/showToast";
-import { PendingError } from "@/store/apiSlice";
+import ApiSlice, { PendingError } from "@/store/apiSlice";
 interface InviteTeamMemberModalProps {
   organisationUUID: string;
   open: boolean;
@@ -76,6 +76,8 @@ const InviteTeamMemberModal = ({ organisationUUID, open, onClose, onSuccess }: I
     useCallback(
       failure => {
         if (failure == null) {
+          // The invited member is added to the team list on the server, so drop the cached index to show it now.
+          ApiSlice.pruneCache("associatedUsers");
           if (onSuccess != null) {
             onSuccess();
           }

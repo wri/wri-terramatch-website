@@ -31,6 +31,8 @@ type TabItem = {
   renderBody: () => ReactElement;
 };
 
+const NOTHING_TO_REPORT_TABS = ["overview", "audit-log"];
+
 type NurseryReportContentProps = {
   nurseryReport: NurseryReportFullDto;
   nursery?: NurseryFullDto | null;
@@ -97,7 +99,7 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
       },
       {
         key: "audit-log",
-        title: t("Audit Log"),
+        title: t("History"),
         renderBody: () => <AuditLog nurseryReport={nurseryReport} />
       }
     ],
@@ -106,7 +108,7 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
 
   const visibleTabItems = useMemo(() => {
     if (nurseryReport.nothingToReport) {
-      return tabItems.filter(item => item.key === "overview");
+      return tabItems.filter(item => NOTHING_TO_REPORT_TABS.includes(item.key));
     }
 
     return tabItems;
