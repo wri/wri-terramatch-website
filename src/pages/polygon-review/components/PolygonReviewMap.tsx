@@ -1,4 +1,3 @@
-import { useT } from "@transifex/react";
 import { FC, useMemo, useState } from "react";
 
 import LoadingMap from "@/components/elements/Map-mapbox/components/LoadingMap";
@@ -8,7 +7,6 @@ import { useBoundingBox } from "@/connections/BoundingBox";
 import { SitePolygonMapIndexFilter, useSitePolygonMapIndex } from "@/connections/SitePolygons";
 import { ProjectMapEntryDto, SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
-import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 
 import { SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS } from "../../site/[uuid]/constants/sitePolygonMapSizing";
 import { getProjectMarkersBbox, toProjectMarkerPoints } from "../utils/projectMarkers";
@@ -21,7 +19,6 @@ type PolygonReviewMapProps = {
   siteUuids: string[];
   polygonFilter: SitePolygonMapIndexFilter;
   selectedPolygonUuids: string[];
-  hasLoadFailure: boolean;
   onViewProjectPolygons: (projectUuid: string) => void;
 };
 
@@ -35,10 +32,8 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
   siteUuids,
   polygonFilter,
   selectedPolygonUuids,
-  hasLoadFailure,
   onViewProjectPolygons
 }) => {
-  const t = useT();
   const mapFunctions = useBaseMap();
   const projectUuid = selectedProject?.uuid;
 
@@ -72,34 +67,26 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
   const polygonTableHighlight = useMemo(() => ({ selectedPolygonUuids }), [selectedPolygonUuids]);
 
   return (
-    <>
-      <ResizeBox
-        initialHeight={SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS}
-        minHeight={SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS}
-        maxHeight={600}
-      >
-        <LoadingMap loading={projectUuid != null && projectPolygons == null && polygonLoadFailure == null} />
-        <MapContainer
-          championsMap
-          mapFunctions={mapFunctions}
-          bbox={bbox}
-          projectMarkers={projectMarkers}
-          onViewProjectPolygons={onViewProjectPolygons}
-          mapIndexPolygons={mapIndexPolygons}
-          polygonTableHighlight={polygonTableHighlight}
-          showLegend
-          hideMediaOnMap
-          disabledPolygonPanel
-          className="h-full w-full flex-1 !rounded-[0.25rem_0.25rem_0_0]"
-        />
-      </ResizeBox>
-      {hasLoadFailure && (
-        <InlineMessage variant="error" label={t("Unable to load projects")} caption={t("Please reload the page.")} />
-      )}
-      {polygonLoadFailure != null && (
-        <InlineMessage variant="error" label={t("Unable to load polygons")} caption={t("Please reload the page.")} />
-      )}
-    </>
+    <ResizeBox
+      initialHeight={SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS}
+      minHeight={SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS}
+      maxHeight={600}
+    >
+      <LoadingMap loading={projectUuid != null && projectPolygons == null && polygonLoadFailure == null} />
+      <MapContainer
+        championsMap
+        mapFunctions={mapFunctions}
+        bbox={bbox}
+        projectMarkers={projectMarkers}
+        onViewProjectPolygons={onViewProjectPolygons}
+        mapIndexPolygons={mapIndexPolygons}
+        polygonTableHighlight={polygonTableHighlight}
+        showLegend
+        hideMediaOnMap
+        disabledPolygonPanel
+        className="h-full w-full flex-1 !rounded-[0.25rem_0.25rem_0_0]"
+      />
+    </ResizeBox>
   );
 };
 
