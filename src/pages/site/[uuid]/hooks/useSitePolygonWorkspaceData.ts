@@ -8,6 +8,8 @@ import {
 } from "@/connections/SitePolygons";
 import type { SitePolygonsIndexQueryParams } from "@/generated/v3/researchService/researchServiceComponents";
 
+import { getDisturbancePolygonUuids, getMapPolygonUuids } from "../utils/sitePolygonsWorkspace.utils";
+
 type UseSitePolygonWorkspaceDataParams = Required<Pick<PolygonEntityScopeProps, "entityName" | "entityUuid">> & {
   filter: Partial<SitePolygonsIndexQueryParams>;
   pageNumber: number;
@@ -40,13 +42,9 @@ export const useSitePolygonWorkspaceData = ({
 
   const mapPolygons = useMemo(() => mapIndex?.polygons ?? [], [mapIndex?.polygons]);
 
-  const mapPolygonUuids = useMemo(() => mapPolygons.map(entry => entry.polygonUuid ?? entry.uuid), [mapPolygons]);
+  const mapPolygonUuids = useMemo(() => getMapPolygonUuids(mapPolygons), [mapPolygons]);
 
-  const disturbancePolygonUuids = useMemo(
-    () =>
-      mapPolygons.filter(entry => entry.disturbanceReportUuid != null).map(entry => entry.polygonUuid ?? entry.uuid),
-    [mapPolygons]
-  );
+  const disturbancePolygonUuids = useMemo(() => getDisturbancePolygonUuids(mapPolygons), [mapPolygons]);
 
   return {
     tablePolygonsLoaded,
