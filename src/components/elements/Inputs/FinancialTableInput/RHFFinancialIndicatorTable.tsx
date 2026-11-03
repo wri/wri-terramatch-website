@@ -22,7 +22,8 @@ import {
   useFieldsProvider,
   useFormModelUuid,
   useShowValidationErrors,
-  useWizardOrgFormDetails
+  useWizardOrgFormDetails,
+  useWizardSubmissionUuid
 } from "@/context/wizardForm.provider";
 import { isTranslatableError } from "@/generated/v3/utils";
 import { normalizedFormData } from "@/helpers/customForms";
@@ -122,7 +123,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
     const showValidationErrors = useShowValidationErrors();
     const fieldsProvider = useFieldsProvider();
     const financialReportUuid = useFormModelUuid("financialReports");
-    const submissionUuid = typeof router.query.submissionUUID === "string" ? router.query.submissionUUID : undefined;
+    const submissionUuid = useWizardSubmissionUuid();
     const { updateEntityAnswers, entityAnswersUpdating } = useFormUpdate(
       financialReportUuid != null ? "financialReports" : undefined,
       financialReportUuid

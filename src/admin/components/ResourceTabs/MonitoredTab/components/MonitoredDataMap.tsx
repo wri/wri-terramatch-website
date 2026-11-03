@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
+import { useEntityMapMedia } from "@/components/elements/Map-mapbox/hooks/useEntityMapMedia";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
 import type { PolygonEntityScope } from "@/components/elements/Map-mapbox/Map.d";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
 import { useBoundingBox } from "@/connections/BoundingBox";
-import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { useSitePolygonMapIndex } from "@/connections/SitePolygons";
 import { OptionValue } from "@/types/common";
 
@@ -25,7 +25,7 @@ const MonitoredDataMap = ({
   const mapFunctions = useBaseMap();
   const [loading, setLoading] = useState(false);
 
-  const entityBbox = useBoundingBox(entityName === "sites" ? { siteUuid: entityUuid } : { projectUuid: entityUuid });
+  const entityBbox = useBoundingBox(entityName === "sites" ? { siteUuids: [entityUuid] } : { projectUuid: entityUuid });
 
   const [mapIndexLoaded, { data: mapIndex }] = useSitePolygonMapIndex({
     entityName: entityName as "sites" | "projects",
@@ -45,9 +45,10 @@ const MonitoredDataMap = ({
     [entityName, entityUuid]
   );
 
-  const [, { data: mediaFiles }] = useMedias({
-    entity: entityName as SupportedEntity,
-    uuid: entityUuid
+  const mediaFiles = useEntityMapMedia({
+    entity: entityName === "sites" ? "sites" : "projects",
+    uuid: entityUuid,
+    enabled: (entityName === "sites" || entityName === "projects") && entityUuid !== ""
   });
 
   useEffect(() => {

@@ -41,13 +41,12 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
       const target = action.target as ReportActionTarget;
       const status = getEntityCombinedStatus(target);
       const projectUuid = getProjectUuid(target);
-      const taskUuid = getTaskUuid(target);
 
       const dueText = target?.dueAt != null ? t("<strong>Due:</strong> {date}", { date: format(target.dueAt) }) : "";
 
       const ctaLink =
-        status?.includes("due") && projectUuid && taskUuid
-          ? `/project/${projectUuid}/reporting-task/${taskUuid}`
+        status?.includes("due") && projectUuid
+          ? `/project/${projectUuid}?tab=reports`
           : getEntityDetailPageLink("project-reports", target?.uuid ?? "");
 
       cardsWithSort.push({
@@ -106,7 +105,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
 
         const dueText = earliestDue != null ? t("<strong>Due:</strong> {date}", { date: format(earliestDue) }) : "";
 
-        const ctaLink = `/project/${projectUuid}/reporting-task/${taskUuid}`;
+        const ctaLink = `/project/${projectUuid}?tab=reports`;
 
         cardsWithSort.push({
           sortAt: maxUpdatedAt,

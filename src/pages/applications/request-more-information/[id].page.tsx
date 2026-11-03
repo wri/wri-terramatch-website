@@ -85,6 +85,7 @@ const RequestMoreInformationPage = () => {
           models={formModels}
           framework={framework}
           disableInitialAutoProgress
+          submissionUuid={submission?.uuid}
           nextButtonText={t("Save and Continue")}
           submitButtonText={t("Submit")}
           hideBackButton={false}

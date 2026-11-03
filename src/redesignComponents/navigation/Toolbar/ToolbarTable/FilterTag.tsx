@@ -98,7 +98,6 @@ const FilterTag: FC<FilterTagProps> = ({ selectedFilters }) => {
           />
         </>
       )}
-
       <Box
         ref={scrollRef}
         overflowX="auto"
@@ -125,7 +124,6 @@ const FilterTag: FC<FilterTagProps> = ({ selectedFilters }) => {
           })}
         </Flex>
       </Box>
-
       {showRightButton && (
         <>
           <Box

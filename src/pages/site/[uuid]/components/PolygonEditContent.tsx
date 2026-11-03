@@ -2,7 +2,6 @@ import type { DateValue } from "@ark-ui/react";
 import { Flex, Text } from "@chakra-ui/react";
 import { CalendarDate } from "@internationalized/date";
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import { format } from "date-fns";
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -45,6 +44,7 @@ import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { DownloadIcon, RefreshIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/FloatingActionToolbar";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 import { trackPolygonDownloaded, trackPolygonStatusChanged } from "@/utils/polygonAnalytics";
@@ -64,7 +64,11 @@ import {
   showPolygonProgressToast
 } from "../utils/polygonOperationToasts";
 import DisturbanceReportedBanner from "./DisturbanceReportedBanner";
-import type { PolygonRunValidationWithResultsCallback, PolygonSaveCallback } from "./polygonEdit.types";
+import type {
+  PolygonRunValidationWithResultsCallback,
+  PolygonSaveCallback,
+  PolygonValidationClearedCallback
+} from "./polygonEdit.types";
 import {
   type PolygonEditFormValues,
   type SavePolygonFlowOptions,
@@ -111,6 +115,7 @@ type PolygonEditContentProps = {
   onRequestInformationModal?: () => void;
   onSaved?: PolygonSaveCallback;
   onRunValidationWithResultsModal?: PolygonRunValidationWithResultsCallback;
+  onValidationCleared?: PolygonValidationClearedCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onUnsavedChangesInvalidatingValidationChange?: (value: boolean) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
@@ -125,7 +130,7 @@ type PolygonEditAccordionSection = "details" | "optional-attributes" | "monitori
 const isoStringToDateValue = (value: string | null | undefined): DateValue[] => {
   if (value == null || value === "") return [];
   const [year, month, day] = value.split("T")[0].split("-").map(Number);
-  if (!year || !month || !day) return [];
+  if (![year, month, day].every(part => Number.isFinite(part) && part > 0)) return [];
   return [new CalendarDate(year, month, day)];
 };
 
@@ -212,6 +217,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   onRequestInformationModal,
   onSaved,
   onRunValidationWithResultsModal,
+  onValidationCleared,
   onPolygonUpdated,
   onUnsavedChangesInvalidatingValidationChange,
   onSuppressMapSelectionHighlightChange,
@@ -239,7 +245,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       showPolygonCompleteToast(label);
       return;
     }
-    showToast({ label, type: "warning", placement: "bottom", duration: 5000, maxWidth: "auto" });
+    showToast({ label, type: "warning", placement: "bottom", duration: 5000 });
   }, []);
   const {
     polygonGeometryEdit,
@@ -300,6 +306,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
   const sitePolygonUuid = polygon?.uuid ?? "";
   const geometryPolygonUuid = polygon?.polygonUuid ?? "";
+  const polygonStatus = polygon?.status ?? undefined;
   const isCreateMode = polygon?.primaryUuid == null || polygon.primaryUuid === "";
   const isPolygonSubmittable = isSitePolygonSubmittable(polygon);
   const submitTooltip = getSingleSitePolygonSubmitTooltip(polygon, t);
@@ -368,6 +375,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const onSavedRef = useLatestRef(onSaved);
   const onCloseRef = useLatestRef(onClose);
   const onPolygonUpdatedRef = useLatestRef(onPolygonUpdated);
+  const onValidationClearedRef = useLatestRef(onValidationCleared);
   const refetchVersionsRef = useLatestRef(refetchVersions);
 
   const getFormValues = useCallback(
@@ -417,6 +425,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       options: {
         geometryChanged: boolean;
         refetchVersionsList: boolean;
+        clearsValidation: boolean;
         previousPolygonUuid?: string | null;
         closeOnSave?: boolean;
       }
@@ -437,6 +446,9 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         await refetchVersionsRef.current?.();
       }
       await onSavedRef.current?.();
+      if (options.clearsValidation && savedPolygon.polygonUuid != null && savedPolygon.polygonUuid !== "") {
+        await onValidationClearedRef.current?.([savedPolygon.polygonUuid]);
+      }
       updateFormBaseline();
       if (options.closeOnSave !== false) {
         onCloseRef.current?.();
@@ -448,6 +460,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       onCloseRef,
       onPolygonUpdatedRef,
       onSavedRef,
+      onValidationClearedRef,
       refetchVersionsRef,
       setDraftPolygonGeometry,
       setIsUserDrawingEnabled,
@@ -509,6 +522,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         const savedPolygon = await finalizeSuccessfulSave(createdPolygon, {
           geometryChanged: true,
           refetchVersionsList: false,
+          clearsValidation: false,
           closeOnSave: options?.closeOnSave
         });
         if (options?.deferSuccessToast) {
@@ -579,6 +593,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         const savedPolygon = await finalizeSuccessfulSave(updatedPolygon, {
           geometryChanged,
           refetchVersionsList: true,
+          clearsValidation: updatedPolygon.validationStatus == null,
           previousPolygonUuid,
           closeOnSave: options?.closeOnSave
         });
@@ -648,7 +663,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     setEditPolygon({
       isOpen: shouldMapEditPolygon,
       uuid: shouldMapEditPolygon ? geometryPolygonUuid : "",
-      primaryUuid: shouldMapEditPolygon ? primaryUuid : undefined
+      primaryUuid: shouldMapEditPolygon ? primaryUuid : undefined,
+      status: shouldMapEditPolygon ? polygonStatus : undefined
     });
 
     if (!shouldMapEditPolygon) {
@@ -659,6 +675,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     geometryPolygonUuid,
     isCreateMode,
     onSuppressMapSelectionHighlightChange,
+    polygonStatus,
     primaryUuid,
     setEditPolygon,
     setIsUserDrawingEnabled,

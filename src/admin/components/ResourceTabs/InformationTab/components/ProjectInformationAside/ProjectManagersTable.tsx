@@ -9,7 +9,9 @@ import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { bulkDeleteUserAssociations, useUserAssociations } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
+import { ToastType, useToastContext } from "@/context/toast.provider";
 import { EMPTY_I18N } from "@/i18n/util";
+import Log from "@/utils/log";
 
 const ProjectManagersTable: FC<{ project: any }> = ({ project }) => {
   const t = useT();
@@ -20,6 +22,7 @@ const ProjectManagersTable: FC<{ project: any }> = ({ project }) => {
   });
 
   const { openModal, closeModal } = useModalContext();
+  const { openToast } = useToastContext();
 
   const confirmDelete = (email_address: string, uuid: string) => {
     openModal(
@@ -34,7 +37,10 @@ const ProjectManagersTable: FC<{ project: any }> = ({ project }) => {
         primaryButtonProps={{
           children: t("Confirm"),
           onClick: () => {
-            bulkDeleteUserAssociations(project.uuid, [uuid]);
+            bulkDeleteUserAssociations(project.uuid, [uuid]).catch(error => {
+              Log.error("Failed to remove project manager", error);
+              openToast(t("Something went wrong!"), ToastType.ERROR);
+            });
             closeModal(ModalId.CONFIRM_DELETE);
           }
         }}

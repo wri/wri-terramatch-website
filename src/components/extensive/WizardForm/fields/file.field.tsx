@@ -14,6 +14,7 @@ const isGeneralDocumentCollection = (c: string | null | undefined): boolean =>
 
 const GENERAL_DOCUMENTS_MAX_MB = 5;
 const DEFAULT_MAX_FILE_SIZE_MB = 10;
+const BYTES_PER_MB = 1024 * 1024;
 
 export const FileField: FormFieldFactory = {
   addValidation: addValidationWith(({ validation, multiChoice }) => {
@@ -25,10 +26,13 @@ export const FileField: FormFieldFactory = {
     }
   }),
 
-  renderInput: ({ additionalProps, collection, multiChoice, model }, sharedProps) => {
+  renderInput: ({ additionalProps, collection, maxFileSize: maxFileSizeBytes, multiChoice, model }, sharedProps) => {
     const isGeneralDocuments = isGeneralDocumentCollection(collection);
+    // The API returns maxFileSize in bytes; RHFFileInput works in MB.
     const maxFileSize =
-      additionalProps?.max ?? (isGeneralDocuments ? GENERAL_DOCUMENTS_MAX_MB : DEFAULT_MAX_FILE_SIZE_MB);
+      maxFileSizeBytes != null
+        ? maxFileSizeBytes / BYTES_PER_MB
+        : additionalProps?.max ?? (isGeneralDocuments ? GENERAL_DOCUMENTS_MAX_MB : DEFAULT_MAX_FILE_SIZE_MB);
     const accept = additionalProps?.accept ?? (isGeneralDocuments ? [FileType.GeneralDocuments] : undefined);
 
     return (

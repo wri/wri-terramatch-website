@@ -163,7 +163,16 @@ export type DashboardProjectsLightDto = {
    */
   lightResource: boolean;
   uuid: string;
+  /**
+   * Use level0Project instead
+   *
+   * @deprecated true
+   */
   country: string | null;
+  /**
+   * Project country codes (GADM level 0)
+   */
+  level0Project: string[] | null;
   frameworkKey: string | null;
   name: string | null;
   treesPlantedCount: number | null;
@@ -210,7 +219,16 @@ export type DashboardProjectsFullDto = {
    */
   lightResource: boolean;
   uuid: string;
+  /**
+   * Use level0Project instead
+   *
+   * @deprecated true
+   */
   country: string | null;
+  /**
+   * Project country codes (GADM level 0)
+   */
+  level0Project: string[] | null;
   frameworkKey: string | null;
   name: string | null;
   treesPlantedCount: number | null;

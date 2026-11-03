@@ -49,7 +49,7 @@ type FinancialIndicator = FinancialIndicatorDto & {
   organisationUuid?: string;
 };
 
-type UserStatus = "approved" | "rejected" | "requested";
+type UserStatus = "approved" | "rejected" | "pending";
 
 export type MyOrganisationConnection = OrganisationConnection & {
   organisationId?: string;
@@ -167,6 +167,12 @@ export const useMyOrg = (): Connected<MyOrganisationConnection> => {
   const [loaded] = useMyUser();
   const [, orgShape] = useConnection(myOrganisationConnection);
   return loaded ? [true, orgShape] : [false, {}];
+};
+
+// Organization names are only links for the organization the user belongs to.
+export const useIsMyOrganisation = (organisationUuid: string | null | undefined): boolean => {
+  const [, myOrg] = useMyOrg();
+  return organisationUuid != null && organisationUuid === myOrg?.organisationId;
 };
 
 export const loadOrganisation = connectionLoader(organisationConnection);

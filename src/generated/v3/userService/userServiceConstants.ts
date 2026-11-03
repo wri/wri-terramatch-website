@@ -85,7 +85,16 @@ export const Roles = {
     "research-service-account": "Research Service Account",
     government: "Government",
     funder: "Funder"
-  } as const
+  } as const,
+  COMBINABLE_ROLES: [
+    "admin-barka-fund",
+    "admin-epa-ghana-pilot",
+    "admin-fundo-flora",
+    "admin-hbf",
+    "admin-ppc",
+    "admin-terrafund",
+    "admin-wcb"
+  ] as const
 } as const;
 
 export const Frameworks = {

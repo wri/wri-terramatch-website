@@ -60,7 +60,7 @@ const useRedirect = () => {
         () => matcher.ensure("/organization/assign"),
         () => matcher.exact("/organization")?.redirect(`/organization/${organisationId}`)
       );
-      matcher.when(userStatus === "requested")?.ensure("/organization/status/pending");
+      matcher.when(userStatus === "pending")?.ensure("/organization/status/pending");
       matcher.if(
         organisation!.status === "draft",
         () => matcher.ensure("/organization/create"),

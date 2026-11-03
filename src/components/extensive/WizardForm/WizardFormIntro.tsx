@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import Image, { StaticImageData } from "next/image";
 import { DetailedHTMLProps, HTMLAttributes } from "react";
 
 import Button, { IButtonProps as IButtonPropsV2 } from "@/components/elements/Button/Button";
@@ -14,7 +13,7 @@ import { FormFooter } from "./FormFooter";
 type WizardFormIntroProps = {
   title: string;
   description?: string;
-  imageSrc?: string | StaticImageData;
+  imageSrc?: string;
 
   submitButtonProps?: IButtonProps;
   backButtonProps?: IButtonProps;
@@ -48,8 +47,8 @@ const WizardFormIntro = (props: WizardFormIntroProps) => {
   return (
     <div className={`w-full rounded-lg border-2 border-neutral-100 bg-white ${containerClass}`}>
       {props.imageSrc && (
-        <Image
-          src={props.imageSrc!}
+        <img
+          src={props.imageSrc}
           alt=""
           role="presentation"
           className={imageClass}

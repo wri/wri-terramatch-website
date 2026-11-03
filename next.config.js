@@ -15,6 +15,54 @@ const nextConfig = {
   // Only files with these extensions under src/pages are routes, so components can live next to the pages
   // that use them. This also applies to the instrumentation hook (src/instrumentation.page.ts).
   pageExtensions: ["page.tsx", "page.ts"],
+  async redirects() {
+    return [
+      {
+        source: "/project/:uuid/reporting-task/:reportingTaskUUID",
+        destination: "/reports?source=project&uuid=:uuid",
+        permanent: true
+      },
+      {
+        source: "/project/:uuid",
+        has: [{ type: "query", key: "tab", value: "reporting-tasks" }],
+        destination: "/reports?source=project&uuid=:uuid",
+        permanent: true
+      },
+      {
+        source: "/site/:uuid",
+        has: [{ type: "query", key: "tab", value: "completed-tasks" }],
+        destination: "/reports?source=site&uuid=:uuid",
+        permanent: true
+      },
+      {
+        source: "/nursery/:uuid",
+        has: [{ type: "query", key: "tab", value: "completed-tasks" }],
+        destination: "/reports?source=nursery&uuid=:uuid",
+        permanent: true
+      },
+      {
+        source: "/site/:uuid/polygon-review",
+        has: [{ type: "query", key: "tab", value: "completed-tasks" }],
+        destination: "/reports?source=site&uuid=:uuid",
+        permanent: true
+      },
+      {
+        source: "/sites",
+        destination: "/site",
+        permanent: true
+      },
+      {
+        source: "/nurseries",
+        destination: "/nursery",
+        permanent: true
+      },
+      {
+        source: "/reports/report-index",
+        destination: "/reports",
+        permanent: true
+      }
+    ];
+  },
   images: { domains: process.env.IMAGE_DOMAINS?.split(",") ?? ["s3-eu-west-1.amazonaws.com"] },
   // webpack5: true,
   webpack(config) {

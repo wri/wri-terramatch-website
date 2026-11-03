@@ -19,7 +19,7 @@ export const DashboardPopup = (event: PopupComponentProps) => {
 
   const learnMoreEvent = () => {
     if (itemUuid != null && layerName === LAYERS_NAMES.CENTROIDS) {
-      const projectCountry = projectFullDto?.country;
+      const projectCountry = projectFullDto?.level0Project?.[0];
       const selectedCountry = dashboardCountries?.find(
         (country: CountriesProps) => country.country_slug === projectCountry
       );

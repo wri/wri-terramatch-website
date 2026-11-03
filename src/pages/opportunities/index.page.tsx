@@ -6,7 +6,6 @@ import FundingCarouselList from "@/components/extensive/FundingsCarouselList/Fun
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
-import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import PageSection from "@/components/extensive/PageElements/Section/PageSection";
 import ApplicationsTable from "@/components/extensive/Tables/ApplicationsTable";
@@ -77,7 +76,6 @@ const OpportunitiesPage = () => {
         <br />
         <br />
       </PageBody>
-      <PageFooter />
     </>
   );
 };

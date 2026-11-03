@@ -14,12 +14,14 @@ import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations
 
 import DateRange from "./DateRange";
 import DescriptionHeader from "./DescriptionHeader";
+import OrganisationName from "./OrganisationName";
 import SeparatorDot from "./SeparatorDot";
 
 export interface ProjectInfoProps {
   title: string;
   tag: ProgressTagProps;
   organization: string;
+  organisationUuid?: string | null;
   country: string;
   countryFlag: string;
   startDate: string;
@@ -32,6 +34,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
   title,
   tag,
   organization,
+  organisationUuid,
   country,
   countryFlag,
   startDate,
@@ -80,9 +83,12 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
           "&": { msOverflowStyle: "none", scrollbarWidth: "none" }
         }}
       >
-        <Button variant="borderless" size="small" className="-mr-2" onClick={handleOrganizationNav}>
-          {organization}
-        </Button>
+        <OrganisationName
+          organisationUuid={organisationUuid}
+          name={organization}
+          className="-mr-2"
+          onClick={handleOrganizationNav}
+        />
         <SeparatorDot />
         <Twemoji options={{ className: "h-4 w-4" }}>{countryFlag}</Twemoji>
         <Text textStyle="300" color="primary.900">

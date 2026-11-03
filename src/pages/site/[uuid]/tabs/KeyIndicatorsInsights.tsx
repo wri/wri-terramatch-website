@@ -32,6 +32,9 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
   const treesGrowingCardProgress = isCombinedTreesGrowingCard
     ? (site.treesPlantedCount ?? 0) + (site.seedsPlantedCount ?? 0) + treesFromReportsAnr
     : site.treesPlantedCount ?? 0;
+  // Fundo Flora reports regenerating trees by species.
+  const treesRegeneratedProgress =
+    framework === Framework.FF_1 ? site.treesRegeneratingSpeciesCount : treesFromReportsAnr;
 
   const keyIndicatorsTooltipContentItem = useMemo(() => {
     return KEY_INDICATORS_TOOLTIP_CONTENT.find(content => content.frameworks.includes(site.frameworkKey!));
@@ -64,7 +67,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
         }
       />
       <ContextCondition frameworksHide={[Framework.PPC, Framework.HBF]}>
-        <ContextCondition frameworksHide={ALL_TF.concat(Framework.EPA_GHANA_PILOT)}>
+        <ContextCondition frameworksHide={ALL_TF.concat(Framework.EPA_GHANA_PILOT, Framework.FF_1)}>
           <MetricCard
             className="flex-[0_0_calc(50%_-_0.75rem)]"
             title={t(`${keyIndicatorsTooltipContentItem?.saplingsRestored.title}`)}
@@ -86,7 +89,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
           className="flex-[0_0_calc(50%_-_0.75rem)]"
           title={t(`${keyIndicatorsTooltipContentItem?.treesRegenerated.title}`)}
           variant="large"
-          progress={treesFromReportsAnr}
+          progress={treesRegeneratedProgress}
           goal={0}
           icon={<RegenerationIcon />}
           tooltipContent={

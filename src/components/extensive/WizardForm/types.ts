@@ -51,6 +51,7 @@ export type FieldDefinition = {
   tableHeaders?: string[] | null;
   additionalProps?: Dictionary<any> | null;
   model?: FormQuestionDto["model"];
+  maxFileSize?: FormQuestionDto["maxFileSize"];
 };
 
 export type SharedFieldProps = {

@@ -66,6 +66,13 @@ export const AsLinkInactive: Story = {
   }
 };
 
+export const CollapsedLink: Story = {
+  args: {
+    ...AsLinkInactive.args,
+    isCollapsed: true
+  }
+};
+
 export const AsAccordion: Story = {
   args: {
     icon: <PlaceholderIcon boxSize={4} />,
@@ -98,5 +105,12 @@ export const AsAccordion: Story = {
       }
     ],
     isCollapsed: false
+  }
+};
+
+export const CollapsedAccordion: Story = {
+  args: {
+    ...AsAccordion.args,
+    isCollapsed: true
   }
 };

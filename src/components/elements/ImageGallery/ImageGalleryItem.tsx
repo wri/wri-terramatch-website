@@ -177,11 +177,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
     <div {...rest} className={classNames("relative overflow-hidden rounded-xl bg-background", className)}>
       {data.thumbUrl && (
         <ImageWithChildren
-          imageSrc={{
-            src: data.thumbUrl,
-            height: 211,
-            width: 1440
-          }}
+          imageSrc={data.thumbUrl}
           isGeotagged={data.lat !== null && data.lng !== null}
           isCover={data.isCover}
           className="h-[226px] rounded-t-xl"

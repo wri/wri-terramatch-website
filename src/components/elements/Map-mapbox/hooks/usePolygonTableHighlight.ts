@@ -16,6 +16,8 @@ import Log from "@/utils/log";
 import { BBox } from "../GeoJSON";
 import type { MapEditFocusState } from "../hooks/useMapEditFocus";
 import { INACTIVE_MAP_EDIT_FOCUS } from "../hooks/useMapEditFocus";
+import { isDrawingGeometry } from "../interactions/draw";
+import { isMediaPhotoAt } from "../layers/mediaPhotoHitTest";
 import { polygonSelectionZoomBboxCache } from "../polygonSelectionZoomBboxCache";
 
 const POLYGON_FILL_LAYER_IDS = getPolygonGeometryFillLayerConfigs().map(c => c.layerId);
@@ -475,11 +477,13 @@ export function usePolygonTableHighlightPointer({
     const canvas = m.getCanvas();
 
     const pickUuid = (e: MapMouseEvent) => {
-      const mode = draw.current?.getMode();
-      if (mode === "draw_polygon" || mode === "draw_line_string") {
+      if (isDrawingGeometry(draw.current)) {
         return null;
       }
       try {
+        if (isMediaPhotoAt(m, e.point)) {
+          return null;
+        }
         const features = m.queryRenderedFeatures(e.point, { layers: POLYGON_FILL_LAYER_IDS });
         return pickPolygonGeometryIdFromProperties(features[0]?.properties ?? null);
       } catch (error) {

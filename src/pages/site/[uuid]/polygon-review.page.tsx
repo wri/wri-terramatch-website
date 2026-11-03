@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { FC, useEffect } from "react";
 
 import { useMyUser } from "@/connections/User";
 
@@ -7,7 +7,7 @@ import SitePageProviders from "./components/SitePageProviders";
 import { useSitePageLoad } from "./hooks/useSitePageLoad";
 import AdminSitePolygonReviewShell from "./sitePolygonReview/AdminSitePolygonReviewShell";
 
-const SitePolygonReviewPage = () => {
+const SitePolygonReviewPage: FC = () => {
   const router = useRouter();
   const siteUUID = router.query.uuid as string;
 

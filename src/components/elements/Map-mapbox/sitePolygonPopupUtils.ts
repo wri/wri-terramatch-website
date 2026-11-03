@@ -1,9 +1,14 @@
-import { SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto, SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { ValidationTagState } from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
 
 export const POPUP_METRIC_UNAVAILABLE = "\u2014";
 
 export type NormalizedPolygonValidationStatus = ValidationTagState;
+
+type SitePolygonPopupLightFields = "practice" | "targetSys" | "primaryUuid" | "siteId";
+
+export type SitePolygonPopupFields = Omit<SitePolygonMapEntryDto, SitePolygonPopupLightFields> &
+  Partial<Pick<SitePolygonLightDto, SitePolygonPopupLightFields>>;
 
 export const findMapIndexEntryByMapFeatureUuid = (
   mapIndexPolygons: SitePolygonMapEntryDto[] | undefined,

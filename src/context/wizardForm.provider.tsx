@@ -189,6 +189,7 @@ type IFormFieldsContext = {
   orgDetails?: OrgFormDetails;
   projectDetails?: ProjectFormDetails;
   showValidationErrors: boolean;
+  submissionUuid?: string;
 };
 
 type WizardFormProviderProps = {
@@ -197,6 +198,7 @@ type WizardFormProviderProps = {
   orgDetails?: OrgFormDetails;
   projectDetails?: ProjectFormDetails;
   showValidationErrors?: boolean;
+  submissionUuid?: string;
 };
 
 const WizardFormContext = createContext<IFormFieldsContext>({
@@ -211,12 +213,20 @@ const WizardFormProvider: FC<PropsWithChildren<WizardFormProviderProps>> = ({
   orgDetails,
   projectDetails,
   showValidationErrors = true,
+  submissionUuid,
   children
 }) => {
   const contextModels = useMemo(() => toArray(models), [models]);
   return (
     <WizardFormContext.Provider
-      value={{ models: contextModels, fieldsProvider, orgDetails, projectDetails, showValidationErrors }}
+      value={{
+        models: contextModels,
+        fieldsProvider,
+        orgDetails,
+        projectDetails,
+        showValidationErrors,
+        submissionUuid
+      }}
     >
       {children}
     </WizardFormContext.Provider>
@@ -243,6 +253,8 @@ export const useFormEntities = () => {
 };
 
 export const useWizardOrgFormDetails = () => useContext(WizardFormContext).orgDetails;
+
+export const useWizardSubmissionUuid = () => useContext(WizardFormContext).submissionUuid;
 
 export const useProjectFormDetails = () => useContext(WizardFormContext).projectDetails;
 

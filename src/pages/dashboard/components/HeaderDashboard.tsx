@@ -26,6 +26,7 @@ import { useLandscapeOptions } from "@/hooks/translation/useLandscapeMappings";
 import { useOnMount } from "@/hooks/useOnMount";
 import { EMPTY_I18N } from "@/i18n/util";
 import { OptionValue } from "@/types/common";
+import { isNotNull } from "@/utils/array";
 import { convertCodesToNames, convertNamesToCodes } from "@/utils/landscapeUtils";
 
 import { useDashboardData } from "../hooks/useDashboardData";
@@ -79,9 +80,9 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   const activeCountries = useMemo(() => {
     if (!activeProjects || !gadmCountries || !gadmCountries.length) return [];
 
-    const uniqueCountrySlugs = [...new Set(activeProjects.map((project: any) => project.country))].filter(
-      Boolean
-    ) as string[];
+    const uniqueCountrySlugs = [...new Set(activeProjects.map(project => project.level0Project?.[0]))].filter(
+      isNotNull
+    );
     const countries = uniqueCountrySlugs
       .map(slug => {
         const gadmCountry = gadmCountries.find(country => {
@@ -589,13 +590,13 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                               ...prevValues,
                               uuid: option.uuid,
                               country:
-                                activeCountries?.find(country => country.country_slug === option.country) ||
+                                activeCountries?.find(country => country.country_slug === option.level0Project?.[0]) ||
                                 prevValues.country
                             }));
                             router.push({
                               pathname: "/dashboard",
                               query: {
-                                country: option.country ?? "",
+                                country: option.level0Project?.[0] ?? "",
                                 uuid: option.uuid
                               }
                             });
@@ -603,7 +604,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                           }}
                         >
                           <Text variant="text-12-semibold" className="text-darkCustom" as="span">
-                            {t(option.country ?? "")},&nbsp;{t(option.organisationName ?? "")},&nbsp;
+                            {t(option.level0Project?.[0] ?? "")},&nbsp;{t(option.organisationName ?? "")},&nbsp;
                           </Text>
                           <Text variant="text-12-light" className="text-darkCustom" as="span">
                             {t(option.name ?? "")},&nbsp;{t(option.frameworkKey ?? "")}

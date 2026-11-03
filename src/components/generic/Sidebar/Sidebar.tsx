@@ -64,12 +64,10 @@ const Sidebar: FC = () => {
     }
   ];
   const changeLanguageHandler = (lang: string) => {
-    if (setLocale) {
+    if (setLocale != null) {
       setLocale(lang as ValidLocale);
-      window.location.reload();
     } else {
       router.push({ pathname: router.pathname, query: router.query }, router.asPath, { locale: lang });
-      setTimeout(() => window.location.reload(), 1000);
     }
   };
 

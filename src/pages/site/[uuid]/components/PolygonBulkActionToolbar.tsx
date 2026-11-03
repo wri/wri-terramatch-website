@@ -1,9 +1,7 @@
-import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { memo, useEffect, useMemo } from "react";
 
 import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
-import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useLayoutShell } from "@/redesignComponents/Layout/LayoutShell.provider";
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 import type { BulkToolbarAction } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
@@ -65,8 +63,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   isSubmitDisabled = false
 }: PolygonBulkActionToolbarProps) {
   const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
-  const { isBulkActionToolbarVisible, setBulkActionToolbarVisible, setSidebarCollapseDisabled } = useLayoutShell();
-  const isAdmin = useIsAdmin();
+  const { setSidebarCollapseDisabled } = useLayoutShell();
   const t = useT();
   const isOverlapAutoFixUnavailable = isOverlapFixAction && !canAutoFixOverlap;
 
@@ -204,30 +201,21 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   const shouldShowBulkActionToolbar = visible && !isPolygonEditDrawerOpen && !isBulkEditDrawerOpen;
 
   useEffect(() => {
-    setBulkActionToolbarVisible(shouldShowBulkActionToolbar);
     setSidebarCollapseDisabled(shouldShowBulkActionToolbar);
+    return () => setSidebarCollapseDisabled(false);
+  }, [setSidebarCollapseDisabled, shouldShowBulkActionToolbar]);
 
-    return () => {
-      setBulkActionToolbarVisible(false);
-      setSidebarCollapseDisabled(false);
-    };
-  }, [setBulkActionToolbarVisible, setSidebarCollapseDisabled, shouldShowBulkActionToolbar]);
+  if (!shouldShowBulkActionToolbar) return null;
 
   return (
-    <>
-      {isBulkActionToolbarVisible && (
-        <Box position="fixed" zIndex="100" bottom={3} left={isAdmin ? 14 : 3} right={isAdmin ? 3 : 0}>
-          <BulkActionToolbar
-            selectedCount={itemCount}
-            cancelAction={cancelAction}
-            deleteAction={deleteAction}
-            actions={toolbarActions}
-            primaryAction={primaryAction}
-            infoTooltip={overlapTooltip ?? adminApproveTooltip ?? (isAdminReview ? undefined : submitDisabledTooltip)}
-          />
-        </Box>
-      )}
-    </>
+    <BulkActionToolbar
+      selectedCount={itemCount}
+      cancelAction={cancelAction}
+      deleteAction={deleteAction}
+      actions={toolbarActions}
+      primaryAction={primaryAction}
+      infoTooltip={overlapTooltip ?? adminApproveTooltip ?? (isAdminReview ? undefined : submitDisabledTooltip)}
+    />
   );
 });
 

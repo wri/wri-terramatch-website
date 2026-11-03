@@ -91,8 +91,7 @@ const InviteSignupPage = () => {
       callbackUrl: window.location.origin + "/auth/login",
       roles: [role],
       token,
-      country: "",
-      program: ""
+      country: ""
     });
   };
 

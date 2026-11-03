@@ -1,6 +1,6 @@
 import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren } from "react";
 
-import Navbar from "@/components/generic/Navbar/Navbar";
+import Navbar from "@/redesignComponents/navigation/NavBar/Navbar";
 
 interface MainLayoutProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {}
 

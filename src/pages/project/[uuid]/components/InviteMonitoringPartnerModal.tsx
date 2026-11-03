@@ -1,7 +1,6 @@
 import { Text } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import { useCallback } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -12,6 +11,7 @@ import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/Button
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ApiSlice from "@/store/apiSlice";
 
 interface InviteMonitoringPartnerModalProps {
@@ -68,7 +68,6 @@ const InviteMonitoringPartnerModal = ({ projectUUID, open, onClose, onSuccess }:
             type: "success",
             placement: "bottom",
             duration: 5000,
-            maxWidth: "auto",
             id: "invitation-sent-successfully"
           });
           handleClose();

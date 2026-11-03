@@ -4,14 +4,17 @@ import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
   getMedia,
   mediaDelete,
+  mediaMapIndex,
+  MediaMapIndexPathParams,
   mediaUpdate,
   uploadFile,
   UploadFileError,
   UploadFileResponse,
   UploadFileVariables
 } from "@/generated/v3/entityService/entityServiceComponents";
-import { MediaDto, MediaRequestAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
+import { MediaDto, MediaMapIndexDto, MediaRequestAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 import { WithFormData } from "@/generated/v3/utils";
+import ApiSlice from "@/store/apiSlice";
 import { mediaToUploadedFile, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 import { parallelRequestHook, RequestOptions } from "@/utils/parallelRequestHook";
@@ -28,6 +31,26 @@ export const mediaConnection = v3Resource("media", getMedia)
 export const updateMedia = resourceUpdater(mediaConnection);
 
 export const useMedia = connectionHook(mediaConnection);
+
+export type MediaMapIndexEntity = MediaMapIndexPathParams["entity"];
+
+type MediaMapIndexProps = { entity?: MediaMapIndexEntity; uuid?: string };
+
+const mediaMapIndexId = ({ entity, uuid }: MediaMapIndexProps) =>
+  entity == null || uuid == null ? "" : `${entity}|${uuid}`;
+
+const mediaMapIndexConnection = v3Resource("mediaMapIndexes", mediaMapIndex)
+  .singleByCustomId<MediaMapIndexDto, MediaMapIndexProps>(
+    ({ entity, uuid }) => (entity == null || uuid == null ? undefined : { pathParams: { entity, uuid } }),
+    mediaMapIndexId
+  )
+  .enabledProp()
+  .refetch(props => {
+    ApiSlice.pruneCache("mediaMapIndexes", [mediaMapIndexId(props)]);
+  })
+  .buildConnection();
+
+export const useMediaMapIndex = connectionHook(mediaMapIndexConnection);
 
 export const deleteMedia = deleterAsync("media", mediaDelete, uuid => ({ pathParams: { uuid: uuid } }));
 

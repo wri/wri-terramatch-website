@@ -15,6 +15,7 @@ import {
   SrpReportLightDto,
   SrpReportFullDto,
   MediaDto,
+  MediaMapIndexDto,
   MediaBulkErrorDto,
   ScientificNameDto,
   EstablishmentsTreesDto,
@@ -25,6 +26,7 @@ import {
   AuditStatusDto,
   AggregateReportsDto,
   ReportCountsDto,
+  EntityCountsDto,
   ProjectLightDto,
   ProjectFullDto,
   SiteLightDto,
@@ -36,6 +38,8 @@ import {
   DisturbanceReportLightDto,
   DisturbanceReportFullDto,
   ProjectReportMetaDto,
+  ProjectNurseriesMetaDto,
+  ProjectSitesMetaDto,
   FileDownloadDto,
   DelayedJobDto,
   FormTranslationDto,
@@ -67,6 +71,7 @@ export const ENTITY_SERVICE_RESOURCES = [
   "nurseryReports",
   "srpReports",
   "media",
+  "mediaMapIndexes",
   "mediaBulkResponses",
   "treeSpeciesScientificNames",
   "establishmentTrees",
@@ -77,12 +82,15 @@ export const ENTITY_SERVICE_RESOURCES = [
   "auditStatuses",
   "aggregateReports",
   "reportCounts",
+  "entityCounts",
   "projects",
   "sites",
   "nurseries",
   "financialReports",
   "disturbanceReports",
   "projectReportsMetas",
+  "projectNurseriesMetas",
+  "projectSitesMetas",
   "fileDownloads",
   "delayedJobs",
   "formTranslations",
@@ -113,6 +121,7 @@ export type EntityServiceApiResources = {
   nurseryReports: StoreResourceMap<NurseryReportLightDto | NurseryReportFullDto>;
   srpReports: StoreResourceMap<SrpReportLightDto | SrpReportFullDto>;
   media: StoreResourceMap<MediaDto>;
+  mediaMapIndexes: StoreResourceMap<MediaMapIndexDto>;
   mediaBulkResponses: StoreResourceMap<MediaBulkErrorDto>;
   treeSpeciesScientificNames: StoreResourceMap<ScientificNameDto>;
   establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
@@ -123,12 +132,15 @@ export type EntityServiceApiResources = {
   auditStatuses: StoreResourceMap<AuditStatusDto>;
   aggregateReports: StoreResourceMap<AggregateReportsDto>;
   reportCounts: StoreResourceMap<ReportCountsDto>;
+  entityCounts: StoreResourceMap<EntityCountsDto>;
   projects: StoreResourceMap<ProjectLightDto | ProjectFullDto>;
   sites: StoreResourceMap<SiteLightDto | SiteFullDto>;
   nurseries: StoreResourceMap<NurseryLightDto | NurseryFullDto>;
   financialReports: StoreResourceMap<FinancialReportLightDto | FinancialReportFullDto>;
   disturbanceReports: StoreResourceMap<DisturbanceReportLightDto | DisturbanceReportFullDto>;
   projectReportsMetas: StoreResourceMap<ProjectReportMetaDto>;
+  projectNurseriesMetas: StoreResourceMap<ProjectNurseriesMetaDto>;
+  projectSitesMetas: StoreResourceMap<ProjectSitesMetaDto>;
   fileDownloads: StoreResourceMap<FileDownloadDto>;
   delayedJobs: StoreResourceMap<DelayedJobDto>;
   formTranslations: StoreResourceMap<FormTranslationDto>;

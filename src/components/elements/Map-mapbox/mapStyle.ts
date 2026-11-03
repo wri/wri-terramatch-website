@@ -64,9 +64,10 @@ export const applyMapDrawStatusStyles = (
 
   const color = STATUS_COLOR_MAP[status];
   DRAW_STATUS_PAINT_LAYERS.forEach(({ baseLayerId, paintProperty }) => {
+    const property = paintProperty as Parameters<MapboxMap["setPaintProperty"]>[1];
     drawLayerIds(baseLayerId).forEach(layerId => {
-      if (map.getLayer(layerId) != null) {
-        map.setPaintProperty(layerId, paintProperty as Parameters<MapboxMap["setPaintProperty"]>[1], color);
+      if (map.getLayer(layerId) != null && map.getPaintProperty(layerId, property) !== color) {
+        map.setPaintProperty(layerId, property, color);
       }
     });
   });

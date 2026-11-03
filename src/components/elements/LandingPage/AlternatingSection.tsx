@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 import { DetailedHTMLProps, HTMLAttributes } from "react";
 
@@ -10,7 +9,7 @@ import Text from "../Text/Text";
 export interface AlternatingSectionProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   title: string;
   description: string;
-  imageSrc: string | StaticImageData;
+  imageSrc: string;
   imageCredit?: { name: string; position: "right" | "left" };
   buttonText: string;
   buttonLink: string;
@@ -33,7 +32,7 @@ const AlternatingSection = (props: AlternatingSectionProps) => {
       </div>
       <div className="flex justify-center bg-background md:w-[50%]">
         <div className="relative h-[278px] w-full md:h-[510px]">
-          <Image src={imageSrc} alt="image" fill style={{ objectFit: "cover" }} placeholder="blur" />
+          <img src={imageSrc} alt={title} className="absolute inset-0 h-full w-full object-cover" />
           <ImageCredit
             className={classNames(`absolute bottom-0`, {
               "left-5": imageCredit?.position === "left",

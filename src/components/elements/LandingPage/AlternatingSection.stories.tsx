@@ -17,7 +17,7 @@ export const Right: Story = {
       "A partnership of WRI, One Tree Planted, and Realize Impact, in 2022, TerraFund for AFR100 invested in Africa’s Top 100 locally led land restoration projects. Located across 27 member countries of the AFR100 Initiative, these community-based non-profits and enterprises received grants or loans of $50,000 to $500,000 each. Now, TerraMatch is tracking their progress by combining field-collected data with insights from WRI’s Land & Carbon Lab.",
     buttonText: "Learn more",
     buttonLink: "/",
-    imageSrc: Image
+    imageSrc: Image.src
   }
 };
 
@@ -28,7 +28,7 @@ export const Left: Story = {
       "A partnership of WRI, One Tree Planted, and Realize Impact, in 2022, TerraFund for AFR100 invested in Africa’s Top 100 locally led land restoration projects. Located across 27 member countries of the AFR100 Initiative, these community-based non-profits and enterprises received grants or loans of $50,000 to $500,000 each. Now, TerraMatch is tracking their progress by combining field-collected data with insights from WRI’s Land & Carbon Lab.",
     buttonText: "Learn more",
     buttonLink: "/",
-    imageSrc: Image,
+    imageSrc: Image.src,
     className: "flex-row-reverse"
   }
 };

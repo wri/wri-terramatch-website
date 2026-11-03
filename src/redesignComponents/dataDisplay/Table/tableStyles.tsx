@@ -2,15 +2,16 @@ import type { SystemStyleObject } from "@chakra-ui/react";
 
 import { getThemedColor } from "@/lib/theme";
 
+import { MIN_PAGE_SIZE_OPTION } from "./tableUtils";
+
 export const getTableWrapperStyles = (
   selectable?: boolean,
   dataByPage?: unknown[],
-  pageSize?: number,
   actualTotalItems?: number,
   css?: SystemStyleObject
 ): SystemStyleObject => {
   const shouldHidePagination =
-    actualTotalItems != null ? actualTotalItems <= (pageSize ?? 0) : dataByPage?.length === 0;
+    actualTotalItems != null ? actualTotalItems <= MIN_PAGE_SIZE_OPTION : dataByPage?.length === 0;
 
   const { "& > div > div": cssScrollContainer, ...restCss } = css ?? {};
 

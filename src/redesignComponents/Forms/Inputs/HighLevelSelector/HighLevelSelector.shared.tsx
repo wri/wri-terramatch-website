@@ -1,10 +1,18 @@
 import { Portal, Text } from "@chakra-ui/react";
-import { FC, PropsWithChildren, ReactNode, useState } from "react";
+import { FC, Fragment, PropsWithChildren, ReactNode, useState } from "react";
 
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon, FolderOpenIcon } from "@/redesignComponents/foundations/Icons";
+import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
 import { MenuContentProps } from "./HighLevelSelector.keyboard";
-import { contentMenuStyles, getLabelStyles, getMenuItemStyles } from "./HighLevelSelector.styles";
+import {
+  contentMenuStyles,
+  getLabelStyles,
+  getMenuItemStyles,
+  groupedContentMenuStyles,
+  menuGroupLabelStyles,
+  menuGroupStyles
+} from "./HighLevelSelector.styles";
 import { HighLevelSelectorItem } from "./HighLevelSelector.types";
 
 export const DEFAULT_EMPTY_MESSAGE = "No results found";
@@ -69,6 +77,8 @@ export const SelectorEmptyMessage: FC<SelectorTextProps> = ({ children }) => (
 interface SelectorMenuProps {
   Content: ChakraSlot;
   Item: ChakraSlot;
+  ItemGroup: ChakraSlot;
+  ItemGroupLabel: ChakraSlot;
   ItemIndicator: ChakraSlot;
   Positioner: ChakraSlot;
   contentProps: MenuContentProps;
@@ -76,34 +86,74 @@ interface SelectorMenuProps {
   items: HighLevelSelectorItem[];
 }
 
+type SelectorMenuSection = {
+  group?: string;
+  items: HighLevelSelectorItem[];
+};
+
+const getMenuSections = (items: HighLevelSelectorItem[]) =>
+  items.reduce<SelectorMenuSection[]>((sections, item) => {
+    const lastSection = sections[sections.length - 1];
+    if (lastSection != null && lastSection.group === item.group) {
+      lastSection.items.push(item);
+    } else {
+      sections.push({ group: item.group, items: [item] });
+    }
+    return sections;
+  }, []);
+
 export const SelectorMenu: FC<SelectorMenuProps> = ({
   Content,
   Item,
+  ItemGroup,
+  ItemGroupLabel,
   ItemIndicator,
   Positioner,
   contentProps,
   emptyMessage,
   items
-}) => (
-  <Portal>
-    <Positioner zIndex={1500}>
-      <Content {...contentMenuStyles} {...contentProps}>
-        {items.length === 0 ? (
-          <SelectorEmptyMessage>{emptyMessage}</SelectorEmptyMessage>
-        ) : (
-          items.map(item => (
-            <Item key={item.value} aria-label={item.label} item={item} {...getMenuItemStyles(item.disabled)}>
-              <ItemIndicator>
-                <CheckIcon aria-hidden="true" width={4} color="neutral.800" height={"auto"} flexShrink={0} />
-              </ItemIndicator>
-              <SelectorOptionText>{item.label}</SelectorOptionText>
-            </Item>
-          ))
-        )}
-      </Content>
-    </Positioner>
-  </Portal>
-);
+}) => {
+  const isGrouped = items.some(item => item.group != null);
+
+  const renderItem = (item: HighLevelSelectorItem) => (
+    <Item key={item.value} aria-label={item.label} item={item} {...getMenuItemStyles(item.disabled)}>
+      <ItemIndicator>
+        <CheckIcon aria-hidden="true" width={4} color="neutral.800" height={"auto"} flexShrink={0} />
+      </ItemIndicator>
+      <SelectorOptionText>{item.label}</SelectorOptionText>
+    </Item>
+  );
+
+  return (
+    <Portal>
+      <Positioner zIndex={1500}>
+        <Content {...(isGrouped ? groupedContentMenuStyles : contentMenuStyles)} {...contentProps}>
+          {items.length === 0 ? (
+            <SelectorEmptyMessage>{emptyMessage}</SelectorEmptyMessage>
+          ) : isGrouped ? (
+            getMenuSections(items).map((section, index) => (
+              <Fragment key={section.group ?? `ungrouped-${index}`}>
+                {index > 0 && <SimpleDivider width="auto" mx={3} />}
+                <ItemGroup {...menuGroupStyles}>
+                  {section.group != null && (
+                    <ItemGroupLabel {...menuGroupLabelStyles}>
+                      <Text as="span" textStyle="300" color="neutral.700">
+                        {section.group}
+                      </Text>
+                    </ItemGroupLabel>
+                  )}
+                  {section.items.map(renderItem)}
+                </ItemGroup>
+              </Fragment>
+            ))
+          ) : (
+            items.map(renderItem)
+          )}
+        </Content>
+      </Positioner>
+    </Portal>
+  );
+};
 
 export const toCollectionValue = (value?: string) => (value == null ? undefined : value.length > 0 ? [value] : []);
 

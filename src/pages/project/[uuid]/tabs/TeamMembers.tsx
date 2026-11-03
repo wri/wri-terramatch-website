@@ -1,11 +1,11 @@
 import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { bulkDeleteUserAssociations, useUserAssociations } from "@/connections/UserAssociation";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { UserAssociationDto } from "@/generated/v3/userService/userServiceSchemas";
 import { getThemedColor } from "@/lib/theme";
 import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
 import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
@@ -14,6 +14,7 @@ import Table, { type TableRenderRowContext } from "@/redesignComponents/dataDisp
 import { RowData } from "@/redesignComponents/dataDisplay/Table/tableUtils";
 import { DeleteIcon, UserAddIcon } from "@/redesignComponents/foundations/Icons";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
+import { isPendingErrorState } from "@/store/apiSlice";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
 
@@ -48,6 +49,8 @@ export const TEAM_MEMBER_ROLE_CHOICES = [
   }
 ];
 
+const TEAM_MEMBER_ROLES = ["project-developer", "project-manager"];
+
 const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
   const t = useT();
   const isMobile = useMediaQuery("(max-width: 1200px)");
@@ -67,34 +70,45 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
     setDeletePartnerData(null);
   }, []);
 
-  const handleConfirmDelete = useCallback(() => {
-    if (deletePartnerData) {
-      bulkDeleteUserAssociations(project.uuid, [deletePartnerData.uuid ?? ""]);
-    }
+  const handleConfirmDelete = useCallback(async () => {
+    if (deletePartnerData == null) return;
+    const uuid = deletePartnerData.uuid ?? "";
     setDeletePartnerData(null);
-  }, [deletePartnerData, project.uuid]);
+    try {
+      await bulkDeleteUserAssociations(project.uuid, [uuid]);
+    } catch (error) {
+      const message = isPendingErrorState(error) ? error.message : undefined;
+      showToast({
+        label: (Array.isArray(message) ? message[0] : message) ?? t("Failed to remove team member"),
+        type: "error",
+        placement: "bottom",
+        duration: 5000
+      });
+    }
+  }, [deletePartnerData, project.uuid, t]);
 
   const teamMembers = useMemo(() => {
     const all =
-      associatedUsers
-        ?.filter(member => {
-          const role = member?.roleName?.toLowerCase();
-          const isValidRole = role && ["project-manager", "project-developer"].includes(role);
-          const matchesSelectedRole = !selectedRole || role === selectedRole.toLowerCase();
-          return isValidRole && matchesSelectedRole;
-        })
-        .map((member, index) => ({
-          ...member,
-          id: member.uuid,
-          roleName: member.roleName ?? "",
-          //TODO: replace with actual image once it is implemented
-          status: member?.status == "active" || member?.isManager ? "Accepted" : "Pending"
-        })) ?? [];
+      associatedUsers?.flatMap(member => {
+        const roleName = member.roles.find(role => TEAM_MEMBER_ROLES.includes(role));
+        if (roleName == null || (selectedRole != null && roleName !== selectedRole)) return [];
+
+        return [
+          {
+            ...member,
+            id: member.uuid,
+            roleName,
+            //TODO: replace with actual image once it is implemented
+            // Every listed user is already a project member; pending invites live in v2_project_invites.
+            status: "Accepted"
+          }
+        ];
+      }) ?? [];
 
     const q = searchQuery.trim().toLowerCase();
     if (q.length === 0) return all;
     return all?.filter(member => {
-      const includes = (key: keyof UserAssociationDto) =>
+      const includes = (key: keyof typeof member) =>
         typeof member?.[key] === "string" && (member?.[key] as string).toLowerCase().includes(q);
 
       return (

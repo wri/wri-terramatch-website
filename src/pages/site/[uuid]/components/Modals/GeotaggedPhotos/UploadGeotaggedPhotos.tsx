@@ -1,6 +1,5 @@
 import { Box, Flex, Grid, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import exifr from "exifr";
 import { ChangeEvent, DragEvent, FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -13,6 +12,7 @@ import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/Button
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import GalleryImage from "@/redesignComponents/content/Images/GalleryImage/GalleryImage";
 import { UploadIcon } from "@/redesignComponents/foundations/Icons";
+import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import Log from "@/utils/log";
 
 import { UploadPhotosWarningContent } from "../UploadPhotos";
@@ -155,8 +155,7 @@ const UploadGeotaggedPhotos: FC<UploadGeotaggedPhotosProps> = ({ open, siteUuid,
           label: t("Upload Failed"),
           type: "error",
           placement: "bottom",
-          duration: 5000,
-          maxWidth: "auto"
+          duration: 5000
         });
         return;
       }
@@ -172,16 +171,14 @@ const UploadGeotaggedPhotos: FC<UploadGeotaggedPhotosProps> = ({ open, siteUuid,
           }),
           type: "warning",
           placement: "bottom",
-          duration: 5000,
-          maxWidth: "auto"
+          duration: 5000
         });
       } else {
         showToast({
           label: t("Upload Complete"),
           type: "success",
           placement: "bottom",
-          duration: 5000,
-          maxWidth: "auto"
+          duration: 5000
         });
       }
 
@@ -192,8 +189,7 @@ const UploadGeotaggedPhotos: FC<UploadGeotaggedPhotosProps> = ({ open, siteUuid,
         label: t("Upload Failed"),
         type: "error",
         placement: "bottom",
-        duration: 5000,
-        maxWidth: "auto"
+        duration: 5000
       });
     } finally {
       setIsUploading(false);

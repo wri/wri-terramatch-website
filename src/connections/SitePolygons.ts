@@ -383,6 +383,35 @@ export const loadSitePolygonByUuid = async ({
   );
 };
 
+export const loadActiveSitePolygonVersion = async ({
+  entityUuid,
+  primaryUuid,
+  versionPolygonUuids,
+  polygonId
+}: {
+  entityUuid: string;
+  primaryUuid?: string | null;
+  versionPolygonUuids: string[];
+  polygonId: string;
+}): Promise<SitePolygonLightDto | undefined> => {
+  if (primaryUuid != null && primaryUuid !== "" && versionPolygonUuids.length > 0) {
+    const versionsResponse = await loadSitePolygons({
+      entityName: "sites",
+      entityUuid,
+      enabled: true,
+      filter: { "polygonUuid[]": versionPolygonUuids },
+      pageNumber: 1,
+      pageSize: versionPolygonUuids.length
+    });
+    const version = (versionsResponse.data ?? []).find(polygon => polygon.primaryUuid === primaryUuid);
+    if (version != null) {
+      return version;
+    }
+  }
+
+  return await loadSitePolygonByUuid({ entityUuid, polygonId });
+};
+
 export const useAllSitePolygons = (
   props: Omit<ConnectionProps<typeof sitePolygonsConnection>, "pageNumber" | "pageSize"> & {
     sortField?: string;

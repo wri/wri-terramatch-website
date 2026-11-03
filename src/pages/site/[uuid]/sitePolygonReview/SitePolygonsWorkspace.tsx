@@ -1,4 +1,3 @@
-import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -33,6 +32,7 @@ import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { SITE_POLYGON_TAB_HEADER_ID } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
+import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import { HIDDEN_STICKY_COLUMN_EDGE_STYLES } from "@/redesignComponents/dataDisplay/Table/tableStyles";
 import type { SortColumn } from "@/redesignComponents/dataDisplay/Table/tableUtils";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
@@ -104,8 +104,8 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     setPolygonApproveConfirmation,
     polygonRequestInformationConfirmation,
     setPolygonRequestInformationConfirmation,
-    editPhotoDetailsMedia,
-    setEditPhotoDetailsMedia
+    editPhotoDetailsMediaUuid,
+    setEditPhotoDetailsMediaUuid
   } = useMapAreaContext();
 
   const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -498,6 +498,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     validatingPolygonCount,
     approvePolygons,
     requestInformationForPolygons,
+    clearValidationUi,
     handleBulkDelete,
     handleBulkDownloadClick,
     handleBulkEditDetails,
@@ -520,7 +521,6 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     handleSubmitPolygonsModalChange,
     handleSystemValidationCompleteModalChange,
     isSystemValidationCompleteModalOpen,
-    openPolygonEditDrawerForRow,
     runPolygonValidation,
     runValidationWithResultsModal,
     showValidationResultsModalIfPending,
@@ -583,9 +583,9 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   const handleViewValidationDetails = useCallback(
     (row: PolygonTableRow) => {
       handleSystemValidationCompleteModalChange(false);
-      openPolygonEditDrawerForRow(row);
+      openPolygonEditDrawerByPolygonId(row.id);
     },
-    [handleSystemValidationCompleteModalChange, openPolygonEditDrawerForRow]
+    [handleSystemValidationCompleteModalChange, openPolygonEditDrawerByPolygonId]
   );
 
   const isValidationInProgress = isValidatingPolygons || pendingValidationPolygonUuids.length > 0;
@@ -746,6 +746,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
         onOverlapFixed={handleDrawerOverlapFixed}
         onRunValidation={runPolygonValidation}
         onRunValidationWithResultsModal={runValidationWithResultsModal}
+        onValidationCleared={clearValidationUi}
         onPolygonDeletingChange={handlePolygonDeletingChange}
         onPolygonSubmittingChange={handlePolygonSubmittingChange}
         onRequestApproveModal={isAdminReview ? handleDrawerRequestApproveModal : undefined}
@@ -816,29 +817,6 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
             onClearFilters={handleClearPolygonFilters}
           />
         </PageItem>
-        <PolygonBulkActionToolbar
-          visible={hasPolygonSelection && !isDeletedAuditView}
-          itemCount={selectedRows.length}
-          isBulkEditDrawerOpen={showBulkEditDrawer}
-          isAdminReview={isAdminReview}
-          submitLabel={bulkToolbarSubmitLabel}
-          polygons={selectedRows}
-          selectedGeometryPolygonUuids={selectedGeometryPolygonUuids}
-          isDownloading={isDownloadingSelectedPolygons}
-          isValidating={isValidatingPolygons}
-          onCancel={clearBulkTableSelection}
-          onClearSelection={clearBulkTableSelection}
-          onDelete={handleOpenDeletePolygonModal}
-          onDownload={handleBulkDownloadClick}
-          onEdit={handleBulkEditDetails}
-          onRunValidation={runValidationWithResultsModal}
-          onSubmit={handleOpenSubmitPolygonsModal}
-          onOpenApproveModal={handleOpenApprovePolygonModal}
-          onOpenRequestInformationModal={handleOpenRequestInformationModal}
-          isOverlapFixAction={hasSelectedOverlapFailure}
-          canAutoFixOverlap={hasFixableSelectedOverlap}
-          isSubmitDisabled={isBulkSubmitDisabled}
-        />
         <SitePolygonModals
           siteUuid={site.uuid}
           isEditPolygonOpen={isEditPolygonOpen}
@@ -848,7 +826,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           deletePayload={deletePayload}
           submitPayload={submitPayload}
           overlapFixResults={overlapFixResults}
-          editPhotoDetailsMedia={editPhotoDetailsMedia}
+          editPhotoDetailsMediaUuid={editPhotoDetailsMediaUuid}
           openBulkEditDrawer={showBulkEditDrawer}
           openDeletePolygonModal={showDeletePolygonModal}
           openOverlapFixModal={showOverlapFixModal}
@@ -867,7 +845,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           onBulkEditSave={handleBulkEditSave}
           onDelete={handleBulkDelete}
           onDeletePolygonModalOpenChange={handleDeletePolygonModalChange}
-          onEditPhotoDetailsClose={() => setEditPhotoDetailsMedia(null)}
+          onEditPhotoDetailsClose={() => setEditPhotoDetailsMediaUuid(null)}
           onMapPopupSubmitConfirmationModalOpenChange={handleMapPopupSubmitConfirmationModalChange}
           onMapPopupSubmit={handleConfirmMapPopupSubmit}
           onOverlapFixClose={handleOverlapFixModalClose}
@@ -948,12 +926,10 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           />
         )}
         {shouldShowNoResults ? (
-          <Box>
-            <Text textStyle="400-bold">{t("No results found")}</Text>
-            <Text textStyle="400">
-              {t("We couldn’t find any site areas matching your search. Try a different keyword.")}
-            </Text>
-          </Box>
+          <NoResults
+            title={t("No results found")}
+            description={t("We couldn’t find any site areas matching your search. Try a different keyword.")}
+          />
         ) : (
           <>
             {!isDeletedAuditView && (
@@ -992,6 +968,29 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
             />
           </>
         )}
+        <PolygonBulkActionToolbar
+          visible={hasPolygonSelection && !isDeletedAuditView}
+          itemCount={selectedRows.length}
+          isBulkEditDrawerOpen={showBulkEditDrawer}
+          isAdminReview={isAdminReview}
+          submitLabel={bulkToolbarSubmitLabel}
+          polygons={selectedRows}
+          selectedGeometryPolygonUuids={selectedGeometryPolygonUuids}
+          isDownloading={isDownloadingSelectedPolygons}
+          isValidating={isValidatingPolygons}
+          onCancel={clearBulkTableSelection}
+          onClearSelection={clearBulkTableSelection}
+          onDelete={handleOpenDeletePolygonModal}
+          onDownload={handleBulkDownloadClick}
+          onEdit={handleBulkEditDetails}
+          onRunValidation={runValidationWithResultsModal}
+          onSubmit={handleOpenSubmitPolygonsModal}
+          onOpenApproveModal={handleOpenApprovePolygonModal}
+          onOpenRequestInformationModal={handleOpenRequestInformationModal}
+          isOverlapFixAction={hasSelectedOverlapFailure}
+          canAutoFixOverlap={hasFixableSelectedOverlap}
+          isSubmitDisabled={isBulkSubmitDisabled}
+        />
       </PageContent>
     </>
   );

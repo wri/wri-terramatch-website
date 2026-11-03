@@ -1785,6 +1785,90 @@ export const mediaDelete = new V3ApiEndpoint<MediaDeleteResponse, MediaDeleteErr
   "DELETE"
 );
 
+export type MediaMapIndexPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * Entity type whose map photos are requested.
+   */
+  entity: "projects" | "sites";
+};
+
+export type MediaMapIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type MediaMapIndexResponse = {
+  meta?: {
+    /**
+     * @example mediaMapIndexes
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example mediaMapIndexes
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.MediaMapIndexDto;
+  };
+};
+
+export type MediaMapIndexVariables = {
+  pathParams: MediaMapIndexPathParams;
+};
+
+/**
+ * Covers the same media as the entity's media association index (a project includes its sites,
+ *       nurseries and reports). Not paginated by design: map markers need the complete set in one response, and
+ *       each entry only carries the few attributes the map needs. Use the media association index for galleries.
+ */
+export const mediaMapIndex = new V3ApiEndpoint<MediaMapIndexResponse, MediaMapIndexError, MediaMapIndexVariables, {}>(
+  "/entities/v3/files/{entity}/{uuid}/mediaMapIndex",
+  "GET"
+);
+
 export type SiteMediaBulkUploadPathParams = {
   /**
    * Entity type to upload media to
@@ -3114,6 +3198,10 @@ export type ReportCountsGetQueryParams = {
    */
   reportTypes?: ("disturbanceReports" | "nurseryReports" | "projectReports" | "siteReports" | "srpReports")[];
   statuses?: ("due" | "draft" | "pending-approval" | "approved" | "information-required")[];
+  /**
+   * Update request statuses to match. A report with no update request never matches.
+   */
+  updateRequestStatuses?: ("draft" | "pending-approval" | "approved" | "information-required")[];
   projectUuid?: string;
   /**
    * Search term matched against project, site and nursery names. A site or nursery report matches if its site / nursery or project name matches; project-level reports match on project name.
@@ -3163,6 +3251,116 @@ export const reportCountsGet = new V3ApiEndpoint<
   {}
 >("/entities/v3/reportCounts", "GET");
 
+export type SitesCountsGetQueryParams = {
+  /**
+   * Matches the entity, project or organisation names
+   */
+  search?: string;
+  status?: string[];
+  updateRequestStatus?: string[];
+  /**
+   * Only the project with this uuid
+   */
+  projectUuid?: string;
+};
+
+export type SitesCountsGetError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type SitesCountsGetResponse = {
+  meta?: {
+    /**
+     * @example entityCounts
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example entityCounts
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.EntityCountsDto;
+  };
+};
+
+export type SitesCountsGetVariables = {
+  queryParams?: SitesCountsGetQueryParams;
+};
+
+export const sitesCountsGet = new V3ApiEndpoint<
+  SitesCountsGetResponse,
+  SitesCountsGetError,
+  SitesCountsGetVariables,
+  {}
+>("/entities/v3/sitesCounts", "GET");
+
+export type NurseriesCountsGetQueryParams = {
+  /**
+   * Matches the entity, project or organisation names
+   */
+  search?: string;
+  status?: string[];
+  updateRequestStatus?: string[];
+  /**
+   * Only the project with this uuid
+   */
+  projectUuid?: string;
+};
+
+export type NurseriesCountsGetError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type NurseriesCountsGetResponse = {
+  meta?: {
+    /**
+     * @example entityCounts
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example entityCounts
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.EntityCountsDto;
+  };
+};
+
+export type NurseriesCountsGetVariables = {
+  queryParams?: NurseriesCountsGetQueryParams;
+};
+
+export const nurseriesCountsGet = new V3ApiEndpoint<
+  NurseriesCountsGetResponse,
+  NurseriesCountsGetError,
+  NurseriesCountsGetVariables,
+  {}
+>("/entities/v3/nurseriesCounts", "GET");
+
 export type EntityIndexPathParams = {
   /**
    * Entity type to retrieve
@@ -3205,8 +3403,8 @@ export type EntityIndexQueryParams = {
   frameworkKey?: string[];
   organisationUuid?: string;
   country?: string;
-  status?: string;
-  updateRequestStatus?: string;
+  status?: string[];
+  updateRequestStatus?: string[];
   projectUuid?: string;
   nurseryUuid?: string;
   siteUuid?: string;
@@ -3881,6 +4079,10 @@ export type EntityReportsMetaIndexQueryParams = {
    */
   reportTypes?: ("disturbanceReports" | "nurseryReports" | "projectReports" | "siteReports" | "srpReports")[];
   statuses?: ("due" | "draft" | "pending-approval" | "approved" | "information-required")[];
+  /**
+   * Update request statuses to match. A report with no update request never matches.
+   */
+  updateRequestStatuses?: ("draft" | "pending-approval" | "approved" | "information-required")[];
   projectUuid?: string;
   /**
    * Search term matched against project, site and nursery names. A site or nursery report matches if its site / nursery or project name matches; project-level reports match on project name.
@@ -3979,6 +4181,230 @@ export const entityReportsMetaIndex = new V3ApiEndpoint<
   EntityReportsMetaIndexVariables,
   {}
 >("/entities/v3/{entity}/reportsMeta", "GET");
+
+export type EntityNurseriesMetaIndexPathParams = {
+  /**
+   * Entity type to retrieve nurseries meta for
+   */
+  entity: "projects";
+};
+
+export type EntityNurseriesMetaIndexQueryParams = {
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  /**
+   * Matches nursery, project or organisation names
+   */
+  search?: string;
+  /**
+   * Only the project with this uuid
+   */
+  projectUuid?: string;
+  status?: string[];
+  updateRequestStatus?: string[];
+};
+
+export type EntityNurseriesMetaIndexError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type EntityNurseriesMetaIndexResponse = {
+  meta?: {
+    /**
+     * @example projectNurseriesMetas
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The current page number.
+       */
+      pageNumber?: number;
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
+  };
+  data?: {
+    /**
+     * @example projectNurseriesMetas
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ProjectNurseriesMetaDto;
+  }[];
+};
+
+export type EntityNurseriesMetaIndexVariables = {
+  pathParams: EntityNurseriesMetaIndexPathParams;
+  queryParams?: EntityNurseriesMetaIndexQueryParams;
+};
+
+export const entityNurseriesMetaIndex = new V3ApiEndpoint<
+  EntityNurseriesMetaIndexResponse,
+  EntityNurseriesMetaIndexError,
+  EntityNurseriesMetaIndexVariables,
+  {}
+>("/entities/v3/{entity}/nurseriesMeta", "GET");
+
+export type EntitySitesMetaIndexPathParams = {
+  /**
+   * Entity type to retrieve sites meta for
+   */
+  entity: "projects";
+};
+
+export type EntitySitesMetaIndexQueryParams = {
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  /**
+   * Matches site or project names
+   */
+  search?: string;
+  /**
+   * Only the project with this uuid
+   */
+  projectUuid?: string;
+  status?: string[];
+  updateRequestStatus?: string[];
+};
+
+export type EntitySitesMetaIndexError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type EntitySitesMetaIndexResponse = {
+  meta?: {
+    /**
+     * @example projectSitesMetas
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The current page number.
+       */
+      pageNumber?: number;
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
+  };
+  data?: {
+    /**
+     * @example projectSitesMetas
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ProjectSitesMetaDto;
+  }[];
+};
+
+export type EntitySitesMetaIndexVariables = {
+  pathParams: EntitySitesMetaIndexPathParams;
+  queryParams?: EntitySitesMetaIndexQueryParams;
+};
+
+export const entitySitesMetaIndex = new V3ApiEndpoint<
+  EntitySitesMetaIndexResponse,
+  EntitySitesMetaIndexError,
+  EntitySitesMetaIndexVariables,
+  {}
+>("/entities/v3/{entity}/sitesMeta", "GET");
 
 export type EntityExportAllPathParams = {
   /**
@@ -5344,8 +5770,8 @@ export type EntityAssociationIndexQueryParams = {
   frameworkKey?: string[];
   organisationUuid?: string;
   country?: string;
-  status?: string;
-  updateRequestStatus?: string;
+  status?: string[];
+  updateRequestStatus?: string[];
   projectUuid?: string;
   nurseryUuid?: string;
   siteUuid?: string;
@@ -7802,7 +8228,16 @@ export const operationsByTag = {
   },
   aboutSections: { aboutSectionIndex, aboutSectionCreate, aboutSectionGet, aboutSectionUpdate, aboutSectionDelete },
   tasks: { taskIndex, taskGet, taskUpdate },
-  files: { exportImage, getMedia, mediaUpdate, mediaDelete, siteMediaBulkUpload, uploadFile, mediaBulkDelete },
+  files: {
+    exportImage,
+    getMedia,
+    mediaUpdate,
+    mediaDelete,
+    mediaMapIndex,
+    siteMediaBulkUpload,
+    uploadFile,
+    mediaBulkDelete
+  },
   trees: {
     treeScientificNamesSearch,
     establishmentTreesFind,
@@ -7816,9 +8251,13 @@ export const operationsByTag = {
   aggregateReports: { getAggregateReports },
   entities: {
     reportCountsGet,
+    sitesCountsGet,
+    nurseriesCountsGet,
     entityIndex,
     entityCreate,
     entityReportsMetaIndex,
+    entityNurseriesMetaIndex,
+    entitySitesMetaIndex,
     entityExportAll,
     entityPushTranslations,
     entityPullTranslations,

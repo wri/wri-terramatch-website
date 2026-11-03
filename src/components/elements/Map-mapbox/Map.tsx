@@ -27,7 +27,6 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto, SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 
@@ -58,6 +57,7 @@ import {
   usePolygonTableHighlightStyle
 } from "./hooks/usePolygonTableHighlight";
 import { addGeojsonToDraw } from "./interactions/draw";
+import { MapMedia } from "./layers/mediaTypes";
 import { CrossSiteOverlapPolygon, OverlapPolygonPoint } from "./layers/overlapTypes";
 import { buildCrossSiteOverlapFeatureCollection, buildCrossSiteOverlapMarkerPoints } from "./layers/overlayLayers";
 import { EMPTY_STATUS_POLYGON_MAP, parsePolygonDataV3 } from "./layers/polygonLayers";
@@ -67,6 +67,7 @@ import type {
   EntityData,
   MapFunctions,
   MobilePopupData,
+  OverviewPolygonPopup,
   PolygonCentroid,
   PolygonEntityScope,
   PolygonFromMapState,
@@ -93,7 +94,7 @@ export interface BaseMapProps {
   showLegend?: boolean;
   hasControls?: boolean;
   entityData?: EntityData;
-  mediaFiles?: MediaDto[];
+  mediaFiles?: MapMedia[];
   tooltipType?: TooltipType;
   sitePolygonData?: SitePolygonLightDto[];
   polygonEntityScope?: PolygonEntityScope;
@@ -110,7 +111,7 @@ export interface BaseMapProps {
   initialPolygonFingerprint?: string;
   /** Champions (non-admin) map layout and controls; omit or false for the default map. */
   championsMap?: boolean;
-  overviewPolygonPopup?: boolean;
+  overviewPolygonPopup?: OverviewPolygonPopup;
   polygonTableHighlight?: {
     selectedPolygonUuids: string[];
     onPolygonClickedFromMap?: (uuid: string) => void;
@@ -266,7 +267,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     hideMediaPopupActions,
     hideMediaOnMap,
     isPolygonGeometryLoading = false,
-    overviewPolygonPopup = false
+    overviewPolygonPopup
   } = props;
 
   const polygonsDataForLayers = useMemo(() => {
@@ -585,6 +586,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
 
   useMapMedia({
     map,
+    draw,
     mediaFiles: props.mediaFiles,
     styleReady,
     styleVersion,
@@ -600,8 +602,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     alwaysShowPhotosOnMap,
     hideMediaPopupActions,
     hideMediaOnMap,
-    isPolygonGeometryLoading,
-    overlapPolygons
+    isPolygonGeometryLoading
   });
 
   useMapOverlapIndicators({

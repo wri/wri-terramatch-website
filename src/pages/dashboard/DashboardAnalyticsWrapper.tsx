@@ -35,7 +35,7 @@ const DashboardAnalyticsWrapper = ({ children }: DashboardAnalyticsWrapperProps)
               'first_name': '${user.firstName ?? ""}',
               'last_name': '${user.lastName ?? ""}',
               'full_name': '${user.fullName ?? ""}',
-              'role': '${user.primaryRole ?? ""}',
+              'role': '${user.roles.join(",")}',
               'email_address': '${user.emailAddress ?? ""}',
               'locale': '${user.locale ?? ""}',
               'organisation_name': '${organisation?.name ?? ""}',

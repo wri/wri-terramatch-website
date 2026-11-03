@@ -50,7 +50,7 @@ const getTreesRegeneratingCount = (siteReport: SiteReportFullDto): number => {
 };
 
 const SiteReportDemographicsLoader = () => (
-  <DemographicsLoader className="h-32 min-w-[calc((100%_-_0.75rem)_/_2)] flex-1 lg:min-w-[calc((100%_-_1.5rem)_/_2)]" />
+  <DemographicsLoader className="h-32 min-w-[calc((100%_-_0.75rem)_/_2)] flex-1 lg:min-w-[calc((100%_-_1.5rem)_/_2)] mobile:min-w-full" />
 );
 
 const TerrafundSiteReportKeyIndicators: FC<TerrafundSiteReportKeyIndicatorsProps> = ({ siteReport, content }) => {
@@ -65,7 +65,7 @@ const TerrafundSiteReportKeyIndicators: FC<TerrafundSiteReportKeyIndicatorsProps
         variant="large"
         icon={<TreeIcon />}
         color="secondary.600"
-        className={"flex-1"}
+        className={"flex-1 mobile:basis-full"}
         metricLabel="trees_planted"
         tooltipContent={getTooltipContent(content.treesPlanted)}
       />
@@ -77,7 +77,7 @@ const TerrafundSiteReportKeyIndicators: FC<TerrafundSiteReportKeyIndicatorsProps
         variant="large"
         icon={<SurvivalRateIcon />}
         color="secondary.600"
-        className={"flex-1"}
+        className={"flex-1 mobile:basis-full"}
         metricLabel="survival_rate"
         tooltipContent={getTooltipContent(content.survivalRate)}
       />
@@ -88,7 +88,7 @@ const TerrafundSiteReportKeyIndicators: FC<TerrafundSiteReportKeyIndicatorsProps
         variant="large"
         icon={<RegenerationIcon />}
         color="secondary.600"
-        className={"flex-1"}
+        className={"flex-1 mobile:basis-full"}
         metricLabel="trees_regenerated"
         tooltipContent={getTooltipContent(content.treesRegenerated)}
       />

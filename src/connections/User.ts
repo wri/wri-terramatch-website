@@ -53,8 +53,9 @@ const selectMeUpdateFailure = (store: ApiDataStore) => {
 };
 
 const isAdmin = (user?: UserDto) =>
-  (user?.primaryRole === "project-manager" || user?.primaryRole.includes("admin")) ?? false;
-const isFunderOrGovernment = (user?: UserDto) => user?.primaryRole === "funder" || user?.primaryRole === "government";
+  user?.roles.some(role => role === "project-manager" || role.includes("admin")) ?? false;
+const isFunderOrGovernment = (user?: UserDto) =>
+  user?.roles.some(role => role === "funder" || role === "government") ?? false;
 
 const FIND_ME: UsersFindVariables = { pathParams: { uuid: "me" } };
 
