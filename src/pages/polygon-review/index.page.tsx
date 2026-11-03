@@ -1,6 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { isEmpty, noop } from "lodash";
+import { isEmpty } from "lodash";
 import { useRouter } from "next/router";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -31,6 +31,7 @@ import PolygonReviewMetrics from "./components/PolygonReviewMetrics";
 import PolygonReviewTableActions from "./components/PolygonReviewTableActions";
 import PolygonReviewToolbar from "./components/PolygonReviewToolbar";
 import ProjectContextPicker from "./components/ProjectContextPicker";
+import { useProjectPolygonIssues } from "./hooks/useProjectPolygonIssues";
 import { useProjectPolygonMetrics } from "./hooks/useProjectPolygonMetrics";
 import {
   EMPTY_PROJECT_CONTEXT_FILTERS,
@@ -40,10 +41,6 @@ import {
 } from "./utils/projectContextFilter";
 
 const NO_POLYGONS: SitePolygonLightDto[] = [];
-
-// Placeholder values from the Figma design until the issues panel is wired to project data.
-const PLACEHOLDER_OVERLAP_COUNT = 6;
-const PLACEHOLDER_DISTURBANCE_COUNT = 2;
 
 const clearTableHover = () => setPolygonTableHoveredUuid(null);
 
@@ -121,6 +118,19 @@ const PolygonReviewIndexPage: FC = () => {
     hasLevel2Filters,
     selectedPolygonUuids
   });
+  const { overlapPolygonUuids, disturbancePolygonUuids } = useProjectPolygonIssues({
+    projectUuid: selectedProjectUuid,
+    siteUuids,
+    polygonFilter: sitePolygonFilter
+  });
+  const selectOverlapPolygons = useCallback(
+    () => setSelectedRowIds(new Set(overlapPolygonUuids)),
+    [overlapPolygonUuids, setSelectedRowIds]
+  );
+  const selectDisturbancePolygons = useCallback(
+    () => setSelectedRowIds(new Set(disturbancePolygonUuids)),
+    [disturbancePolygonUuids, setSelectedRowIds]
+  );
   const tableContainerRef = useRef<HTMLDivElement>(null);
 
   const projects = useMemo(() => sortProjectsByName(mapIndex?.projects ?? []), [mapIndex]);
@@ -221,12 +231,14 @@ const PolygonReviewIndexPage: FC = () => {
                     filtered={metrics.filtered}
                     selected={metrics.selected}
                   />
-                  <SitePolygonIssuesPanel
-                    overlapCount={PLACEHOLDER_OVERLAP_COUNT}
-                    disturbanceCount={PLACEHOLDER_DISTURBANCE_COUNT}
-                    onSelectOverlapPolygons={noop}
-                    onSelectDisturbancePolygons={noop}
-                  />
+                  {overlapPolygonUuids.length > 0 && (
+                    <SitePolygonIssuesPanel
+                      overlapCount={overlapPolygonUuids.length}
+                      disturbanceCount={disturbancePolygonUuids.length}
+                      onSelectOverlapPolygons={selectOverlapPolygons}
+                      onSelectDisturbancePolygons={selectDisturbancePolygons}
+                    />
+                  )}
                 </Flex>
               )}
               <Flex direction="column" gap={3}>

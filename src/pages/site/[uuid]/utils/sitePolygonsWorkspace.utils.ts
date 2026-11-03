@@ -1,5 +1,8 @@
 import type { OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
-import type { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import type {
+  SitePolygonLightDto,
+  SitePolygonMapEntryDto
+} from "@/generated/v3/researchService/researchServiceSchemas";
 
 import type { PolygonTableRow } from "../components/PolygonTableRow";
 import { mapSitePolygonToTableRow } from "../components/polygonTableRow.utils";
@@ -84,3 +87,11 @@ export const mergeMapAlertPolygons = (
 
   return Array.from(byUuid.values());
 };
+
+/** Table row ids (polygon geometry UUIDs) of the given map index polygons. */
+export const getMapPolygonUuids = (mapPolygons: SitePolygonMapEntryDto[]): string[] =>
+  mapPolygons.map(entry => entry.polygonUuid ?? entry.uuid);
+
+/** Table row ids of the map index polygons linked to a disturbance report. */
+export const getDisturbancePolygonUuids = (mapPolygons: SitePolygonMapEntryDto[]): string[] =>
+  getMapPolygonUuids(mapPolygons.filter(entry => entry.disturbanceReportUuid != null));
