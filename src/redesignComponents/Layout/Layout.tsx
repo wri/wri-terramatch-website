@@ -59,7 +59,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
             ? `/organization/${myOrg.organisationId}`
             : "/",
           icon: <OrganizationIcon boxSize={4} />,
-          label: "Organizations"
+          label: isAdmin ? "Organizations" : "My Organization"
         },
         {
           href: "/my-projects",
