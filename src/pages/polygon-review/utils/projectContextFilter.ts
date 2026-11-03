@@ -10,7 +10,7 @@ export type FacetOption = { value: string; count: number };
 
 export const EMPTY_PROJECT_CONTEXT_FILTERS: ProjectContextFilters = { frameworkKey: [], country: [], cohort: [] };
 
-const getFacetValue = (project: ProjectMapEntryDto, facet: ProjectContextFacet): string | null =>
+export const getFacetValue = (project: ProjectMapEntryDto, facet: ProjectContextFacet): string | null =>
   facet === "country" ? project.level0Project?.[0] ?? null : project[facet];
 
 const matchesFacet = (project: ProjectMapEntryDto, filters: ProjectContextFilters, facet: ProjectContextFacet) => {
@@ -59,13 +59,3 @@ export const getProjectFacetFilters = (project: ProjectMapEntryDto): ProjectCont
   country: toFilterValues(getFacetValue(project, "country")),
   cohort: toFilterValues(getFacetValue(project, "cohort"))
 });
-
-export const toggleFacetValue = (
-  filters: ProjectContextFilters,
-  facet: ProjectContextFacet,
-  value: string,
-  checked: boolean
-): ProjectContextFilters => {
-  const values = filters[facet].filter(selected => selected !== value);
-  return { ...filters, [facet]: checked ? [...values, value] : values };
-};
