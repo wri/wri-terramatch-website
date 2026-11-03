@@ -1,6 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { isEmpty } from "lodash";
+import { isEmpty, noop } from "lodash";
 import { useRouter } from "next/router";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -21,6 +21,7 @@ import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject
 import { buildPolygonTableColumns } from "../site/[uuid]/components/polygonTableColumns";
 import type { PolygonTableRow } from "../site/[uuid]/components/PolygonTableRow";
 import { mapSitePolygonToTableRow } from "../site/[uuid]/components/polygonTableRow.utils";
+import SitePolygonIssuesPanel from "../site/[uuid]/components/SitePolygonIssuesPanel";
 import SitePolygonTableSection from "../site/[uuid]/components/SitePolygonTableSection";
 import { usePolygonTablePaging } from "../site/[uuid]/hooks/usePolygonTablePaging";
 import { useSitePolygonFilters } from "../site/[uuid]/hooks/useSitePolygonFilters";
@@ -39,6 +40,10 @@ import {
 } from "./utils/projectContextFilter";
 
 const NO_POLYGONS: SitePolygonLightDto[] = [];
+
+// Placeholder values from the Figma design until the issues panel is wired to project data.
+const PLACEHOLDER_OVERLAP_COUNT = 6;
+const PLACEHOLDER_DISTURBANCE_COUNT = 2;
 
 const clearTableHover = () => setPolygonTableHoveredUuid(null);
 
@@ -60,7 +65,7 @@ const PolygonReviewIndexPage: FC = () => {
   const t = useT();
   const router = useRouter();
   const [isUserLoaded, { isAdmin }] = useMyUser();
-  const [, { data: mapIndex, loadFailure }] = useProjectMapIndex({ enabled: isAdmin });
+  const [, { data: mapIndex }] = useProjectMapIndex({ enabled: isAdmin });
 
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [filters, setFilters] = useState<ProjectContextFilters>(EMPTY_PROJECT_CONTEXT_FILTERS);
@@ -198,7 +203,6 @@ const PolygonReviewIndexPage: FC = () => {
               siteUuids={siteUuids}
               polygonFilter={sitePolygonFilter}
               selectedPolygonUuids={selectedPolygonUuids}
-              hasLoadFailure={loadFailure != null}
               onViewProjectPolygons={selectProject}
             />
             <Flex
@@ -211,11 +215,19 @@ const PolygonReviewIndexPage: FC = () => {
               paddingBottom={7}
             >
               {selectedProject != null && (
-                <PolygonReviewMetrics
-                  project={metrics.project}
-                  filtered={metrics.filtered}
-                  selected={metrics.selected}
-                />
+                <Flex className="items-center justify-between gap-4 mobile:flex-col">
+                  <PolygonReviewMetrics
+                    project={metrics.project}
+                    filtered={metrics.filtered}
+                    selected={metrics.selected}
+                  />
+                  <SitePolygonIssuesPanel
+                    overlapCount={PLACEHOLDER_OVERLAP_COUNT}
+                    disturbanceCount={PLACEHOLDER_DISTURBANCE_COUNT}
+                    onSelectOverlapPolygons={noop}
+                    onSelectDisturbancePolygons={noop}
+                  />
+                </Flex>
               )}
               <Flex direction="column" gap={3}>
                 <PolygonReviewTableActions />
