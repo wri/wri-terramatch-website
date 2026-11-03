@@ -13,10 +13,6 @@ type UseProjectPolygonIssuesParams = {
 
 const NO_POLYGONS: SitePolygonMapEntryDto[] = [];
 
-/**
- * Polygons in the project scope with a failed overlap validation or a linked disturbance. The scoped map index request
- * is the same one the map makes, so only the overlap query adds a request.
- */
 export const useProjectPolygonIssues = ({ projectUuid, siteUuids, polygonFilter }: UseProjectPolygonIssuesParams) => {
   const scope = {
     entityName: "projects" as const,
