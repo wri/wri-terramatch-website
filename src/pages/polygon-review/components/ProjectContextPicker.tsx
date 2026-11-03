@@ -9,6 +9,7 @@ import { isNotNull } from "@/utils/array";
 
 import { useProjectFacetLabels } from "../hooks/useProjectFacetLabels";
 import {
+  EMPTY_PROJECT_CONTEXT_FILTERS,
   getFacetOptions,
   getFacetValue,
   getProjectFacetFilters,
@@ -34,44 +35,47 @@ type ProjectContextPickerProps = ProjectContextPickerContentProps & {
   onOpenChange: (open: boolean) => void;
 };
 
-const SelectedProjectSubtitle: FC<{ project: ProjectMapEntryDto }> = ({ project }) => {
-  const getLabel = useProjectFacetLabels();
-  const frameworkKey = getFacetValue(project, "frameworkKey");
-  const country = getFacetValue(project, "country");
+type FacetLabelGetter = ReturnType<typeof useProjectFacetLabels>;
 
-  return (
-    <>
-      {[
-        frameworkKey == null ? null : getLabel("frameworkKey", frameworkKey),
-        country == null ? null : getLabel("country", country)
-      ]
-        .filter(isNotNull)
-        .join(" · ")}
-    </>
-  );
+const MAX_CHECKBOX_OPTIONS = 7;
+
+const SUBTITLE_FACETS = ["frameworkKey", "country"] as const;
+
+const getProjectSubtitle = (project: ProjectMapEntryDto, getLabel: FacetLabelGetter) => {
+  const parts = SUBTITLE_FACETS.map(facet => {
+    const value = getFacetValue(project, facet);
+    return value == null ? null : getLabel(facet, value);
+  }).filter(isNotNull);
+  return parts.length === 0 ? undefined : parts.join(" · ");
 };
 
 /**
- * Popover body. It only mounts while the popover is open, so the project rows, facet counts and the label
- * lookups (frameworks / countries) cost nothing until an admin opens the picker.
+ * Popover body. It only mounts while the popover is open, so the project rows and facet counts cost nothing
+ * until an admin opens the picker.
  */
-const ProjectContextPickerContent: FC<ProjectContextPickerContentProps> = ({
+const ProjectContextPickerContent: FC<ProjectContextPickerContentProps & { getLabel: FacetLabelGetter }> = ({
   projects,
   filteredProjects,
   filters,
   selectedProject,
+  getLabel,
   onFiltersChange,
   onSelectProject,
   onClear
 }) => {
   const t = useT();
-  const getLabel = useProjectFacetLabels();
   const isLocked = selectedProject != null;
   const canClear = isLocked || PROJECT_CONTEXT_FACETS.some(facet => filters[facet].length > 0);
 
   const facetFilters = useMemo(
     () => (selectedProject != null ? getProjectFacetFilters(selectedProject) : filters),
     [filters, selectedProject]
+  );
+
+  // Counted over all projects so the country control doesn't switch type as other facets narrow it.
+  const countryCount = useMemo(
+    () => getFacetOptions(projects, EMPTY_PROJECT_CONTEXT_FILTERS, "country").length,
+    [projects]
   );
 
   const facetGroups = useMemo(() => {
@@ -83,11 +87,15 @@ const ProjectContextPickerContent: FC<ProjectContextPickerContentProps> = ({
     return (
       [
         { facet: "frameworkKey", label: t("Framework") },
-        { facet: "country", label: t("Country"), search: countrySearch },
+        {
+          facet: "country",
+          label: t("Country"),
+          search: countryCount > MAX_CHECKBOX_OPTIONS ? countrySearch : undefined
+        },
         { facet: "cohort", label: t("Cohort") }
       ] as const
     ).map(group => ({ ...group, options: getFacetOptions(projects, facetFilters, group.facet) }));
-  }, [facetFilters, projects, t]);
+  }, [countryCount, facetFilters, projects, t]);
 
   const setFacetValues = useCallback(
     (facet: ProjectContextFacet, values: string[]) => onFiltersChange({ ...filters, [facet]: values }),
@@ -152,19 +160,24 @@ const ProjectContextPickerContent: FC<ProjectContextPickerContentProps> = ({
 
 const ProjectContextPicker: FC<ProjectContextPickerProps> = ({ open, onOpenChange, ...contentProps }) => {
   const t = useT();
+  const getLabel = useProjectFacetLabels();
   const { selectedProject } = contentProps;
+  const subtitle = useMemo(
+    () => (selectedProject == null ? undefined : getProjectSubtitle(selectedProject, getLabel)),
+    [getLabel, selectedProject]
+  );
 
   return (
     <HighLevelPopoverSelector
       open={open}
       placeholder={t("Select a project")}
       value={selectedProject?.name}
-      subtitle={selectedProject == null ? undefined : <SelectedProjectSubtitle project={selectedProject} />}
+      subtitle={subtitle}
       width="25rem"
       contentWidth="45rem"
       onOpenChange={onOpenChange}
     >
-      <ProjectContextPickerContent {...contentProps} />
+      <ProjectContextPickerContent {...contentProps} getLabel={getLabel} />
     </HighLevelPopoverSelector>
   );
 };
