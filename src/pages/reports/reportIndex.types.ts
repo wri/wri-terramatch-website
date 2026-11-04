@@ -20,6 +20,7 @@ export type ReportsIndexReport = {
   completion: number | null;
   updatedAt: string;
   reportTitle: string | null;
+  feedback: string | null;
 };
 
 /**
@@ -53,6 +54,7 @@ type AdditionalReportBase = {
   status: ReportsIndexStatus;
   nothingToReport: boolean;
   updateRequestStatus: EntityUpdateStatusValue | null;
+  feedback: string | null;
   completion: number | null;
   updatedAt: string;
   organisationName: string | null;

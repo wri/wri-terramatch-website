@@ -54,7 +54,8 @@ const ProjectReportsSection: FC<ProjectReportsSectionProps> = ({
   const [open, setOpen] = useIndexAccordionOpen({
     defaultOpen,
     resetKey: openResetKey,
-    restoreOpen: restoreSectionId == null ? undefined : section.id === restoreSectionId
+    restoreOpen: restoreSectionId == null ? undefined : section.id === restoreSectionId,
+    storageKey: section.id
   });
 
   useEffect(() => {
@@ -107,6 +108,7 @@ const ProjectReportsSection: FC<ProjectReportsSectionProps> = ({
           section.periods.map((period, index) => (
             <ReportingPeriodSection
               key={period.id}
+              storageKey={`${section.id}:${period.id}`}
               period={period}
               allPeriodReports={unfilteredPeriods?.find(item => item.id === period.id)?.reports}
               defaultOpen={expandForPeriodFilter || index === 0}

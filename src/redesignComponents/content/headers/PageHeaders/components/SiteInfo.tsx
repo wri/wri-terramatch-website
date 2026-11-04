@@ -11,11 +11,13 @@ import { DownloadIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import DateRange from "./DateRange";
 import DescriptionHeader from "./DescriptionHeader";
+import OrganisationName from "./OrganisationName";
 import SeparatorDot from "./SeparatorDot";
 
 export interface SiteInfoProps {
   site: SiteFullDto;
   organization: string;
+  organisationUuid?: string | null;
   projectName: string;
   projectUuid: string;
   startDate: string;
@@ -26,6 +28,7 @@ export interface SiteInfoProps {
 const SiteInfo: FC<SiteInfoProps> = ({
   site,
   organization,
+  organisationUuid,
   projectName,
   projectUuid,
   startDate,
@@ -67,14 +70,12 @@ const SiteInfo: FC<SiteInfoProps> = ({
           {projectName}
         </Button>
         <SeparatorDot />
-        <Button
-          variant="borderless"
-          size="small"
+        <OrganisationName
+          organisationUuid={organisationUuid}
+          name={organization}
           className="-ml-2 block max-w-[30vw] truncate"
           onClick={() => router.push(`/my-projects`)}
-        >
-          {organization}
-        </Button>
+        />
       </Text>
       <DateRange startDate={startDate} endDate={endDate} />
       {description != null ? (

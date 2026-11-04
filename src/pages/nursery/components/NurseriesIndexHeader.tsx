@@ -129,7 +129,7 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
         classNameContentLeft={embeddedInProject ? "min-w-0 flex-1 !shrink" : "w-full"}
         classNameContentSearch="w-[19rem] max-w-full"
         search={{
-          placeholder: t("Search nurseries"),
+          placeholder: t("Search"),
           options: [],
           displayResults: "none",
           count: nurseryCount,

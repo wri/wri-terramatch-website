@@ -30,6 +30,7 @@ import UploadPolygons from "../site/[uuid]/components/Modals/UploadPolygons";
 import { buildPolygonTableColumns } from "../site/[uuid]/components/polygonTableColumns";
 import type { PolygonTableRow } from "../site/[uuid]/components/PolygonTableRow";
 import { mapSitePolygonToTableRow } from "../site/[uuid]/components/polygonTableRow.utils";
+import SitePolygonIssuesPanel from "../site/[uuid]/components/SitePolygonIssuesPanel";
 import SitePolygonTableSection from "../site/[uuid]/components/SitePolygonTableSection";
 import { useExistingPolygonModal } from "../site/[uuid]/hooks/useExistingPolygonModal";
 import { usePolygonTablePaging } from "../site/[uuid]/hooks/usePolygonTablePaging";
@@ -43,6 +44,7 @@ import PolygonReviewSiteSync from "./components/PolygonReviewSiteSync";
 import PolygonReviewTableActions from "./components/PolygonReviewTableActions";
 import PolygonReviewToolbar from "./components/PolygonReviewToolbar";
 import ProjectContextPicker from "./components/ProjectContextPicker";
+import { useProjectPolygonIssues } from "./hooks/useProjectPolygonIssues";
 import { useProjectPolygonMetrics } from "./hooks/useProjectPolygonMetrics";
 import {
   EMPTY_PROJECT_CONTEXT_FILTERS,
@@ -73,7 +75,7 @@ const PolygonReviewIndexContent: FC = () => {
   const t = useT();
   const router = useRouter();
   const [isUserLoaded, { isAdmin }] = useMyUser();
-  const [, { data: mapIndex, loadFailure }] = useProjectMapIndex({ enabled: isAdmin });
+  const [, { data: mapIndex }] = useProjectMapIndex({ enabled: isAdmin });
 
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [filters, setFilters] = useState<ProjectContextFilters>(EMPTY_PROJECT_CONTEXT_FILTERS);
@@ -132,6 +134,19 @@ const PolygonReviewIndexContent: FC = () => {
     hasLevel2Filters,
     selectedPolygonUuids
   });
+  const { overlapPolygonUuids, disturbancePolygonUuids } = useProjectPolygonIssues({
+    projectUuid: selectedProjectUuid,
+    siteUuids,
+    polygonFilter: sitePolygonFilter
+  });
+  const selectOverlapPolygons = useCallback(
+    () => setSelectedRowIds(new Set(overlapPolygonUuids)),
+    [overlapPolygonUuids, setSelectedRowIds]
+  );
+  const selectDisturbancePolygons = useCallback(
+    () => setSelectedRowIds(new Set(disturbancePolygonUuids)),
+    [disturbancePolygonUuids, setSelectedRowIds]
+  );
   const tableContainerRef = useRef<HTMLDivElement>(null);
 
   const clearTableSelection = useCallback(() => setSelectedRowIds(new Set()), [setSelectedRowIds]);
@@ -256,62 +271,71 @@ const PolygonReviewIndexContent: FC = () => {
                 siteUuids={siteUuids}
                 polygonFilter={sitePolygonFilter}
                 selectedPolygonUuids={selectedPolygonUuids}
-                hasLoadFailure={loadFailure != null}
                 onViewProjectPolygons={selectProject}
               />
-              {selectedProject != null && (
-                <PolygonReviewMetrics
-                  project={metrics.project}
-                  filtered={metrics.filtered}
-                  selected={metrics.selected}
-                />
-              )}
               <Flex
                 direction="column"
-                gap={3}
+                gap={5}
                 bg="neutral.100"
                 borderRadius="0.25rem"
                 paddingX={4}
                 paddingTop={4}
                 paddingBottom={7}
               >
-                <PolygonReviewTableActions
-                  isProjectSelected={selectedProject != null}
-                  isSingleSiteSelected={scopedSite != null}
-                  onDrawPolygon={startNewPolygonFlow}
-                  onUpload={openUploadModal}
-                />
-                {selectedProject == null ? (
-                  <Flex
-                    direction="column"
-                    overflow="hidden"
-                    borderWidth="0.125rem"
-                    borderColor="neutral.300"
-                    borderRadius="0.25rem"
-                    bg="neutral.100"
-                  >
-                    <Table data={[]} columns={columns} selectable showPagination={false} />
-                    <PolygonReviewEmptyState onSelectProject={openPicker} />
+                {selectedProject != null && (
+                  <Flex className="items-center justify-between gap-4 mobile:flex-col">
+                    <PolygonReviewMetrics
+                      project={metrics.project}
+                      filtered={metrics.filtered}
+                      selected={metrics.selected}
+                    />
+                    <SitePolygonIssuesPanel
+                      overlapCount={overlapPolygonUuids.length}
+                      disturbanceCount={disturbancePolygonUuids.length}
+                      onSelectOverlapPolygons={selectOverlapPolygons}
+                      onSelectDisturbancePolygons={selectDisturbancePolygons}
+                    />
                   </Flex>
-                ) : (
-                  <SitePolygonTableSection
-                    tableContainerRef={tableContainerRef}
-                    isSitePolygonsLoading={!polygonsLoaded}
-                    polygonRows={polygonRows}
-                    columns={columns}
-                    selectedRows={selectedRows}
-                    loadingLabel={t("Loading polygons...")}
-                    onAllItemsSelected={onAllItemsSelected}
-                    onClearHover={clearTableHover}
-                    onRowSelected={handleRowSelected}
-                    totalItems={indexTotal ?? 0}
-                    currentPage={pageNumber}
-                    pageSize={pageSize}
-                    onPageChange={setPageNumber}
-                    onPageSizeChange={handlePageSizeChange}
-                    onSortChange={handleSortChange}
-                  />
                 )}
+                <Flex direction="column" gap={3}>
+                  <PolygonReviewTableActions
+                    isProjectSelected={selectedProject != null}
+                    isSingleSiteSelected={scopedSite != null}
+                    onDrawPolygon={startNewPolygonFlow}
+                    onUpload={openUploadModal}
+                  />
+                  {selectedProject == null ? (
+                    <Flex
+                      direction="column"
+                      overflow="hidden"
+                      borderWidth="0.125rem"
+                      borderColor="neutral.300"
+                      borderRadius="0.25rem"
+                      bg="neutral.100"
+                    >
+                      <Table data={[]} columns={columns} selectable showPagination={false} />
+                      <PolygonReviewEmptyState onSelectProject={openPicker} />
+                    </Flex>
+                  ) : (
+                    <SitePolygonTableSection
+                      tableContainerRef={tableContainerRef}
+                      isSitePolygonsLoading={!polygonsLoaded}
+                      polygonRows={polygonRows}
+                      columns={columns}
+                      selectedRows={selectedRows}
+                      loadingLabel={t("Loading polygons...")}
+                      onAllItemsSelected={onAllItemsSelected}
+                      onClearHover={clearTableHover}
+                      onRowSelected={handleRowSelected}
+                      totalItems={indexTotal ?? 0}
+                      currentPage={pageNumber}
+                      pageSize={pageSize}
+                      onPageChange={setPageNumber}
+                      onPageSizeChange={handlePageSizeChange}
+                      onSortChange={handleSortChange}
+                    />
+                  )}
+                </Flex>
               </Flex>
             </Flex>
           </PageContent>

@@ -196,16 +196,14 @@ export const REPORTS_INDEX_ATTENTION_STATUSES: ReadonlySet<TagSubmissionState> =
 
 const REPORTS_INDEX_COMPLETE_STATUSES: ReadonlySet<TagSubmissionState> = new Set(["approved"]);
 
-// Drafts are still in progress, so only due reports and reports with information required (on the report or on
-// its update request) need attention.
+// A report needs attention when its status or its update request status is due, draft or information-required.
 export const getReportsRequiringAttention = (
   reports: Array<{ status: TagSubmissionState; updateRequestStatus?: EntityUpdateStatusValue | null }>
 ) =>
   reports.filter(
     report =>
-      report.status === "due" ||
-      report.status === "information-required" ||
-      report.updateRequestStatus === "information-required"
+      REPORTS_INDEX_ATTENTION_STATUSES.has(report.status) ||
+      (report.updateRequestStatus != null && REPORTS_INDEX_ATTENTION_STATUSES.has(report.updateRequestStatus))
   ).length;
 
 export const areAllReportsComplete = (reports: Array<{ status: TagSubmissionState }>) =>

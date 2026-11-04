@@ -45,6 +45,21 @@ const TeamMemberActionModal: FC<TeamMemberActionModalProps> = ({ action, members
   const listBackground = action === "approve" ? "primary.100" : "neutral.200";
   const firstMember = members[0];
 
+  const getSingleDescription = useCallback(() => {
+    const userName = (
+      <Text as="span" textStyle="500-bold" color="neutral.900">
+        {firstMember?.fullName}
+      </Text>
+    );
+    if (action === "remove") {
+      return t("Are you sure you want to remove {userName} from the Organization?", { userName });
+    }
+    if (action === "reject") {
+      return t("Are you sure you want to reject {userName}'s request to join the Organization?", { userName });
+    }
+    return t("Are you sure you want to accept {userName}'s request to join the Organization?", { userName });
+  }, [action, firstMember, t]);
+
   return (
     <Modal
       open={action != null}
@@ -76,17 +91,7 @@ const TeamMemberActionModal: FC<TeamMemberActionModalProps> = ({ action, members
         ) : (
           <Flex alignItems="center" flexDirection="column" width="100%" textAlign="center">
             <Text textStyle="400" color="neutral.900">
-              {action === "remove"
-                ? t("Are you sure you want to remove")
-                : action === "reject"
-                ? t("Are you sure you want to reject")
-                : t("Are you sure you want to accept")}
-            </Text>
-            <Text textStyle="500-bold" color="neutral.900">
-              {action === "remove" ? firstMember?.fullName : `${firstMember?.fullName}'s`}
-            </Text>
-            <Text textStyle="400" color="neutral.900">
-              {action === "remove" ? t("from the Organization?") : t("request to join the Organization?")}
+              {getSingleDescription()}
             </Text>
           </Flex>
         )

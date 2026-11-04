@@ -30,7 +30,12 @@ const ReportsIndexPage: FC = () => {
   const [projectsLoaded, { data: projects }] = useProjectIndex({});
   const [projectLoaded, { data: project }] = useLightProject({ id: sourceUuid, enabled: sourceUuid != null });
 
-  const finalProject = sourceUuid == null ? projects?.[0] ?? null : project;
+  const loadedProject = sourceUuid == null ? projects?.[0] ?? null : project;
+  const [lastProject, setLastProject] = useState(loadedProject);
+  if (loadedProject != null && loadedProject !== lastProject) {
+    setLastProject(loadedProject);
+  }
+  const finalProject = loadedProject ?? (sourceUuid != null && !projectLoaded ? lastProject : null);
   const loading = !router.isReady || (finalProject == null && (sourceUuid == null ? !projectsLoaded : !projectLoaded));
 
   return (
@@ -42,7 +47,7 @@ const ReportsIndexPage: FC = () => {
         </Head>
         <LoadingContainer loading={loading}>
           {finalProject == null ? null : (
-            <ReportsSelectionProvider key={`project:${finalProject.uuid}`}>
+            <ReportsSelectionProvider>
               <ReportsIndexContent project={finalProject} />
             </ReportsSelectionProvider>
           )}

@@ -13,7 +13,6 @@ import { ProjectMapEntryDto, SitePolygonMapEntryDto } from "@/generated/v3/resea
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
 import UndoIcon from "@/redesignComponents/foundations/Icons/Function/UndoIcon";
-import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 
 import { SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS } from "../../site/[uuid]/constants/sitePolygonMapSizing";
 import { usePolygonDrawUndo } from "../../site/[uuid]/hooks/usePolygonDrawUndo";
@@ -27,7 +26,6 @@ type PolygonReviewMapProps = {
   siteUuids: string[];
   polygonFilter: SitePolygonMapIndexFilter;
   selectedPolygonUuids: string[];
-  hasLoadFailure: boolean;
   onViewProjectPolygons: (projectUuid: string) => void;
 };
 
@@ -41,7 +39,6 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
   siteUuids,
   polygonFilter,
   selectedPolygonUuids,
-  hasLoadFailure,
   onViewProjectPolygons
 }) => {
   const t = useT();
@@ -85,48 +82,40 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
   const polygonTableHighlight = useMemo(() => ({ selectedPolygonUuids }), [selectedPolygonUuids]);
 
   return (
-    <>
-      <ResizeBox
-        initialHeight={SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS}
-        minHeight={SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS}
-        maxHeight={600}
-      >
-        <LoadingMap loading={projectUuid != null && projectPolygons == null && polygonLoadFailure == null} />
-        <MapContainer
-          championsMap
-          mapFunctions={mapFunctions}
-          bbox={bbox}
-          projectMarkers={projectMarkers}
-          onViewProjectPolygons={onViewProjectPolygons}
-          mapIndexPolygons={mapIndexPolygons}
-          polygonTableHighlight={polygonTableHighlight}
-          showLegend
-          hideMediaOnMap
-          disabledPolygonPanel
-          className={classNames("flex-1", {
-            "!fixed top-0 bottom-0 left-0 right-0 z-[37] mt-12 ml-12 max-h-[calc(100vh_-_3rem)] w-screen max-w-[calc(100vw_-_3rem)] overflow-hidden rounded-none":
-              isEditPolygonOpen,
-            "h-full w-full !rounded-[0.25rem_0.25rem_0_0]": !isEditPolygonOpen
-          })}
-        />
-        {showPolygonUndoButton && (
-          <Button
-            variant="secondary"
-            leftIcon={<UndoIcon />}
-            className="fixed bottom-2 left-[calc(32rem+(100vw-32rem)/2)] z-[38] -translate-x-1/2"
-            onClick={handleUndoPolygonDraw}
-          >
-            {t("Undo")}
-          </Button>
-        )}
-      </ResizeBox>
-      {hasLoadFailure && (
-        <InlineMessage variant="error" label={t("Unable to load projects")} caption={t("Please reload the page.")} />
+    <ResizeBox
+      initialHeight={SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS}
+      minHeight={SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS}
+      maxHeight={600}
+    >
+      <LoadingMap loading={projectUuid != null && projectPolygons == null && polygonLoadFailure == null} />
+      <MapContainer
+        championsMap
+        mapFunctions={mapFunctions}
+        bbox={bbox}
+        projectMarkers={projectMarkers}
+        onViewProjectPolygons={onViewProjectPolygons}
+        mapIndexPolygons={mapIndexPolygons}
+        polygonTableHighlight={polygonTableHighlight}
+        showLegend
+        hideMediaOnMap
+        disabledPolygonPanel
+        className={classNames("flex-1", {
+          "!fixed top-0 bottom-0 left-0 right-0 z-[37] mt-12 ml-12 max-h-[calc(100vh_-_3rem)] w-screen max-w-[calc(100vw_-_3rem)] overflow-hidden rounded-none":
+            isEditPolygonOpen,
+          "h-full w-full !rounded-[0.25rem_0.25rem_0_0]": !isEditPolygonOpen
+        })}
+      />
+      {showPolygonUndoButton && (
+        <Button
+          variant="secondary"
+          leftIcon={<UndoIcon />}
+          className="fixed bottom-2 left-[calc(32rem+(100vw-32rem)/2)] z-[38] -translate-x-1/2"
+          onClick={handleUndoPolygonDraw}
+        >
+          {t("Undo")}
+        </Button>
       )}
-      {polygonLoadFailure != null && (
-        <InlineMessage variant="error" label={t("Unable to load polygons")} caption={t("Please reload the page.")} />
-      )}
-    </>
+    </ResizeBox>
   );
 };
 
