@@ -213,6 +213,7 @@ const PolygonReviewIndexPage: FC = () => {
               siteUuids={siteUuids}
               polygonFilter={sitePolygonFilter}
               selectedPolygonUuids={selectedPolygonUuids}
+              showDeleted={polygonFilters.showDeleted}
               onViewProjectPolygons={selectProject}
             />
             <Flex
@@ -261,6 +262,7 @@ const PolygonReviewIndexPage: FC = () => {
                     columns={columns}
                     selectedRows={selectedRows}
                     loadingLabel={t("Loading polygons...")}
+                    readOnly={polygonFilters.showDeleted}
                     onAllItemsSelected={onAllItemsSelected}
                     onClearHover={clearTableHover}
                     onRowSelected={handleRowSelected}

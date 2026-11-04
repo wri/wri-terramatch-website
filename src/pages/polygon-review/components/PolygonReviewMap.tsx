@@ -5,6 +5,7 @@ import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { SitePolygonMapIndexFilter, useSitePolygonMapIndex } from "@/connections/SitePolygons";
+import { DELETED_AUDIT_POLYGONS } from "@/constants/statuses";
 import { ProjectMapEntryDto, SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
 
@@ -19,6 +20,7 @@ type PolygonReviewMapProps = {
   siteUuids: string[];
   polygonFilter: SitePolygonMapIndexFilter;
   selectedPolygonUuids: string[];
+  showDeleted?: boolean;
   onViewProjectPolygons: (projectUuid: string) => void;
 };
 
@@ -32,6 +34,7 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
   siteUuids,
   polygonFilter,
   selectedPolygonUuids,
+  showDeleted = false,
   onViewProjectPolygons
 }) => {
   const mapFunctions = useBaseMap();
@@ -60,8 +63,22 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
     () => getProjectMarkersBbox(toProjectMarkerPoints(selectedProject != null ? [selectedProject] : projects)),
     [projects, selectedProject]
   );
+  // In the deleted audit view, zoom to the deleted polygons themselves (matches the site page), not the active ones.
+  const deletedPolygonUuids = useMemo(() => {
+    if (!showDeleted) return undefined;
+    const uuids = (projectPolygons ?? [])
+      .map(polygon => polygon.polygonUuid)
+      .filter((uuid): uuid is string => uuid != null && uuid !== "");
+    return uuids.length > 0 ? uuids : undefined;
+  }, [showDeleted, projectPolygons]);
   const polygonsBbox = useBoundingBox(
-    projectUuid == null ? {} : siteUuids.length > 0 ? { siteUuids } : { projectUuid }
+    projectUuid == null
+      ? {}
+      : deletedPolygonUuids != null
+      ? { polygonUuids: deletedPolygonUuids }
+      : siteUuids.length > 0
+      ? { siteUuids }
+      : { projectUuid }
   );
   const bbox = (projectUuid != null ? polygonsBbox : undefined) ?? markersBbox;
   const polygonTableHighlight = useMemo(() => ({ selectedPolygonUuids }), [selectedPolygonUuids]);
@@ -80,6 +97,7 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
         projectMarkers={projectMarkers}
         onViewProjectPolygons={onViewProjectPolygons}
         mapIndexPolygons={mapIndexPolygons}
+        mapPolygonsForcedStatus={showDeleted ? DELETED_AUDIT_POLYGONS : undefined}
         polygonTableHighlight={polygonTableHighlight}
         showLegend
         hideMediaOnMap
