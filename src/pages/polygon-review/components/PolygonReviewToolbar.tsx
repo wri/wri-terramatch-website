@@ -61,6 +61,7 @@ const PolygonReviewToolbar: FC<PolygonReviewToolbarProps> = ({
       <PolygonFilterDrawer
         open={isFilterDrawerOpen}
         filters={polygonFilters}
+        isAdminReview
         siteFilterProjectUuid={projectUuid}
         onApplyFilters={onApplyFilters}
         onClearFilters={onClearFilters}
