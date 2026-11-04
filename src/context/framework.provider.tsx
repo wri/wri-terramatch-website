@@ -1,5 +1,5 @@
+import { useShowContext } from "ra-core";
 import { type JSX, ComponentType, createContext, ReactNode, useContext, useMemo } from "react";
-import { useShowContext } from "react-admin";
 
 export enum Framework {
   PPC = "ppc",
