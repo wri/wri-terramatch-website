@@ -46,7 +46,6 @@ const DashboardStack = ({ children }: PropsWithChildren) => (
     <NavbarProvider>
       <ModalRoot />
       <Toast />
-      <WRIToast />
       <DashboardAnalyticsWrapper>
         <DashboardLayout>{children}</DashboardLayout>
       </DashboardAnalyticsWrapper>
@@ -72,7 +71,6 @@ const PDStack = ({ children }: PropsWithChildren) => (
       <NavbarProvider>
         <ModalRoot />
         <Toast />
-        <WRIToast />
         <Layout>
           {children}
           <CookieBanner />
@@ -87,7 +85,6 @@ const SiteRouteStack = ({ children, withMainLayout = true }: PropsWithChildren<{
     <NavbarProvider>
       <ModalRoot />
       <Toast />
-      <WRIToast />
       {withMainLayout ? (
         <Layout>
           {children}
@@ -120,6 +117,7 @@ const _App = ({ Component, pageProps }: AppProps) => {
   return (
     <ChakraProvider value={system}>
       <ToastProvider>
+        <WRIToast />
         <WrappedReduxProvider>
           <Bootstrap>
             <LayoutShellProvider>
