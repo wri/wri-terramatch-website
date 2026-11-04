@@ -47,7 +47,6 @@ const refreshTouchedSites = (siteUuids: string[]) => {
   ApiSlice.pruneIndex("projects", "");
 };
 
-/** Downloads the given sites' profiles, showing progress / completion / error toasts. Never throws. */
 export const downloadSites = async (sites: SiteIndexSite[], t: ReturnType<typeof useT>) => {
   try {
     showEntityProgressToast(

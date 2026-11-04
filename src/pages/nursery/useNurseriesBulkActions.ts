@@ -44,7 +44,6 @@ const refreshTouchedNurseries = (nurseryUuids: string[]) => {
   ApiSlice.pruneIndex("projects", "");
 };
 
-/** Downloads the given nurseries, showing progress / completion / error toasts. Never throws. */
 export const downloadNurseries = async (nurseries: NurseryIndexRow[], t: ReturnType<typeof useT>) => {
   try {
     showEntityProgressToast(

@@ -203,7 +203,6 @@ const ReportingPeriodSection: FC<ReportingPeriodSectionProps> = ({
   const projectReportUuid = metricsReady ? period.projectReportUuid : null;
 
   const [reportLoaded, { data: projectReport }] = useLightProjectReport({
-    // Only needed for the metric cards, which aren't shown on mobile.
     id: open && !isMobile && projectReportUuid != null ? projectReportUuid : undefined
   });
   const frameworkKey = projectReport?.frameworkKey ?? period.frameworkKey;

@@ -4,7 +4,6 @@ import { FC } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
-/** "X Require Attention" badge for index accordion headers; shows just the count on mobile. */
 const AttentionBadge: FC<{ count: number }> = ({ count }) => {
   const t = useT();
   const isMobile = useIsMobile();

@@ -89,7 +89,6 @@ const refreshSelectedReports = async (reports: ReportIndexItem[]) => {
   await Promise.all(reports.map(reloadReport));
 };
 
-/** Downloads the given reports, showing progress / completion / error toasts. Never throws. */
 export const downloadReports = async (reports: ReportIndexItem[], t: ReturnType<typeof useT>) => {
   try {
     showEntityProgressToast(

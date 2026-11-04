@@ -6,12 +6,10 @@ import ActionCell from "@/redesignComponents/dataDisplay/Table/components/Action
 import { DownloadIcon } from "@/redesignComponents/foundations/Icons";
 
 type DownloadActionCellProps = {
-  /** Performs the download; expected to handle its own toasts and errors. */
   onDownload: () => Promise<void>;
   ariaLabel?: string;
 };
 
-/** Row "Download" action used by the index tables on mobile in place of "Edit". */
 const DownloadActionCell: FC<DownloadActionCellProps> = ({ onDownload, ariaLabel }) => {
   const t = useT();
   const [isDownloading, setIsDownloading] = useState(false);

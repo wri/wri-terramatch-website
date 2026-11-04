@@ -148,7 +148,6 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
               )
             }
           />
-          {/* On mobile the Add button stays beside the title and the view selector gets its own row. */}
           {isMobile && viewSelector != null && <Box className="bg-theme-neutral-100 px-6 pt-4">{viewSelector}</Box>}
         </>
       )}
