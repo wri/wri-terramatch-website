@@ -126,7 +126,7 @@ export const SelectorMenu: FC<SelectorMenuProps> = ({
 
   return (
     <Portal>
-      <Positioner zIndex={1500}>
+      <Positioner>
         <Content {...(isGrouped ? groupedContentMenuStyles : contentMenuStyles)} {...contentProps}>
           {items.length === 0 ? (
             <SelectorEmptyMessage>{emptyMessage}</SelectorEmptyMessage>

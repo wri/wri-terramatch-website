@@ -89,6 +89,28 @@ const refreshSelectedReports = async (reports: ReportIndexItem[]) => {
   await Promise.all(reports.map(reloadReport));
 };
 
+export const downloadReports = async (reports: ReportIndexItem[], t: ReturnType<typeof useT>) => {
+  try {
+    showEntityProgressToast(
+      t,
+      reports.length === 1 ? t("Downloading report") : t("Downloading reports"),
+      ENTITY_TOAST_IDS.downloading
+    );
+    for (const [entity, uuids] of Object.entries(groupReportUuidsByEntity(reports))) {
+      if (uuids == null || uuids.length === 0) continue;
+      await entityExportAll.downloadFile({
+        pathParams: { entity: entity as SupportedEntity },
+        queryParams: { uuids }
+      });
+    }
+    completeEntityProgressToast(ENTITY_TOAST_IDS.downloading, t("Download Complete"));
+  } catch (error) {
+    Log.error("Failed to download reports", error);
+    closeEntityProgressToast(ENTITY_TOAST_IDS.downloading);
+    showEntityErrorToast(t("Error Downloading Reports"));
+  }
+};
+
 export const useReportsBulkActions = ({ selectedReports, clearSelection }: UseReportsBulkActionsProps) => {
   const t = useT();
   const { trackBulkActionSubmitted } = useReportsIndexAnalytics();
@@ -149,24 +171,7 @@ export const useReportsBulkActions = ({ selectedReports, clearSelection }: UseRe
     setIsDownloading(true);
     clearSelection();
     try {
-      showEntityProgressToast(
-        t,
-        selectedReports.length === 1 ? t("Downloading report") : t("Downloading reports"),
-        ENTITY_TOAST_IDS.downloading
-      );
-      const grouped = groupReportUuidsByEntity(selectedReports);
-      for (const [entity, uuids] of Object.entries(grouped)) {
-        if (uuids == null || uuids.length === 0) continue;
-        await entityExportAll.downloadFile({
-          pathParams: { entity: entity as SupportedEntity },
-          queryParams: { uuids }
-        });
-      }
-      completeEntityProgressToast(ENTITY_TOAST_IDS.downloading, t("Download Complete"));
-    } catch (error) {
-      Log.error("Failed to download selected reports", error);
-      closeEntityProgressToast(ENTITY_TOAST_IDS.downloading);
-      showEntityErrorToast(t("Error Downloading Reports"));
+      await downloadReports(selectedReports, t);
     } finally {
       setIsDownloading(false);
     }

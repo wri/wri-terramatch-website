@@ -3,10 +3,12 @@ import { useT } from "@transifex/react";
 import { startCase } from "lodash";
 import { FC, useCallback, useMemo } from "react";
 
+import DownloadActionCell from "@/components/extensive/EntityIndex/DownloadActionCell";
 import EntityUpdateStatus from "@/components/extensive/EntityIndex/EntityUpdateStatus";
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import { useDate } from "@/hooks/useDate";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
@@ -23,7 +25,15 @@ import { AdditionalReport, AdditionalReportType } from "../reportIndex.types";
 import { getReportStatusSortValue, getReportViewHref, rememberReportsIndexPosition } from "../reportIndex.utils";
 import { useReportProfileOrigin } from "../ReportProfileOrigin.provider";
 import { useReportTableSelection } from "../ReportsSelection.provider";
+import { downloadReports } from "../useReportsBulkActions";
 import ReportsIndexEditButton from "./ReportsIndexEditButton";
+
+const MOBILE_ACTIONS_WIDTH = "9rem";
+
+const withMobileActionsWidth = (columns: TableColumn[], isMobile: boolean) =>
+  isMobile
+    ? columns.map(column => (column.key === "actions" ? { ...column, width: MOBILE_ACTIONS_WIDTH } : column))
+    : columns;
 
 const getColumns = (type: AdditionalReportType, t: ReturnType<typeof useT>): TableColumn[] => {
   if (type === "financial-report") {
@@ -100,7 +110,8 @@ const AdditionalReportsTable: FC<AdditionalReportsTableProps> = ({
   const profileOrigin = useReportProfileOrigin();
   const { selectedRows, isReportSelected, handleRowSelected, handleAllItemsSelected } =
     useReportTableSelection(reports);
-  const columns = useMemo(() => getColumns(type, t), [t, type]);
+  const isMobile = useIsMobile();
+  const columns = useMemo(() => withMobileActionsWidth(getColumns(type, t), isMobile), [isMobile, t, type]);
   const currencyLabels = useMemo(() => getCurrencyOptions(t), [t]);
   const monthLabels = useMemo(() => getMonthOptions(t), [t]);
 
@@ -137,14 +148,16 @@ const AdditionalReportsTable: FC<AdditionalReportsTableProps> = ({
           data-report-id={report.id}
           style={{ scrollMarginTop: "7rem" }}
         >
-          <ChakraTableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)}>
-            <Checkbox
-              name={`additional-report-${report.id}`}
-              aria-label={t("Select {report}", { report: reportName })}
-              checked={isSelected}
-              onCheckedChange={({ checked }) => handleRowSelected(report, checked === true)}
-            />
-          </ChakraTableCell>
+          {isMobile ? null : (
+            <ChakraTableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)}>
+              <Checkbox
+                name={`additional-report-${report.id}`}
+                aria-label={t("Select {report}", { report: reportName })}
+                checked={isSelected}
+                onCheckedChange={({ checked }) => handleRowSelected(report, checked === true)}
+              />
+            </ChakraTableCell>
+          )}
           <ChakraTableCell {...context?.getCellProps("name")}>
             <TitleCell
               label={report.type == "disturbance-report" ? report.disturbanceTitle : reportName}
@@ -211,7 +224,11 @@ const AdditionalReportsTable: FC<AdditionalReportsTableProps> = ({
             {renderDateTag(report.updatedAt, false)}
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("actions")}>
-            <ReportsIndexEditButton report={report} indexHref={indexHref} />
+            {isMobile ? (
+              <DownloadActionCell onDownload={() => downloadReports([report], t)} />
+            ) : (
+              <ReportsIndexEditButton report={report} indexHref={indexHref} />
+            )}
           </ChakraTableCell>
         </TableRow>
       );
@@ -221,6 +238,7 @@ const AdditionalReportsTable: FC<AdditionalReportsTableProps> = ({
       format,
       handleRowSelected,
       indexHref,
+      isMobile,
       isReportSelected,
       monthLabels,
       profileOrigin,
@@ -234,12 +252,13 @@ const AdditionalReportsTable: FC<AdditionalReportsTableProps> = ({
       <Table<AdditionalReport>
         data={reports}
         columns={columns}
-        selectable
+        selectable={!isMobile}
         selectedRows={selectedRows}
         onRowSelected={handleRowSelected}
         onAllItemsSelected={handleAllItemsSelected}
         renderRow={renderRow}
         pageSize={10}
+        paginationVariant={isMobile ? "compact" : "default"}
         totalItems={reports.length}
         restoreRowId={restoreRowId}
         onRowRestored={onRowRestored}
