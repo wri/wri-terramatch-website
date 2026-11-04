@@ -8,8 +8,6 @@ import Combobox from "@/redesignComponents/Forms/Inputs/Combobox";
 
 import { FacetOption } from "../utils/projectContextFilter";
 
-const MAX_CHECKBOX_OPTIONS = 7;
-
 export type FacetSearch = {
   placeholder: string;
   getCaption: (optionCount: number) => string;
@@ -40,7 +38,6 @@ const ProjectFacetGroup: FC<ProjectFacetGroupProps> = ({
   onChange
 }) => {
   const t = useT();
-  const showCombobox = search != null && options.length > MAX_CHECKBOX_OPTIONS;
 
   const items = useMemo(
     () => options.map(({ value, count }) => ({ value, label: `${getLabel(value)} (${count})` })),
@@ -51,13 +48,13 @@ const ProjectFacetGroup: FC<ProjectFacetGroupProps> = ({
     <FilterCard
       label={label}
       labelSuffix={t("(optional)")}
-      caption={showCombobox ? search.getCaption(options.length) : undefined}
+      caption={search != null ? search.getCaption(options.length) : undefined}
     >
       {options.length === 0 ? (
         <Text textStyle="300" color="neutral.700">
           {t("No options available")}
         </Text>
-      ) : showCombobox ? (
+      ) : search != null ? (
         <Combobox
           placeholder={search.placeholder}
           size="small"
