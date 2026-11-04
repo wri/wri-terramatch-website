@@ -5,7 +5,7 @@ import { FC, ReactNode, useCallback, useRef } from "react";
 import { ProjectMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import QaStatusTag from "@/redesignComponents/actions/Tags/QaStatusTag/QaStatusTag";
-import { AreaHectaresCircleIcon, JobsCircleIcon, TreeCircleIcon } from "@/redesignComponents/foundations/Icons";
+import { AreaHectaresCircleIcon, PolygonsCircleIcon, TreeCircleIcon } from "@/redesignComponents/foundations/Icons";
 import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
 
 import {
@@ -87,7 +87,7 @@ const ProjectMarkerPopup: FC<ProjectMarkerPopupProps> = ({ project, onClose, onV
               value={t("{area} ha", { area: formatAreaHectaresForPopup(sumCalcArea) })}
             />
             <MetricRow
-              icon={<JobsCircleIcon boxSize={6} />}
+              icon={<PolygonsCircleIcon boxSize={6} />}
               label={t("Polygons")}
               value={polygonCount.toLocaleString()}
             />

@@ -83,6 +83,7 @@ export { PhotoLibraryIcon } from "./Function/PhotoLibraryIcon";
 export { VideoIcon } from "./Function/VideoIcon";
 export { PlaceholderIcon } from "./Function/PlaceholderIcon";
 export { PlusIcon } from "./Function/PlusIcon";
+export { PolygonsCircleIcon } from "./DataVisualisation/PolygonsCircleIcon";
 export { PolygonsIcon } from "./NavigationSections/PolygonsIcon";
 export { ProgrammeIcon } from "./NavigationSections/ProgrammeIcon";
 export { ProjectIcon } from "./NavigationSections/ProjectIcon";
