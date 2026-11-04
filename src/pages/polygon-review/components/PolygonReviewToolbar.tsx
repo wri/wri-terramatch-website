@@ -53,7 +53,7 @@ const PolygonReviewToolbar: FC<PolygonReviewToolbarProps> = ({
               : t("of {total} polygons", { total: projectPolygonCount.toLocaleString("en-US") })
         }}
         selectedFilters={activeFilterLabels}
-        lockedMessage={projectUuid != null ? undefined : t("Pick a project in ‘View’ to search and filter polygons")}
+        lockedMessage={projectUuid != null ? undefined : t("Select a project to search and filter polygons")}
         showClearFilters={activeFilterLabels.length > 0}
         onClearFilters={onClearFilters}
         onClickFilterButton={openFilterDrawer}
@@ -61,6 +61,7 @@ const PolygonReviewToolbar: FC<PolygonReviewToolbarProps> = ({
       <PolygonFilterDrawer
         open={isFilterDrawerOpen}
         filters={polygonFilters}
+        isAdminReview
         siteFilterProjectUuid={projectUuid}
         onApplyFilters={onApplyFilters}
         onClearFilters={onClearFilters}

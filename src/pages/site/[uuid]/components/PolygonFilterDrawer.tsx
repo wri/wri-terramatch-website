@@ -218,10 +218,8 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
 
   const handleShowDeletedChange = ({ checked }: CheckboxChange) => {
     const showDeleted = checked === true;
-    // Deleted polygons is an exclusive audit view: turning it on clears every other draft
-    // filter so the applied state can never combine "deleted" with a status/practice/etc filter.
     if (showDeleted) {
-      setDraftFilters({ ...EMPTY_POLYGON_FILTERS, showDeleted: true });
+      setDraftFilters(current => ({ ...EMPTY_POLYGON_FILTERS, sites: current.sites, showDeleted: true }));
     } else {
       setDraftFilters(current => ({ ...current, showDeleted: false }));
     }

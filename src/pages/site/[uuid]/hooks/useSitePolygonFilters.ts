@@ -66,14 +66,12 @@ export const useSitePolygonFilters = ({ t }: UseSitePolygonFiltersParams) => {
   const activeFilterLabels = useMemo<SelectedFilter[]>(() => {
     const labels: SelectedFilter[] = [];
     if (polygonFilters.showDeleted) {
-      return [
-        {
-          label: t("Deleted Polygons"),
-          onRemove: () => {
-            setPolygonFilters(current => ({ ...current, showDeleted: false }));
-          }
+      labels.push({
+        label: t("Deleted Polygons"),
+        onRemove: () => {
+          setPolygonFilters(current => ({ ...current, showDeleted: false }));
         }
-      ];
+      });
     }
     if (polygonFilters.sites.length > 0) {
       labels.push({
