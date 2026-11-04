@@ -194,6 +194,13 @@ function WizardForm(props: WizardFormProps) {
     [formValues, showValidationErrors]
   );
 
+  // Unlike stepHasValidationIssues, this ignores showValidationErrors: deferring error messages must not let
+  // an incomplete step look complete or leave the submit button enabled.
+  const stepIsIncomplete = useCallback(
+    (validation: (typeof steps)[number]["validation"]) => !validation.isValidSync(formValues),
+    [formValues]
+  );
+
   const stepHasFeedbackIssues = useCallback(
     (stepId: string) =>
       hasUnresolvedFeedbackInStep(
@@ -224,7 +231,7 @@ function WizardForm(props: WizardFormProps) {
     stepHasIssues
   });
 
-  const hasValidationErrorInAnyStep = steps.some(({ id, validation }) => stepHasValidationIssues(id, validation));
+  const hasValidationErrorInAnyStep = steps.some(({ validation }) => stepIsIncomplete(validation));
 
   Log.debug("Form Values", formValues);
   Log.debug("Form Errors", formHook.formState.errors);
@@ -426,11 +433,11 @@ function WizardForm(props: WizardFormProps) {
 
   const getStepTabState = useCallback(
     (stepId: string, validation: (typeof steps)[number]["validation"]): TabItem["state"] => {
-      if (stepHasIssues(stepId, validation)) return "error";
+      if (stepIsIncomplete(validation) || stepHasFeedbackIssues(stepId)) return "error";
       if (validation.isValidSync(formValues)) return "complete";
       return "unstarted";
     },
-    [formValues, stepHasIssues]
+    [formValues, stepHasFeedbackIssues, stepIsIncomplete]
   );
 
   const stepTabItems = useMemo(
@@ -448,7 +455,7 @@ function WizardForm(props: WizardFormProps) {
       title: t(`{title}`, { title: props.summaryOptions?.title }),
       renderBody: () => {
         const submitButtonDisable =
-          props.submitButtonDisable || steps.some(({ id, validation }) => stepHasValidationIssues(id, validation));
+          props.submitButtonDisable || steps.some(({ validation }) => stepIsIncomplete(validation));
         return (
           <SummaryItem
             title={props.summaryOptions?.title!}
@@ -494,7 +501,7 @@ function WizardForm(props: WizardFormProps) {
       onClickSaveAndExit,
       entity?.feedback,
       entity?.feedbackFields,
-      stepHasValidationIssues,
+      stepIsIncomplete,
       reportAnalytics
     ]
   );

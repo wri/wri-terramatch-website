@@ -169,6 +169,12 @@ export const useMyOrg = (): Connected<MyOrganisationConnection> => {
   return loaded ? [true, orgShape] : [false, {}];
 };
 
+// Organization names are only links for the organization the user belongs to.
+export const useIsMyOrganisation = (organisationUuid: string | null | undefined): boolean => {
+  const [, myOrg] = useMyOrg();
+  return organisationUuid != null && organisationUuid === myOrg?.organisationId;
+};
+
 export const loadOrganisation = connectionLoader(organisationConnection);
 export const useOrganisation = connectionHook(organisationConnection);
 export const updateOrganisation = resourceUpdater(

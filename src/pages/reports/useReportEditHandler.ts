@@ -28,6 +28,7 @@ export const useReportEditHandler = (report: ReportIndexItem, indexHref?: string
     entityUUID: report.id,
     entityStatus: report.status,
     updateRequestStatus: report.updateRequestStatus,
+    feedback: report.feedback ?? null,
     entityTitle: report.name ?? "",
     ...{
       reportTitle:

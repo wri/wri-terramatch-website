@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { FC, memo, useCallback, useMemo, useState } from "react";
+import { FC, memo, useCallback, useState } from "react";
 
 import type { ProjectNurseriesMetaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useIndexAccordionOpen } from "@/hooks/useIndexAccordionOpen";
@@ -41,13 +41,6 @@ const NurseryProjectSection: FC<NurseryProjectSectionProps> = ({
   );
 
   const nurseries = useNurseryProjectRows(meta, filters, loadRequested);
-  const attentionCount = useMemo(
-    () =>
-      nurseries.rows.filter(
-        nursery => nursery.status === "information-required" || nursery.updateRequestStatus === "information-required"
-      ).length,
-    [nurseries.rows]
-  );
 
   return (
     <Accordion
@@ -65,8 +58,10 @@ const NurseryProjectSection: FC<NurseryProjectSectionProps> = ({
           open={open}
           statusLabels={
             <>
-              {attentionCount > 0 ? (
-                <TextBadge variant="primary">{t("{count} Require Attention", { count: attentionCount })}</TextBadge>
+              {meta.nurseriesRequiringAttention > 0 ? (
+                <TextBadge variant="primary">
+                  {t("{count} Require Attention", { count: meta.nurseriesRequiringAttention })}
+                </TextBadge>
               ) : null}
             </>
           }

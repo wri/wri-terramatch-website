@@ -1,5 +1,6 @@
 import React, { createContext, ReactNode, useContext } from "react";
 
+import { IndexAccordionStates } from "@/hooks/useIndexAccordionOpen";
 import { EMPTY_REPORT_FILTERS, ReportFilterState } from "@/pages/reports/components/reportFilter.constants";
 
 export type ReportsFilterValues = {
@@ -18,6 +19,11 @@ type ReportsType = {
   setFiltersByTab: React.Dispatch<React.SetStateAction<Record<string, ReportFilterState>>>;
   searchTerm: string;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
+  queryByTab: Record<string, string>;
+  setQueryByTab: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+  viewByTab: Record<string, string>;
+  setViewByTab: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+  accordionStates: IndexAccordionStates;
 };
 
 const ReportsContext = createContext<ReportsType | undefined>(undefined);
@@ -28,9 +34,24 @@ export const ReportsProvider: React.FC<{ children: ReactNode }> = ({ children })
     "additional-reports": EMPTY_REPORT_FILTERS
   });
   const [searchTerm, setSearchTerm] = React.useState("");
+  const [queryByTab, setQueryByTab] = React.useState<Record<string, string>>({});
+  const [viewByTab, setViewByTab] = React.useState<Record<string, string>>({});
+  const [accordionStates] = React.useState<IndexAccordionStates>(() => new Map());
 
   return (
-    <ReportsContext.Provider value={{ filtersByTab, setFiltersByTab, searchTerm, setSearchTerm }}>
+    <ReportsContext.Provider
+      value={{
+        filtersByTab,
+        setFiltersByTab,
+        searchTerm,
+        setSearchTerm,
+        queryByTab,
+        setQueryByTab,
+        viewByTab,
+        setViewByTab,
+        accordionStates
+      }}
+    >
       {children}
     </ReportsContext.Provider>
   );
