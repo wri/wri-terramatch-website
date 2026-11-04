@@ -8,11 +8,15 @@ import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionB
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import { DownloadIcon, PlusIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 
-const LockedActionTooltip: FC<PropsWithChildren> = ({ children }) => {
-  const t = useT();
+type LockedActionTooltipProps = {
+  message?: string;
+};
+
+const LockedActionTooltip: FC<PropsWithChildren<LockedActionTooltipProps>> = ({ message, children }) => {
+  if (message == null) return <>{children}</>;
 
   return (
-    <Tooltip content={t("Select a project to download or add polygons")} position="top">
+    <Tooltip content={message} position="top">
       {/* Disabled buttons swallow pointer events, so the wrapper receives the hover for the tooltip. */}
       <Flex as="span" className="cursor-not-allowed">
         {children}
@@ -21,13 +25,29 @@ const LockedActionTooltip: FC<PropsWithChildren> = ({ children }) => {
   );
 };
 
-/** Download All, Upload Monitoring Plots and Add; disabled until the project-scoped workspace lands. */
-const PolygonReviewTableActions: FC = () => {
+type PolygonReviewTableActionsProps = {
+  isProjectSelected: boolean;
+  isSingleSiteSelected: boolean;
+  onDrawPolygon: () => void;
+  onUpload: () => void;
+};
+
+/** Download All, Upload Monitoring Plots and Add (draw / upload polygons). */
+const PolygonReviewTableActions: FC<PolygonReviewTableActionsProps> = ({
+  isProjectSelected,
+  isSingleSiteSelected,
+  onDrawPolygon,
+  onUpload
+}) => {
   const t = useT();
+  const projectLockedMessage = isProjectSelected ? undefined : t("Select a project to download or add polygons");
+  const addLockedMessage =
+    projectLockedMessage ?? (isSingleSiteSelected ? undefined : t("Select a single site to draw or upload polygons."));
+  const isAddDisabled = addLockedMessage != null;
 
   return (
     <Flex justify="flex-end" align="center" gap={2}>
-      <LockedActionTooltip>
+      <LockedActionTooltip message={t("Select a project to download or add polygons")}>
         <MultiActionButton
           className="pointer-events-none"
           variant="secondary"
@@ -39,21 +59,24 @@ const PolygonReviewTableActions: FC = () => {
           disabled
         />
       </LockedActionTooltip>
-      <LockedActionTooltip>
+      <LockedActionTooltip message={t("Select a project to download or add polygons")}>
         <Button className="pointer-events-none" variant="secondary" size="small" leftIcon={<UploadIcon />} disabled>
           {t("Upload Monitoring Plots")}
         </Button>
       </LockedActionTooltip>
-      <LockedActionTooltip>
+      <LockedActionTooltip message={addLockedMessage}>
         <MultiActionButton
-          className="pointer-events-none"
+          className={isAddDisabled ? "pointer-events-none" : undefined}
           variant="primary"
           size="small"
           mainActionLabel={t("Add")}
           mainActionLeftIcon={<PlusIcon />}
-          mainActionOnClick={noop}
-          otherActions={[]}
-          disabled
+          mainActionOnClick={onDrawPolygon}
+          otherActions={[
+            { label: t("Draw Polygon"), onClick: onDrawPolygon, value: "draw-polygon" },
+            { label: t("Upload"), onClick: onUpload, value: "upload" }
+          ]}
+          disabled={isAddDisabled}
         />
       </LockedActionTooltip>
     </Flex>

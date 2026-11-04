@@ -4,11 +4,17 @@ import { isEmpty } from "lodash";
 import { useRouter } from "next/router";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { buildSitePolygonEditUrl } from "@/components/elements/Map-mapbox/sitePolygonNavigation";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
+import { useFullSite } from "@/connections/Entity";
 import { useProjectMapIndex } from "@/connections/ProjectMapIndex";
-import { useSitePolygons } from "@/connections/SitePolygons";
+import { pruneSitePolygonsCache, useSitePolygons } from "@/connections/SitePolygons";
 import { useMyUser } from "@/connections/User";
+import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
+import FrameworkProvider from "@/context/framework.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
+import { PolygonEditDrawerDataSync, PolygonEditDrawerProvider } from "@/context/polygonEditDrawer.provider";
+import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
 import { setPolygonTableHoveredUuid, useSyncPolygonTableSelectionStore } from "@/context/polygonTableInteraction.store";
 import type { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
@@ -18,15 +24,22 @@ import { PolygonsIcon } from "@/redesignComponents/foundations/Icons";
 import Layout from "@/redesignComponents/Layout/Layout";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 
+import ExistingPolygon from "../site/[uuid]/components/Modals/ExistingPolygon";
+import UploadError from "../site/[uuid]/components/Modals/UploadError";
+import UploadPolygons from "../site/[uuid]/components/Modals/UploadPolygons";
 import { buildPolygonTableColumns } from "../site/[uuid]/components/polygonTableColumns";
 import type { PolygonTableRow } from "../site/[uuid]/components/PolygonTableRow";
 import { mapSitePolygonToTableRow } from "../site/[uuid]/components/polygonTableRow.utils";
 import SitePolygonTableSection from "../site/[uuid]/components/SitePolygonTableSection";
+import { useExistingPolygonModal } from "../site/[uuid]/hooks/useExistingPolygonModal";
 import { usePolygonTablePaging } from "../site/[uuid]/hooks/usePolygonTablePaging";
+import { usePolygonUploadErrorModal } from "../site/[uuid]/hooks/usePolygonUploadErrorModal";
 import { useSitePolygonFilters } from "../site/[uuid]/hooks/useSitePolygonFilters";
+import { useStartSitePolygonDrawing } from "../site/[uuid]/hooks/useStartSitePolygonDrawing";
 import PolygonReviewEmptyState from "./components/PolygonReviewEmptyState";
 import PolygonReviewMap from "./components/PolygonReviewMap";
 import PolygonReviewMetrics from "./components/PolygonReviewMetrics";
+import PolygonReviewSiteSync from "./components/PolygonReviewSiteSync";
 import PolygonReviewTableActions from "./components/PolygonReviewTableActions";
 import PolygonReviewToolbar from "./components/PolygonReviewToolbar";
 import ProjectContextPicker from "./components/ProjectContextPicker";
@@ -56,7 +69,7 @@ const toTableRow = (polygon: SitePolygonLightDto, t: (key: string) => string): P
  * Polygon Review index. No polygon data loads until a project is picked in the Level 1 project context filter;
  * clearing that filter returns the page to its initial (unscoped) state.
  */
-const PolygonReviewIndexPage: FC = () => {
+const PolygonReviewIndexContent: FC = () => {
   const t = useT();
   const router = useRouter();
   const [isUserLoaded, { isAdmin }] = useMyUser();
@@ -83,6 +96,9 @@ const PolygonReviewIndexPage: FC = () => {
   }, [handleClearPolygonFilters]);
   const siteUuids = useMemo(() => polygonFilters.sites.map(({ value }) => value), [polygonFilters.sites]);
   const hasLevel2Filters = !isEmpty(sitePolygonFilter) || siteUuids.length > 0;
+  const singleSiteUuid = siteUuids.length === 1 ? siteUuids[0] : undefined;
+  const [, { data: singleSite }] = useFullSite({ id: singleSiteUuid ?? "", enabled: singleSiteUuid != null });
+  const scopedSite = singleSiteUuid != null && singleSite?.uuid === singleSiteUuid ? singleSite : undefined;
 
   const { pageNumber, pageSize, sortField, sortDirection, setPageNumber, handlePageSizeChange, handleSortChange } =
     usePolygonTablePaging({ filter: sitePolygonFilter });
@@ -117,6 +133,45 @@ const PolygonReviewIndexPage: FC = () => {
     selectedPolygonUuids
   });
   const tableContainerRef = useRef<HTMLDivElement>(null);
+
+  const clearTableSelection = useCallback(() => setSelectedRowIds(new Set()), [setSelectedRowIds]);
+  const startDrawing = useStartSitePolygonDrawing({ onClearTableSelection: clearTableSelection });
+  const startNewPolygonFlow = useCallback(() => {
+    openPolygonEditDrawerForSitePolygon();
+    startDrawing();
+  }, [startDrawing]);
+
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const openUploadModal = useCallback(() => setIsUploadModalOpen(true), []);
+  const {
+    openUploadErrorModal: isUploadErrorModalOpen,
+    uploadErrorMessage,
+    onUploadError,
+    onUploadErrorModalOpenChange
+  } = usePolygonUploadErrorModal();
+  const {
+    openExistingPolygonModal: isExistingPolygonModalOpen,
+    existingPolygonDuplicate,
+    onDuplicateDetected,
+    onExistingPolygonModalOpenChange
+  } = useExistingPolygonModal();
+  const handleDuplicateDetected = useCallback<typeof onDuplicateDetected>(
+    duplicate => {
+      onDuplicateDetected(duplicate);
+      pruneSitePolygonsCache();
+    },
+    [onDuplicateDetected]
+  );
+  const viewExistingPolygon = useCallback(() => {
+    if (existingPolygonDuplicate == null) return;
+    const { siteUuid, sitePolygonUuid } = existingPolygonDuplicate;
+    const duplicateSiteUuid = siteUuid === "" ? singleSiteUuid ?? "" : siteUuid;
+    window.open(
+      buildSitePolygonEditUrl(duplicateSiteUuid, sitePolygonUuid, { adminReview: true }),
+      "_blank",
+      "noopener,noreferrer"
+    );
+  }, [existingPolygonDuplicate, singleSiteUuid]);
 
   const projects = useMemo(() => sortProjectsByName(mapIndex?.projects ?? []), [mapIndex]);
   const filteredProjects = useMemo(() => filterProjects(projects, filters), [filters, projects]);
@@ -178,79 +233,122 @@ const PolygonReviewIndexPage: FC = () => {
           />
         }
       />
-      <MapAreaProvider>
-        <PageContent className="bg-theme-neutral-200">
-          <Flex direction="column" gap={4}>
-            <PolygonReviewToolbar
-              projectUuid={selectedProject?.uuid}
-              matchingPolygonCount={selectedProject != null ? indexTotal : undefined}
-              projectPolygonCount={hasLevel2Filters ? metrics.project?.polygonCount : undefined}
-              polygonFilters={polygonFilters}
-              activeFilterLabels={activeFilterLabels}
-              searchResetKey={searchResetKey}
-              onSearchChange={setPolygonSearch}
-              onApplyFilters={setPolygonFilters}
-              onClearFilters={clearPolygonFilters}
-            />
-            <PolygonReviewMap
-              projects={filteredProjects}
-              selectedProject={selectedProject}
-              siteUuids={siteUuids}
-              polygonFilter={sitePolygonFilter}
-              selectedPolygonUuids={selectedPolygonUuids}
-              hasLoadFailure={loadFailure != null}
-              onViewProjectPolygons={selectProject}
-            />
-            {selectedProject != null && (
-              <PolygonReviewMetrics project={metrics.project} filtered={metrics.filtered} selected={metrics.selected} />
-            )}
-            <Flex
-              direction="column"
-              gap={3}
-              bg="neutral.100"
-              borderRadius="0.25rem"
-              paddingX={4}
-              paddingTop={4}
-              paddingBottom={7}
-            >
-              <PolygonReviewTableActions />
-              {selectedProject == null ? (
-                <Flex
-                  direction="column"
-                  overflow="hidden"
-                  borderWidth="0.125rem"
-                  borderColor="neutral.300"
-                  borderRadius="0.25rem"
-                  bg="neutral.100"
-                >
-                  <Table data={[]} columns={columns} selectable showPagination={false} />
-                  <PolygonReviewEmptyState onSelectProject={openPicker} />
-                </Flex>
-              ) : (
-                <SitePolygonTableSection
-                  tableContainerRef={tableContainerRef}
-                  isSitePolygonsLoading={!polygonsLoaded}
-                  polygonRows={polygonRows}
-                  columns={columns}
-                  selectedRows={selectedRows}
-                  loadingLabel={t("Loading polygons...")}
-                  onAllItemsSelected={onAllItemsSelected}
-                  onClearHover={clearTableHover}
-                  onRowSelected={handleRowSelected}
-                  totalItems={indexTotal ?? 0}
-                  currentPage={pageNumber}
-                  pageSize={pageSize}
-                  onPageChange={setPageNumber}
-                  onPageSizeChange={handlePageSizeChange}
-                  onSortChange={handleSortChange}
+      <FrameworkProvider frameworkKey={scopedSite?.frameworkKey}>
+        <PolygonEditDrawerProvider>
+          <PolygonReviewSiteSync site={scopedSite} />
+          <PolygonEditDrawerDataSync polygons={polygons ?? NO_POLYGONS} onRefetchPolygons={pruneSitePolygonsCache} />
+          <PageContent className="bg-theme-neutral-200">
+            <Flex direction="column" gap={4}>
+              <PolygonReviewToolbar
+                projectUuid={selectedProject?.uuid}
+                matchingPolygonCount={selectedProject != null ? indexTotal : undefined}
+                projectPolygonCount={hasLevel2Filters ? metrics.project?.polygonCount : undefined}
+                polygonFilters={polygonFilters}
+                activeFilterLabels={activeFilterLabels}
+                searchResetKey={searchResetKey}
+                onSearchChange={setPolygonSearch}
+                onApplyFilters={setPolygonFilters}
+                onClearFilters={clearPolygonFilters}
+              />
+              <PolygonReviewMap
+                projects={filteredProjects}
+                selectedProject={selectedProject}
+                siteUuids={siteUuids}
+                polygonFilter={sitePolygonFilter}
+                selectedPolygonUuids={selectedPolygonUuids}
+                hasLoadFailure={loadFailure != null}
+                onViewProjectPolygons={selectProject}
+              />
+              {selectedProject != null && (
+                <PolygonReviewMetrics
+                  project={metrics.project}
+                  filtered={metrics.filtered}
+                  selected={metrics.selected}
                 />
               )}
+              <Flex
+                direction="column"
+                gap={3}
+                bg="neutral.100"
+                borderRadius="0.25rem"
+                paddingX={4}
+                paddingTop={4}
+                paddingBottom={7}
+              >
+                <PolygonReviewTableActions
+                  isProjectSelected={selectedProject != null}
+                  isSingleSiteSelected={scopedSite != null}
+                  onDrawPolygon={startNewPolygonFlow}
+                  onUpload={openUploadModal}
+                />
+                {selectedProject == null ? (
+                  <Flex
+                    direction="column"
+                    overflow="hidden"
+                    borderWidth="0.125rem"
+                    borderColor="neutral.300"
+                    borderRadius="0.25rem"
+                    bg="neutral.100"
+                  >
+                    <Table data={[]} columns={columns} selectable showPagination={false} />
+                    <PolygonReviewEmptyState onSelectProject={openPicker} />
+                  </Flex>
+                ) : (
+                  <SitePolygonTableSection
+                    tableContainerRef={tableContainerRef}
+                    isSitePolygonsLoading={!polygonsLoaded}
+                    polygonRows={polygonRows}
+                    columns={columns}
+                    selectedRows={selectedRows}
+                    loadingLabel={t("Loading polygons...")}
+                    onAllItemsSelected={onAllItemsSelected}
+                    onClearHover={clearTableHover}
+                    onRowSelected={handleRowSelected}
+                    totalItems={indexTotal ?? 0}
+                    currentPage={pageNumber}
+                    pageSize={pageSize}
+                    onPageChange={setPageNumber}
+                    onPageSizeChange={handlePageSizeChange}
+                    onSortChange={handleSortChange}
+                  />
+                )}
+              </Flex>
             </Flex>
-          </Flex>
-        </PageContent>
-      </MapAreaProvider>
+          </PageContent>
+          {singleSiteUuid != null && (
+            <UploadPolygons
+              open={isUploadModalOpen}
+              siteUuid={singleSiteUuid}
+              siteHasExistingPolygons={(indexTotal ?? 0) > 0}
+              onOpenChange={setIsUploadModalOpen}
+              onUploadSuccess={pruneSitePolygonsCache}
+              onDuplicateDetected={handleDuplicateDetected}
+              onUploadError={onUploadError}
+            />
+          )}
+          <ExistingPolygon
+            open={isExistingPolygonModalOpen}
+            siteName={existingPolygonDuplicate?.siteName ?? ""}
+            onOpenChange={onExistingPolygonModalOpenChange}
+            onView={viewExistingPolygon}
+          />
+          <UploadError
+            open={isUploadErrorModalOpen}
+            backendErrorMessage={uploadErrorMessage}
+            onOpenChange={onUploadErrorModalOpenChange}
+          />
+        </PolygonEditDrawerProvider>
+      </FrameworkProvider>
     </Layout>
   );
 };
+
+const PolygonReviewIndexPage: FC = () => (
+  <MapAreaProvider>
+    <AnrMapOverlayProvider>
+      <PolygonReviewIndexContent />
+    </AnrMapOverlayProvider>
+  </MapAreaProvider>
+);
 
 export default PolygonReviewIndexPage;

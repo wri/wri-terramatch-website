@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { FC, useMemo, useState } from "react";
 
 import LoadingMap from "@/components/elements/Map-mapbox/components/LoadingMap";
@@ -6,11 +7,16 @@ import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { SitePolygonMapIndexFilter, useSitePolygonMapIndex } from "@/connections/SitePolygons";
+import { useMapAreaContext } from "@/context/mapArea.provider";
+import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { ProjectMapEntryDto, SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
+import UndoIcon from "@/redesignComponents/foundations/Icons/Function/UndoIcon";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 
 import { SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS } from "../../site/[uuid]/constants/sitePolygonMapSizing";
+import { usePolygonDrawUndo } from "../../site/[uuid]/hooks/usePolygonDrawUndo";
 import { getProjectMarkersBbox, toProjectMarkerPoints } from "../utils/projectMarkers";
 
 const NO_POLYGONS: SitePolygonMapEntryDto[] = [];
@@ -39,8 +45,15 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
   onViewProjectPolygons
 }) => {
   const t = useT();
-  const mapFunctions = useBaseMap();
+  const mapFunctions = useBaseMap(undefined, undefined, { deferDrawCreateSave: true });
   const projectUuid = selectedProject?.uuid;
+  const { isOpen: isEditPolygonOpen } = usePolygonEditDrawer();
+  const { isUserDrawingEnabled, editPolygon } = useMapAreaContext();
+  const { showPolygonUndoButton, handleUndoPolygonDraw } = usePolygonDrawUndo({
+    isEditPolygonOpen,
+    isUserDrawingEnabled,
+    isExistingPolygonOpen: editPolygon.isOpen && editPolygon.uuid !== ""
+  });
 
   const [, { data: polygonMapIndex, loadFailure: polygonLoadFailure }] = useSitePolygonMapIndex({
     entityName: "projects",
@@ -90,8 +103,22 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
           showLegend
           hideMediaOnMap
           disabledPolygonPanel
-          className="h-full w-full flex-1 !rounded-[0.25rem_0.25rem_0_0]"
+          className={classNames("flex-1", {
+            "!fixed top-0 bottom-0 left-0 right-0 z-[37] mt-12 ml-12 max-h-[calc(100vh_-_3rem)] w-screen max-w-[calc(100vw_-_3rem)] overflow-hidden rounded-none":
+              isEditPolygonOpen,
+            "h-full w-full !rounded-[0.25rem_0.25rem_0_0]": !isEditPolygonOpen
+          })}
         />
+        {showPolygonUndoButton && (
+          <Button
+            variant="secondary"
+            leftIcon={<UndoIcon />}
+            className="fixed bottom-2 left-[calc(32rem+(100vw-32rem)/2)] z-[38] -translate-x-1/2"
+            onClick={handleUndoPolygonDraw}
+          >
+            {t("Undo")}
+          </Button>
+        )}
       </ResizeBox>
       {hasLoadFailure && (
         <InlineMessage variant="error" label={t("Unable to load projects")} caption={t("Please reload the page.")} />
