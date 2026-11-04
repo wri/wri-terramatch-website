@@ -1,6 +1,8 @@
 import { useT } from "@transifex/react";
 import { FC } from "react";
 
+import { getPolygonReviewUrl } from "@/pages/polygon-review/utils/polygonReviewUrl";
+
 import PolygonReviewLauncherCard from "./PolygonReviewLauncherCard";
 
 /**
@@ -13,7 +15,7 @@ const PolygonReviewIndexLauncher: FC = () => {
   return (
     <div className="p-6">
       <PolygonReviewLauncherCard
-        href="/polygon-review"
+        href={getPolygonReviewUrl()}
         title={t("Explore Polygon Review page")}
         description={t(
           "Review, validate, and edit polygons across all projects in one place. It opens in a new browser tab."

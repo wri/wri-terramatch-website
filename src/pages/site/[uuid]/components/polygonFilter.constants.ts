@@ -27,6 +27,11 @@ export type PolygonValidationStatus = "not_checked" | "failed" | "partial" | "pa
 
 export type SiteFilterOption = { label: string; value: string };
 
+export const toSiteFilterOption = ({ uuid, name }: { uuid: string; name: string | null }): SiteFilterOption => ({
+  value: uuid,
+  label: name ?? uuid
+});
+
 export type PolygonFilterState = {
   sites: SiteFilterOption[];
   polygonStatus: PolygonSubmissionStatus[];

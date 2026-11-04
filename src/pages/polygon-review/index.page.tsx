@@ -1,6 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { isEmpty } from "lodash";
+import { isEmpty, isEqual } from "lodash";
 import { useRouter } from "next/router";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -31,8 +31,10 @@ import PolygonReviewMetrics from "./components/PolygonReviewMetrics";
 import PolygonReviewTableActions from "./components/PolygonReviewTableActions";
 import PolygonReviewToolbar from "./components/PolygonReviewToolbar";
 import ProjectContextPicker from "./components/ProjectContextPicker";
+import { useInitialPolygonReviewState } from "./hooks/useInitialPolygonReviewState";
 import { useProjectPolygonIssues } from "./hooks/useProjectPolygonIssues";
 import { useProjectPolygonMetrics } from "./hooks/useProjectPolygonMetrics";
+import { POLYGON_REVIEW_PATH } from "./utils/polygonReviewUrl";
 import {
   EMPTY_PROJECT_CONTEXT_FILTERS,
   filterProjects,
@@ -56,7 +58,8 @@ const toTableRow = (polygon: SitePolygonLightDto, t: (key: string) => string): P
 
 /**
  * Polygon Review index. No polygon data loads until a project is picked in the Level 1 project context filter;
- * clearing that filter returns the page to its initial (unscoped) state.
+ * clearing that filter returns the page to its initial (unscoped) state. Query params (see `polygonReviewUrl`) can
+ * pre-select the project context and filters on load.
  */
 const PolygonReviewIndexPage: FC = () => {
   const t = useT();
@@ -140,6 +143,30 @@ const PolygonReviewIndexPage: FC = () => {
     [projects, selectedProjectUuid]
   );
 
+  const { initialState, clearInitialStateQuery } = useInitialPolygonReviewState(isAdmin);
+  // State rather than a ref: it has to flip in the same render as the scope it applies, or the effect below would
+  // compare against the previous (empty) scope and drop the query params straight away.
+  const [hasAppliedInitialState, setHasAppliedInitialState] = useState(false);
+  useEffect(() => {
+    if (initialState == null || hasAppliedInitialState) return;
+    // Wait for the map index so the picker, map and table all agree on the project.
+    if (!projects.some(({ uuid }) => uuid === initialState.projectUuid)) return;
+
+    setHasAppliedInitialState(true);
+    setSelectedProjectUuid(initialState.projectUuid);
+    setPolygonFilters(initialState.polygonFilters);
+  }, [hasAppliedInitialState, initialState, projects, setPolygonFilters]);
+
+  // The query params only describe the scope the page was opened with; drop them once the project or sites change.
+  useEffect(() => {
+    if (initialState == null || !hasAppliedInitialState) return;
+
+    const initialSiteUuids = initialState.polygonFilters.sites.map(({ value }) => value);
+    if (selectedProjectUuid !== initialState.projectUuid || !isEqual(siteUuids, initialSiteUuids)) {
+      clearInitialStateQuery();
+    }
+  }, [clearInitialStateQuery, hasAppliedInitialState, initialState, selectedProjectUuid, siteUuids]);
+
   const openPicker = useCallback(() => setIsPickerOpen(true), []);
 
   const selectProject = useCallback(
@@ -172,7 +199,7 @@ const PolygonReviewIndexPage: FC = () => {
         className="sticky top-0 z-20 !px-6"
         breadcrumbs={{
           linkRouter: router,
-          links: [{ icon: <PolygonsIcon />, label: t("Polygons"), link: "/polygon-review" }]
+          links: [{ icon: <PolygonsIcon />, label: t("Polygons"), link: POLYGON_REVIEW_PATH }]
         }}
       />
       <PageHeader

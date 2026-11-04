@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useSiteIndex } from "@/connections/Entity";
 import { useDebounce } from "@/hooks/useDebounce";
 
-import { SiteFilterOption } from "../../site/[uuid]/components/polygonFilter.constants";
+import { SiteFilterOption, toSiteFilterOption } from "../../site/[uuid]/components/polygonFilter.constants";
 
 const SITE_SEARCH_PAGE_SIZE = 50;
 const SITE_SEARCH_DEBOUNCE_MS = 300;
@@ -21,10 +21,7 @@ export const useProjectSiteSearch = (projectUuid: string) => {
     sortDirection: "ASC"
   });
 
-  const options = useMemo<SiteFilterOption[]>(
-    () => (sites ?? []).map(({ uuid, name }) => ({ value: uuid, label: name ?? uuid })),
-    [sites]
-  );
+  const options = useMemo<SiteFilterOption[]>(() => (sites ?? []).map(toSiteFilterOption), [sites]);
 
   const onQueryChange = useCallback(
     (value: string) => {
