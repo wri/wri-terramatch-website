@@ -134,7 +134,7 @@ const PolygonReviewTableActions: FC<PolygonReviewTableActionsProps> = ({
           disabled={isDownloadDisabled}
         />
       </LockedActionTooltip>
-      <LockedActionTooltip message={t("Select a project to download or add polygons")}>
+      <LockedActionTooltip message={projectLockedMessage}>
         <Button className="pointer-events-none" variant="secondary" size="small" leftIcon={<UploadIcon />} disabled>
           {t("Upload Monitoring Plots")}
         </Button>

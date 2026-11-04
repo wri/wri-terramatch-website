@@ -1,4 +1,3 @@
-import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC, useMemo, useState } from "react";
 
@@ -7,15 +6,16 @@ import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { SitePolygonMapIndexFilter, useSitePolygonMapIndex } from "@/connections/SitePolygons";
+import { DELETED_AUDIT_POLYGONS } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { ProjectMapEntryDto, SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
-import UndoIcon from "@/redesignComponents/foundations/Icons/Function/UndoIcon";
 
+import PolygonDrawUndoButton from "../../site/[uuid]/components/PolygonDrawUndoButton";
 import { SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS } from "../../site/[uuid]/constants/sitePolygonMapSizing";
 import { usePolygonDrawUndo } from "../../site/[uuid]/hooks/usePolygonDrawUndo";
+import { getPolygonEditMapClassNames } from "../../site/[uuid]/utils/polygonEditMapClassNames";
 import { getProjectMarkersBbox, toProjectMarkerPoints } from "../utils/projectMarkers";
 
 const NO_POLYGONS: SitePolygonMapEntryDto[] = [];
@@ -26,6 +26,7 @@ type PolygonReviewMapProps = {
   siteUuids: string[];
   polygonFilter: SitePolygonMapIndexFilter;
   selectedPolygonUuids: string[];
+  showDeleted?: boolean;
   onViewProjectPolygons: (projectUuid: string) => void;
 };
 
@@ -39,9 +40,9 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
   siteUuids,
   polygonFilter,
   selectedPolygonUuids,
+  showDeleted = false,
   onViewProjectPolygons
 }) => {
-  const t = useT();
   const mapFunctions = useBaseMap(undefined, undefined, { deferDrawCreateSave: true });
   const projectUuid = selectedProject?.uuid;
   const { isOpen: isEditPolygonOpen } = usePolygonEditDrawer();
@@ -75,8 +76,22 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
     () => getProjectMarkersBbox(toProjectMarkerPoints(selectedProject != null ? [selectedProject] : projects)),
     [projects, selectedProject]
   );
+  // In the deleted audit view, zoom to the deleted polygons themselves (matches the site page), not the active ones.
+  const deletedPolygonUuids = useMemo(() => {
+    if (!showDeleted) return undefined;
+    const uuids = (projectPolygons ?? [])
+      .map(polygon => polygon.polygonUuid)
+      .filter((uuid): uuid is string => uuid != null && uuid !== "");
+    return uuids.length > 0 ? uuids : undefined;
+  }, [showDeleted, projectPolygons]);
   const polygonsBbox = useBoundingBox(
-    projectUuid == null ? {} : siteUuids.length > 0 ? { siteUuids } : { projectUuid }
+    projectUuid == null
+      ? {}
+      : deletedPolygonUuids != null
+      ? { polygonUuids: deletedPolygonUuids }
+      : siteUuids.length > 0
+      ? { siteUuids }
+      : { projectUuid }
   );
   const bbox = (projectUuid != null ? polygonsBbox : undefined) ?? markersBbox;
   const polygonTableHighlight = useMemo(() => ({ selectedPolygonUuids }), [selectedPolygonUuids]);
@@ -95,26 +110,19 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
         projectMarkers={projectMarkers}
         onViewProjectPolygons={onViewProjectPolygons}
         mapIndexPolygons={mapIndexPolygons}
+        mapPolygonsForcedStatus={showDeleted ? DELETED_AUDIT_POLYGONS : undefined}
         polygonTableHighlight={polygonTableHighlight}
         showLegend
         hideMediaOnMap
         disabledPolygonPanel
-        className={classNames("flex-1", {
-          "!fixed top-0 bottom-0 left-0 right-0 z-[37] mt-12 ml-12 max-h-[calc(100vh_-_3rem)] w-screen max-w-[calc(100vw_-_3rem)] overflow-hidden rounded-none":
-            isEditPolygonOpen,
-          "h-full w-full !rounded-[0.25rem_0.25rem_0_0]": !isEditPolygonOpen
-        })}
+        // Polygon Review is admin-only, so the full-screen map always uses the admin offsets.
+        className={classNames(
+          "flex-1",
+          { "overflow-hidden": isEditPolygonOpen },
+          getPolygonEditMapClassNames(isEditPolygonOpen, true)
+        )}
       />
-      {showPolygonUndoButton && (
-        <Button
-          variant="secondary"
-          leftIcon={<UndoIcon />}
-          className="fixed bottom-2 left-[calc(32rem+(100vw-32rem)/2)] z-[38] -translate-x-1/2"
-          onClick={handleUndoPolygonDraw}
-        >
-          {t("Undo")}
-        </Button>
-      )}
+      {showPolygonUndoButton && <PolygonDrawUndoButton onClick={handleUndoPolygonDraw} />}
     </ResizeBox>
   );
 };
