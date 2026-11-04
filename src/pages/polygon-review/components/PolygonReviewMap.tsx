@@ -1,4 +1,3 @@
-import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC, useMemo, useState } from "react";
 
@@ -10,12 +9,12 @@ import { SitePolygonMapIndexFilter, useSitePolygonMapIndex } from "@/connections
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { ProjectMapEntryDto, SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
-import UndoIcon from "@/redesignComponents/foundations/Icons/Function/UndoIcon";
 
+import PolygonDrawUndoButton from "../../site/[uuid]/components/PolygonDrawUndoButton";
 import { SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS } from "../../site/[uuid]/constants/sitePolygonMapSizing";
 import { usePolygonDrawUndo } from "../../site/[uuid]/hooks/usePolygonDrawUndo";
+import { getPolygonEditMapClassNames } from "../../site/[uuid]/utils/polygonEditMapClassNames";
 import { getProjectMarkersBbox, toProjectMarkerPoints } from "../utils/projectMarkers";
 
 const NO_POLYGONS: SitePolygonMapEntryDto[] = [];
@@ -41,7 +40,6 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
   selectedPolygonUuids,
   onViewProjectPolygons
 }) => {
-  const t = useT();
   const mapFunctions = useBaseMap(undefined, undefined, { deferDrawCreateSave: true });
   const projectUuid = selectedProject?.uuid;
   const { isOpen: isEditPolygonOpen } = usePolygonEditDrawer();
@@ -99,22 +97,14 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
         showLegend
         hideMediaOnMap
         disabledPolygonPanel
-        className={classNames("flex-1", {
-          "!fixed top-0 bottom-0 left-0 right-0 z-[37] mt-12 ml-12 max-h-[calc(100vh_-_3rem)] w-screen max-w-[calc(100vw_-_3rem)] overflow-hidden rounded-none":
-            isEditPolygonOpen,
-          "h-full w-full !rounded-[0.25rem_0.25rem_0_0]": !isEditPolygonOpen
-        })}
+        // Polygon Review is admin-only, so the full-screen map always uses the admin offsets.
+        className={classNames(
+          "flex-1",
+          { "overflow-hidden": isEditPolygonOpen },
+          getPolygonEditMapClassNames(isEditPolygonOpen, true)
+        )}
       />
-      {showPolygonUndoButton && (
-        <Button
-          variant="secondary"
-          leftIcon={<UndoIcon />}
-          className="fixed bottom-2 left-[calc(32rem+(100vw-32rem)/2)] z-[38] -translate-x-1/2"
-          onClick={handleUndoPolygonDraw}
-        >
-          {t("Undo")}
-        </Button>
-      )}
+      {showPolygonUndoButton && <PolygonDrawUndoButton onClick={handleUndoPolygonDraw} />}
     </ResizeBox>
   );
 };

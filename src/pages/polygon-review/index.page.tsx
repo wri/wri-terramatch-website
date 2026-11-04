@@ -14,7 +14,10 @@ import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import FrameworkProvider from "@/context/framework.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
 import { PolygonEditDrawerDataSync, PolygonEditDrawerProvider } from "@/context/polygonEditDrawer.provider";
-import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
+import {
+  openPolygonEditDrawerForPolygonId,
+  openPolygonEditDrawerForSitePolygon
+} from "@/context/polygonEditDrawer.utils";
 import { setPolygonTableHoveredUuid, useSyncPolygonTableSelectionStore } from "@/context/polygonTableInteraction.store";
 import type { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
@@ -23,6 +26,7 @@ import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTab
 import { PolygonsIcon } from "@/redesignComponents/foundations/Icons";
 import Layout from "@/redesignComponents/Layout/Layout";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
+import Log from "@/utils/log";
 
 import ExistingPolygon from "../site/[uuid]/components/Modals/ExistingPolygon";
 import UploadError from "../site/[uuid]/components/Modals/UploadError";
@@ -37,6 +41,7 @@ import { usePolygonTablePaging } from "../site/[uuid]/hooks/usePolygonTablePagin
 import { usePolygonUploadErrorModal } from "../site/[uuid]/hooks/usePolygonUploadErrorModal";
 import { useSitePolygonFilters } from "../site/[uuid]/hooks/useSitePolygonFilters";
 import { useStartSitePolygonDrawing } from "../site/[uuid]/hooks/useStartSitePolygonDrawing";
+import type { UploadPolygonsSuccessResult } from "../site/[uuid]/hooks/useUploadPolygons";
 import PolygonReviewEmptyState from "./components/PolygonReviewEmptyState";
 import PolygonReviewMap from "./components/PolygonReviewMap";
 import PolygonReviewMetrics from "./components/PolygonReviewMetrics";
@@ -156,6 +161,24 @@ const PolygonReviewIndexContent: FC = () => {
     startDrawing();
   }, [startDrawing]);
 
+  const findTablePolygon = useCallback(
+    (polygonId: string) => polygons?.find(polygon => polygon.polygonUuid === polygonId || polygon.uuid === polygonId),
+    [polygons]
+  );
+  const openPolygonInDrawer = useCallback(
+    (polygonId: string) => {
+      if (singleSiteUuid == null) return;
+      void openPolygonEditDrawerForPolygonId({
+        polygonId,
+        siteUuid: singleSiteUuid,
+        findCachedSitePolygon: findTablePolygon
+      }).catch(error => {
+        Log.error("Failed to open polygon in edit drawer:", error);
+      });
+    },
+    [findTablePolygon, singleSiteUuid]
+  );
+
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const openUploadModal = useCallback(() => setIsUploadModalOpen(true), []);
   const {
@@ -177,16 +200,35 @@ const PolygonReviewIndexContent: FC = () => {
     },
     [onDuplicateDetected]
   );
+  // Same behaviour as the site page: a single uploaded polygon opens in the edit drawer.
+  const handleUploadSuccess = useCallback(
+    ({ createdSitePolygonUuid, uploadedFileCount }: UploadPolygonsSuccessResult) => {
+      pruneSitePolygonsCache();
+      if (createdSitePolygonUuid != null && uploadedFileCount === 1) {
+        openPolygonInDrawer(createdSitePolygonUuid);
+      }
+    },
+    [openPolygonInDrawer]
+  );
+  // Same behaviour as the site page: a duplicate in the scoped site opens in the drawer, others in a new tab.
   const viewExistingPolygon = useCallback(() => {
     if (existingPolygonDuplicate == null) return;
-    const { siteUuid, sitePolygonUuid } = existingPolygonDuplicate;
-    const duplicateSiteUuid = siteUuid === "" ? singleSiteUuid ?? "" : siteUuid;
+    const { siteUuid, sitePolygonUuid, polygonUuid } = existingPolygonDuplicate;
+    if (siteUuid === "" || siteUuid === singleSiteUuid) {
+      const existingInTable = findTablePolygon(sitePolygonUuid) ?? findTablePolygon(polygonUuid);
+      if (existingInTable != null) {
+        openPolygonEditDrawerForSitePolygon(existingInTable, existingInTable.name ?? undefined);
+        return;
+      }
+      openPolygonInDrawer(sitePolygonUuid);
+      return;
+    }
     window.open(
-      buildSitePolygonEditUrl(duplicateSiteUuid, sitePolygonUuid, { adminReview: true }),
+      buildSitePolygonEditUrl(siteUuid, sitePolygonUuid, { adminReview: true }),
       "_blank",
       "noopener,noreferrer"
     );
-  }, [existingPolygonDuplicate, singleSiteUuid]);
+  }, [existingPolygonDuplicate, findTablePolygon, openPolygonInDrawer, singleSiteUuid]);
 
   const projects = useMemo(() => sortProjectsByName(mapIndex?.projects ?? []), [mapIndex]);
   const filteredProjects = useMemo(() => filterProjects(projects, filters), [filters, projects]);
@@ -251,7 +293,7 @@ const PolygonReviewIndexContent: FC = () => {
       <FrameworkProvider frameworkKey={scopedSite?.frameworkKey}>
         <PolygonEditDrawerProvider>
           <PolygonReviewSiteSync site={scopedSite} />
-          <PolygonEditDrawerDataSync polygons={polygons ?? NO_POLYGONS} onRefetchPolygons={pruneSitePolygonsCache} />
+          <PolygonEditDrawerDataSync polygons={polygons} onRefetchPolygons={pruneSitePolygonsCache} />
           <PageContent className="bg-theme-neutral-200">
             <Flex direction="column" gap={4}>
               <PolygonReviewToolbar
@@ -345,7 +387,7 @@ const PolygonReviewIndexContent: FC = () => {
               siteUuid={singleSiteUuid}
               siteHasExistingPolygons={(indexTotal ?? 0) > 0}
               onOpenChange={setIsUploadModalOpen}
-              onUploadSuccess={pruneSitePolygonsCache}
+              onUploadSuccess={handleUploadSuccess}
               onDuplicateDetected={handleDuplicateDetected}
               onUploadError={onUploadError}
             />

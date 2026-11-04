@@ -32,7 +32,10 @@ type PolygonReviewTableActionsProps = {
   onUpload: () => void;
 };
 
-/** Download All, Upload Monitoring Plots and Add (draw / upload polygons). */
+/**
+ * Download All, Upload Monitoring Plots and Add (draw / upload polygons). Download All and Upload Monitoring Plots stay
+ * disabled until the project-scoped workspace lands.
+ */
 const PolygonReviewTableActions: FC<PolygonReviewTableActionsProps> = ({
   isProjectSelected,
   isSingleSiteSelected,
@@ -47,7 +50,7 @@ const PolygonReviewTableActions: FC<PolygonReviewTableActionsProps> = ({
 
   return (
     <Flex justify="flex-end" align="center" gap={2}>
-      <LockedActionTooltip message={t("Select a project to download or add polygons")}>
+      <LockedActionTooltip message={projectLockedMessage}>
         <MultiActionButton
           className="pointer-events-none"
           variant="secondary"
@@ -59,7 +62,7 @@ const PolygonReviewTableActions: FC<PolygonReviewTableActionsProps> = ({
           disabled
         />
       </LockedActionTooltip>
-      <LockedActionTooltip message={t("Select a project to download or add polygons")}>
+      <LockedActionTooltip message={projectLockedMessage}>
         <Button className="pointer-events-none" variant="secondary" size="small" leftIcon={<UploadIcon />} disabled>
           {t("Upload Monitoring Plots")}
         </Button>

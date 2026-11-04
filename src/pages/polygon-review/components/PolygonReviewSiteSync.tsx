@@ -9,7 +9,7 @@ type PolygonReviewSiteSyncProps = {
 };
 
 const PolygonReviewSiteSync: FC<PolygonReviewSiteSyncProps> = ({ site }) => {
-  const { setSiteData, resetSiteMapInteractionState } = useMapAreaContext();
+  const { setSiteData } = useMapAreaContext();
   const { closePolygonEdit } = usePolygonEditDrawer();
   const siteUuid = site?.uuid;
   const previousSiteUuidRef = useRef(siteUuid);
@@ -23,8 +23,6 @@ const PolygonReviewSiteSync: FC<PolygonReviewSiteSyncProps> = ({ site }) => {
     previousSiteUuidRef.current = siteUuid;
     closePolygonEdit();
   }, [closePolygonEdit, siteUuid]);
-
-  useEffect(() => resetSiteMapInteractionState, [resetSiteMapInteractionState]);
 
   return null;
 };
