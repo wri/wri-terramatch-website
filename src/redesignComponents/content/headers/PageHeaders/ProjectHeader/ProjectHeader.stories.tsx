@@ -55,7 +55,7 @@ const createMockProject = (overrides: Partial<ProjectFullDto> = {}): ProjectFull
   const baseProject = {
     lightResource: false,
     uuid: "550e8400-e29b-41d4-a716-446655440000",
-    frameworkKey: "terrafund",
+    frameworkKey: "terrafund-non-profits",
     organisationName: "Organisation Name",
     organisationUuid: "550e8400-e29b-41d4-a716-446655440001",
     organisationType: "NGO",
@@ -188,7 +188,7 @@ const meta: Meta<typeof ProjectHeader> = {
   decorators: [
     (Story, context) => {
       const project = context.args?.project as ProjectFullDto | undefined;
-      const frameworkKey = project?.frameworkKey ?? "terrafund";
+      const frameworkKey = project?.frameworkKey ?? "terrafund-non-profits";
       return (
         <FrameworkProvider frameworkKey={frameworkKey}>
           <Story />

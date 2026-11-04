@@ -5,40 +5,7 @@ export const useKeyIndicatorsTooltipContent = () => {
 
   return [
     {
-      frameworks: ["terrafund-3"],
-      treesRestored: {
-        title: t("Trees Planted"),
-        content: t("This is the sum of trees planted, as reported by this project across all of this project’s sites.")
-      },
-      treesRegenerated: {
-        title: t("Trees Regenerated"),
-        content: t(
-          "This is the sum of trees growing due to assisted natural regeneration interventions, as reported by this project across all of this project’s sites."
-        )
-      },
-      saplingsRestored: {
-        title: t("Seedlings Grown"),
-        content: t(
-          "This is the sum of seedlings grown in nurseries, as reported by this project across all of this project’s nurseries."
-        )
-      },
-      treesToBeRestored: {
-        title: t("Trees to be Grown"),
-        content: t(
-          "This is the expected number of trees that will be grown through this project. It represents the following calculation: [trees to be planted * expected survival rate] + [trees to be regenerated]."
-        )
-      },
-      hectaresRestored: {
-        title: t("Area Restored (ha)"),
-        content: t("Number of hectares within approved polygons for this project")
-      },
-      jobsCreated: {
-        title: t("Jobs Created"),
-        content: t("This is the sum of part-time and full-time jobs reported created by this project.")
-      }
-    },
-    {
-      frameworks: ["terrafund", "terrafund-landscapes", "enterprises", "epa-ghana-pilot"],
+      frameworks: ["terrafund-non-profits", "enterprises", "epa-ghana-pilot"],
       treesRestored: {
         title: t("Trees Planted"),
         content: t("This is the sum of trees planted, as reported by this project across all of this project’s sites.")

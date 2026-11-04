@@ -13,16 +13,12 @@ export const useFrameworkTitle = () => {
     case Framework.HBF:
       return t("Harit Bharat Fund");
 
-    case Framework.TF:
-    case Framework.TF_LANDSCAPES:
+    case Framework.TF_NON_PROFITS:
     case Framework.ENTERPRISES:
       return t("TerraFund");
 
     case Framework.FF_1:
       return t("Fundo Flora");
-
-    case Framework.TF_3:
-      return t("TerraFund 3");
 
     case Framework.UNDEFINED:
     default:

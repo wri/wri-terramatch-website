@@ -63,7 +63,7 @@ const baseSiteReport: SiteReportFullDto = {
   projectName: "Project Name",
   projectUuid: "00000000-0000-0000-0000-000000000030",
   projectReportUuid: "00000000-0000-0000-0000-000000000031",
-  frameworkKey: "terrafund",
+  frameworkKey: "terrafund-non-profits",
   completion: 72,
   reportTitle: "Site Report Q2 2025",
   nothingToReport: false,

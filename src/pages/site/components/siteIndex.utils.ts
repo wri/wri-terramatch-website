@@ -134,12 +134,9 @@ export const buildProjectMetrics = (
 
   if (isTerrafund(frameworkKey)) {
     let treesRegeneratedGoal = firstPositiveGoal(project?.treesToBeRestoredGoal);
-    if (frameworkKey === Framework.TF_3 || frameworkKey === Framework.ENTERPRISES) {
+    if (frameworkKey === Framework.TF_NON_PROFITS || frameworkKey === Framework.ENTERPRISES) {
       // These frameworks enter the ANR goal per site, so the goal is the sum across approved sites.
       treesRegeneratedGoal = totals.aNatRegenerationGoal;
-    } else if (frameworkKey === Framework.TF) {
-      // TerraFund cohort 1 & 2 have no Trees Regenerated goal, so the card shows progress without one.
-      treesRegeneratedGoal = 0;
     }
     return {
       treesPlanted: metric(treesPlanted, treesGoal),

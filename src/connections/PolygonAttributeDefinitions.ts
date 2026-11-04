@@ -22,11 +22,9 @@ import { Connected } from "@/types/connection";
 export type FrameworkKey = PolygonAttributeDefinitionsIndexQueryParams["frameworkKey"];
 
 const FRAMEWORK_KEYS: readonly FrameworkKey[] = [
-  "terrafund",
-  "terrafund-landscapes",
+  "terrafund-non-profits",
   "enterprises",
   "epa-ghana-pilot",
-  "terrafund-3",
   "ppc",
   "hbf",
   "fundo-flora-1",

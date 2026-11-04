@@ -622,7 +622,9 @@ function WizardForm(props: WizardFormProps) {
     return [
       { key: "project-profile", labelKey: "Project Profile" },
       { key: "site-reports", labelKey: "Site Reports" },
-      ...(props.framework === Framework.TF ? [{ key: "nurseries-reports", labelKey: "Nursery Reports" }] : [])
+      ...(props.framework === Framework.TF_NON_PROFITS
+        ? [{ key: "nurseries-reports", labelKey: "Nursery Reports" }]
+        : [])
     ];
   }, [models, props.framework]);
 
