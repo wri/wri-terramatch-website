@@ -1,13 +1,23 @@
-import { Box, Flex, List, Text } from "@chakra-ui/react";
+import { type SystemStyleObject, Box, Flex, List, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, PropsWithChildren, ReactNode } from "react";
+import { FC, PropsWithChildren, ReactNode, useCallback, useMemo } from "react";
+
+import Table from "@/redesignComponents/dataDisplay/Table/Table";
 
 import ModalConfirmation, { ModalConfirmationProps } from "./ModalConfirmation";
 
 export interface ModalSelectionItem {
   id: string | number;
   label: string;
+  cells?: Record<string, string | null>;
 }
+
+export interface ModalSelectionColumn {
+  key: string;
+  label: string;
+}
+
+export const LABEL_COLUMN_KEY = "label";
 
 interface SelectionCopy {
   title: string;
@@ -25,9 +35,44 @@ export interface ModalSelectionProps
   onConfirm: () => void;
   isLoading?: boolean;
   confirmLabel?: string;
+  view?: "list" | "table";
+  columns?: ModalSelectionColumn[];
+  footnote?: ReactNode;
 }
 
 type Props = PropsWithChildren<ModalSelectionProps & { action: "delete" | "submit" }>;
+
+type SelectionTableRow = { id: string | number } & Record<string, string | number | null>;
+
+const SELECTION_TABLE_CSS: SystemStyleObject = {
+  border: "0.0625rem solid var(--chakra-colors-neutral-300)",
+  borderRadius: "0.25rem",
+  overflow: "hidden",
+  "& >div>div": {
+    maxHeight: "15rem",
+    overflowX: "hidden",
+    overflowY: "auto"
+  },
+  "& table": {
+    tableLayout: "fixed",
+    width: "100%"
+  },
+  "& table thead tr, & table thead tr th": {
+    backgroundColor: "var(--chakra-colors-neutral-200)",
+    position: "sticky",
+    top: 0,
+    zIndex: 1
+  },
+  "& table tbody tr:last-child": {
+    borderBottom: "none !important"
+  }
+};
+
+const toTableRow = ({ id, label, cells }: ModalSelectionItem): SelectionTableRow => ({
+  ...cells,
+  id,
+  [LABEL_COLUMN_KEY]: label
+});
 
 const ModalSelection: FC<Props> = ({
   items,
@@ -37,6 +82,9 @@ const ModalSelection: FC<Props> = ({
   isLoading = false,
   confirmLabel,
   action,
+  view = "list",
+  columns,
+  footnote,
   children,
   ...modalProps
 }) => {
@@ -45,6 +93,16 @@ const ModalSelection: FC<Props> = ({
   const isDelete = action === "delete";
   const copy = isSingle ? singular : plural;
   const notice = isDelete ? t("You can’t undo this.") : null;
+  const tableColumns = view === "table" ? columns : undefined;
+  const tableRows = useMemo(() => (tableColumns != null ? items.map(toTableRow) : []), [items, tableColumns]);
+  const renderTableCell = useCallback((row: SelectionTableRow, columnKey: string) => {
+    const value = row[columnKey] ?? "—";
+    return (
+      <Text textStyle="300" color="neutral.800" title={String(value)} truncate>
+        {value}
+      </Text>
+    );
+  }, []);
 
   return (
     <ModalConfirmation
@@ -77,6 +135,7 @@ const ModalSelection: FC<Props> = ({
                   {notice}
                 </Text>
               )}
+              {footnote}
             </Flex>
           ) : (
             <Box className="px-4">
@@ -91,17 +150,30 @@ const ModalSelection: FC<Props> = ({
                   </>
                 )}
               </Text>
-              <Box bg="neutral.200" className="rounded px-3 py-2">
-                <List.Root as="ul" className="list-disc space-y-2 pl-4">
-                  {items.map(item => (
-                    <List.Item key={item.id} _marker={{ color: "neutral.900" }}>
-                      <Text as="span" textStyle="400" color="neutral.900">
-                        {item.label}
-                      </Text>
-                    </List.Item>
-                  ))}
-                </List.Root>
-              </Box>
+              {tableColumns != null ? (
+                <Table
+                  css={SELECTION_TABLE_CSS}
+                  variant="full-width"
+                  data={tableRows}
+                  columns={tableColumns}
+                  renderDataCell={renderTableCell}
+                  showPagination={false}
+                  showItemCount={false}
+                />
+              ) : (
+                <Box bg="neutral.200" className="rounded px-3 py-2">
+                  <List.Root as="ul" className="list-disc space-y-2 pl-4">
+                    {items.map(item => (
+                      <List.Item key={item.id} _marker={{ color: "neutral.900" }}>
+                        <Text as="span" textStyle="400" color="neutral.900">
+                          {item.label}
+                        </Text>
+                      </List.Item>
+                    ))}
+                  </List.Root>
+                </Box>
+              )}
+              {footnote}
             </Box>
           )}
           {children}
