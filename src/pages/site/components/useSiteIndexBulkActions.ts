@@ -47,6 +47,28 @@ const refreshTouchedSites = (siteUuids: string[]) => {
   ApiSlice.pruneIndex("projects", "");
 };
 
+/** Downloads the given sites' profiles, showing progress / completion / error toasts. Never throws. */
+export const downloadSites = async (sites: SiteIndexSite[], t: ReturnType<typeof useT>) => {
+  try {
+    showEntityProgressToast(
+      t,
+      sites.length === 1 ? t("Downloading site profile") : t("Downloading site profiles"),
+      ENTITY_TOAST_IDS.downloading
+    );
+    for (const { frameworkKey, uuids } of groupSiteUuidsByFramework(sites)) {
+      await entityExportAll.downloadFile({
+        pathParams: { entity: "sites" },
+        queryParams: { frameworkKey, uuids }
+      });
+    }
+    completeEntityProgressToast(ENTITY_TOAST_IDS.downloading, t("Download Complete"));
+  } catch (error) {
+    Log.error("Failed to download sites", error);
+    closeEntityProgressToast(ENTITY_TOAST_IDS.downloading);
+    showEntityErrorToast(t("Error Downloading Sites"));
+  }
+};
+
 export const useSiteIndexBulkActions = ({
   selectedSites,
   isSubmissionReady,
@@ -76,22 +98,7 @@ export const useSiteIndexBulkActions = ({
     setIsDownloading(true);
     clearSelection();
     try {
-      showEntityProgressToast(
-        t,
-        selectedSites.length === 1 ? t("Downloading site profile") : t("Downloading site profiles"),
-        ENTITY_TOAST_IDS.downloading
-      );
-      for (const { frameworkKey, uuids } of grouped) {
-        await entityExportAll.downloadFile({
-          pathParams: { entity: "sites" },
-          queryParams: { frameworkKey, uuids }
-        });
-      }
-      completeEntityProgressToast(ENTITY_TOAST_IDS.downloading, t("Download Complete"));
-    } catch (error) {
-      Log.error("Failed to download selected sites", error);
-      closeEntityProgressToast(ENTITY_TOAST_IDS.downloading);
-      showEntityErrorToast(t("Error Downloading Sites"));
+      await downloadSites(selectedSites, t);
     } finally {
       setIsDownloading(false);
     }

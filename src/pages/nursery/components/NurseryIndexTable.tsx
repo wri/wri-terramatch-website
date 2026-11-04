@@ -2,8 +2,10 @@ import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/re
 import { useT } from "@transifex/react";
 import { FC, useCallback, useMemo } from "react";
 
+import DownloadActionCell from "@/components/extensive/EntityIndex/DownloadActionCell";
 import EntityUpdateStatus from "@/components/extensive/EntityIndex/EntityUpdateStatus";
 import { useDate } from "@/hooks/useDate";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
@@ -19,6 +21,7 @@ import { CalendarIcon } from "@/redesignComponents/foundations/Icons";
 import { useNurseryTableSelection } from "../NurseriesSelection.provider";
 import type { NurseryIndexRow } from "../nurseryIndex.types";
 import { getNurseryDetailUrl } from "../nurseryIndex.utils";
+import { downloadNurseries } from "../useNurseriesBulkActions";
 import NurseryIndexEditButton from "./NurseryIndexEditButton";
 
 const NurseryIndexTable: FC<{ nurseries: NurseryIndexRow[]; embeddedInProject: boolean }> = ({
@@ -27,6 +30,7 @@ const NurseryIndexTable: FC<{ nurseries: NurseryIndexRow[]; embeddedInProject: b
 }) => {
   const t = useT();
   const { format } = useDate();
+  const isMobile = useIsMobile();
   const { selectedRows, isNurserySelected, handleRowSelected, handleAllItemsSelected } =
     useNurseryTableSelection(nurseries);
 
@@ -37,9 +41,9 @@ const NurseryIndexTable: FC<{ nurseries: NurseryIndexRow[]; embeddedInProject: b
       { key: "updateRequestStatus", label: t("Updates"), sortable: true, width: "15.625rem" },
       { key: "updatedAt", label: t("Latest Update"), sortable: true, width: "10.625rem" },
       { key: "createdAt", label: t("Date Created"), sortable: true, width: "9.375rem" },
-      { key: "actions", label: "", width: "8.125rem" }
+      { key: "actions", label: "", width: isMobile ? "9rem" : "8.125rem" }
     ],
-    [t]
+    [isMobile, t]
   );
 
   const renderRow = useCallback(
@@ -52,14 +56,16 @@ const NurseryIndexTable: FC<{ nurseries: NurseryIndexRow[]; embeddedInProject: b
           className={context?.className != null ? `group ${context.className}` : "group"}
           aria-selected={isSelected}
         >
-          <ChakraTableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)}>
-            <Checkbox
-              name={`nursery-${nursery.id}`}
-              aria-label={t("Select {nursery}", { nursery: nursery.name ?? t("Nursery") })}
-              checked={isSelected}
-              onCheckedChange={({ checked }) => handleRowSelected(nursery, checked === true)}
-            />
-          </ChakraTableCell>
+          {isMobile ? null : (
+            <ChakraTableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)}>
+              <Checkbox
+                name={`nursery-${nursery.id}`}
+                aria-label={t("Select {nursery}", { nursery: nursery.name ?? t("Nursery") })}
+                checked={isSelected}
+                onCheckedChange={({ checked }) => handleRowSelected(nursery, checked === true)}
+              />
+            </ChakraTableCell>
+          )}
           <ChakraTableCell {...context?.getCellProps("name")}>
             <TitleCell label={nursery.name ?? t("Nursery")} link={nurseryHref} linkTarget="_self" showChevron={false} />
           </ChakraTableCell>
@@ -95,12 +101,19 @@ const NurseryIndexTable: FC<{ nurseries: NurseryIndexRow[]; embeddedInProject: b
             />
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("actions")}>
-            <NurseryIndexEditButton nursery={nursery} />
+            {isMobile ? (
+              <DownloadActionCell
+                ariaLabel={t("Download {nursery}", { nursery: nursery.name ?? t("Nursery") })}
+                onDownload={() => downloadNurseries([nursery], t)}
+              />
+            ) : (
+              <NurseryIndexEditButton nursery={nursery} />
+            )}
           </ChakraTableCell>
         </TableRow>
       );
     },
-    [format, handleRowSelected, isNurserySelected, t, embeddedInProject]
+    [format, handleRowSelected, isMobile, isNurserySelected, t, embeddedInProject]
   );
 
   return (
@@ -108,12 +121,13 @@ const NurseryIndexTable: FC<{ nurseries: NurseryIndexRow[]; embeddedInProject: b
       <Table<NurseryIndexRow>
         data={nurseries}
         columns={columns}
-        selectable
+        selectable={!isMobile}
         selectedRows={selectedRows}
         onRowSelected={handleRowSelected}
         onAllItemsSelected={handleAllItemsSelected}
         renderRow={renderRow}
         pageSize={10}
+        paginationVariant={isMobile ? "compact" : "default"}
         totalItems={nurseries.length}
         className="overflow-hidden rounded"
       />

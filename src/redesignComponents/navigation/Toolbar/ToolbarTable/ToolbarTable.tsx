@@ -62,16 +62,16 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
 
   return (
     <Toolbar
-      className={classNames("max-w-full gap-4 mobile:mb-6 mobile:flex-col mobile:!items-start", className)}
+      className={classNames("max-w-full gap-4 mobile:mb-6 mobile:flex-col mobile:!items-start mobile:gap-0", className)}
       classNameContentLeft={classNames(
-        "!max-w-full",
+        "!max-w-full mobile:w-full",
         { "min-w-0 flex-1 !shrink ": hasContentRight },
         classNameContentLeft
       )}
       contentLeft={
-        <Flex className="min-w-0 max-w-full items-center gap-4 mobile:mb-5 mobile:flex-col mobile:items-start mobile:gap-0 mobile:gap-y-4">
+        <Flex className="min-w-0 max-w-full items-center gap-4 mobile:w-full mobile:flex-col mobile:items-start mobile:gap-0 mobile:gap-y-4 ">
           {search != null && (
-            <Flex className="w-full min-w-max max-w-max items-center gap-4">
+            <Flex className="w-full min-w-max max-w-max items-center gap-4 mobile:min-w-0 mobile:max-w-full">
               {!showSearchInput &&
                 (cacheKey == null ? [search.resetKey ?? "search"] : cachedSearchKeys).map(key => (
                   <Box
@@ -94,7 +94,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
                   </Box>
                 ))}
 
-              <Flex className="items-center gap-1">
+              <Flex className="flex-shrink-0 items-center gap-1 whitespace-nowrap">
                 <Text textStyle="400-bold" color="primary.900">
                   {search.count != null ? `${search.count.toLocaleString("en-US")}` : ""}
                 </Text>

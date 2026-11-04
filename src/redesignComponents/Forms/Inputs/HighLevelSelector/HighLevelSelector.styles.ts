@@ -61,7 +61,10 @@ export const contentMenuStyles = {
   outline: "none",
   overflowY: "auto",
   p: 1,
-  width: "100%"
+  width: "100%",
+  // The positioner copies its z-index from the content (`z-index: var(--z-index)`), so it must be set here
+  // to render above sticky toolbars such as the reports tab bar.
+  zIndex: "popover"
 } as const;
 
 export const groupedContentMenuStyles = {

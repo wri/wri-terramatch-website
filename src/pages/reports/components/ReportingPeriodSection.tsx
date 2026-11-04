@@ -15,6 +15,7 @@ import { DemographicCollections } from "@/generated/v3/entityService/entityServi
 import { useDate } from "@/hooks/useDate";
 import { useIndexAccordionOpen } from "@/hooks/useIndexAccordionOpen";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { useReportsIndexAnalytics } from "@/hooks/useReportsIndexAnalytics";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
@@ -177,6 +178,7 @@ const ReportingPeriodSection: FC<ReportingPeriodSectionProps> = ({
   const t = useT();
   const { format } = useDate();
   const isAdmin = useIsAdmin();
+  const isMobile = useIsMobile();
   const [open, setOpen] = useIndexAccordionOpen({ defaultOpen, resetKey: openResetKey, restoreOpen, storageKey });
   const { trackAttentionDisplayed } = useReportsIndexAnalytics();
 
@@ -201,7 +203,8 @@ const ReportingPeriodSection: FC<ReportingPeriodSectionProps> = ({
   const projectReportUuid = metricsReady ? period.projectReportUuid : null;
 
   const [reportLoaded, { data: projectReport }] = useLightProjectReport({
-    id: open && projectReportUuid != null ? projectReportUuid : undefined
+    // Only needed for the metric cards, which aren't shown on mobile.
+    id: open && !isMobile && projectReportUuid != null ? projectReportUuid : undefined
   });
   const frameworkKey = projectReport?.frameworkKey ?? period.frameworkKey;
   const metricsLoading = open && (!metricsReady || (projectReportUuid != null && !reportLoaded));
@@ -248,7 +251,7 @@ const ReportingPeriodSection: FC<ReportingPeriodSectionProps> = ({
       >
         {open ? (
           <div className="bg-theme-neutral-100 p-4" data-table-scroll-anchor>
-            {metricsLoading ? (
+            {isMobile ? null : metricsLoading ? (
               <DemographicsLoader className="mb-5 h-10 w-full" />
             ) : (
               <FrameworkProvider frameworkKey={frameworkKey}>

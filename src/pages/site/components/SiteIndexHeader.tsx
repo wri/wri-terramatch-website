@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { useRouter } from "next/router";
 import { FC, useMemo, useState } from "react";
 
+import { useIsMobile } from "@/hooks/useIsMobile";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import HighLevelSelector from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector";
@@ -54,6 +55,7 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
 }) => {
   const t = useT();
   const router = useRouter();
+  const isMobile = useIsMobile();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const selectedFilters = useMemo<SelectedFilter[]>(
     () => [
@@ -87,9 +89,33 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
     children: t("Add Site"),
     leftIcon: <PlusIcon boxSize="0.625rem" />,
     disabled: addSiteDisabled,
-    className: embeddedInProject ? "shrink-0 whitespace-nowrap" : "mobile:w-full",
+    className: "shrink-0 whitespace-nowrap",
     onClick: onAddSite
   };
+
+  const addSitePageButton = (
+    <Button
+      size="small"
+      {...addSiteButton}
+      disabled={viewProjects.length === 0 || selectedProject === ALL_PROJECTS_VIEW}
+    />
+  );
+
+  const viewSelector = showViewSelector ? (
+    <Box className="w-[25rem] mobile:w-full">
+      <HighLevelSelector
+        width="100%"
+        label={t("View:")}
+        items={[
+          { label: t("All Projects"), value: ALL_PROJECTS_VIEW },
+          ...viewProjects.map(project => ({ label: project.name, value: project.id }))
+        ]}
+        value={selectedProject}
+        emptyMessage={t("No results found")}
+        onChange={onViewChange}
+      />
+    </Box>
+  ) : null;
 
   return (
     <>
@@ -110,33 +136,20 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
           />
           <PageHeader
             title={t("Sites")}
-            className=" !bg-theme-neutral-100 !pb-0 !pt-1 mobile:flex-col mobile:items-start mobile:gap-4"
-            classNameActions="mobile:w-full"
+            className=" !bg-theme-neutral-100 !pb-0 !pt-1"
             actions={
-              <Flex gap="0.5rem" alignItems="center" className="mobile:w-full mobile:flex-col mobile:items-stretch">
-                {showViewSelector && (
-                  <Box className="w-[25rem] mobile:w-full">
-                    <HighLevelSelector
-                      width="100%"
-                      label={t("View:")}
-                      items={[
-                        { label: t("All Projects"), value: ALL_PROJECTS_VIEW },
-                        ...viewProjects.map(project => ({ label: project.name, value: project.id }))
-                      ]}
-                      value={selectedProject}
-                      emptyMessage={t("No results found")}
-                      onChange={onViewChange}
-                    />
-                  </Box>
-                )}
-                <Button
-                  size="small"
-                  {...addSiteButton}
-                  disabled={viewProjects.length === 0 || selectedProject === ALL_PROJECTS_VIEW}
-                />
-              </Flex>
+              isMobile ? (
+                addSitePageButton
+              ) : (
+                <Flex gap="0.5rem" alignItems="center">
+                  {viewSelector}
+                  {addSitePageButton}
+                </Flex>
+              )
             }
           />
+          {/* On mobile the Add button stays beside the title and the view selector gets its own row. */}
+          {isMobile && viewSelector != null && <Box className="bg-theme-neutral-100 px-6 pt-4">{viewSelector}</Box>}
         </>
       )}
       <ToolbarTable
@@ -145,7 +158,7 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
           embeddedInProject ? "border-b border-theme-neutral-300 !bg-theme-neutral-100" : "!bg-theme-neutral-200 "
         )}
         classNameContentLeft={embeddedInProject ? "min-w-0 flex-1 !shrink" : "w-full"}
-        classNameContentSearch="w-[19rem] max-w-full"
+        classNameContentSearch="w-[19rem] max-w-full mobile:w-auto mobile:min-w-0 mobile:flex-1"
         search={{
           label: siteCount === 1 ? t("Site") : t("Sites"),
           placeholder: t("Search"),
