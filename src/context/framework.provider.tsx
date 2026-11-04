@@ -1,4 +1,4 @@
-import { ComponentType, createContext, ReactNode, useContext, useMemo } from "react";
+import { type JSX, ComponentType, createContext, ReactNode, useContext, useMemo } from "react";
 import { useShowContext } from "react-admin";
 
 export enum Framework {

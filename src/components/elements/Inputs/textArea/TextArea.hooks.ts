@@ -6,7 +6,9 @@ export const useTextAreaAuto = (
 ): {
   value: string | number | readonly string[] | undefined;
   handleChange: (evt: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  textareaProps: React.TextareaHTMLAttributes<HTMLTextAreaElement> & { ref: React.RefObject<HTMLTextAreaElement> };
+  textareaProps: React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
+    ref: React.RefObject<HTMLTextAreaElement | null>;
+  };
 } => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -20,7 +22,7 @@ export const useTextAreaAuto = (
   }, [value]);
 
   const textareaProps: React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
-    ref: React.RefObject<HTMLTextAreaElement>;
+    ref: React.RefObject<HTMLTextAreaElement | null>;
   } = {
     onChange: handleChange,
     ref: textAreaRef
