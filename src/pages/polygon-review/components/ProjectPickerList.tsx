@@ -14,11 +14,12 @@ const ROW_HEIGHT = `${ROW_HEIGHT_REM}rem`;
 
 type ProjectPickerListProps = {
   projects: ProjectMapEntryDto[];
+  filtersSummary: string;
   selectedUuid: string | null;
   onSelect: (uuid: string) => void;
 };
 
-const ProjectPickerList: FC<ProjectPickerListProps> = ({ projects, selectedUuid, onSelect }) => {
+const ProjectPickerList: FC<ProjectPickerListProps> = ({ projects, filtersSummary, selectedUuid, onSelect }) => {
   const t = useT();
   const [query, setQuery] = useState("");
   const [rowsScrolled, setRowsScrolled] = useState(0);
@@ -42,7 +43,9 @@ const ProjectPickerList: FC<ProjectPickerListProps> = ({ projects, selectedUuid,
     <Flex direction="column" gap={2} minWidth={0} flex={1}>
       <Flex justify="space-between" align="baseline">
         <Text textStyle="500-bold" color="neutral.900">
-          {t("{count} projects", { count: visibleProjects.length })}
+          {filtersSummary.length === 0
+            ? t("{count} projects", { count: visibleProjects.length })
+            : t("{count} projects in {filters}", { count: visibleProjects.length, filters: filtersSummary })}
         </Text>
         <Text textStyle="300" color="neutral.600">
           {t("Pick one project")}

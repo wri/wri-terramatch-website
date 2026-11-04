@@ -49,14 +49,20 @@ const getProjectSubtitle = (project: ProjectMapEntryDto, getLabel: FacetLabelGet
   return parts.length === 0 ? undefined : parts.join(" · ");
 };
 
+const getFiltersSummary = (filters: ProjectContextFilters, getLabel: FacetLabelGetter) =>
+  PROJECT_CONTEXT_FACETS.flatMap(facet => filters[facet].map(value => getLabel(facet, value))).join(", ");
+
 /**
  * Popover body. It only mounts while the popover is open, so the project rows and facet counts cost nothing
  * until an admin opens the picker.
  */
-const ProjectContextPickerContent: FC<ProjectContextPickerContentProps & { getLabel: FacetLabelGetter }> = ({
+const ProjectContextPickerContent: FC<
+  ProjectContextPickerContentProps & { filtersSummary: string; getLabel: FacetLabelGetter }
+> = ({
   projects,
   filteredProjects,
   filters,
+  filtersSummary,
   selectedProject,
   getLabel,
   onFiltersChange,
@@ -65,7 +71,7 @@ const ProjectContextPickerContent: FC<ProjectContextPickerContentProps & { getLa
 }) => {
   const t = useT();
   const isLocked = selectedProject != null;
-  const canClear = isLocked || PROJECT_CONTEXT_FACETS.some(facet => filters[facet].length > 0);
+  const canClear = isLocked || filtersSummary.length > 0;
 
   const facetFilters = useMemo(
     () => (selectedProject != null ? getProjectFacetFilters(selectedProject) : filters),
@@ -131,6 +137,7 @@ const ProjectContextPickerContent: FC<ProjectContextPickerContentProps & { getLa
         <Flex flex={1} minWidth={0} padding={4}>
           <ProjectPickerList
             projects={filteredProjects}
+            filtersSummary={filtersSummary}
             selectedUuid={selectedProject?.uuid ?? null}
             onSelect={onSelectProject}
           />
@@ -161,11 +168,13 @@ const ProjectContextPickerContent: FC<ProjectContextPickerContentProps & { getLa
 const ProjectContextPicker: FC<ProjectContextPickerProps> = ({ open, onOpenChange, ...contentProps }) => {
   const t = useT();
   const getLabel = useProjectFacetLabels();
-  const { selectedProject } = contentProps;
-  const subtitle = useMemo(
-    () => (selectedProject == null ? undefined : getProjectSubtitle(selectedProject, getLabel)),
-    [getLabel, selectedProject]
-  );
+  const { filters, selectedProject } = contentProps;
+  const filtersSummary = useMemo(() => getFiltersSummary(filters, getLabel), [filters, getLabel]);
+
+  const subtitle = useMemo(() => {
+    if (selectedProject != null) return getProjectSubtitle(selectedProject, getLabel);
+    return filtersSummary.length === 0 ? undefined : t("Narrowed by: {filters}", { filters: filtersSummary });
+  }, [filtersSummary, getLabel, selectedProject, t]);
 
   return (
     <HighLevelPopoverSelector
@@ -177,7 +186,7 @@ const ProjectContextPicker: FC<ProjectContextPickerProps> = ({ open, onOpenChang
       contentWidth="45rem"
       onOpenChange={onOpenChange}
     >
-      <ProjectContextPickerContent {...contentProps} getLabel={getLabel} />
+      <ProjectContextPickerContent {...contentProps} filtersSummary={filtersSummary} getLabel={getLabel} />
     </HighLevelPopoverSelector>
   );
 };

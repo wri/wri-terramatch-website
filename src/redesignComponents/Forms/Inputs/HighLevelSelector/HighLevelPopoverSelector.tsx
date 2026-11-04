@@ -54,7 +54,7 @@ const HighLevelPopoverSelector: FC<HighLevelPopoverSelectorProps> = ({
           <SelectorTriggerContent
             disabled={disabled}
             open={open}
-            subtitle={hasValue ? subtitle : undefined}
+            subtitle={subtitle}
             value={
               <Text as="span" {...getValueTextStyles(disabled)}>
                 {hasValue ? value : placeholder}
