@@ -41,8 +41,10 @@ const getFilterKey = (original: string, replace?: { key: string; replaceWith: st
 export const raConnectionProps = <FilterType, SideloadType>(params: GetListParams) => {
   const filter: Record<string, unknown> = { ...params.filter };
 
-  if (filter.frameworkKey != null && !Array.isArray(filter.frameworkKey)) {
-    filter.frameworkKey = [filter.frameworkKey];
+  for (const key of ["frameworkKey", "cohort"] as const) {
+    if (filter[key] != null && !Array.isArray(filter[key])) {
+      filter[key] = [filter[key]];
+    }
   }
 
   if (filter.q != null && filter.search == null) {
