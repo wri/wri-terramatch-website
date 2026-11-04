@@ -231,14 +231,12 @@ const PolygonReviewIndexPage: FC = () => {
                     filtered={metrics.filtered}
                     selected={metrics.selected}
                   />
-                  {overlapPolygonUuids.length > 0 && (
-                    <SitePolygonIssuesPanel
-                      overlapCount={overlapPolygonUuids.length}
-                      disturbanceCount={disturbancePolygonUuids.length}
-                      onSelectOverlapPolygons={selectOverlapPolygons}
-                      onSelectDisturbancePolygons={selectDisturbancePolygons}
-                    />
-                  )}
+                  <SitePolygonIssuesPanel
+                    overlapCount={overlapPolygonUuids.length}
+                    disturbanceCount={disturbancePolygonUuids.length}
+                    onSelectOverlapPolygons={selectOverlapPolygons}
+                    onSelectDisturbancePolygons={selectDisturbancePolygons}
+                  />
                 </Flex>
               )}
               <Flex direction="column" gap={3}>

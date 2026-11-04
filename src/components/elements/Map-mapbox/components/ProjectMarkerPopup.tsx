@@ -20,7 +20,7 @@ export type ProjectMarkerPopupProps = {
   onViewProjectPolygons: (projectUuid: string) => void;
 };
 
-const METRIC_ROW_PROPS = { minHeight: "2.8125rem", paddingX: 3, paddingY: 2 } as const;
+const METRIC_ROW_PROPS = { minHeight: "1.5rem", paddingX: 3, paddingY: 2 } as const;
 
 const MetricRow: FC<{ icon: ReactNode; label: string; value: string }> = ({ icon, label, value }) => (
   <Flex alignItems="center" justifyContent="space-between" gap={8} {...METRIC_ROW_PROPS}>
