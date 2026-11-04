@@ -4,7 +4,7 @@ import { FC, UIEvent, useCallback, useMemo, useState } from "react";
 
 import { ProjectMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Search from "@/redesignComponents/Forms/Actions/Search/Search";
-import { SearchProps } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
+import { SELECTOR_BORDER_WIDTH, SELECTOR_RADIUS } from "@/redesignComponents/Forms/Inputs/HighLevelSelector";
 
 import ProjectPickerRow from "./ProjectPickerRow";
 
@@ -39,26 +39,29 @@ const ProjectPickerList: FC<ProjectPickerListProps> = ({ projects, selectedUuid,
   const remainingRows = Math.max(0, visibleProjects.length - VISIBLE_ROWS - rowsScrolled);
 
   return (
-    <Flex direction="column" gap={3} minWidth={0} flex={1}>
+    <Flex direction="column" gap={2} minWidth={0} flex={1}>
       <Flex justify="space-between" align="baseline">
-        <Text textStyle="400-bold" color="neutral.900">
+        <Text textStyle="500-bold" color="neutral.900">
           {t("{count} projects", { count: visibleProjects.length })}
         </Text>
-        <Text textStyle="200" color="neutral.700">
+        <Text textStyle="300" color="neutral.600">
           {t("Pick one project")}
         </Text>
       </Flex>
-      <Search
-        {...({
-          placeholder: t("Search project name"),
-          options: [],
-          displayResults: "none",
-          size: "small",
-          onQueryChange: setQuery
-        } as SearchProps)}
-      />
-      <Flex direction="column" borderWidth="0.0625rem" borderColor="neutral.300" borderRadius="0.25rem">
-        <Flex justify="space-between" paddingX={3} paddingY={2} borderBottomWidth="0.0625rem" borderColor="neutral.300">
+      <Search placeholder={t("Search project name")} options={[]} displayResults="none" onQueryChange={setQuery} />
+      <Flex
+        direction="column"
+        borderWidth={SELECTOR_BORDER_WIDTH}
+        borderColor="neutral.300"
+        borderRadius={SELECTOR_RADIUS}
+      >
+        <Flex
+          justify="space-between"
+          paddingX={3}
+          paddingY={2}
+          borderBottomWidth={SELECTOR_BORDER_WIDTH}
+          borderColor="neutral.300"
+        >
           <Text textStyle="200-bold" color="neutral.900">
             {t("Project name")}
           </Text>
