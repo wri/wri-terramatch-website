@@ -263,7 +263,8 @@ export class V3ApiEndpoint<
 
       // avoid importing the FileDownloadDto due to circular dependency
       const downloadUrl = data.attributes.url as string;
-      const fileName = downloadUrl.split("/").pop() ?? defaultFileName;
+      const urlFileName = new URL(downloadUrl).pathname.split("/").pop();
+      const fileName = urlFileName == null ? defaultFileName : decodeURIComponent(urlFileName);
       // Fetching the file and saving it as a local blob (the same way polygon downloads work) means
       // the caller's promise only resolves once the file is in hand, and avoids Safari's "allow
       // downloads" prompt for a cross-origin link clicked outside a user gesture.
