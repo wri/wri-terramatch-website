@@ -4,10 +4,10 @@ import {
   SitePolygonFullDto,
   ValidationDto,
   GeoJsonExportDto,
+  DelayedJobDto,
   SitePolygonMapIndexDto,
   SitePolygonSummaryDto,
   GeometryUploadComparisonSummaryDto,
-  DelayedJobDto,
   BoundingBoxDto,
   ValidationSummaryDto,
   ClippedVersionDto,
@@ -22,10 +22,10 @@ export const RESEARCH_SERVICE_RESOURCES = [
   "sitePolygons",
   "validations",
   "geojsonExports",
+  "delayedJobs",
   "sitePolygonMapIndexes",
   "sitePolygonSummaries",
   "geometryUploadComparisonSummaries",
-  "delayedJobs",
   "boundingBoxes",
   "validationSummaries",
   "clippedVersions",
@@ -40,10 +40,10 @@ export type ResearchServiceApiResources = {
   sitePolygons: StoreResourceMap<SitePolygonLightDto | SitePolygonFullDto>;
   validations: StoreResourceMap<ValidationDto>;
   geojsonExports: StoreResourceMap<GeoJsonExportDto>;
+  delayedJobs: StoreResourceMap<DelayedJobDto>;
   sitePolygonMapIndexes: StoreResourceMap<SitePolygonMapIndexDto>;
   sitePolygonSummaries: StoreResourceMap<SitePolygonSummaryDto>;
   geometryUploadComparisonSummaries: StoreResourceMap<GeometryUploadComparisonSummaryDto>;
-  delayedJobs: StoreResourceMap<DelayedJobDto>;
   boundingBoxes: StoreResourceMap<BoundingBoxDto>;
   validationSummaries: StoreResourceMap<ValidationSummaryDto>;
   clippedVersions: StoreResourceMap<ClippedVersionDto>;
