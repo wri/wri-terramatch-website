@@ -10,8 +10,7 @@ import {
   bulkUpdateSitePolygonStatus,
   getStatusUpdateCommentCreatedAt,
   loadActiveSitePolygonVersion,
-  loadSitePolygonMapIndex,
-  pruneSitePolygonsCache
+  loadSitePolygonMapIndex
 } from "@/connections/SitePolygons";
 import { useMyUser } from "@/connections/User";
 import { createPolygonValidation } from "@/connections/Validation";
@@ -178,8 +177,6 @@ export const useSitePolygonBulkActions = ({
 
   const refreshPolygonData = useCallback(
     async ({ refreshValidations = false }: { refreshValidations?: boolean } = {}) => {
-      pruneSitePolygonsCache();
-
       const refreshPromises: Promise<unknown>[] = [refetchPolygons()];
       if (refreshValidations) {
         refreshPromises.push(fetchAllValidationPages(true), fetchOverlapValidations(true));
@@ -414,7 +411,7 @@ export const useSitePolygonBulkActions = ({
       }
 
       trackPolygonRunValidationClicked({
-        siteUuid: entityUuid,
+        entityUuid,
         entityType: entityName,
         polygonIds: geometryPolygonUuids
       });
@@ -610,7 +607,7 @@ export const useSitePolygonBulkActions = ({
           )
         );
         trackBulkActionCompleted({
-          siteUuid: entityUuid,
+          entityUuid,
           entityType: entityName,
           actionType: "fix_overlap",
           polygonCount: fixableCandidates.length
@@ -731,7 +728,7 @@ export const useSitePolygonBulkActions = ({
           }
 
           trackPolygonStatusChanged({
-            siteUuid: entityUuid,
+            entityUuid,
             entityType: entityName,
             polygonId: geometryPolygonUuid,
             fromStatus: sitePolygon?.status ?? "draft",
@@ -740,7 +737,7 @@ export const useSitePolygonBulkActions = ({
         }
 
         trackBulkActionCompleted({
-          siteUuid: entityUuid,
+          entityUuid,
           entityType: entityName,
           actionType: "submit",
           polygonCount: sitePolygonUuids.length
@@ -845,7 +842,7 @@ export const useSitePolygonBulkActions = ({
           }
 
           trackPolygonStatusChanged({
-            siteUuid: entityUuid,
+            entityUuid,
             entityType: entityName,
             polygonId: geometryPolygonUuid,
             fromStatus: sitePolygon?.status ?? "pending-approval",
@@ -854,7 +851,7 @@ export const useSitePolygonBulkActions = ({
         }
 
         trackBulkActionCompleted({
-          siteUuid: entityUuid,
+          entityUuid,
           entityType: entityName,
           actionType: "approve",
           polygonCount: sitePolygonUuids.length
@@ -923,7 +920,7 @@ export const useSitePolygonBulkActions = ({
           }
 
           trackPolygonStatusChanged({
-            siteUuid: entityUuid,
+            entityUuid,
             entityType: entityName,
             polygonId: geometryPolygonUuid,
             fromStatus: sitePolygon?.status ?? "pending-approval",
@@ -932,7 +929,7 @@ export const useSitePolygonBulkActions = ({
         }
 
         trackBulkActionCompleted({
-          siteUuid: entityUuid,
+          entityUuid,
           entityType: entityName,
           actionType: "request_information",
           polygonCount: sitePolygonUuids.length
@@ -988,14 +985,14 @@ export const useSitePolygonBulkActions = ({
             : `${downloadName ?? "polygons"}-${new Date().toISOString().slice(0, 10)}`;
         await downloadMultiplePolygonsGeoJson(geometryPolygonUuids, filename);
         trackPolygonDownloaded({
-          siteUuid: entityUuid,
+          entityUuid,
           entityType: entityName,
           polygonType: "standard",
           polygonId: formatPolygonTargetId(geometryPolygonUuids),
           polygonCount: geometryPolygonUuids.length
         });
         trackBulkActionCompleted({
-          siteUuid: entityUuid,
+          entityUuid,
           entityType: entityName,
           actionType: "download",
           polygonCount: geometryPolygonUuids.length

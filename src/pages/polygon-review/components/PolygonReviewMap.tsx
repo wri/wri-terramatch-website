@@ -1,22 +1,20 @@
 import { Box } from "@chakra-ui/react";
-import { useT } from "@transifex/react";
-import classNames from "classnames";
-import { FC, useEffect, useMemo, useState } from "react";
+import { ComponentProps, FC, useMemo, useState } from "react";
 
 import LoadingMap from "@/components/elements/Map-mapbox/components/LoadingMap";
-import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
+import { usePolygonMapEditing } from "@/components/elements/Map-mapbox/hooks/usePolygonMapEditing";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
-import type { PolygonEntityScope, PolygonFromMapState } from "@/components/elements/Map-mapbox/Map.d";
+import type { PolygonEntityScope } from "@/components/elements/Map-mapbox/Map.d";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { SitePolygonMapIndexFilter, useSitePolygonMapIndex } from "@/connections/SitePolygons";
 import { DELETED_AUDIT_POLYGONS } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { ProjectMapEntryDto, SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
-import UndoIcon from "@/redesignComponents/foundations/Icons/Function/UndoIcon";
 
+import PolygonDrawUndoButton from "../../site/[uuid]/components/PolygonDrawUndoButton";
+import { getPolygonMapEditClassName } from "../../site/[uuid]/components/polygonMapEditLayout";
 import { SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS } from "../../site/[uuid]/constants/sitePolygonMapSizing";
 import { usePolygonDrawUndo } from "../../site/[uuid]/hooks/usePolygonDrawUndo";
 import { getProjectMarkersBbox, toProjectMarkerPoints } from "../utils/projectMarkers";
@@ -28,35 +26,32 @@ type PolygonReviewMapProps = {
   selectedProject: ProjectMapEntryDto | null;
   siteUuids: string[];
   polygonFilter: SitePolygonMapIndexFilter;
-  selectedPolygonUuids: string[];
+  polygonTableHighlight: ComponentProps<typeof MapContainer>["polygonTableHighlight"];
   showDeleted?: boolean;
   onViewProjectPolygons: (projectUuid: string) => void;
+  onRefetchPolygons: () => Promise<void>;
 };
 
 /**
  * Shows the project markers until a project is picked, then the project's polygons that match the Level 2 filters.
  * Polygons come from the GeoServer tiles filtered by the project's map index, so only the sparse index is fetched.
+ * Editing a polygon works as on the site polygon map (see PolygonsMap), which shares usePolygonMapEditing.
  */
 const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
   projects,
   selectedProject,
   siteUuids,
   polygonFilter,
-  selectedPolygonUuids,
+  polygonTableHighlight,
   showDeleted = false,
-  onViewProjectPolygons
+  onViewProjectPolygons,
+  onRefetchPolygons
 }) => {
-  const t = useT();
-  const mapFunctions = useBaseMap();
   const projectUuid = selectedProject?.uuid;
   const { isOpen: isEditPolygonOpen } = usePolygonEditDrawer();
-  const { editPolygon, isUserDrawingEnabled, polygonData } = useMapAreaContext();
-
-  const [polygonFromMap, setPolygonFromMap] = useState<PolygonFromMapState>({ isOpen: false, uuid: "" });
-  useEffect(() => {
-    const { isOpen, uuid, status } = editPolygon;
-    setPolygonFromMap({ isOpen, uuid, status });
-  }, [editPolygon]);
+  const { editPolygon, isUserDrawingEnabled } = useMapAreaContext();
+  const { mapFunctions, polygonFromMap, setPolygonFromMap, sitePolygonData, autoEditPolygon, isRefetchingPolygonData } =
+    usePolygonMapEditing(onRefetchPolygons);
 
   const { showPolygonUndoButton, handleUndoPolygonDraw } = usePolygonDrawUndo({
     isEditPolygonOpen,
@@ -110,7 +105,6 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
       : { projectUuid }
   );
   const bbox = (projectUuid != null ? polygonsBbox : undefined) ?? markersBbox;
-  const polygonTableHighlight = useMemo(() => ({ selectedPolygonUuids }), [selectedPolygonUuids]);
 
   return (
     <ResizeBox
@@ -118,14 +112,7 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
       minHeight={SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS}
       maxHeight={600}
     >
-      <Box
-        position="relative"
-        className={classNames("h-full w-full flex-1 overflow-hidden", {
-          "!fixed top-0 bottom-0 left-0 right-0 z-[37] mt-12 ml-12 max-h-[calc(100vh_-_3rem)] w-screen max-w-[calc(100vw_-_3rem)] rounded-none":
-            isEditPolygonOpen,
-          "!rounded-[0.25rem_0.25rem_0_0]": !isEditPolygonOpen
-        })}
-      >
+      <Box position="relative" flex="1" className={getPolygonMapEditClassName(isEditPolygonOpen, true)}>
         <LoadingMap loading={projectUuid != null && projectPolygons == null && polygonLoadFailure == null} />
         <MapContainer
           championsMap
@@ -136,27 +123,19 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
           mapIndexPolygons={mapIndexPolygons}
           mapPolygonsForcedStatus={showDeleted ? DELETED_AUDIT_POLYGONS : undefined}
           polygonTableHighlight={polygonTableHighlight}
-          sitePolygonData={polygonData}
+          sitePolygonData={sitePolygonData}
           polygonEntityScope={polygonEntityScope}
           polygonFromMap={polygonFromMap}
           setPolygonFromMap={setPolygonFromMap}
-          autoEditPolygon={editPolygon.isOpen}
+          autoEditPolygon={autoEditPolygon}
+          shouldBboxZoom={!isRefetchingPolygonData}
           showLegend
           hideMediaOnMap
           disabledPolygonPanel
           className="h-full w-full flex-1"
         />
       </Box>
-      {showPolygonUndoButton && !showDeleted && (
-        <Button
-          variant="secondary"
-          leftIcon={<UndoIcon />}
-          className="fixed bottom-2 left-[calc(32rem+(100vw-32rem)/2)] z-[38] -translate-x-1/2"
-          onClick={handleUndoPolygonDraw}
-        >
-          {t("Undo")}
-        </Button>
-      )}
+      {showPolygonUndoButton && !showDeleted && <PolygonDrawUndoButton onUndo={handleUndoPolygonDraw} />}
     </ResizeBox>
   );
 };

@@ -13,7 +13,7 @@ import FrameworkProvider from "@/context/framework.provider";
 import { MapAreaProvider, useMapAreaContext } from "@/context/mapArea.provider";
 import { PolygonEditDrawerProvider } from "@/context/polygonEditDrawer.provider";
 import { setPolygonTableHoveredUuid, useSyncPolygonTableSelectionStore } from "@/context/polygonTableInteraction.store";
-import type { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import type { ProjectMapEntryDto, SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
@@ -23,7 +23,6 @@ import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject
 
 import { buildPolygonTableColumns } from "../site/[uuid]/components/polygonTableColumns";
 import type { PolygonTableRow } from "../site/[uuid]/components/PolygonTableRow";
-import { mapSitePolygonToTableRow } from "../site/[uuid]/components/polygonTableRow.utils";
 import SitePolygonIssuesPanel from "../site/[uuid]/components/SitePolygonIssuesPanel";
 import SitePolygonTableSection from "../site/[uuid]/components/SitePolygonTableSection";
 import { usePolygonTablePaging } from "../site/[uuid]/hooks/usePolygonTablePaging";
@@ -38,6 +37,8 @@ import ProjectContextPicker from "./components/ProjectContextPicker";
 import { useProjectPolygonBulkActions } from "./hooks/useProjectPolygonBulkActions";
 import { useProjectPolygonIssues } from "./hooks/useProjectPolygonIssues";
 import { useProjectPolygonMetrics } from "./hooks/useProjectPolygonMetrics";
+import { useSelectedProjectPolygons } from "./hooks/useSelectedProjectPolygons";
+import { toPolygonReviewTableRow } from "./utils/polygonReviewTableRow";
 import {
   EMPTY_PROJECT_CONTEXT_FILTERS,
   filterProjects,
@@ -49,29 +50,16 @@ const NO_POLYGONS: SitePolygonLightDto[] = [];
 
 const clearTableHover = () => setPolygonTableHoveredUuid(null);
 
-const toTableRow = (polygon: SitePolygonLightDto, t: (key: string) => string): PolygonTableRow => ({
-  ...mapSitePolygonToTableRow(polygon, t),
-  entity: {
-    siteUuid: polygon.siteId,
-    siteName: polygon.siteName,
-    projectUuid: polygon.projectId,
-    projectName: polygon.projectName
-  }
-});
-
 /**
  * Polygon Review index. No polygon data loads until a project is picked in the Level 1 project context filter;
  * clearing that filter returns the page to its initial (unscoped) state.
  */
 type PolygonReviewIndexContentProps = {
-  selectedProjectUuid: string | null;
-  setSelectedProjectUuid: (uuid: string | null) => void;
+  selectedProject: ProjectMapEntryDto | null;
+  setSelectedProject: (project: ProjectMapEntryDto | null) => void;
 };
 
-const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({
-  selectedProjectUuid,
-  setSelectedProjectUuid
-}) => {
+const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selectedProject, setSelectedProject }) => {
   const t = useT();
   const router = useRouter();
   const [isUserLoaded, { isAdmin }] = useMyUser();
@@ -79,6 +67,7 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({
 
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [filters, setFilters] = useState<ProjectContextFilters>(EMPTY_PROJECT_CONTEXT_FILTERS);
+  const selectedProjectUuid = selectedProject?.uuid ?? null;
 
   const columns = useMemo(() => buildPolygonTableColumns(t, { showEntityColumns: true }), [t]);
 
@@ -112,10 +101,18 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({
     sortDirection
   });
   const pagePolygons = polygons ?? NO_POLYGONS;
-  const polygonRows = useMemo(() => pagePolygons.map(polygon => toTableRow(polygon, t)), [pagePolygons, t]);
+  const polygonRows = useMemo(
+    () => pagePolygons.map(polygon => toPolygonReviewTableRow(polygon, t)),
+    [pagePolygons, t]
+  );
 
-  const { selectedRows, selectedRowIds, setSelectedRowIds, handleRowSelected, onAllItemsSelected } =
+  const { selectedRowIds, setSelectedRowIds, handleRowSelected, onAllItemsSelected } =
     useTableSelection<PolygonTableRow>(true, polygonRows);
+  const { selectionPolygons, selectedRows, isSelectionLoading } = useSelectedProjectPolygons({
+    projectUuid: selectedProjectUuid,
+    pagePolygons,
+    selectedRowIds
+  });
   useSyncPolygonTableSelectionStore(selectedRowIds);
   const selectedPolygonUuids = useMemo(() => Array.from(selectedRowIds, String), [selectedRowIds]);
 
@@ -148,27 +145,23 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({
 
   const projects = useMemo(() => sortProjectsByName(mapIndex?.projects ?? []), [mapIndex]);
   const filteredProjects = useMemo(() => filterProjects(projects, filters), [filters, projects]);
-  const selectedProject = useMemo(
-    () => projects.find(({ uuid }) => uuid === selectedProjectUuid) ?? null,
-    [projects, selectedProjectUuid]
-  );
 
   const openPicker = useCallback(() => setIsPickerOpen(true), []);
 
   const selectProject = useCallback(
     (uuid: string) => {
-      setSelectedProjectUuid(uuid);
+      setSelectedProject(projects.find(project => project.uuid === uuid) ?? null);
       setIsPickerOpen(false);
       clearPolygonFilters();
     },
-    [clearPolygonFilters, setSelectedProjectUuid]
+    [clearPolygonFilters, projects, setSelectedProject]
   );
 
   const clearProjectContext = useCallback(() => {
     setFilters(EMPTY_PROJECT_CONTEXT_FILTERS);
-    setSelectedProjectUuid(null);
+    setSelectedProject(null);
     clearPolygonFilters();
-  }, [clearPolygonFilters, setSelectedProjectUuid]);
+  }, [clearPolygonFilters, setSelectedProject]);
 
   const { setPolygonData, resetSiteMapInteractionState } = useMapAreaContext();
   useEffect(() => {
@@ -177,13 +170,22 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({
   useEffect(() => resetSiteMapInteractionState, [resetSiteMapInteractionState]);
 
   const polygonBulkActions = useProjectPolygonBulkActions({
-    projectUuid: selectedProject?.uuid ?? null,
+    projectUuid: selectedProjectUuid,
     projectName: selectedProject?.name ?? null,
-    polygons: pagePolygons,
+    polygons: selectionPolygons,
     selectedRows,
     selectedRowIds,
     setSelectedRowIds
   });
+  const { validationZoomPolygonUuids, handleValidationZoomConsumed } = polygonBulkActions;
+  const polygonTableHighlight = useMemo(
+    () => ({
+      selectedPolygonUuids,
+      validationZoomPolygonUuids,
+      onValidationZoomConsumed: handleValidationZoomConsumed
+    }),
+    [handleValidationZoomConsumed, selectedPolygonUuids, validationZoomPolygonUuids]
+  );
 
   const isAccessDenied = isUserLoaded && !isAdmin;
   useEffect(() => {
@@ -239,9 +241,10 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({
             selectedProject={selectedProject}
             siteUuids={siteUuids}
             polygonFilter={sitePolygonFilter}
-            selectedPolygonUuids={selectedPolygonUuids}
+            polygonTableHighlight={polygonTableHighlight}
             showDeleted={polygonFilters.showDeleted}
             onViewProjectPolygons={selectProject}
+            onRefetchPolygons={polygonBulkActions.refetchPolygons}
           />
           <Flex
             direction="column"
@@ -309,9 +312,9 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({
         <PolygonReviewBulkActions
           actions={polygonBulkActions}
           projectUuid={selectedProject?.uuid ?? null}
-          polygons={pagePolygons}
+          polygons={selectionPolygons}
           selectedRows={selectedRows}
-          visible={selectedRows.length > 0 && !polygonFilters.showDeleted}
+          visible={selectedRowIds.size > 0 && !isSelectionLoading && !polygonFilters.showDeleted}
         />
       </PageContent>
     </Layout>
@@ -319,20 +322,14 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({
 };
 
 const PolygonReviewIndexPage: FC = () => {
-  const [selectedProjectUuid, setSelectedProjectUuid] = useState<string | null>(null);
-  const [, { isAdmin }] = useMyUser();
-  const [, { data: mapIndex }] = useProjectMapIndex({ enabled: isAdmin });
-  const frameworkKey = mapIndex?.projects.find(({ uuid }) => uuid === selectedProjectUuid)?.frameworkKey;
+  const [selectedProject, setSelectedProject] = useState<ProjectMapEntryDto | null>(null);
 
   return (
     <MapAreaProvider>
-      <FrameworkProvider frameworkKey={frameworkKey}>
+      <FrameworkProvider frameworkKey={selectedProject?.frameworkKey}>
         <AnrMapOverlayProvider>
           <PolygonEditDrawerProvider>
-            <PolygonReviewIndexContent
-              selectedProjectUuid={selectedProjectUuid}
-              setSelectedProjectUuid={setSelectedProjectUuid}
-            />
+            <PolygonReviewIndexContent selectedProject={selectedProject} setSelectedProject={setSelectedProject} />
           </PolygonEditDrawerProvider>
         </AnrMapOverlayProvider>
       </FrameworkProvider>

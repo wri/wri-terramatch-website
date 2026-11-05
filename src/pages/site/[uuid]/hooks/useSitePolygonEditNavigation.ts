@@ -59,7 +59,8 @@ export const useSitePolygonEditNavigation = ({
     (polygonId: string) =>
       openPolygonEditDrawerForPolygonId({
         polygonId,
-        siteUuid,
+        entityName: "sites",
+        entityUuid: siteUuid,
         findCachedSitePolygon: findTableSitePolygon
       }),
     [findTableSitePolygon, siteUuid]

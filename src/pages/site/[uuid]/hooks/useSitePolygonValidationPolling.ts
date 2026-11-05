@@ -224,7 +224,7 @@ export const useSitePolygonValidationPoll = ({
               }
 
               trackPolygonValidationResults({
-                siteUuid: entityUuid,
+                entityUuid,
                 entityType: entityName,
                 polygonId: polygonUuid,
                 validation,
@@ -234,7 +234,7 @@ export const useSitePolygonValidationPoll = ({
 
             if (pendingValidationTrackBulkRef.current) {
               trackBulkActionCompleted({
-                siteUuid: entityUuid,
+                entityUuid,
                 entityType: entityName,
                 actionType: "run_validation",
                 polygonCount: polygonUuids.length

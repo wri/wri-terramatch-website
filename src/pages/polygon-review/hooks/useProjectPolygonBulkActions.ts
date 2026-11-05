@@ -1,12 +1,15 @@
 import { useT } from "@transifex/react";
+import { noop } from "lodash";
 import { useCallback, useMemo } from "react";
 
 import { pruneSitePolygonsCache } from "@/connections/SitePolygons";
 import { usePolygonValidations } from "@/connections/Validation";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
+import { openPolygonEditDrawerForPolygonId } from "@/context/polygonEditDrawer.utils";
 import { setPolygonTableHoveredUuid } from "@/context/polygonTableInteraction.store";
 import type { SitePolygonLightDto, ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import Log from "@/utils/log";
 
 import { buildPolygonValidationsMap } from "../../site/[uuid]/components/Modals/validationCriteria";
 import type { PolygonTableRow } from "../../site/[uuid]/components/PolygonTableRow";
@@ -18,6 +21,7 @@ import {
   useSitePolygonValidationPoll,
   useSitePolygonValidationState
 } from "../../site/[uuid]/hooks/useSitePolygonValidationPolling";
+import { showPolygonErrorToast } from "../../site/[uuid]/utils/polygonOperationToasts";
 import { getPolygonTableLoadingLabel } from "../../site/[uuid]/utils/polygonTableLoadingLabel";
 
 const NO_OVERLAP_FIX_SUMMARY: OverlapFixSelectionSummary = {
@@ -109,7 +113,7 @@ export const useProjectPolygonBulkActions = ({
     refetchPolygons,
     fetchAllValidationPages: fetchPageValidations,
     fetchOverlapValidations: fetchNoOverlapValidations,
-    onOverlapFixResultsOpen: () => undefined,
+    onOverlapFixResultsOpen: noop,
     onValidationJobsStarted: validationState.handleValidationJobsStarted,
     onValidationPendingClear: validationState.clearValidationPending,
     onValidationUiCleared: validationState.handleValidationUiCleared
@@ -154,6 +158,25 @@ export const useProjectPolygonBulkActions = ({
     t
   });
 
+  const openPolygonEditDrawerByPolygonId = useCallback(
+    (polygonId: string) => {
+      openPolygonEditDrawerForPolygonId({
+        polygonId,
+        entityName: "projects",
+        entityUuid,
+        findCachedSitePolygon: findTableSitePolygon
+      })
+        .then(opened => {
+          if (!opened) showPolygonErrorToast(t("Could not find this polygon"));
+        })
+        .catch(error => {
+          Log.error("Failed to open polygon edit drawer", error);
+          showPolygonErrorToast(t("Could not open this polygon"));
+        });
+    },
+    [entityUuid, findTableSitePolygon, t]
+  );
+
   const { pendingValidationPolygonUuids } = validationState;
   const { isValidatingPolygons, isDeletingPolygons } = bulkActions;
   const isValidationInProgress = isValidatingPolygons || pendingValidationPolygonUuids.length > 0;
@@ -164,6 +187,9 @@ export const useProjectPolygonBulkActions = ({
     reviewActions,
     polygonValidations,
     pendingValidationPolygonUuids,
+    validationZoomPolygonUuids: validationState.validationZoomPolygonUuids,
+    handleValidationZoomConsumed: validationState.handleValidationZoomConsumed,
+    openPolygonEditDrawerByPolygonId,
     selectedGeometryPolygonUuids: selection.selectedGeometryPolygonUuids,
     clearBulkTableSelection,
     isTableLocked: isValidationInProgress || isDeletingPolygons,

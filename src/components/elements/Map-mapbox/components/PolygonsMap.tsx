@@ -1,23 +1,17 @@
 import { Box } from "@chakra-ui/react";
-import { useT } from "@transifex/react";
 import classNames from "classnames";
 import type { FC } from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
-import { type MapDrawSaveHandler, useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { useEntityMapMedia } from "@/components/elements/Map-mapbox/hooks/useEntityMapMedia";
+import { usePolygonMapEditing } from "@/components/elements/Map-mapbox/hooks/usePolygonMapEditing";
 import { CrossSiteOverlapPolygon, OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
-import type { PolygonEntityScope, PolygonFromMapState } from "@/components/elements/Map-mapbox/Map.d";
+import type { PolygonEntityScope } from "@/components/elements/Map-mapbox/Map.d";
 import { resolveMapExtentBbox, useBoundingBox } from "@/connections/BoundingBox";
 import { DELETED_AUDIT_POLYGONS } from "@/constants/statuses";
-import { useMapAreaContext } from "@/context/mapArea.provider";
-import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import { useValueChanged } from "@/hooks/useValueChanged";
-import { showToast } from "@/redesignComponents/status/Toast/showToast";
 
-import { storePolygon } from "../utils";
 import LoadingMap from "./LoadingMap";
 
 export type PolygonsMapEntityModel = {
@@ -69,40 +63,10 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   crossSiteOverlapPolygons,
   isDeletedAuditView = false
 }) => {
-  const t = useT();
   const disabledPolygonPanel = true;
-  const [polygonFromMap, setPolygonFromMap] = useState<PolygonFromMapState>({ isOpen: false, uuid: "" });
   const [isPolygonTilesLoading, setIsPolygonTilesLoading] = useState(false);
-
-  const context = useSitePolygonData();
-  const reloadSiteData = context?.reloadSiteData;
-
-  const {
-    editPolygon,
-    shouldRefetchPolygonData,
-    setSelectedPolygonsInCheckbox,
-    shouldRefetchValidation,
-    setShouldRefetchValidation,
-    setShouldRefetchPolygonData,
-    polygonData: sitePolygonDataV3
-  } = useMapAreaContext();
-
-  const onSave = useCallback<MapDrawSaveHandler>(
-    async geojson => {
-      try {
-        await storePolygon(geojson, entityModel, setPolygonFromMap, onRefetchPolygons);
-      } catch (error) {
-        const errorMessage =
-          error != null && typeof error === "object" && "message" in error
-            ? String(error.message)
-            : t("Failed to create polygon");
-        showToast({ label: errorMessage, type: "error", placement: "bottom", duration: 5000 });
-      }
-    },
-    [entityModel, onRefetchPolygons, setPolygonFromMap, t]
-  );
-
-  const mapFunctions = useBaseMap(onSave, undefined, { deferDrawCreateSave: true });
+  const { mapFunctions, polygonFromMap, setPolygonFromMap, sitePolygonData, autoEditPolygon, isRefetchingPolygonData } =
+    usePolygonMapEditing(onRefetchPolygons);
 
   const mediaFiles = useEntityMapMedia({ entity: type, uuid: entityModel.uuid });
 
@@ -158,28 +122,6 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
     [countryBbox, entityModel.projectUuid, hasPolygons, modelBbox, projectBbox, type]
   );
 
-  useEffect(() => {
-    const { isOpen, uuid, status } = editPolygon;
-    setPolygonFromMap({ isOpen, uuid, status });
-    if (isOpen) {
-      setSelectedPolygonsInCheckbox([]);
-    }
-  }, [editPolygon, setSelectedPolygonsInCheckbox]);
-
-  useValueChanged(shouldRefetchPolygonData, async () => {
-    if (shouldRefetchPolygonData) {
-      await Promise.all([onRefetchPolygons(), reloadSiteData?.()]);
-      setShouldRefetchPolygonData(false);
-    }
-  });
-
-  useValueChanged(shouldRefetchValidation, () => {
-    if (shouldRefetchValidation) {
-      void onRefetchPolygons();
-      setShouldRefetchValidation(false);
-    }
-  });
-
   const isPolygonGeometryLoading = isLoadingPolygons || (polygons.length > 0 && isPolygonTilesLoading);
 
   return (
@@ -195,26 +137,22 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
         showPopups={!isDeletedAuditView}
         showLegend
         siteData={true}
-        status={type === "sites" && !disabledPolygonPanel && editPolygon.isOpen}
+        status={type === "sites" && !disabledPolygonPanel && autoEditPolygon}
         validationType={
-          type === "sites" && !disabledPolygonPanel
-            ? editPolygon.isOpen
-              ? "individualValidation"
-              : "bulkValidation"
-            : ""
+          type === "sites" && !disabledPolygonPanel ? (autoEditPolygon ? "individualValidation" : "bulkValidation") : ""
         }
         record={entityModel}
         className="h-full w-full flex-1"
         polygonsExists={polygons.length > 0}
         setPolygonFromMap={setPolygonFromMap}
         polygonFromMap={polygonFromMap}
-        shouldBboxZoom={!shouldRefetchPolygonData && !freezeCameraZoom}
+        shouldBboxZoom={!isRefetchingPolygonData && !freezeCameraZoom}
         skipNextSiteBboxZoomNonce={skipNextSiteBboxZoomNonce}
         mediaFiles={mediaFiles}
-        sitePolygonData={sitePolygonDataV3}
+        sitePolygonData={sitePolygonData}
         polygonEntityScope={polygonEntityScope}
         disabledPolygonPanel={disabledPolygonPanel}
-        autoEditPolygon={editPolygon.isOpen}
+        autoEditPolygon={autoEditPolygon}
         polygonTableHighlight={polygonTableHighlight}
         overlapPolygons={overlapPolygons}
         crossSiteOverlapPolygons={crossSiteOverlapPolygons}

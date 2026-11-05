@@ -33,14 +33,15 @@ const PolygonReviewBulkActions: FC<PolygonReviewBulkActionsProps> = ({
 }) => {
   const t = useT();
   const { bulkActions, reviewActions } = actions;
-  const { handleSystemValidationCompleteModalChange, openPolygonEditDrawerForRow } = bulkActions;
+  const { handleSystemValidationCompleteModalChange } = bulkActions;
+  const { openPolygonEditDrawerByPolygonId } = actions;
 
   const handleViewValidationDetails = useCallback(
     (row: PolygonTableRow) => {
       handleSystemValidationCompleteModalChange(false);
-      openPolygonEditDrawerForRow(row);
+      openPolygonEditDrawerByPolygonId(row.id);
     },
-    [handleSystemValidationCompleteModalChange, openPolygonEditDrawerForRow]
+    [handleSystemValidationCompleteModalChange, openPolygonEditDrawerByPolygonId]
   );
 
   return (
