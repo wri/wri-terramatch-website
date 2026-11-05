@@ -20,7 +20,7 @@ import Log from "@/utils/log";
 import { parallelRequestHook, RequestOptions } from "@/utils/parallelRequestHook";
 
 import { v3Resource } from "./util/apiConnectionFactory";
-import { connectionHook } from "./util/connectionShortcuts";
+import { connectionHook, connectionLoader } from "./util/connectionShortcuts";
 import { resourceUpdater } from "./util/resourceMutator";
 
 export const mediaConnection = v3Resource("media", getMedia)
@@ -51,6 +51,12 @@ const mediaMapIndexConnection = v3Resource("mediaMapIndexes", mediaMapIndex)
   .buildConnection();
 
 export const useMediaMapIndex = connectionHook(mediaMapIndexConnection);
+
+export const loadMediaMapIndex = connectionLoader(mediaMapIndexConnection);
+
+export const pruneMediaMapIndexCache = (scopes: MediaMapIndexProps[]) => {
+  ApiSlice.pruneCache("mediaMapIndexes", scopes.map(mediaMapIndexId));
+};
 
 export const deleteMedia = deleterAsync("media", mediaDelete, uuid => ({ pathParams: { uuid: uuid } }));
 

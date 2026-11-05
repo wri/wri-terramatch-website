@@ -17,6 +17,7 @@ import PolygonDrawUndoButton from "../../site/[uuid]/components/PolygonDrawUndoB
 import { getPolygonMapEditClassName } from "../../site/[uuid]/components/polygonMapEditLayout";
 import { SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS } from "../../site/[uuid]/constants/sitePolygonMapSizing";
 import { usePolygonDrawUndo } from "../../site/[uuid]/hooks/usePolygonDrawUndo";
+import { useProjectMapMedia } from "../hooks/useProjectMapMedia";
 import { getProjectMarkersBbox, toProjectMarkerPoints } from "../utils/projectMarkers";
 
 const NO_POLYGONS: SitePolygonMapEntryDto[] = [];
@@ -72,6 +73,7 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
     enabled: projectUuid != null
   });
   const projectPolygons = polygonMapIndex?.polygons;
+  const mediaFiles = useProjectMapMedia({ projectUuid: projectUuid ?? null, siteUuids });
 
   // Once the polygon layers are added, an empty list is needed to hide them when the project is cleared.
   const [hasPolygonLayers, setHasPolygonLayers] = useState(false);
@@ -130,7 +132,7 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
           autoEditPolygon={autoEditPolygon}
           shouldBboxZoom={!isRefetchingPolygonData}
           showLegend
-          hideMediaOnMap
+          mediaFiles={mediaFiles}
           disabledPolygonPanel
           className="h-full w-full flex-1"
         />
