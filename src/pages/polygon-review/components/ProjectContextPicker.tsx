@@ -9,7 +9,6 @@ import { isNotNull } from "@/utils/array";
 
 import { useProjectFacetLabels } from "../hooks/useProjectFacetLabels";
 import {
-  EMPTY_PROJECT_CONTEXT_FILTERS,
   getFacetOptions,
   getFacetValue,
   getProjectFacetFilters,
@@ -78,12 +77,6 @@ const ProjectContextPickerContent: FC<
     [filters, selectedProject]
   );
 
-  // Counted over all projects so the country control doesn't switch type as other facets narrow it.
-  const countryCount = useMemo(
-    () => getFacetOptions(projects, EMPTY_PROJECT_CONTEXT_FILTERS, "country").length,
-    [projects]
-  );
-
   const facetGroups = useMemo(() => {
     const countrySearch: FacetSearch = {
       placeholder: t("Type to search countries"),
@@ -93,15 +86,15 @@ const ProjectContextPickerContent: FC<
     return (
       [
         { facet: "frameworkKey", label: t("Framework") },
-        {
-          facet: "country",
-          label: t("Country"),
-          search: countryCount > MAX_CHECKBOX_OPTIONS ? countrySearch : undefined
-        },
+        { facet: "country", label: t("Country"), search: countrySearch },
         { facet: "cohort", label: t("Cohort") }
       ] as const
-    ).map(group => ({ ...group, options: getFacetOptions(projects, facetFilters, group.facet) }));
-  }, [countryCount, facetFilters, projects, t]);
+    ).map(({ facet, label, ...group }) => {
+      const options = getFacetOptions(projects, facetFilters, facet);
+      const search = "search" in group && options.length > MAX_CHECKBOX_OPTIONS ? group.search : undefined;
+      return { facet, label, options, search };
+    });
+  }, [facetFilters, projects, t]);
 
   const setFacetValues = useCallback(
     (facet: ProjectContextFacet, values: string[]) => onFiltersChange({ ...filters, [facet]: values }),
@@ -121,14 +114,14 @@ const ProjectContextPickerContent: FC<
           overflowY="auto"
           bg="neutral.200"
         >
-          {facetGroups.map(({ facet, label, options, ...group }) => (
+          {facetGroups.map(({ facet, label, options, search }) => (
             <ProjectFacetGroup
               key={facet}
               label={label}
               options={options}
               selected={facetFilters[facet]}
               disabled={isLocked}
-              search={"search" in group ? group.search : undefined}
+              search={search}
               getLabel={value => getLabel(facet, value)}
               onChange={values => setFacetValues(facet, values)}
             />
