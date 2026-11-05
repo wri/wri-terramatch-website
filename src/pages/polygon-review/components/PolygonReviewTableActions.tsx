@@ -89,11 +89,11 @@ const PolygonReviewTableActions: FC<PolygonReviewTableActionsProps> = ({
   }, [projectUuid, startExport]);
   const exportSites = useCallback(() => void startExport({ siteUuids }), [siteUuids, startExport]);
 
-  const polygonCountCaption = (count: number | undefined) =>
-    t("{count} polygons", { count: count?.toLocaleString() ?? "-" });
-  const siteScopeLabel = sites.length === 1 ? sites[0].label : t("{count} sites", { count: sites.length });
-  const downloadActions = [
-    {
+  const siteTotalPolygons = siteSummary?.totalPolygons;
+  const downloadActions = useMemo(() => {
+    const polygonCountCaption = (count: number | undefined) =>
+      count === 1 ? t("1 polygon") : t("{count} polygons", { count: count?.toLocaleString() ?? "-" });
+    const projectAction = {
       label: (
         <DownloadOptionLabel
           title={t("Project polygons (GeoJSON)")}
@@ -102,22 +102,24 @@ const PolygonReviewTableActions: FC<PolygonReviewTableActionsProps> = ({
       ),
       onClick: exportProject,
       value: "project-polygons"
-    },
-    ...(hasSiteFilter
-      ? [
-          {
-            label: (
-              <DownloadOptionLabel
-                title={t("Site polygons (GeoJSON)")}
-                caption={`${siteScopeLabel} · ${polygonCountCaption(siteSummary?.totalPolygons)}`}
-              />
-            ),
-            onClick: exportSites,
-            value: "site-polygons"
-          }
-        ]
-      : [])
-  ];
+    };
+    if (!hasSiteFilter) return [projectAction];
+
+    const siteScopeLabel = sites.length === 1 ? sites[0].label : t("{count} sites", { count: sites.length });
+    return [
+      projectAction,
+      {
+        label: (
+          <DownloadOptionLabel
+            title={t("Site polygons (GeoJSON)")}
+            caption={`${siteScopeLabel} · ${polygonCountCaption(siteTotalPolygons)}`}
+          />
+        ),
+        onClick: exportSites,
+        value: "site-polygons"
+      }
+    ];
+  }, [exportProject, exportSites, hasSiteFilter, projectPolygonCount, siteTotalPolygons, sites, t]);
   const isDownloadDisabled = downloadLockedMessage != null || isExporting;
 
   return (
