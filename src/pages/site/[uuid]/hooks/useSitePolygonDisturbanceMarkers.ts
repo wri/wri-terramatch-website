@@ -34,7 +34,8 @@ export const useSitePolygonDisturbanceMarkers = ({
     let cancelled = false;
 
     void loadSitePolygonsByUuidBatch({
-      siteUuid,
+      entityName: "sites",
+      entityUuid: siteUuid,
       polygonUuids: disturbancePolygonUuids,
       errorContext: "Failed to load disturbance marker polygon geometry"
     }).then(polygons => {

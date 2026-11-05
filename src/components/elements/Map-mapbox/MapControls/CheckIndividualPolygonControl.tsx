@@ -200,7 +200,7 @@ const CheckIndividualPolygonControl: FC<CheckIndividualPolygonControlProps> = ({
         onClick={() => {
           const polygonUuid = editPolygon?.uuid ?? "";
           trackPolygonRunValidationClicked({
-            siteUuid: entityUuidFromScope ?? "",
+            entityUuid: entityUuidFromScope ?? "",
             polygonIds: polygonUuid !== "" ? [polygonUuid] : []
           });
           setClickedValidation(true);

@@ -36,7 +36,7 @@ export type MapMenuPanelItemProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElem
   polygonUuid?: string;
   siteId?: string;
   setClickedButton: React.Dispatch<React.SetStateAction<string>>;
-  refContainer: React.RefObject<HTMLDivElement> | null;
+  refContainer: React.RefObject<HTMLDivElement | null> | null;
   type: string;
   polygonName?: string;
   primaryUuid?: string;

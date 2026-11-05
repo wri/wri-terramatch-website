@@ -1,4 +1,3 @@
-import classNames from "classnames";
 import type { ComponentProps, FC } from "react";
 
 import PolygonsMap from "@/components/elements/Map-mapbox/components/PolygonsMap";
@@ -11,8 +10,8 @@ import type { SitePolygonMapEntryDto } from "@/generated/v3/researchService/rese
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
 
 import { SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS } from "../constants/sitePolygonMapSizing";
-import { getPolygonEditMapClassNames } from "../utils/polygonEditMapClassNames";
 import PolygonDrawUndoButton from "./PolygonDrawUndoButton";
+import { getPolygonMapEditClassName } from "./polygonMapEditLayout";
 
 type SitePolygonMapSectionProps = {
   site: SiteFullDto;
@@ -46,28 +45,30 @@ const SitePolygonMapSection: FC<SitePolygonMapSectionProps> = ({
   showUndoButton,
   onUndoDraw,
   isDeletedAuditView = false
-}) => (
-  <ResizeBox
-    initialHeight={SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS}
-    minHeight={SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS}
-    maxHeight={600}
-  >
-    <PolygonsMap
-      entityModel={site}
-      type="sites"
-      className={classNames("overflow-hidden", getPolygonEditMapClassNames(isEditPolygonOpen, isAdmin))}
-      polygons={polygons}
-      onRefetchPolygons={onRefetchPolygons}
-      isLoadingPolygons={isSitePolygonsLoading}
-      freezeCameraZoom={freezeCameraZoom}
-      skipNextSiteBboxZoomNonce={skipNextSiteBboxZoomNonce}
-      polygonTableHighlight={polygonTableHighlight}
-      overlapPolygons={overlapPolygons}
-      crossSiteOverlapPolygons={crossSiteOverlapPolygons}
-      isDeletedAuditView={isDeletedAuditView}
-    />
-    {showUndoButton && !isDeletedAuditView && <PolygonDrawUndoButton onClick={onUndoDraw} />}
-  </ResizeBox>
-);
+}) => {
+  return (
+    <ResizeBox
+      initialHeight={SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS}
+      minHeight={SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS}
+      maxHeight={600}
+    >
+      <PolygonsMap
+        entityModel={site}
+        type="sites"
+        className={getPolygonMapEditClassName(isEditPolygonOpen, isAdmin)}
+        polygons={polygons}
+        onRefetchPolygons={onRefetchPolygons}
+        isLoadingPolygons={isSitePolygonsLoading}
+        freezeCameraZoom={freezeCameraZoom}
+        skipNextSiteBboxZoomNonce={skipNextSiteBboxZoomNonce}
+        polygonTableHighlight={polygonTableHighlight}
+        overlapPolygons={overlapPolygons}
+        crossSiteOverlapPolygons={crossSiteOverlapPolygons}
+        isDeletedAuditView={isDeletedAuditView}
+      />
+      {showUndoButton && !isDeletedAuditView && <PolygonDrawUndoButton onUndo={onUndoDraw} />}
+    </ResizeBox>
+  );
+};
 
 export default SitePolygonMapSection;

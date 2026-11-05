@@ -1,6 +1,5 @@
-import { renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { ReactNode, useMemo } from "react";
-import { act } from "react-dom/test-utils";
 import { Provider as ReduxProvider } from "react-redux";
 import { createSelector } from "reselect";
 

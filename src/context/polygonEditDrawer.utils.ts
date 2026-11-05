@@ -26,14 +26,16 @@ export const openPolygonEditDrawerForSitePolygon = (
 
 export const openPolygonEditDrawerForPolygonId = async ({
   polygonId,
-  siteUuid,
+  entityName,
+  entityUuid,
   findCachedSitePolygon
 }: {
   polygonId: string;
-  siteUuid: string;
+  entityName: "sites" | "projects";
+  entityUuid: string;
   findCachedSitePolygon?: (polygonId: string) => SitePolygonLightDto | undefined;
 }): Promise<boolean> => {
-  if (polygonId === "" || siteUuid === "") {
+  if (polygonId === "" || entityUuid === "") {
     return false;
   }
 
@@ -44,7 +46,7 @@ export const openPolygonEditDrawerForPolygonId = async ({
   }
 
   try {
-    const loadedPolygon = await loadSitePolygonByUuid({ entityUuid: siteUuid, polygonId });
+    const loadedPolygon = await loadSitePolygonByUuid({ entityName, entityUuid, polygonId });
     if (loadedPolygon == null) {
       return false;
     }

@@ -25,7 +25,7 @@ export type ImpactStoryData = {
   status: string;
 };
 
-type ModalStoryProps = ModalProps & {
+type ModalStoryProps = Omit<ModalProps, "content"> & {
   data: ImpactStoryData;
   preview?: boolean;
 };

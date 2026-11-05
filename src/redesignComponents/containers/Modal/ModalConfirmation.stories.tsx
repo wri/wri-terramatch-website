@@ -1,5 +1,6 @@
 import { Text } from "@chakra-ui/react";
 import type { Meta, StoryObj } from "@storybook/react";
+import { fn } from "@storybook/test";
 import { useT } from "@transifex/react";
 import { useState } from "react";
 
@@ -11,7 +12,7 @@ const meta = {
   title: "Redesign Components/Containers/ModalConfirmation",
   component: ModalConfirmation,
   tags: ["autodocs"],
-  args: { open: false },
+  args: { open: false, onOpenChange: fn() },
   render: args => {
     const t = useT();
     const [open, setOpen] = useState(false);

@@ -1,6 +1,7 @@
 import { Flex } from "@chakra-ui/react";
 import { FC, useMemo } from "react";
 
+import type { EntityUpdateStatusValue } from "@/components/extensive/EntityIndex/EntityUpdateStatus";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { CheckApprovedIcon } from "@/redesignComponents/foundations/Icons";
 
@@ -8,7 +9,7 @@ import type { ReportsIndexStatus } from "../reportIndex.types";
 import { areAllReportsComplete, getReportStatusCounts } from "../reportIndex.utils";
 
 type ReportAttentionStatusLabelsProps = {
-  reports: Array<{ status: ReportsIndexStatus }>;
+  reports: Array<{ status: ReportsIndexStatus; updateRequestStatus?: EntityUpdateStatusValue | null }>;
 };
 
 const ReportAttentionStatusLabels: FC<ReportAttentionStatusLabelsProps> = ({ reports }) => {

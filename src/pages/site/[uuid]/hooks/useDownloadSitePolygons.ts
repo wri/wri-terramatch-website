@@ -33,7 +33,7 @@ export const useDownloadSitePolygons = ({ siteUuid, siteName }: UseDownloadSiteP
       showPolygonProgressToast(t, getDownloadingPolygonsProgressLabel(t), POLYGON_TOAST_IDS.downloading);
       await downloadSiteGeoJsonPolygons(siteUuid, siteName ?? "");
       trackPolygonDownloaded({
-        siteUuid,
+        entityUuid: siteUuid,
         polygonType: "standard",
         polygonCount: 1
       });

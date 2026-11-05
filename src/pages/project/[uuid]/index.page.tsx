@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo, useState } from "react";
 
@@ -138,9 +137,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         open={showInviteModal}
         onClose={() => setShowInviteModal(false)}
       />
-      <Head>
-        <title>{t("Project")}</title>
-      </Head>
+      <title>{t("Project")}</title>
       <ProjectBanner
         project={project}
         onAddTeamClick={handleInvite}
