@@ -228,7 +228,7 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
           />
         }
       />
-      <PageContent className="bg-theme-neutral-200">
+      <PageContent className="h-auto bg-theme-neutral-200">
         <Flex direction="column" gap={4}>
           <PolygonReviewToolbar
             projectUuid={selectedProject?.uuid}
