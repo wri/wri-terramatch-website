@@ -22,8 +22,10 @@ import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTab
 import { PolygonsIcon } from "@/redesignComponents/foundations/Icons";
 import Layout from "@/redesignComponents/Layout/Layout";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
+import ResponsiveTypography from "@/styles/ResponsiveTypography";
 
 import ExistingPolygon from "../site/[uuid]/components/Modals/ExistingPolygon";
+import MapEditPhotoDetails from "../site/[uuid]/components/Modals/GeotaggedPhotos/MapEditPhotoDetails";
 import UploadError from "../site/[uuid]/components/Modals/UploadError";
 import UploadPolygons from "../site/[uuid]/components/Modals/UploadPolygons";
 import { buildPolygonTableColumns } from "../site/[uuid]/components/polygonTableColumns";
@@ -227,7 +229,9 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
     clearPolygonFilters();
   }, [clearPolygonFilters, setSelectedProject]);
 
-  const { setPolygonData, resetSiteMapInteractionState } = useMapAreaContext();
+  const { setPolygonData, resetSiteMapInteractionState, editPhotoDetailsMediaUuid, setEditPhotoDetailsMediaUuid } =
+    useMapAreaContext();
+  const closeEditPhotoDetails = useCallback(() => setEditPhotoDetailsMediaUuid(null), [setEditPhotoDetailsMediaUuid]);
   useEffect(() => {
     setPolygonData(pagePolygons);
   }, [pagePolygons, setPolygonData]);
@@ -262,6 +266,7 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
 
   return (
     <Layout>
+      <ResponsiveTypography />
       <ToolbarObject
         className="sticky top-0 z-20 !px-6"
         breadcrumbs={{
@@ -288,7 +293,7 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
         }
       />
       <PolygonReviewSiteSync siteUuid={singleSiteUuid} site={scopedSite} />
-      <PageContent className="bg-theme-neutral-200">
+      <PageContent className="h-auto bg-theme-neutral-200">
         <Flex direction="column" gap={4}>
           <PolygonReviewToolbar
             projectUuid={selectedProject?.uuid}
@@ -390,6 +395,13 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
           selectedRows={selectedRows}
           visible={selectedRowIds.size > 0 && !isSelectionLoading && !polygonFilters.showDeleted}
         />
+        {editPhotoDetailsMediaUuid != null && (
+          <MapEditPhotoDetails
+            key={editPhotoDetailsMediaUuid}
+            uuid={editPhotoDetailsMediaUuid}
+            onClose={closeEditPhotoDetails}
+          />
+        )}
       </PageContent>
       {singleSiteUuid != null && (
         <UploadPolygons
