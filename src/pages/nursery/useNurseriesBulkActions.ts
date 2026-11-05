@@ -44,6 +44,27 @@ const refreshTouchedNurseries = (nurseryUuids: string[]) => {
   ApiSlice.pruneIndex("projects", "");
 };
 
+export const downloadNurseries = async (nurseries: NurseryIndexRow[], t: ReturnType<typeof useT>) => {
+  try {
+    showEntityProgressToast(
+      t,
+      nurseries.length === 1 ? t("Downloading nursery") : t("Downloading nurseries"),
+      ENTITY_TOAST_IDS.downloading
+    );
+    for (const { frameworkKey, uuids } of groupNurseryUuidsByFramework(nurseries)) {
+      await entityExportAll.downloadFile({
+        pathParams: { entity: "nurseries" },
+        queryParams: { frameworkKey, uuids }
+      });
+    }
+    completeEntityProgressToast(ENTITY_TOAST_IDS.downloading, t("Download Complete"));
+  } catch (error) {
+    Log.error("Failed to download nurseries", error);
+    closeEntityProgressToast(ENTITY_TOAST_IDS.downloading);
+    showEntityErrorToast(t("Error Downloading Nurseries"));
+  }
+};
+
 export const useNurseriesBulkActions = ({
   selectedNurseries,
   isSubmissionReady,
@@ -72,22 +93,7 @@ export const useNurseriesBulkActions = ({
     setIsDownloading(true);
     clearSelection();
     try {
-      showEntityProgressToast(
-        t,
-        selectedNurseries.length === 1 ? t("Downloading nursery") : t("Downloading nurseries"),
-        ENTITY_TOAST_IDS.downloading
-      );
-      for (const { frameworkKey, uuids } of grouped) {
-        await entityExportAll.downloadFile({
-          pathParams: { entity: "nurseries" },
-          queryParams: { frameworkKey, uuids }
-        });
-      }
-      completeEntityProgressToast(ENTITY_TOAST_IDS.downloading, t("Download Complete"));
-    } catch (error) {
-      Log.error("Failed to download selected nurseries", error);
-      closeEntityProgressToast(ENTITY_TOAST_IDS.downloading);
-      showEntityErrorToast(t("Error Downloading Nurseries"));
+      await downloadNurseries(selectedNurseries, t);
     } finally {
       setIsDownloading(false);
     }

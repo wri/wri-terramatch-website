@@ -56,16 +56,18 @@ interface SelectorTriggerContentProps {
 
 export const SelectorTriggerContent: FC<SelectorTriggerContentProps> = ({ disabled, open, value, subtitle }) => (
   <>
-    <Flex direction="column" flex={1} minWidth={0}>
-      <Flex align="center" gap={2} minWidth={0}>
+    <Flex align="flex-start" gap={2} flex={1} minWidth={0}>
+      <Flex align="center" height="1.5rem" flexShrink={0}>
         <SelectorFolderIcon disabled={disabled} />
-        {value}
       </Flex>
-      {subtitle != null && (
-        <Text as="span" textStyle="300" color="neutral.700" truncate>
-          {subtitle}
-        </Text>
-      )}
+      <Flex direction="column" gap={0.5} flex={1} minWidth={0}>
+        {value}
+        {subtitle != null && (
+          <Text as="span" textStyle="300" color="neutral.700" truncate>
+            {subtitle}
+          </Text>
+        )}
+      </Flex>
     </Flex>
     <Box as="span" color={disabled ? "neutral.500" : "primary.900"} flexShrink={0}>
       <SelectorChevron open={open} />
@@ -152,7 +154,7 @@ export const SelectorMenu: FC<SelectorMenuProps> = ({
 
   return (
     <Portal>
-      <Positioner zIndex={1500}>
+      <Positioner>
         <Content {...(isGrouped ? groupedContentMenuStyles : contentMenuStyles)} {...contentProps}>
           {items.length === 0 ? (
             <SelectorEmptyMessage>{emptyMessage}</SelectorEmptyMessage>

@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 
@@ -42,9 +41,7 @@ const ReportsIndexPage: FC = () => {
     <FrameworkProvider frameworkKey={finalProject?.frameworkKey}>
       <ReportsProvider>
         <ResponsiveTypography />
-        <Head>
-          <title>{t("Reports")}</title>
-        </Head>
+        <title>{t("Reports")}</title>
         <LoadingContainer loading={loading}>
           {finalProject == null ? null : (
             <ReportsSelectionProvider>

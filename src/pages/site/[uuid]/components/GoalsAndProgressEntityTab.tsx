@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import React, { FC } from "react";
+import React, { type JSX, FC } from "react";
 
 import ProgressGoalsDoughnutChart, {
   ProgressGoalsData

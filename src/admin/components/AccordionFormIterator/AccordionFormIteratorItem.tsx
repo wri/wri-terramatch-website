@@ -16,6 +16,8 @@ import {
   useSimpleFormIterator
 } from "react-admin";
 
+type ClonableElement = ReactElement<Record<string, unknown>>;
+
 export const AccordionFormIteratorItem = React.forwardRef((props: AccordionFormIteratorItemProps, ref: any) => {
   const {
     children,
@@ -74,7 +76,7 @@ export const AccordionFormIteratorItem = React.forwardRef((props: AccordionFormI
           {summaryChildren}
           {reOrderButtons &&
             !disableReordering &&
-            cloneElement(reOrderButtons, {
+            cloneElement(reOrderButtons as ClonableElement, {
               index,
               max: total,
               reOrder,
@@ -98,7 +100,7 @@ export const AccordionFormIteratorItem = React.forwardRef((props: AccordionFormI
               >
                 {
                   //@ts-ignore
-                  Children.map(children, (input: ReactElement, index2) => {
+                  Children.map(children, (input: ClonableElement, index2) => {
                     if (!isValidElement<any>(input)) {
                       return null;
                     }
@@ -117,7 +119,7 @@ export const AccordionFormIteratorItem = React.forwardRef((props: AccordionFormI
                 <span className={SimpleFormIteratorClasses.action}>
                   {removeButton &&
                     !disableRemoveField(record) &&
-                    cloneElement(removeButton, {
+                    cloneElement(removeButton as ClonableElement, {
                       className: clsx("button-remove", `button-remove-${source}-${index}`)
                     })}
                 </span>

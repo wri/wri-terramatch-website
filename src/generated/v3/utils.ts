@@ -163,6 +163,18 @@ type RequestBody = {
 // After this long, a file download falls back to the direct link instead of waiting on the blob.
 const FILE_DOWNLOAD_TIMEOUT = 2 * 60 * 1000; // in ms
 
+/**
+ * Returns the file name for a download URL: the decoded last path segment, without the query string.
+ * Presigned URLs carry the signature and credentials in the query, so it must not be part of the name.
+ * @param url Absolute URL of the file to download
+ * @returns The file name, or undefined when the URL path has no segment to use
+ */
+const getFileNameFromUrl = (url: string): string | undefined => {
+  const lastSegment = new URL(url).pathname.split("/").pop();
+  if (lastSegment == null || lastSegment === "") return undefined;
+  return decodeURIComponent(lastSegment);
+};
+
 export class V3ApiEndpoint<
   TResponse = unknown,
   TError extends ErrorPayload | undefined = ErrorPayload,
@@ -263,8 +275,7 @@ export class V3ApiEndpoint<
 
       // avoid importing the FileDownloadDto due to circular dependency
       const downloadUrl = data.attributes.url as string;
-      const urlFileName = new URL(downloadUrl).pathname.split("/").pop();
-      const fileName = urlFileName == null ? defaultFileName : decodeURIComponent(urlFileName);
+      const fileName = getFileNameFromUrl(downloadUrl) ?? defaultFileName;
       // Fetching the file and saving it as a local blob (the same way polygon downloads work) means
       // the caller's promise only resolves once the file is in hand, and avoids Safari's "allow
       // downloads" prompt for a cross-origin link clicked outside a user gesture.

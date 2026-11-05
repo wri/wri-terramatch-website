@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
+import { type JSX } from "react";
 
 import { buildReportTrail, ReportTrailEntities, ReportTrailRoot } from "@/pages/reports/reportBreadcrumbs.utils";
 import { getReportProfileOriginFromQuery, ReportsIndexSource } from "@/pages/reports/reportIndex.utils";

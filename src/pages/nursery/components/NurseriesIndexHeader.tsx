@@ -1,10 +1,11 @@
-import { Flex } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 import { FC, useMemo, useState } from "react";
 
 import { getStatusOptions, getUpdateStatusFilterOptions } from "@/constants/options/status";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import HighLevelSelector from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector";
@@ -45,6 +46,7 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
 }) => {
   const t = useT();
   const router = useRouter();
+  const isMobile = useIsMobile();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const statusOptions = useMemo(() => getStatusOptions(t), [t]);
   const updateOptions = useMemo(() => getUpdateStatusFilterOptions(t), [t]);
@@ -76,11 +78,23 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
     children: t("Add Nursery"),
     leftIcon: <PlusIcon boxSize="0.625rem" />,
     disabled: addNurseryHref == null,
-    className: embeddedInProject ? "shrink-0 whitespace-nowrap" : undefined,
+    className: "shrink-0 whitespace-nowrap",
     onClick: () => {
       if (addNurseryHref != null) void router.push(addNurseryHref);
     }
   };
+
+  const viewSelector = showViewSelector ? (
+    <HighLevelSelector
+      label={t("View:")}
+      items={viewItems}
+      value={viewValue}
+      emptyMessage={t("No projects found")}
+      width="25rem"
+      className="mobile:!w-full"
+      onChange={onViewChange}
+    />
+  ) : null;
 
   return (
     <>
@@ -100,25 +114,20 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
             }}
           />
           <PageHeader
-            className=" !bg-theme-neutral-100 !pb-0 !pt-1 mobile:flex-col mobile:items-start mobile:gap-4"
+            className=" !bg-theme-neutral-100 !pb-0 !pt-1"
             title={t("Nurseries")}
             actions={
-              <Flex gap={4} alignItems="center">
-                {showViewSelector && (
-                  <HighLevelSelector
-                    label={t("View:")}
-                    items={viewItems}
-                    value={viewValue}
-                    emptyMessage={t("No projects found")}
-                    width="25rem"
-                    className="mobile:!w-full"
-                    onChange={onViewChange}
-                  />
-                )}
+              isMobile ? (
                 <Button size="small" {...addNurseryButton} />
-              </Flex>
+              ) : (
+                <Flex gap={4} alignItems="center">
+                  {viewSelector}
+                  <Button size="small" {...addNurseryButton} />
+                </Flex>
+              )
             }
           />
+          {isMobile && viewSelector != null && <Box className="bg-theme-neutral-100 px-6 pt-4">{viewSelector}</Box>}
         </>
       )}
       <ToolbarTable
@@ -127,7 +136,7 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
           embeddedInProject ? "border-b border-theme-neutral-300 !bg-theme-neutral-100" : "!bg-theme-neutral-200"
         )}
         classNameContentLeft={embeddedInProject ? "min-w-0 flex-1 !shrink" : "w-full"}
-        classNameContentSearch="w-[19rem] max-w-full"
+        classNameContentSearch="w-[19rem] max-w-full mobile:w-auto mobile:min-w-0 mobile:flex-1"
         search={{
           placeholder: t("Search"),
           options: [],

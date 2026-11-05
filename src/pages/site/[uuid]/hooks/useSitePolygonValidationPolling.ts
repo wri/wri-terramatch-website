@@ -111,7 +111,8 @@ export const useSitePolygonValidationState = ({ findTableSitePolygon }: UseSiteP
 };
 
 type UseSitePolygonValidationPollParams = {
-  siteUuid: string;
+  entityName: "sites" | "projects";
+  entityUuid: string;
   pendingValidationPolygonUuids: string[];
   setPendingValidationPolygonUuids: (value: string[]) => void;
   setSupplementalValidations: React.Dispatch<React.SetStateAction<ValidationDto[]>>;
@@ -133,7 +134,8 @@ type UseSitePolygonValidationPollParams = {
 };
 
 export const useSitePolygonValidationPoll = ({
-  siteUuid,
+  entityName,
+  entityUuid,
   pendingValidationPolygonUuids,
   setPendingValidationPolygonUuids,
   setSupplementalValidations,
@@ -222,7 +224,8 @@ export const useSitePolygonValidationPoll = ({
               }
 
               trackPolygonValidationResults({
-                siteUuid,
+                entityUuid,
+                entityType: entityName,
                 polygonId: polygonUuid,
                 validation,
                 priorValidationStatus: priorValidationStatusRef.current.get(polygonUuid)
@@ -231,7 +234,8 @@ export const useSitePolygonValidationPoll = ({
 
             if (pendingValidationTrackBulkRef.current) {
               trackBulkActionCompleted({
-                siteUuid,
+                entityUuid,
+                entityType: entityName,
                 actionType: "run_validation",
                 polygonCount: polygonUuids.length
               });
@@ -286,7 +290,8 @@ export const useSitePolygonValidationPoll = ({
     setPendingValidationPolygonUuids,
     setSupplementalValidations,
     setValidationZoomPolygonUuids,
-    siteUuid,
+    entityName,
+    entityUuid,
     t,
     validationAfterCriteriaClearRef,
     validationPollingGenerationRef,

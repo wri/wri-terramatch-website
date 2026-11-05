@@ -1,0 +1,71 @@
+diff --git a/node_modules/ra-ui-materialui/dist/cjs/button/PrevNextButtons.js b/node_modules/ra-ui-materialui/dist/cjs/button/PrevNextButtons.js
+index 53d1ab5..ac08213 100644
+--- a/node_modules/ra-ui-materialui/dist/cjs/button/PrevNextButtons.js
++++ b/node_modules/ra-ui-materialui/dist/cjs/button/PrevNextButtons.js
+@@ -29,7 +29,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.PrevNextButtonClasses = exports.PrevNextButtons = void 0;
+ var React = __importStar(require("react"));
+ var ra_core_1 = require("ra-core");
+-var icons_material_1 = require("@mui/icons-material");
++var NavigateBefore_1 = __importDefault(require("@mui/icons-material/NavigateBefore"));
++var NavigateNext_1 = __importDefault(require("@mui/icons-material/NavigateNext"));
+ var Error_1 = __importDefault(require("@mui/icons-material/Error"));
+ var react_router_dom_1 = require("react-router-dom");
+ var material_1 = require("@mui/material");
+@@ -125,13 +126,13 @@ var PrevNextButtons = function (props) {
+     }
+     return (React.createElement(Root, { sx: sx, role: "navigation", direction: "row", className: (0, clsx_1.default)(exports.PrevNextButtonClasses.root) },
+         React.createElement(material_1.IconButton, { component: hasPrev ? react_router_dom_1.Link : undefined, to: prevPath, "aria-label": translate('ra.navigation.previous'), disabled: !hasPrev, size: "small" },
+-            React.createElement(icons_material_1.NavigateBefore, null)),
++            React.createElement(NavigateBefore_1.default, null)),
+         typeof index === 'number' && (React.createElement(material_1.Typography, { variant: "body2" },
+             index + 1,
+             " / ",
+             total)),
+         React.createElement(material_1.IconButton, { component: hasNext ? react_router_dom_1.Link : undefined, to: nextPath, "aria-label": translate('ra.navigation.next'), disabled: !hasNext, size: "small" },
+-            React.createElement(icons_material_1.NavigateNext, null))));
++            React.createElement(NavigateNext_1.default, null))));
+ };
+ exports.PrevNextButtons = PrevNextButtons;
+ var PREFIX = 'RaPrevNextButton';
+diff --git a/node_modules/ra-ui-materialui/dist/cjs/input/BooleanInput.d.ts b/node_modules/ra-ui-materialui/dist/cjs/input/BooleanInput.d.ts
+index 043641f..e1397ee 100644
+--- a/node_modules/ra-ui-materialui/dist/cjs/input/BooleanInput.d.ts
++++ b/node_modules/ra-ui-materialui/dist/cjs/input/BooleanInput.d.ts
+@@ -14,7 +14,7 @@ export declare const BooleanInput: {
+         source: PropTypes.Requireable<string>;
+     };
+ };
+-export type BooleanInputProps = CommonInputProps & SwitchProps & Omit<FormGroupProps, 'defaultValue' | 'onChange' | 'onBlur' | 'onFocus'> & {
++export type BooleanInputProps = CommonInputProps & Omit<SwitchProps, 'defaultValue'> & Omit<FormGroupProps, 'defaultValue' | 'onChange' | 'onBlur' | 'onFocus'> & {
+     options?: SwitchProps;
+ };
+ //# sourceMappingURL=BooleanInput.d.ts.map
+\ No newline at end of file
+diff --git a/node_modules/ra-ui-materialui/dist/esm/button/PrevNextButtons.js b/node_modules/ra-ui-materialui/dist/esm/button/PrevNextButtons.js
+index a664435..7a61547 100644
+--- a/node_modules/ra-ui-materialui/dist/esm/button/PrevNextButtons.js
++++ b/node_modules/ra-ui-materialui/dist/esm/button/PrevNextButtons.js
+@@ -1,6 +1,7 @@
+ import * as React from 'react';
+ import { useTranslate, usePrevNextController, } from 'ra-core';
+-import { NavigateBefore, NavigateNext } from '@mui/icons-material';
++import NavigateBefore from '@mui/icons-material/NavigateBefore';
++import NavigateNext from '@mui/icons-material/NavigateNext';
+ import ErrorIcon from '@mui/icons-material/Error';
+ import { Link } from 'react-router-dom';
+ import { Box, Stack, Typography, IconButton, styled, } from '@mui/material';
+diff --git a/node_modules/ra-ui-materialui/dist/esm/input/BooleanInput.d.ts b/node_modules/ra-ui-materialui/dist/esm/input/BooleanInput.d.ts
+index 043641f..e1397ee 100644
+--- a/node_modules/ra-ui-materialui/dist/esm/input/BooleanInput.d.ts
++++ b/node_modules/ra-ui-materialui/dist/esm/input/BooleanInput.d.ts
+@@ -14,7 +14,7 @@ export declare const BooleanInput: {
+         source: PropTypes.Requireable<string>;
+     };
+ };
+-export type BooleanInputProps = CommonInputProps & SwitchProps & Omit<FormGroupProps, 'defaultValue' | 'onChange' | 'onBlur' | 'onFocus'> & {
++export type BooleanInputProps = CommonInputProps & Omit<SwitchProps, 'defaultValue'> & Omit<FormGroupProps, 'defaultValue' | 'onChange' | 'onBlur' | 'onFocus'> & {
+     options?: SwitchProps;
+ };
+ //# sourceMappingURL=BooleanInput.d.ts.map
+\ No newline at end of file

@@ -10,8 +10,8 @@ import type { PolygonTableRow } from "./PolygonTableRow";
 import { renderPolygonTableRow } from "./PolygonTableRowConnected";
 
 type SitePolygonTableSectionProps = {
-  tableContainerRef: RefObject<HTMLDivElement>;
-  tableScrollContainerRef?: RefObject<HTMLDivElement>;
+  tableContainerRef: RefObject<HTMLDivElement | null>;
+  tableScrollContainerRef?: RefObject<HTMLDivElement | null>;
   tableStyles?: SystemStyleObject;
   isSitePolygonsLoading: boolean;
   polygonRows: PolygonTableRow[];

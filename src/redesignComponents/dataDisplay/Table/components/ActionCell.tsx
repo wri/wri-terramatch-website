@@ -19,7 +19,7 @@ const ActionCell: FC<ActionCellProps> = ({ button, buttonSecondary, onButtonIcon
       display="flex"
       alignItems="center"
       justifyContent="flex-end"
-      className="opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+      className="opacity-0 transition-opacity duration-300 group-hover:opacity-100 mobile:opacity-100"
     >
       {button != null && <Button {...button} variant="secondary" size="small" />}
       {buttonSecondary != null && <Button {...buttonSecondary} />}

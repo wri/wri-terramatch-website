@@ -319,7 +319,7 @@ const ProcessBulkPolygonsControl: FC<ProcessBulkPolygonsControlProps> = ({
           return;
         }
         trackPolygonRunValidationClicked({
-          siteUuid: entityData?.uuid ?? "",
+          entityUuid: entityData?.uuid ?? "",
           polygonIds: selectedUUIDs
         });
         setIsLoadingDelayedJob?.(true);
