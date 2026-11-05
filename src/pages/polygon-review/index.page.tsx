@@ -1,6 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { isEmpty } from "lodash";
+import { isEmpty, isEqual } from "lodash";
 import { useRouter } from "next/router";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -47,11 +47,13 @@ import PolygonReviewSiteSync from "./components/PolygonReviewSiteSync";
 import PolygonReviewTableActions from "./components/PolygonReviewTableActions";
 import PolygonReviewToolbar from "./components/PolygonReviewToolbar";
 import ProjectContextPicker from "./components/ProjectContextPicker";
+import { useInitialPolygonReviewState } from "./hooks/useInitialPolygonReviewState";
 import { useProjectPolygonBulkActions } from "./hooks/useProjectPolygonBulkActions";
 import { useProjectPolygonIssues } from "./hooks/useProjectPolygonIssues";
 import { useProjectPolygonMetrics } from "./hooks/useProjectPolygonMetrics";
 import { useSelectedProjectPolygons } from "./hooks/useSelectedProjectPolygons";
 import { toPolygonReviewTableRow } from "./utils/polygonReviewTableRow";
+import { POLYGON_REVIEW_PATH } from "./utils/polygonReviewUrl";
 import {
   EMPTY_PROJECT_CONTEXT_FILTERS,
   filterProjects,
@@ -212,6 +214,28 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
   const projects = useMemo(() => sortProjectsByName(mapIndex?.projects ?? []), [mapIndex]);
   const filteredProjects = useMemo(() => filterProjects(projects, filters), [filters, projects]);
 
+  const { initialState, clearInitialStateQuery } = useInitialPolygonReviewState(isAdmin);
+  // Not a ref: it must change in the same render as the scope, or the effect below clears the query params at once.
+  const [hasAppliedInitialState, setHasAppliedInitialState] = useState(false);
+  useEffect(() => {
+    if (initialState == null || hasAppliedInitialState) return;
+    const initialProject = projects.find(({ uuid }) => uuid === initialState.projectUuid);
+    if (initialProject == null) return;
+
+    setHasAppliedInitialState(true);
+    setSelectedProject(initialProject);
+    setPolygonFilters(initialState.polygonFilters);
+  }, [hasAppliedInitialState, initialState, projects, setPolygonFilters, setSelectedProject]);
+
+  useEffect(() => {
+    if (initialState == null || !hasAppliedInitialState) return;
+
+    const initialSiteUuids = initialState.polygonFilters.sites.map(({ value }) => value);
+    if (selectedProjectUuid !== initialState.projectUuid || !isEqual(siteUuids, initialSiteUuids)) {
+      clearInitialStateQuery();
+    }
+  }, [clearInitialStateQuery, hasAppliedInitialState, initialState, selectedProjectUuid, siteUuids]);
+
   const openPicker = useCallback(() => setIsPickerOpen(true), []);
 
   const selectProject = useCallback(
@@ -271,7 +295,7 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
         className="sticky top-0 z-20 !px-6"
         breadcrumbs={{
           linkRouter: router,
-          links: [{ icon: <PolygonsIcon />, label: t("Polygons"), link: "/polygon-review" }]
+          links: [{ icon: <PolygonsIcon />, label: t("Polygons"), link: POLYGON_REVIEW_PATH }]
         }}
       />
       <PageHeader

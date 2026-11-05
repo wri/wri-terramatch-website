@@ -2,10 +2,12 @@ import { useT } from "@transifex/react";
 import { FC } from "react";
 import { useShowContext } from "react-admin";
 
+import { getPolygonReviewUrl } from "@/pages/polygon-review/utils/polygonReviewUrl";
+
 import PolygonReviewLauncherCard from "./PolygonReviewLauncherCard";
 
 /**
- * Temporary react-admin bridge: opens the standalone polygon review page from the RA site show tab.
+ * Temporary react-admin bridge: opens the polygon review index from the RA site show tab, scoped to this site.
  * Delete this file when react-admin site show is removed.
  */
 const PolygonReviewLauncher: FC = () => {
@@ -16,7 +18,7 @@ const PolygonReviewLauncher: FC = () => {
 
   return (
     <PolygonReviewLauncherCard
-      href={`/site/${record.uuid}/polygon-review`}
+      href={getPolygonReviewUrl({ siteUuid: record.uuid })}
       title={t("Polygon Review has moved")}
       description={t(
         "Review, validate, and edit site polygons in the new dedicated page. It opens in a new browser tab."
