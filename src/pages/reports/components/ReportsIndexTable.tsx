@@ -136,7 +136,7 @@ const ReportsIndexTable: FC<{
             )}
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("updateRequestStatus")}>
-            <EntityUpdateStatus status={report.updateRequestStatus} />
+            <EntityUpdateStatus status={report.nothingToReport ? null : report.updateRequestStatus} />
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("updatedAt")}>
             {report.status === "due" ? (

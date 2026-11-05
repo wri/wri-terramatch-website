@@ -209,7 +209,7 @@ const AdditionalReportsTable: FC<AdditionalReportsTableProps> = ({
             )}
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("updateRequestStatus")}>
-            <EntityUpdateStatus status={report.updateRequestStatus} />
+            <EntityUpdateStatus status={report.nothingToReport ? null : report.updateRequestStatus} />
           </ChakraTableCell>
 
           {report.type === "disturbance-report" && (
