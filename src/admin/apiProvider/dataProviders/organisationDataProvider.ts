@@ -100,7 +100,7 @@ export const organisationDataProvider: OrganisationDataProvider = {
     }
   },
 
-  async update<RecordType>(_: string, params: UpdateParams<RecordType>) {
+  async update<RecordType>(_: string, params: UpdateParams) {
     const uuid = params.id as string;
     const uploadKeys = ["logo", "cover", "legal_registration", "reference", "additional"];
     const attributes = lo.omit(params.data, uploadKeys) as OrganisationUpdateAttributes;

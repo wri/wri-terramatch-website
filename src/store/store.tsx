@@ -16,6 +16,20 @@ export type AppStore = {
   dataApi: DataApiStore;
 };
 
+type Store = ReturnType<typeof configureStore<AppStore>>;
+
+// Points the static ApiSlice / DataApiSlice references (used to dispatch API actions outside of
+// React) at the given store.
+const bindStore = (store: Store) => {
+  ApiSlice.redux = store;
+  DataApiSlice.redux = store;
+
+  if (typeof window !== "undefined" && (window as any).terramatch != null) {
+    // Make some things available to the browser console for easy debugging.
+    (window as any).terramatch.getState = () => store.getState();
+  }
+};
+
 export const makeStore = () => {
   const store = configureStore({
     reducer: {
@@ -43,18 +57,15 @@ export const makeStore = () => {
     }
   });
 
-  ApiSlice.redux = store;
-  DataApiSlice.redux = store;
-
-  if (typeof window !== "undefined" && (window as any).terramatch != null) {
-    // Make some things available to the browser console for easy debugging.
-    (window as any).terramatch.getState = () => store.getState();
-  }
-
+  bindStore(store);
   return store;
 };
 
 export const WrappedReduxProvider = ({ children }: PropsWithChildren) => {
   const store = useMemo(() => makeStore(), []);
+  // React 19 StrictMode calls the useMemo factory twice in development but keeps the first result,
+  // so the second makeStore() call leaves the static references bound to a store the Provider never
+  // sees. Bind them to the store the Provider actually uses.
+  bindStore(store);
   return <ReduxProvider store={store}>{children}</ReduxProvider>;
 };

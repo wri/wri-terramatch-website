@@ -70,7 +70,7 @@ const UserDataGrid = () => {
       <FunctionField
         source="emailAddressVerifiedAt"
         label="Verified"
-        render={(record?: UserDto) => (record?.emailAddressVerifiedAt != null ? "✓" : "x")}
+        render={(record: UserDto) => (record.emailAddressVerifiedAt != null ? "✓" : "x")}
         sortBy="emailAddressVerifiedAt"
       />
       <SimpleChipFieldArray source="roles" label="Roles" choices={userPrimaryRoleChoices} sortable={false} />

@@ -117,13 +117,17 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
           </Flex>
           {caption != null &&
             (isCaptionLink ? (
-              <NextLink href={captionHref} className={titleLinkClassName} onClick={handleCaptionClick}>
-                <Text as="span" textStyle="300" className="truncate underline underline-offset-2">
+              <NextLink
+                href={captionHref}
+                className={classNames(titleLinkClassName, "max-w-full")}
+                onClick={handleCaptionClick}
+              >
+                <Text as="span" textStyle="300" className="block truncate underline underline-offset-2">
                   {caption}
                 </Text>
               </NextLink>
             ) : (
-              <Text textStyle="300" className="truncate">
+              <Text textStyle="300" className="max-w-full truncate">
                 {caption}
               </Text>
             ))}

@@ -71,7 +71,7 @@ const buildUserPatchBody = (
 };
 
 export const userDataProvider: Partial<DataProvider> = {
-  async create<RecordType>(_: string, params: CreateParams<RecordType>) {
+  async create<RecordType>(_: string, params: CreateParams) {
     try {
       const user = await createUser(params.data as UserCreateBaseAttributes);
 
@@ -143,7 +143,7 @@ export const userDataProvider: Partial<DataProvider> = {
     }
   },
 
-  async update<RecordType>(_: string, params: UpdateParams<RecordType>) {
+  async update<RecordType>(_: string, params: UpdateParams) {
     const uuid = params.id as string;
 
     const body = buildUserPatchBody(

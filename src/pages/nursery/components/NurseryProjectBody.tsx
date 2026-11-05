@@ -4,6 +4,7 @@ import { FC, useMemo } from "react";
 
 import type { ProjectNurseriesMetaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { InfiniteScrollSentinel } from "@/hooks/useInfiniteScrollSentinel";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { LoadingIcon, SeedlingsIcon } from "@/redesignComponents/foundations/Icons";
 
@@ -32,23 +33,26 @@ const NurseryProjectBody: FC<NurseryProjectBodyProps> = ({
   embeddedInProject = false
 }) => {
   const t = useT();
+  const isMobile = useIsMobile();
   const { selectedRows } = useNurseryTableSelection(nurseries.rows);
   const selectedSeedlings = useMemo(() => sumNurserySeedlingsGrown(selectedRows), [selectedRows]);
 
   return (
     <Flex p={4} bg="neutral.100" gap={5} flexDirection="column" data-table-scroll-anchor>
-      <MetricCard
-        className="w-fit min-w-[16rem]"
-        goal={nurseries.goal}
-        icon={<SeedlingsIcon />}
-        progress={meta.seedlingsGrownTotal}
-        title={t("Seedlings Grown")}
-        tooltipContent={t(SEEDLINGS_GROWN_TOOLTIP)}
-        variant="progressBar"
-        color="secondary.600"
-        selection={selectedRows.length > 0 ? selectedSeedlings : undefined}
-        filtered={isFiltered ? meta.seedlingsGrownMatching : undefined}
-      />
+      {isMobile ? null : (
+        <MetricCard
+          className="w-fit min-w-[16rem]"
+          goal={nurseries.goal}
+          icon={<SeedlingsIcon />}
+          progress={meta.seedlingsGrownTotal}
+          title={t("Seedlings Grown")}
+          tooltipContent={t(SEEDLINGS_GROWN_TOOLTIP)}
+          variant="progressBar"
+          color="secondary.600"
+          selection={selectedRows.length > 0 ? selectedSeedlings : undefined}
+          filtered={isFiltered ? meta.seedlingsGrownMatching : undefined}
+        />
+      )}
       {!nurseries.loaded ? (
         <Flex minHeight="3rem" alignItems="center" gap={3}>
           <LoadingIcon boxSize={5} className="animate-spin" color="primary.700" />
