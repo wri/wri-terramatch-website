@@ -14,10 +14,10 @@ export const useFrameworkTitle = () => {
       return t("Harit Bharat Fund");
 
     case Framework.TF_NON_PROFITS:
-    case Framework.ENTERPRISES:
+    case Framework.TF_ENTERPRISES:
       return t("TerraFund");
 
-    case Framework.FF_1:
+    case Framework.FUNDO_FLORA:
       return t("Fundo Flora");
 
     case Framework.UNDEFINED:

@@ -8,5 +8,5 @@ export const SUMMARY_INVASIVE_ROLLUP_HIDE: readonly Framework[] = [
   Framework.PPC,
   Framework.HBF,
   ...ALL_TF,
-  Framework.FF_1
+  Framework.FUNDO_FLORA
 ];

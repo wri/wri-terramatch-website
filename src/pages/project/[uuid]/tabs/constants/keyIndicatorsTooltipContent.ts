@@ -5,7 +5,7 @@ export const useKeyIndicatorsTooltipContent = () => {
 
   return [
     {
-      frameworks: ["terrafund-non-profits", "enterprises", "epa-ghana-pilot"],
+      frameworks: ["terrafund-non-profits", "terrafund-enterprises", "epa-ghana-pilot"],
       treesRestored: {
         title: t("Trees Planted"),
         content: t("This is the sum of trees planted, as reported by this project across all of this project’s sites.")
@@ -38,7 +38,7 @@ export const useKeyIndicatorsTooltipContent = () => {
       }
     },
     {
-      frameworks: ["fundo-flora-1"],
+      frameworks: ["fundo-flora"],
       treesRestored: {
         title: t("Trees Planted"),
         content: t("This is the sum of trees planted, as reported by this project across all of this project’s sites.")

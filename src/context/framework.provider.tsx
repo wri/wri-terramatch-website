@@ -4,23 +4,23 @@ import { type JSX, ComponentType, createContext, ReactNode, useContext, useMemo 
 export enum Framework {
   PPC = "ppc",
   TF_NON_PROFITS = "terrafund-non-profits",
-  ENTERPRISES = "enterprises",
+  TF_ENTERPRISES = "terrafund-enterprises",
   HBF = "hbf",
   EPA_GHANA_PILOT = "epa-ghana-pilot",
-  FF_1 = "fundo-flora-1",
+  FUNDO_FLORA = "fundo-flora",
   WCB = "wcb",
   BARKA_FUND = "barka-fund",
 
   UNDEFINED = "undefined"
 }
 
-export const ALL_TF = [Framework.TF_NON_PROFITS, Framework.ENTERPRISES];
+export const ALL_TF = [Framework.TF_NON_PROFITS, Framework.TF_ENTERPRISES];
 export const isTerrafund = (framework: Framework) => ALL_TF.includes(framework as (typeof ALL_TF)[number]);
 
 /** TerraFund for AFR100 project banner logo: Non-Profits, Enterprises, EPA-Ghana only */
 export const TERRAFUND_AFR100_BANNER_LOGO_FRAMEWORKS: readonly Framework[] = [
   Framework.TF_NON_PROFITS,
-  Framework.ENTERPRISES,
+  Framework.TF_ENTERPRISES,
   Framework.EPA_GHANA_PILOT
 ];
 

@@ -134,7 +134,7 @@ export const buildProjectMetrics = (
 
   if (isTerrafund(frameworkKey)) {
     let treesRegeneratedGoal = firstPositiveGoal(project?.treesToBeRestoredGoal);
-    if (frameworkKey === Framework.TF_NON_PROFITS || frameworkKey === Framework.ENTERPRISES) {
+    if (frameworkKey === Framework.TF_NON_PROFITS || frameworkKey === Framework.TF_ENTERPRISES) {
       // These frameworks enter the ANR goal per site, so the goal is the sum across approved sites.
       treesRegeneratedGoal = totals.aNatRegenerationGoal;
     }
