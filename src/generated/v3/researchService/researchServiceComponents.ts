@@ -558,8 +558,7 @@ export type BulkDeleteSitePolygonsVariables = {
  *        geometry for all related site polygons. The request body follows JSON:API format with
  *        an array of resource identifiers (type and id).
  *
- *        Up to 50 polygons are deleted in the request. Larger selections return a
- *        delayed job instead; its payload holds the same deleted response once it completes.
+ *        Up to 50 polygons are deleted in the request. Larger selections return a delayed job.
  */
 export const bulkDeleteSitePolygons = new V3ApiEndpoint<
   | {
@@ -1275,56 +1274,6 @@ export type BulkUpdateSitePolygonAttributesError = Fetcher.ErrorWrapper<
     }
 >;
 
-export type BulkUpdateSitePolygonAttributesResponse = {
-  meta?: {
-    /**
-     * @example sitePolygons
-     */
-    resourceType?: string;
-    indices?: {
-      /**
-       * The resource type for this included index
-       */
-      resource?: string;
-      /**
-       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
-       */
-      requestPath?: string;
-      /**
-       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
-       */
-      ids?: string[];
-      /**
-       * The total number of records available.
-       *
-       * @example 42
-       */
-      total?: number;
-    }[];
-    deleted?: {
-      /**
-       * The resource type for this deleted resource
-       */
-      resource?: string;
-      /**
-       * The ID of the deleted resource
-       */
-      id?: string;
-    }[];
-  };
-  data?: {
-    /**
-     * @example sitePolygons
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.SitePolygonLightDto;
-  }[];
-};
-
 export type BulkUpdateSitePolygonAttributesVariables = {
   body: Schemas.SitePolygonBulkAttributeUpdateBodyDto;
 };
@@ -1334,9 +1283,78 @@ export type BulkUpdateSitePolygonAttributesVariables = {
  *     Supported fields: plantStart, practice, targetSys, distr, numTrees, submissionCycle.
  *     At least one attribute field must be provided. Empty string or empty array explicitly clears a field.
  *     Omitted fields inherit values from each polygon's active version.
+ *
+ *     Up to 50 polygons are updated in the request. Larger selections return a delayed job.
  */
 export const bulkUpdateSitePolygonAttributes = new V3ApiEndpoint<
-  BulkUpdateSitePolygonAttributesResponse,
+  | {
+      meta?: {
+        /**
+         * @example sitePolygons
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
+      };
+      data?: {
+        /**
+         * @example sitePolygons
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SitePolygonLightDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
   BulkUpdateSitePolygonAttributesError,
   BulkUpdateSitePolygonAttributesVariables,
   {}
@@ -1388,66 +1406,85 @@ export type UpdateSitePolygonStatusError = Fetcher.ErrorWrapper<
     }
 >;
 
-export type UpdateSitePolygonStatusResponse = {
-  meta?: {
-    /**
-     * @example sitePolygons
-     */
-    resourceType?: string;
-    indices?: {
-      /**
-       * The resource type for this included index
-       */
-      resource?: string;
-      /**
-       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
-       */
-      requestPath?: string;
-      /**
-       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
-       */
-      ids?: string[];
-      /**
-       * The total number of records available.
-       *
-       * @example 42
-       */
-      total?: number;
-    }[];
-    deleted?: {
-      /**
-       * The resource type for this deleted resource
-       */
-      resource?: string;
-      /**
-       * The ID of the deleted resource
-       */
-      id?: string;
-    }[];
-  };
-  data?: {
-    /**
-     * @example sitePolygons
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.SitePolygonLightDto;
-  }[];
-};
-
 export type UpdateSitePolygonStatusVariables = {
   body: Schemas.SitePolygonStatusBulkUpdateBodyDto;
   pathParams: UpdateSitePolygonStatusPathParams;
 };
 
 /**
- * Update the status of the list of site polygons
+ * Update the status of the list of site polygons.
+ *
+ *     Up to 50 polygons are updated in the request. Larger selections return a delayed job.
  */
 export const updateSitePolygonStatus = new V3ApiEndpoint<
-  UpdateSitePolygonStatusResponse,
+  | {
+      meta?: {
+        /**
+         * @example sitePolygons
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
+      };
+      data?: {
+        /**
+         * @example sitePolygons
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SitePolygonLightDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
   UpdateSitePolygonStatusError,
   UpdateSitePolygonStatusVariables,
   {}

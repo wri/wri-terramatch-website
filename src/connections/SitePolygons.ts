@@ -8,7 +8,6 @@ import { connectionHook, connectionLoader } from "@/connections/util/connectionS
 import { deleterAsync } from "@/connections/util/resourceDeleter";
 import type { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import {
-  type UpdateSitePolygonStatusResponse,
   bulkDeleteSitePolygons as bulkDeleteSitePolygonsEndpoint,
   bulkUpdateSitePolygonAttributes as bulkUpdateSitePolygonAttributesEndpoint,
   createSitePolygons,
@@ -138,7 +137,10 @@ const createBulkDeleteBody = (resources: SitePolygonResourceIdentifier[]): SiteP
 
 export type BulkSitePolygonAttributeChanges = SitePolygonBulkAttributeChangesDto;
 
-export type SitePolygonStatusUpdateResponse = UpdateSitePolygonStatusResponse & {
+export type SitePolygonStatusUpdateResponse = Extract<
+  Awaited<ReturnType<typeof updateSitePolygonStatus.fetchAwait>>,
+  { data?: unknown[] }
+> & {
   included?: JsonApiResource[];
 };
 
@@ -254,7 +256,7 @@ export const bulkUpdateSitePolygonStatus = async (
   };
 
   const variables = { body, pathParams: { status } };
-  return updateSitePolygonStatus.fetchAwait(variables);
+  return (await updateSitePolygonStatus.fetchAwait(variables)) as SitePolygonStatusUpdateResponse;
 };
 
 export const bulkDeleteSitePolygons = async (uuids: string[]): Promise<void> => {
