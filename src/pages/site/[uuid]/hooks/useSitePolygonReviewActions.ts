@@ -11,7 +11,8 @@ import { mapSitePolygonToTableRow } from "../components/polygonTableRow.utils";
 type TranslateFn = (key: string, params?: Record<string, unknown>) => string;
 
 type UseSitePolygonReviewActionsParams = {
-  siteUuid: string;
+  entityName: "sites" | "projects";
+  entityUuid: string;
   editPolygonUuid: string;
   selectedRows: PolygonTableRow[];
   findTableSitePolygon: (polygonId: string) => SitePolygonLightDto | undefined;
@@ -26,7 +27,8 @@ type UseSitePolygonReviewActionsParams = {
 };
 
 export const useSitePolygonReviewActions = ({
-  siteUuid,
+  entityName,
+  entityUuid,
   editPolygonUuid,
   selectedRows,
   findTableSitePolygon,
@@ -147,7 +149,7 @@ export const useSitePolygonReviewActions = ({
       return;
     }
 
-    void loadSitePolygonByUuid({ entityUuid: siteUuid, polygonId: confirmationId })
+    void loadSitePolygonByUuid({ entityName, entityUuid, polygonId: confirmationId })
       .then(loadedPolygon => {
         if (loadedPolygon != null && isSitePolygonApprovable(loadedPolygon)) {
           setApprovePayload({ polygons: [mapSitePolygonToTableRow(loadedPolygon, t)] });
@@ -157,7 +159,7 @@ export const useSitePolygonReviewActions = ({
       .catch(error => {
         Log.error("Failed to load polygon for approval:", error);
       });
-  }, [findTableSitePolygon, polygonApproveConfirmation, setPolygonApproveConfirmation, siteUuid, t]);
+  }, [findTableSitePolygon, polygonApproveConfirmation, setPolygonApproveConfirmation, entityName, entityUuid, t]);
 
   useEffect(() => {
     if (polygonRequestInformationConfirmation == null) return;
@@ -171,7 +173,7 @@ export const useSitePolygonReviewActions = ({
       return;
     }
 
-    void loadSitePolygonByUuid({ entityUuid: siteUuid, polygonId: confirmationId })
+    void loadSitePolygonByUuid({ entityName, entityUuid, polygonId: confirmationId })
       .then(loadedPolygon => {
         if (loadedPolygon != null) {
           setRequestInformationPayload({ polygons: [mapSitePolygonToTableRow(loadedPolygon, t)] });
@@ -185,7 +187,8 @@ export const useSitePolygonReviewActions = ({
     findTableSitePolygon,
     polygonRequestInformationConfirmation,
     setPolygonRequestInformationConfirmation,
-    siteUuid,
+    entityName,
+    entityUuid,
     t
   ]);
 

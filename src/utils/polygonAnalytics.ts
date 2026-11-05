@@ -99,13 +99,15 @@ export const isFirstPassValidation = (priorValidationStatus: string | null | und
 
 export const trackPolygonRunValidationClicked = ({
   siteUuid,
+  entityType = "site",
   polygonIds
 }: {
   siteUuid: string;
+  entityType?: string;
   polygonIds: string[];
 }): void => {
   trackPolygonEvent("polygon_run_validation_clicked", {
-    ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+    ...getPolygonAnalyticsContext({ entityType, entityId: siteUuid }),
     polygon_id: formatPolygonTargetId(polygonIds)
   });
 };
@@ -141,15 +143,17 @@ export const trackPolygonFilterCleared = ({ siteUuid }: { siteUuid: string }): v
 
 export const trackBulkActionCompleted = ({
   siteUuid,
+  entityType = "site",
   actionType,
   polygonCount
 }: {
   siteUuid: string;
+  entityType?: string;
   actionType: BulkActionType;
   polygonCount: number;
 }): void => {
   trackPolygonEvent("bulk_action_completed", {
-    ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+    ...getPolygonAnalyticsContext({ entityType, entityId: siteUuid }),
     action_type: actionType,
     polygon_count: polygonCount
   });
@@ -157,17 +161,19 @@ export const trackBulkActionCompleted = ({
 
 export const trackPolygonDownloaded = ({
   siteUuid,
+  entityType = "site",
   polygonType,
   polygonId,
   polygonCount
 }: {
   siteUuid: string;
+  entityType?: string;
   polygonType: PolygonType;
   polygonId?: string;
   polygonCount?: number;
 }): void => {
   trackPolygonEvent("polygon_downloaded", {
-    ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+    ...getPolygonAnalyticsContext({ entityType, entityId: siteUuid }),
     polygon_type: polygonType,
     ...(polygonId != null && polygonId !== "" ? { polygon_id: polygonId } : {}),
     ...(polygonCount != null ? { polygon_count: polygonCount } : {})
@@ -244,11 +250,13 @@ export const trackPolygonUploadError = ({
 
 export const trackPolygonValidationResults = ({
   siteUuid,
+  entityType = "site",
   polygonId,
   validation,
   priorValidationStatus
 }: {
   siteUuid: string;
+  entityType?: string;
   polygonId: string;
   validation: ValidationDto;
   priorValidationStatus?: string | null;
@@ -257,7 +265,7 @@ export const trackPolygonValidationResults = ({
   const validationResult = passed ? "pass" : "fail";
 
   trackPolygonEvent("polygon_validation_run", {
-    ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+    ...getPolygonAnalyticsContext({ entityType, entityId: siteUuid }),
     polygon_id: polygonId,
     validation_result: validationResult
   });
@@ -266,7 +274,7 @@ export const trackPolygonValidationResults = ({
     const errorTypes = resolveValidationErrorTypes(validation);
     for (const errorType of errorTypes) {
       trackPolygonEvent("polygon_validation_error", {
-        ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+        ...getPolygonAnalyticsContext({ entityType, entityId: siteUuid }),
         polygon_id: polygonId,
         error_type: errorType
       });
@@ -276,7 +284,7 @@ export const trackPolygonValidationResults = ({
 
   if (isFirstPassValidation(priorValidationStatus)) {
     trackPolygonEvent("first_pass_validation_passed", {
-      ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+      ...getPolygonAnalyticsContext({ entityType, entityId: siteUuid }),
       polygon_id: polygonId
     });
   }
@@ -284,17 +292,19 @@ export const trackPolygonValidationResults = ({
 
 export const trackPolygonStatusChanged = ({
   siteUuid,
+  entityType = "site",
   polygonId,
   fromStatus,
   toStatus
 }: {
   siteUuid: string;
+  entityType?: string;
   polygonId: string;
   fromStatus: string;
   toStatus: string;
 }): void => {
   trackPolygonEvent("polygon_status_changed", {
-    ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+    ...getPolygonAnalyticsContext({ entityType, entityId: siteUuid }),
     polygon_id: polygonId,
     from_status: fromStatus,
     to_status: toStatus
@@ -302,7 +312,7 @@ export const trackPolygonStatusChanged = ({
 
   if (toStatus === "information-required") {
     trackPolygonEvent("polygon_information_required", {
-      ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+      ...getPolygonAnalyticsContext({ entityType, entityId: siteUuid }),
       polygon_id: polygonId
     });
   }

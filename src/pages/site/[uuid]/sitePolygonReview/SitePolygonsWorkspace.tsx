@@ -445,8 +445,9 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     cancelPendingValidationResultsModal,
     validatedPolygons
   } = useSitePolygonBulkActions({
-    siteUuid: site.uuid,
-    siteName: site.name,
+    entityName: "sites",
+    entityUuid: site.uuid,
+    downloadName: site.name,
     polygonsData: selectionPolygonsData,
     selectedRows,
     selectedSitePolygons,
@@ -467,7 +468,8 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   });
 
   useSitePolygonValidationPoll({
-    siteUuid: site.uuid,
+    entityName: "sites",
+    entityUuid: site.uuid,
     pendingValidationPolygonUuids,
     setPendingValidationPolygonUuids,
     setSupplementalValidations,
@@ -602,7 +604,8 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     handleDrawerRequestApproveModal,
     handleDrawerRequestInformationModal
   } = useSitePolygonReviewActions({
-    siteUuid: site.uuid,
+    entityName: "sites",
+    entityUuid: site.uuid,
     editPolygonUuid: editPolygon.uuid,
     selectedRows,
     findTableSitePolygon,
