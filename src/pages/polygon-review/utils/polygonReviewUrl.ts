@@ -5,7 +5,6 @@ import { appendQueryParams } from "@/utils/appendQueryParams";
 
 export const POLYGON_REVIEW_PATH = "/polygon-review";
 
-/** Query params the Polygon Review index reads to set its initial state. */
 export type PolygonReviewQuery = {
   siteUuid?: string;
 };

@@ -56,8 +56,7 @@ const clearTableHover = () => setPolygonTableHoveredUuid(null);
 
 /**
  * Polygon Review index. No polygon data loads until a project is picked in the Level 1 project context filter;
- * clearing that filter returns the page to its initial (unscoped) state. Query params (see `polygonReviewUrl`) can
- * pre-select the project context and filters on load.
+ * clearing that filter returns the page to its initial (unscoped) state.
  */
 type PolygonReviewIndexContentProps = {
   selectedProject: ProjectMapEntryDto | null;
@@ -152,12 +151,10 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
   const filteredProjects = useMemo(() => filterProjects(projects, filters), [filters, projects]);
 
   const { initialState, clearInitialStateQuery } = useInitialPolygonReviewState(isAdmin);
-  // State rather than a ref: it has to flip in the same render as the scope it applies, or the effect below would
-  // compare against the previous (empty) scope and drop the query params straight away.
+  // Not a ref: it must change in the same render as the scope, or the effect below clears the query params at once.
   const [hasAppliedInitialState, setHasAppliedInitialState] = useState(false);
   useEffect(() => {
     if (initialState == null || hasAppliedInitialState) return;
-    // Wait for the map index so the picker, map and table all agree on the project.
     const initialProject = projects.find(({ uuid }) => uuid === initialState.projectUuid);
     if (initialProject == null) return;
 
@@ -166,7 +163,6 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
     setPolygonFilters(initialState.polygonFilters);
   }, [hasAppliedInitialState, initialState, projects, setPolygonFilters, setSelectedProject]);
 
-  // The query params only describe the scope the page was opened with; drop them once the project or sites change.
   useEffect(() => {
     if (initialState == null || !hasAppliedInitialState) return;
 

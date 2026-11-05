@@ -15,11 +15,6 @@ export type InitialPolygonReviewState = {
   polygonFilters: PolygonFilterState;
 };
 
-/**
- * Resolves the Polygon Review query params into the project context and filters the page starts with
- * (`initialState`, null when the URL asks for nothing). A `siteUuid` scopes the page to that site's project with the
- * site filter applied. `clearInitialStateQuery` removes those params once the page no longer shows that scope.
- */
 export const useInitialPolygonReviewState = (enabled: boolean) => {
   const router = useRouter();
   const { siteUuid } = useMemo(
