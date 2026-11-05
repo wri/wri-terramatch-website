@@ -1,3 +1,4 @@
+import { isEmpty } from "lodash";
 import { useMemo } from "react";
 
 import { SitePolygonMapIndexFilter, useSitePolygonSummary } from "@/connections/SitePolygons";
@@ -7,7 +8,6 @@ type UseProjectPolygonMetricsParams = {
   projectUuid: string | null;
   siteUuids: string[];
   polygonFilter: SitePolygonMapIndexFilter;
-  hasLevel2Filters: boolean;
   selectedPolygonUuids: string[];
 };
 
@@ -30,18 +30,25 @@ export const useProjectPolygonMetrics = ({
   projectUuid,
   siteUuids,
   polygonFilter,
-  hasLevel2Filters,
   selectedPolygonUuids
 }: UseProjectPolygonMetricsParams) => {
   const isProjectSelected = projectUuid != null;
   const scope = { entityName: "projects" as const, entityUuid: projectUuid ?? undefined };
 
+  const hasSiteFilter = siteUuids.length > 0;
+  const hasPolygonFilter = !isEmpty(polygonFilter);
+
   const [, { data: projectSummary }] = useSitePolygonSummary({ ...scope, enabled: isProjectSelected });
+  const [, { data: sitesSummary }] = useSitePolygonSummary({
+    ...scope,
+    siteUuids,
+    enabled: isProjectSelected && hasSiteFilter
+  });
   const [, { data: filteredSummary }] = useSitePolygonSummary({
     ...scope,
     siteUuids,
     filter: polygonFilter,
-    enabled: isProjectSelected && hasLevel2Filters
+    enabled: isProjectSelected && hasPolygonFilter
   });
   const selectionFilter = useMemo(() => ({ "polygonUuid[]": selectedPolygonUuids }), [selectedPolygonUuids]);
   const [, { data: selectedSummary }] = useSitePolygonSummary({
@@ -52,7 +59,9 @@ export const useProjectPolygonMetrics = ({
 
   return {
     project: toTotals(projectSummary),
-    filtered: hasLevel2Filters ? toTotals(filteredSummary) : undefined,
+    sites: hasSiteFilter ? toTotals(sitesSummary) : undefined,
+    // With only a site filter active, the filtered totals are the selected sites' totals.
+    filtered: hasPolygonFilter ? toTotals(filteredSummary) : hasSiteFilter ? toTotals(sitesSummary) : undefined,
     selected: selectedPolygonUuids.length > 0 ? toTotals(selectedSummary) : undefined
   };
 };
