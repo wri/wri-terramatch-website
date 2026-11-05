@@ -20,6 +20,7 @@ import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTab
 import { PolygonsIcon } from "@/redesignComponents/foundations/Icons";
 import Layout from "@/redesignComponents/Layout/Layout";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
+import ResponsiveTypography from "@/styles/ResponsiveTypography";
 
 import { buildPolygonTableColumns } from "../site/[uuid]/components/polygonTableColumns";
 import type { PolygonTableRow } from "../site/[uuid]/components/PolygonTableRow";
@@ -198,6 +199,7 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
 
   return (
     <Layout>
+      <ResponsiveTypography />
       <ToolbarObject
         className="sticky top-0 z-20 !px-6"
         breadcrumbs={{
