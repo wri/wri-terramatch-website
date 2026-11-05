@@ -4,7 +4,6 @@ import { isEmpty } from "lodash";
 import { useRouter } from "next/router";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { buildSitePolygonEditUrl } from "@/components/elements/Map-mapbox/sitePolygonNavigation";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { useFullSite } from "@/connections/Entity";
 import { useProjectMapIndex } from "@/connections/ProjectMapIndex";
@@ -14,10 +13,7 @@ import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import FrameworkProvider from "@/context/framework.provider";
 import { MapAreaProvider, useMapAreaContext } from "@/context/mapArea.provider";
 import { PolygonEditDrawerProvider } from "@/context/polygonEditDrawer.provider";
-import {
-  openPolygonEditDrawerForPolygonId,
-  openPolygonEditDrawerForSitePolygon
-} from "@/context/polygonEditDrawer.utils";
+import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
 import { setPolygonTableHoveredUuid, useSyncPolygonTableSelectionStore } from "@/context/polygonTableInteraction.store";
 import type { ProjectMapEntryDto, SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
@@ -26,7 +22,6 @@ import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTab
 import { PolygonsIcon } from "@/redesignComponents/foundations/Icons";
 import Layout from "@/redesignComponents/Layout/Layout";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
-import Log from "@/utils/log";
 
 import ExistingPolygon from "../site/[uuid]/components/Modals/ExistingPolygon";
 import UploadError from "../site/[uuid]/components/Modals/UploadError";
@@ -36,6 +31,7 @@ import type { PolygonTableRow } from "../site/[uuid]/components/PolygonTableRow"
 import SitePolygonIssuesPanel from "../site/[uuid]/components/SitePolygonIssuesPanel";
 import SitePolygonTableSection from "../site/[uuid]/components/SitePolygonTableSection";
 import { useExistingPolygonModal } from "../site/[uuid]/hooks/useExistingPolygonModal";
+import { useOpenSitePolygonInDrawer } from "../site/[uuid]/hooks/useOpenSitePolygonInDrawer";
 import { usePolygonTablePaging } from "../site/[uuid]/hooks/usePolygonTablePaging";
 import { usePolygonUploadErrorModal } from "../site/[uuid]/hooks/usePolygonUploadErrorModal";
 import { useSitePolygonFilters } from "../site/[uuid]/hooks/useSitePolygonFilters";
@@ -143,7 +139,6 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
     projectUuid: selectedProjectUuid,
     siteUuids,
     polygonFilter: sitePolygonFilter,
-    hasLevel2Filters,
     selectedPolygonUuids
   });
   const { overlapPolygonUuids, disturbancePolygonUuids } = useProjectPolygonIssues({
@@ -173,21 +168,6 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
       pagePolygons.find(polygon => polygon.polygonUuid === polygonId || polygon.uuid === polygonId),
     [pagePolygons]
   );
-  const openPolygonInDrawer = useCallback(
-    (polygonId: string) => {
-      if (singleSiteUuid == null) return;
-      void openPolygonEditDrawerForPolygonId({
-        polygonId,
-        entityName: "sites",
-        entityUuid: singleSiteUuid,
-        findCachedSitePolygon: findTablePolygon
-      }).catch(error => {
-        Log.error("Failed to open polygon in edit drawer:", error);
-      });
-    },
-    [findTablePolygon, singleSiteUuid]
-  );
-
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const openUploadModal = useCallback(() => setIsUploadModalOpen(true), []);
   const {
@@ -209,35 +189,23 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
     },
     [onDuplicateDetected]
   );
+  const { setUploadedPolygonUuidToOpen, handleViewExistingPolygon } = useOpenSitePolygonInDrawer({
+    siteUuid: singleSiteUuid ?? "",
+    isAdminReview: true,
+    isTablePolygonsLoading: !polygonsLoaded,
+    findTableSitePolygon: findTablePolygon,
+    existingPolygonDuplicate
+  });
   // Same behaviour as the site page: a single uploaded polygon opens in the edit drawer.
   const handleUploadSuccess = useCallback(
     ({ createdSitePolygonUuid, uploadedFileCount }: UploadPolygonsSuccessResult) => {
       pruneSitePolygonsCache();
       if (createdSitePolygonUuid != null && uploadedFileCount === 1) {
-        openPolygonInDrawer(createdSitePolygonUuid);
+        setUploadedPolygonUuidToOpen(createdSitePolygonUuid);
       }
     },
-    [openPolygonInDrawer]
+    [setUploadedPolygonUuidToOpen]
   );
-  // Same behaviour as the site page: a duplicate in the scoped site opens in the drawer, others in a new tab.
-  const viewExistingPolygon = useCallback(() => {
-    if (existingPolygonDuplicate == null) return;
-    const { siteUuid, sitePolygonUuid, polygonUuid } = existingPolygonDuplicate;
-    if (siteUuid === "" || siteUuid === singleSiteUuid) {
-      const existingInTable = findTablePolygon(sitePolygonUuid) ?? findTablePolygon(polygonUuid);
-      if (existingInTable != null) {
-        openPolygonEditDrawerForSitePolygon(existingInTable, existingInTable.name ?? undefined);
-        return;
-      }
-      openPolygonInDrawer(sitePolygonUuid);
-      return;
-    }
-    window.open(
-      buildSitePolygonEditUrl(siteUuid, sitePolygonUuid, { adminReview: true }),
-      "_blank",
-      "noopener,noreferrer"
-    );
-  }, [existingPolygonDuplicate, findTablePolygon, openPolygonInDrawer, singleSiteUuid]);
 
   const projects = useMemo(() => sortProjectsByName(mapIndex?.projects ?? []), [mapIndex]);
   const filteredProjects = useMemo(() => filterProjects(projects, filters), [filters, projects]);
@@ -319,7 +287,7 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
           />
         }
       />
-      <PolygonReviewSiteSync site={scopedSite} />
+      <PolygonReviewSiteSync siteUuid={singleSiteUuid} site={scopedSite} />
       <PageContent className="bg-theme-neutral-200">
         <Flex direction="column" gap={4}>
           <PolygonReviewToolbar
@@ -371,8 +339,10 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
               <PolygonReviewTableActions
                 projectUuid={selectedProject?.uuid}
                 projectPolygonCount={metrics.project?.polygonCount}
+                sitePolygonCount={metrics.sites?.polygonCount}
                 sites={polygonFilters.sites}
                 isSingleSiteSelected={scopedSite != null}
+                isDeletedAuditView={polygonFilters.showDeleted}
                 onDrawPolygon={startNewPolygonFlow}
                 onUpload={openUploadModal}
               />
@@ -425,7 +395,7 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
         <UploadPolygons
           open={isUploadModalOpen}
           siteUuid={singleSiteUuid}
-          siteHasExistingPolygons={(indexTotal ?? 0) > 0}
+          siteHasExistingPolygons={(metrics.sites?.polygonCount ?? 0) > 0}
           onOpenChange={setIsUploadModalOpen}
           onUploadSuccess={handleUploadSuccess}
           onDuplicateDetected={handleDuplicateDetected}
@@ -436,7 +406,7 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
         open={isExistingPolygonModalOpen}
         siteName={existingPolygonDuplicate?.siteName ?? ""}
         onOpenChange={onExistingPolygonModalOpenChange}
-        onView={viewExistingPolygon}
+        onView={handleViewExistingPolygon}
       />
       <UploadError
         open={isUploadErrorModalOpen}

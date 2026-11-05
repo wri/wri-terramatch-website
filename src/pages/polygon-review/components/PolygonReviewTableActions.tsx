@@ -2,7 +2,6 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, PropsWithChildren, useCallback, useMemo } from "react";
 
-import { useSitePolygonSummary } from "@/connections/SitePolygons";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
@@ -51,8 +50,10 @@ export type PolygonReviewSiteOption = {
 type PolygonReviewTableActionsProps = {
   projectUuid?: string;
   projectPolygonCount?: number;
+  sitePolygonCount?: number;
   sites: PolygonReviewSiteOption[];
   isSingleSiteSelected: boolean;
+  isDeletedAuditView: boolean;
   onDrawPolygon: () => void;
   onUpload: () => void;
 };
@@ -61,8 +62,10 @@ type PolygonReviewTableActionsProps = {
 const PolygonReviewTableActions: FC<PolygonReviewTableActionsProps> = ({
   projectUuid,
   projectPolygonCount,
+  sitePolygonCount,
   sites,
   isSingleSiteSelected,
+  isDeletedAuditView,
   onDrawPolygon,
   onUpload
 }) => {
@@ -70,26 +73,21 @@ const PolygonReviewTableActions: FC<PolygonReviewTableActionsProps> = ({
   const isProjectSelected = projectUuid != null;
   const projectLockedMessage = isProjectSelected ? undefined : t("Select a project to download or add polygons");
   const downloadLockedMessage = isProjectSelected ? undefined : t("Select a project or site to download polygons.");
-  const addLockedMessage =
-    projectLockedMessage ?? (isSingleSiteSelected ? undefined : t("Select a single site to draw or upload polygons."));
+  const addLockedMessage = isSingleSiteSelected ? undefined : t("Select a single site to draw or upload polygons.");
   const isAddDisabled = addLockedMessage != null;
 
   const siteUuids = useMemo(() => sites.map(({ value }) => value), [sites]);
   const hasSiteFilter = isProjectSelected && siteUuids.length > 0;
-  const [, { data: siteSummary }] = useSitePolygonSummary({
-    entityName: "projects",
-    entityUuid: projectUuid,
-    siteUuids,
-    enabled: hasSiteFilter
-  });
 
-  const { startExport, isExporting } = usePolygonGeoJsonExport();
+  const { startExport, isExporting } = usePolygonGeoJsonExport(projectUuid);
   const exportProject = useCallback(() => {
-    if (projectUuid != null) void startExport({ projectUuids: [projectUuid] });
-  }, [projectUuid, startExport]);
-  const exportSites = useCallback(() => void startExport({ siteUuids }), [siteUuids, startExport]);
+    if (projectUuid != null) void startExport({ projectUuids: [projectUuid] }, projectPolygonCount);
+  }, [projectPolygonCount, projectUuid, startExport]);
+  const exportSites = useCallback(
+    () => void startExport({ siteUuids }, sitePolygonCount),
+    [sitePolygonCount, siteUuids, startExport]
+  );
 
-  const siteTotalPolygons = siteSummary?.totalPolygons;
   const downloadActions = useMemo(() => {
     const polygonCountCaption = (count: number | undefined) =>
       count === 1 ? t("1 polygon") : t("{count} polygons", { count: count?.toLocaleString() ?? "-" });
@@ -105,21 +103,22 @@ const PolygonReviewTableActions: FC<PolygonReviewTableActionsProps> = ({
     };
     if (!hasSiteFilter) return [projectAction];
 
-    const siteScopeLabel = sites.length === 1 ? sites[0].label : t("{count} sites", { count: sites.length });
+    const formattedSiteCount = sitePolygonCount?.toLocaleString() ?? "-";
+    const siteCaption =
+      sites.length === 1
+        ? sitePolygonCount === 1
+          ? t("{site} · 1 polygon", { site: sites[0].label })
+          : t("{site} · {count} polygons", { site: sites[0].label, count: formattedSiteCount })
+        : t("{siteCount} sites · {count} polygons", { siteCount: sites.length, count: formattedSiteCount });
     return [
       projectAction,
       {
-        label: (
-          <DownloadOptionLabel
-            title={t("Site polygons (GeoJSON)")}
-            caption={`${siteScopeLabel} · ${polygonCountCaption(siteTotalPolygons)}`}
-          />
-        ),
+        label: <DownloadOptionLabel title={t("Site polygons (GeoJSON)")} caption={siteCaption} />,
         onClick: exportSites,
         value: "site-polygons"
       }
     ];
-  }, [exportProject, exportSites, hasSiteFilter, projectPolygonCount, siteTotalPolygons, sites, t]);
+  }, [exportProject, exportSites, hasSiteFilter, projectPolygonCount, sitePolygonCount, sites, t]);
   const isDownloadDisabled = downloadLockedMessage != null || isExporting;
 
   return (
@@ -141,21 +140,23 @@ const PolygonReviewTableActions: FC<PolygonReviewTableActionsProps> = ({
           {t("Upload Monitoring Plots")}
         </Button>
       </LockedActionTooltip>
-      <LockedActionTooltip message={addLockedMessage}>
-        <MultiActionButton
-          className={isAddDisabled ? "pointer-events-none" : undefined}
-          variant="primary"
-          size="small"
-          mainActionLabel={t("Add")}
-          mainActionLeftIcon={<PlusIcon />}
-          mainActionOnClick={onDrawPolygon}
-          otherActions={[
-            { label: t("Draw Polygon"), onClick: onDrawPolygon, value: "draw-polygon" },
-            { label: t("Upload"), onClick: onUpload, value: "upload" }
-          ]}
-          disabled={isAddDisabled}
-        />
-      </LockedActionTooltip>
+      {!isDeletedAuditView && (
+        <LockedActionTooltip message={addLockedMessage}>
+          <MultiActionButton
+            className={isAddDisabled ? "pointer-events-none" : undefined}
+            variant="primary"
+            size="small"
+            mainActionLabel={t("Add")}
+            mainActionLeftIcon={<PlusIcon />}
+            mainActionOnClick={onDrawPolygon}
+            otherActions={[
+              { label: t("Draw Polygon"), onClick: onDrawPolygon, value: "draw-polygon" },
+              { label: t("Upload"), onClick: onUpload, value: "upload" }
+            ]}
+            disabled={isAddDisabled}
+          />
+        </LockedActionTooltip>
+      )}
     </Flex>
   );
 };

@@ -5,19 +5,20 @@ import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 type PolygonReviewSiteSyncProps = {
+  siteUuid?: string;
   site?: SiteFullDto;
 };
 
-const PolygonReviewSiteSync: FC<PolygonReviewSiteSyncProps> = ({ site }) => {
+const PolygonReviewSiteSync: FC<PolygonReviewSiteSyncProps> = ({ siteUuid, site }) => {
   const { setSiteData } = useMapAreaContext();
   const { closePolygonEdit } = usePolygonEditDrawer();
-  const siteUuid = site?.uuid;
   const previousSiteUuidRef = useRef(siteUuid);
 
   useEffect(() => {
     setSiteData(site);
   }, [setSiteData, site]);
 
+  // Keyed on the filter rather than the loaded site, so the site finishing loading doesn't close an open drawer.
   useEffect(() => {
     if (previousSiteUuidRef.current === siteUuid) return;
     previousSiteUuidRef.current = siteUuid;
