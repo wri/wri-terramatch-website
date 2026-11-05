@@ -54,10 +54,6 @@ export const useMediaMapIndex = connectionHook(mediaMapIndexConnection);
 
 export const loadMediaMapIndex = connectionLoader(mediaMapIndexConnection);
 
-export const pruneMediaMapIndexCache = (scopes: MediaMapIndexProps[]) => {
-  ApiSlice.pruneCache("mediaMapIndexes", scopes.map(mediaMapIndexId));
-};
-
 export const deleteMedia = deleterAsync("media", mediaDelete, uuid => ({ pathParams: { uuid: uuid } }));
 
 export const prepareFileForUpload = async (

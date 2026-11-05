@@ -73,7 +73,7 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
     enabled: projectUuid != null
   });
   const projectPolygons = polygonMapIndex?.polygons;
-  const mediaFiles = useProjectMapMedia({ projectUuid: projectUuid ?? null, siteUuids });
+  const mediaFiles = useProjectMapMedia({ projectUuid, siteUuids });
 
   // Once the polygon layers are added, an empty list is needed to hide them when the project is cleared.
   const [hasPolygonLayers, setHasPolygonLayers] = useState(false);
