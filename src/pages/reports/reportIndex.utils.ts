@@ -202,8 +202,11 @@ type ReportWithUpdateStatus = {
 };
 
 // The update request status only takes over while the report itself is approved ("Editing: ..." rows).
+// A draft update is still being edited, so the report keeps counting as approved.
 const getEffectiveStatus = ({ status, updateRequestStatus }: ReportWithUpdateStatus): TagSubmissionState =>
-  status === "approved" && updateRequestStatus != null ? updateRequestStatus : status;
+  status === "approved" && updateRequestStatus != null && updateRequestStatus !== "draft"
+    ? updateRequestStatus
+    : status;
 
 export const getReportsRequiringAttention = (reports: ReportWithUpdateStatus[]) =>
   reports.filter(report => REPORTS_INDEX_ATTENTION_STATUSES.has(getEffectiveStatus(report))).length;
