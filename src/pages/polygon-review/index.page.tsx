@@ -369,7 +369,9 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
             )}
             <Flex direction="column" gap={3}>
               <PolygonReviewTableActions
-                isProjectSelected={selectedProject != null}
+                projectUuid={selectedProject?.uuid}
+                projectPolygonCount={metrics.project?.polygonCount}
+                sites={polygonFilters.sites}
                 isSingleSiteSelected={scopedSite != null}
                 onDrawPolygon={startNewPolygonFlow}
                 onUpload={openUploadModal}

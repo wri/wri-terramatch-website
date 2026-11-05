@@ -276,7 +276,7 @@ export type SitePolygonsIndexQueryParams = {
    */
   hasDisturbance?: boolean;
   /**
-   * Soft-deleted polygons for one site. Search is supported; other filters are ignored.
+   * Soft-deleted polygons for the siteId[] and / or projectId[] scope. Search is supported; other filters are ignored.
    *
    * @default false
    */
@@ -547,16 +547,6 @@ export type BulkDeleteSitePolygonsError = Fetcher.ErrorWrapper<
     }
 >;
 
-export type BulkDeleteSitePolygonsResponse = {
-  meta?: {
-    resourceType?: "sitePolygons" | "sitePolygons";
-    /**
-     * @format uuid
-     */
-    resourceId?: string;
-  };
-};
-
 export type BulkDeleteSitePolygonsVariables = {
   body: Schemas.SitePolygonBulkDeleteBodyDto;
 };
@@ -567,9 +557,39 @@ export type BulkDeleteSitePolygonsVariables = {
  *        ALL related site polygons by primaryUuid (version management) and deletes polygon
  *        geometry for all related site polygons. The request body follows JSON:API format with
  *        an array of resource identifiers (type and id).
+ *
+ *        Up to 50 polygons are deleted in the request. Larger selections return a
+ *        delayed job instead; its payload holds the same deleted response once it completes.
  */
 export const bulkDeleteSitePolygons = new V3ApiEndpoint<
-  BulkDeleteSitePolygonsResponse,
+  | {
+      meta?: {
+        resourceType?: "sitePolygons" | "sitePolygons";
+        /**
+         * @format uuid
+         */
+        resourceId?: string;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
   BulkDeleteSitePolygonsError,
   BulkDeleteSitePolygonsVariables,
   {}
@@ -686,6 +706,83 @@ export const getSitePolygonsGeoJson = new V3ApiEndpoint<
   GetSitePolygonsGeoJsonVariables,
   {}
 >("/research/v3/sitePolygons/geojson", "GET");
+
+export type CreateSitePolygonsGeoJsonExportError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type CreateSitePolygonsGeoJsonExportResponse = {
+  meta?: {
+    /**
+     * @example delayedJobs
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example delayedJobs
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.DelayedJobDto;
+  };
+};
+
+export type CreateSitePolygonsGeoJsonExportVariables = {
+  body: Schemas.GeoJsonExportBodyDto;
+};
+
+/**
+ * Provide exactly one of projectUuids, siteUuids or polygonUuids. The file is written to S3
+ *     in the background; the completed delayed job payload holds a fileDownloads resource with a signed URL.
+ */
+export const createSitePolygonsGeoJsonExport = new V3ApiEndpoint<
+  CreateSitePolygonsGeoJsonExportResponse,
+  CreateSitePolygonsGeoJsonExportError,
+  CreateSitePolygonsGeoJsonExportVariables,
+  {}
+>("/research/v3/sitePolygons/exports", "POST");
 
 export type SitePolygonsMapIndexQueryParams = {
   /**
@@ -828,7 +925,7 @@ export type SitePolygonsMapIndexQueryParams = {
    */
   hasDisturbance?: boolean;
   /**
-   * Soft-deleted polygons for one site. Requires exactly one siteId[] value.
+   * Soft-deleted polygons for the siteId[] and / or projectId[] scope. Requires siteId[] or projectId[].
    *
    * @default false
    */
@@ -1051,7 +1148,7 @@ export type SitePolygonsSummaryQueryParams = {
    */
   hasDisturbance?: boolean;
   /**
-   * Soft-deleted polygons for one site. Requires exactly one siteId[] value.
+   * Soft-deleted polygons for the siteId[] and / or projectId[] scope. Requires siteId[] or projectId[].
    *
    * @default false
    */
@@ -4509,6 +4606,7 @@ export const operationsByTag = {
     bulkUpdateSitePolygons,
     bulkDeleteSitePolygons,
     getSitePolygonsGeoJson,
+    createSitePolygonsGeoJsonExport,
     sitePolygonsMapIndex,
     sitePolygonsSummary,
     bulkUpdateSitePolygonAttributes,
