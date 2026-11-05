@@ -9,14 +9,6 @@ export const getProjectCohortOptions = (t: typeof useT | Function = (t: string) 
       title: t("Priceless Planet Coalition")
     },
     {
-      value: "terrafund",
-      title: t("TerraFund Top 100")
-    },
-    {
-      value: "terrafund-landscapes",
-      title: t("TerraFund Landscapes")
-    },
-    {
       value: "terrafund-cohort-1",
       title: t("TerraFund Cohort One")
     },
@@ -25,7 +17,7 @@ export const getProjectCohortOptions = (t: typeof useT | Function = (t: string) 
       title: t("TerraFund Cohort Two")
     },
     {
-      value: "terrafund-3",
+      value: "terrafund-cohort-3",
       title: t("TerraFund Cohort Three")
     },
     {

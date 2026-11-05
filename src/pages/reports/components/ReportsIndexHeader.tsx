@@ -254,9 +254,9 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
       )}
       {!entityProfile && (
         <Toolbar
-          className="sticky top-11 z-10 items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-2 pt-5"
-          classNameContentLeft="min-w-0"
-          classNameContentRight="mt-[-1.25rem]"
+          className="sticky top-11 z-10 items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-2 pt-5 mobile:flex-col-reverse mobile:items-stretch mobile:gap-3"
+          classNameContentLeft="min-w-0 mobile:flex-shrink"
+          classNameContentRight="mt-[-1.25rem] mobile:mt-0 mobile:w-full mobile:flex-shrink"
           contentLeft={
             <TabBar
               key={activeTab}
@@ -301,7 +301,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
               }
         }
         showSearchInput={showSearchInput}
-        classNameContentSearch="w-[19rem]"
+        classNameContentSearch="w-[19rem] mobile:w-auto mobile:min-w-0 mobile:flex-1"
         selectedFilters={activeFilterLabels}
         showClearFilters={activeFilterLabels.length > 0}
         onClickFilterButton={() => setIsFilterDrawerOpen(true)}

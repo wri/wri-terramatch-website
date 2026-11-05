@@ -1,5 +1,4 @@
-import { renderHook } from "@testing-library/react";
-import { act } from "react-dom/test-utils";
+import { act, renderHook } from "@testing-library/react";
 
 import { wait } from "@/utils/test-utils";
 

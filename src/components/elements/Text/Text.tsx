@@ -1,6 +1,6 @@
 import cn from "classnames";
 import _ from "lodash";
-import { ForwardedRef, forwardRef, HTMLProps, LegacyRef, ReactElement, ReactNode } from "react";
+import { type JSX, ForwardedRef, forwardRef, HTMLProps, LegacyRef, ReactElement, ReactNode } from "react";
 
 import { TextVariants } from "@/types/common";
 

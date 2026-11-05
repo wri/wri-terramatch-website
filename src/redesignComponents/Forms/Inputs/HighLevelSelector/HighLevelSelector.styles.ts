@@ -98,7 +98,8 @@ export const contentMenuStyles = {
   outline: "none",
   overflowY: "auto",
   p: 1,
-  width: "100%"
+  width: "100%",
+  zIndex: "popover"
 } as const;
 
 export const popoverContentStyles = {

@@ -123,7 +123,7 @@ const TreePlantingChart: React.FC<ChartProps> = ({ data = [] }) => {
           padding={{ left: 10 }}
         />
         <YAxis tickLine={false} axisLine={true} tick={props => <CustomYAxisTick {...props} />} />
-        <Tooltip content={CustomTooltip} cursor={{ stroke: "#a6a6a6", strokeWidth: 1, strokeDasharray: "4 4" }} />
+        <Tooltip content={<CustomTooltip />} cursor={{ stroke: "#a6a6a6", strokeWidth: 1, strokeDasharray: "4 4" }} />
         {Object.entries(COLORS).map(
           ([key, color]) =>
             dataMap.has(key) && (

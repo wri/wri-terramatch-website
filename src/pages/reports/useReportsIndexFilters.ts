@@ -37,13 +37,16 @@ const matchesSearchQuery = (values: Array<string | null | undefined>, query: str
 };
 
 const matchesStatuses = (
-  report: { status: string; updateRequestStatus: string | null },
+  report: { status: string; updateRequestStatus: string | null; nothingToReport?: boolean },
   { statuses, updateStatuses }: Pick<ReportFilterCriteria, "statuses" | "updateStatuses">
 ) => {
   if (statuses.length > 0 && !statuses.includes(report.status)) return false;
+  // A "Nothing to report" report never shows an update status.
   if (
     updateStatuses.length > 0 &&
-    (report.updateRequestStatus == null || !updateStatuses.includes(report.updateRequestStatus))
+    (report.nothingToReport === true ||
+      report.updateRequestStatus == null ||
+      !updateStatuses.includes(report.updateRequestStatus))
   ) {
     return false;
   }
@@ -51,7 +54,7 @@ const matchesStatuses = (
 };
 
 const matchesTypeAndStatus = (
-  report: { type: string; status: string; updateRequestStatus: string | null },
+  report: { type: string; status: string; updateRequestStatus: string | null; nothingToReport?: boolean },
   criteria: Pick<ReportFilterCriteria, "reportTypes" | "statuses" | "updateStatuses">
 ) => {
   if (criteria.reportTypes.length > 0 && !criteria.reportTypes.includes(report.type)) return false;

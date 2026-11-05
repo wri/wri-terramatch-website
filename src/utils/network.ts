@@ -23,7 +23,9 @@ export const downloadFileUrl = (url: string, fileName?: string) => {
  */
 export const downloadFileBlob = async (blob: Blob, fileName?: string) => {
   try {
-    const url = window.URL.createObjectURL(new Blob([blob]));
+    // Pass the blob straight through: wrapping it in `new Blob([blob])` drops its MIME type, and the
+    // browser then picks the saved file's type from the file name alone.
+    const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
     if (fileName != null) link.download = fileName;

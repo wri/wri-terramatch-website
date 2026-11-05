@@ -14,7 +14,7 @@ export type UserRoleCardProps = {
   options?: MenuItemProps[];
   titleOptions?: string;
   setSelectedOption?: any;
-  refContentCard?: React.RefObject<HTMLDivElement>;
+  refContentCard?: React.RefObject<HTMLDivElement | null>;
   selectedOption?: string;
   icon?: IconNames;
 };

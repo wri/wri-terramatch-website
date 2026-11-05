@@ -6,6 +6,11 @@ export default function Document() {
     <Html>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <Script id="plausible-queue-stub" strategy="beforeInteractive">
+          {`
+            window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) };
+          `}
+        </Script>
         <Script id="google-tag-manager-gtm" strategy="lazyOnload" async>
           {`
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
