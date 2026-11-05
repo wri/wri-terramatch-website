@@ -27,6 +27,9 @@ export const useGetReportingFrameworkFormKey = (
     case "nurseries":
       return frameworkData.nurseryFormUuid;
 
+    case "disturbance-reports":
+      return frameworkData.disturbanceReportFormUuid;
+
     case "project-reports":
       return frameworkData.projectReportFormUuid;
 

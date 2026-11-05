@@ -1,6 +1,5 @@
 import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import Head from "next/head";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import IndexLoadingRow from "@/components/extensive/EntityIndex/IndexLoadingRow";
@@ -148,9 +147,7 @@ const NurseriesIndexPage: FC = () => {
   return (
     <NurseriesSelectionProvider>
       <ResponsiveTypography />
-      <Head>
-        <title>{t("Nurseries")}</title>
-      </Head>
+      <title>{t("Nurseries")}</title>
       <NurseriesIndexContent />
     </NurseriesSelectionProvider>
   );

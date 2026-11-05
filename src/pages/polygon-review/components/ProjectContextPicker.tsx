@@ -1,30 +1,23 @@
-import { Box, Flex, Popover, Portal, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback, useMemo } from "react";
 
 import { ProjectMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import {
-  ChakraSlot,
-  SelectorChevron,
-  SelectorFolderIcon
-} from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector.shared";
-import { getControlStyles } from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector.styles";
+import { HighLevelPopoverSelector, SELECTOR_BORDER_WIDTH } from "@/redesignComponents/Forms/Inputs/HighLevelSelector";
+import { isNotNull } from "@/utils/array";
 
 import { useProjectFacetLabels } from "../hooks/useProjectFacetLabels";
 import {
   getFacetOptions,
+  getFacetValue,
   getProjectFacetFilters,
+  PROJECT_CONTEXT_FACETS,
   ProjectContextFacet,
-  ProjectContextFilters,
-  toggleFacetValue
+  ProjectContextFilters
 } from "../utils/projectContextFilter";
-import ProjectFacetGroup from "./ProjectFacetGroup";
+import ProjectFacetGroup, { FacetSearch } from "./ProjectFacetGroup";
 import ProjectPickerList from "./ProjectPickerList";
-
-const PopoverTrigger = Popover.Trigger as ChakraSlot;
-const PopoverPositioner = Popover.Positioner as ChakraSlot;
-const PopoverContent = Popover.Content as ChakraSlot;
 
 type ProjectContextPickerContentProps = {
   projects: ProjectMapEntryDto[];
@@ -41,65 +34,103 @@ type ProjectContextPickerProps = ProjectContextPickerContentProps & {
   onOpenChange: (open: boolean) => void;
 };
 
+type FacetLabelGetter = ReturnType<typeof useProjectFacetLabels>;
+
+const MAX_CHECKBOX_OPTIONS = 7;
+
+const SUBTITLE_FACETS = ["frameworkKey", "country"] as const;
+
+const getProjectSubtitle = (project: ProjectMapEntryDto, getLabel: FacetLabelGetter) => {
+  const parts = SUBTITLE_FACETS.map(facet => {
+    const value = getFacetValue(project, facet);
+    return value == null ? null : getLabel(facet, value);
+  }).filter(isNotNull);
+  return parts.length === 0 ? undefined : parts.join(" · ");
+};
+
+const getFiltersSummary = (filters: ProjectContextFilters, getLabel: FacetLabelGetter) =>
+  PROJECT_CONTEXT_FACETS.flatMap(facet => filters[facet].map(value => getLabel(facet, value))).join(", ");
+
 /**
- * Popover body. It only mounts while the popover is open, so the project rows, facet counts and the label
- * lookups (frameworks / countries) cost nothing until an admin opens the picker.
+ * Popover body. It only mounts while the popover is open, so the project rows and facet counts cost nothing
+ * until an admin opens the picker.
  */
-const ProjectContextPickerContent: FC<ProjectContextPickerContentProps> = ({
+const ProjectContextPickerContent: FC<
+  ProjectContextPickerContentProps & { filtersSummary: string; getLabel: FacetLabelGetter }
+> = ({
   projects,
   filteredProjects,
   filters,
+  filtersSummary,
   selectedProject,
+  getLabel,
   onFiltersChange,
   onSelectProject,
   onClear
 }) => {
   const t = useT();
-  const getLabel = useProjectFacetLabels();
   const isLocked = selectedProject != null;
+  const canClear = isLocked || filtersSummary.length > 0;
 
   const facetFilters = useMemo(
     () => (selectedProject != null ? getProjectFacetFilters(selectedProject) : filters),
     [filters, selectedProject]
   );
 
-  const facetGroups = useMemo(
-    () =>
-      (
-        [
-          { facet: "frameworkKey", label: t("Framework (optional)") },
-          { facet: "country", label: t("Country (optional)") },
-          { facet: "cohort", label: t("Cohort (optional)") }
-        ] as const
-      ).map(({ facet, label }) => ({ facet, label, options: getFacetOptions(projects, facetFilters, facet) })),
-    [facetFilters, projects, t]
-  );
+  const facetGroups = useMemo(() => {
+    const countrySearch: FacetSearch = {
+      placeholder: t("Type to search countries"),
+      getCaption: count => t("{count} countries available", { count })
+    };
 
-  const toggleFacet = useCallback(
-    (facet: ProjectContextFacet, value: string, checked: boolean) =>
-      onFiltersChange(toggleFacetValue(filters, facet, value, checked)),
+    return (
+      [
+        { facet: "frameworkKey", label: t("Framework") },
+        { facet: "country", label: t("Country"), search: countrySearch },
+        { facet: "cohort", label: t("Cohort") }
+      ] as const
+    ).map(({ facet, label, ...group }) => {
+      const options = getFacetOptions(projects, facetFilters, facet);
+      const search = "search" in group && options.length > MAX_CHECKBOX_OPTIONS ? group.search : undefined;
+      return { facet, label, options, search };
+    });
+  }, [facetFilters, projects, t]);
+
+  const setFacetValues = useCallback(
+    (facet: ProjectContextFacet, values: string[]) => onFiltersChange({ ...filters, [facet]: values }),
     [filters, onFiltersChange]
   );
 
   return (
     <>
-      <Flex gap={4} padding={4} bg="neutral.200" alignItems="flex-start">
-        <Flex direction="column" gap={3} width="16rem" flexShrink={0} maxHeight="30rem" overflowY="auto">
-          {facetGroups.map(({ facet, label, options }) => (
+      <Flex alignItems="stretch">
+        <Flex
+          direction="column"
+          gap={3}
+          padding={3}
+          width="17.5rem"
+          flexShrink={0}
+          maxHeight="37.5rem"
+          overflowY="auto"
+          bg="neutral.200"
+        >
+          {facetGroups.map(({ facet, label, options, search }) => (
             <ProjectFacetGroup
               key={facet}
               label={label}
               options={options}
               selected={facetFilters[facet]}
               disabled={isLocked}
+              search={search}
               getLabel={value => getLabel(facet, value)}
-              onToggle={(value, checked) => toggleFacet(facet, value, checked)}
+              onChange={values => setFacetValues(facet, values)}
             />
           ))}
         </Flex>
-        <Flex flex={1} minWidth={0} padding={3} bg="neutral.100" borderRadius="0.25rem">
+        <Flex flex={1} minWidth={0} padding={4}>
           <ProjectPickerList
             projects={filteredProjects}
+            filtersSummary={filtersSummary}
             selectedUuid={selectedProject?.uuid ?? null}
             onSelect={onSelectProject}
           />
@@ -108,18 +139,18 @@ const ProjectContextPickerContent: FC<ProjectContextPickerContentProps> = ({
       <Flex
         justify="space-between"
         align="center"
-        gap={4}
+        gap={3}
         paddingX={4}
         paddingY={2}
-        borderTopWidth="0.0625rem"
+        borderTopWidth={SELECTOR_BORDER_WIDTH}
         borderColor="neutral.300"
       >
-        <Text textStyle="200" color="neutral.700">
+        <Text textStyle="300" color="neutral.700">
           {isLocked
             ? t("Clear filters to pick a project with a different framework, country or cohort.")
             : t("Choose a framework, country or cohort to narrow your list of projects.")}
         </Text>
-        <Button variant="borderless" size="small" onClick={onClear}>
+        <Button variant="borderless" size="small" disabled={!canClear} onClick={onClear}>
           {t("Clear filters")}
         </Button>
       </Flex>
@@ -129,52 +160,27 @@ const ProjectContextPickerContent: FC<ProjectContextPickerContentProps> = ({
 
 const ProjectContextPicker: FC<ProjectContextPickerProps> = ({ open, onOpenChange, ...contentProps }) => {
   const t = useT();
-  const handleOpenChange = useCallback(({ open }: { open: boolean }) => onOpenChange(open), [onOpenChange]);
+  const getLabel = useProjectFacetLabels();
+  const { filters, selectedProject } = contentProps;
+  const filtersSummary = useMemo(() => getFiltersSummary(filters, getLabel), [filters, getLabel]);
+
+  const subtitle = useMemo(() => {
+    if (selectedProject != null) return getProjectSubtitle(selectedProject, getLabel);
+    return filtersSummary.length === 0 ? undefined : t("Narrowed by: {filters}", { filters: filtersSummary });
+  }, [filtersSummary, getLabel, selectedProject, t]);
 
   return (
-    <Popover.Root
+    <HighLevelPopoverSelector
       open={open}
-      onOpenChange={handleOpenChange}
-      positioning={{ placement: "bottom-end", gutter: 4 }}
-      lazyMount
-      unmountOnExit
+      placeholder={t("Select a project")}
+      value={selectedProject?.name}
+      subtitle={subtitle}
+      width="25rem"
+      contentWidth="45rem"
+      onOpenChange={onOpenChange}
     >
-      <PopoverTrigger
-        {...getControlStyles(false)}
-        display="flex"
-        alignItems="flex-end"
-        gap={2}
-        width="25rem"
-        maxWidth="100%"
-        paddingX={2}
-        paddingTop={1}
-        paddingBottom={2}
-        cursor="pointer"
-      >
-        <SelectorFolderIcon disabled={false} />
-        <Text as="span" textStyle="400-bold" color="neutral.900" truncate flex={1} textAlign="left">
-          {contentProps.selectedProject?.name ?? t("Select a project")}
-        </Text>
-        <Box as="span" color="primary.900">
-          <SelectorChevron open={open} />
-        </Box>
-      </PopoverTrigger>
-      <Portal>
-        <PopoverPositioner>
-          <PopoverContent
-            width="50rem"
-            maxWidth="calc(100vw - 2rem)"
-            bg="neutral.100"
-            borderWidth="0.0625rem"
-            borderColor="neutral.400"
-            borderRadius="0.25rem"
-            boxShadow="lg"
-          >
-            <ProjectContextPickerContent {...contentProps} />
-          </PopoverContent>
-        </PopoverPositioner>
-      </Portal>
-    </Popover.Root>
+      <ProjectContextPickerContent {...contentProps} filtersSummary={filtersSummary} getLabel={getLabel} />
+    </HighLevelPopoverSelector>
   );
 };
 

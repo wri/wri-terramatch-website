@@ -2,11 +2,11 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useEffect, useMemo } from "react";
 
+import AttentionBadge from "@/components/extensive/EntityIndex/AttentionBadge";
 import { useIndexAccordionOpen } from "@/hooks/useIndexAccordionOpen";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
-import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
 import { ReportsIndexPeriod, ReportsIndexProjectSection } from "../reportIndex.types";
 import { getReportsRequiringAttention } from "../reportIndex.utils";
@@ -54,7 +54,8 @@ const ProjectReportsSection: FC<ProjectReportsSectionProps> = ({
   const [open, setOpen] = useIndexAccordionOpen({
     defaultOpen,
     resetKey: openResetKey,
-    restoreOpen: restoreSectionId == null ? undefined : section.id === restoreSectionId
+    restoreOpen: restoreSectionId == null ? undefined : section.id === restoreSectionId,
+    storageKey: section.id
   });
 
   useEffect(() => {
@@ -87,11 +88,7 @@ const ProjectReportsSection: FC<ProjectReportsSectionProps> = ({
           titleHref={`/project/${section.id}`}
           caption={section.organisationName ?? ""}
           open={open}
-          statusLabels={
-            displayedAttentionCount > 0 ? (
-              <TextBadge>{t("{count} Require Attention", { count: displayedAttentionCount })}</TextBadge>
-            ) : null
-          }
+          statusLabels={<AttentionBadge count={displayedAttentionCount} />}
         />
       }
     >
@@ -107,6 +104,7 @@ const ProjectReportsSection: FC<ProjectReportsSectionProps> = ({
           section.periods.map((period, index) => (
             <ReportingPeriodSection
               key={period.id}
+              storageKey={`${section.id}:${period.id}`}
               period={period}
               allPeriodReports={unfilteredPeriods?.find(item => item.id === period.id)?.reports}
               defaultOpen={expandForPeriodFilter || index === 0}

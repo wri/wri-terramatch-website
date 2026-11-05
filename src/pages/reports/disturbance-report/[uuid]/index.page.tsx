@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 import { format, isValid } from "date-fns";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo } from "react";
 
@@ -138,9 +137,7 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
   return (
     <>
       <ResponsiveTypography />
-      <Head>
-        <title>{disturbanceReportTitle(disturbanceReport)}</title>
-      </Head>
+      <title>{disturbanceReportTitle(disturbanceReport)}</title>
       <DisturbanceReportBanner
         report={disturbanceReport}
         title={disturbanceReportTitle(disturbanceReport)}

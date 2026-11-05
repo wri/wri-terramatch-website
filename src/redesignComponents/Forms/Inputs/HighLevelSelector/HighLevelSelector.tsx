@@ -6,14 +6,18 @@ import {
   ChakraSlot,
   DEFAULT_EMPTY_MESSAGE,
   DEFAULT_WIDTH,
-  SelectorChevron,
-  SelectorFolderIcon,
   SelectorLabel,
   SelectorMenu,
+  SelectorTriggerContent,
   toCollectionValue,
   useSelectorOpenState
 } from "./HighLevelSelector.shared";
-import { getControlStyles, selectorPositioning } from "./HighLevelSelector.styles";
+import {
+  getControlStyles,
+  getTriggerStyles,
+  getValueTextStyles,
+  selectorPositioning
+} from "./HighLevelSelector.styles";
 import {
   HighLevelSelectorProps,
   SelectorOpenChangeDetails,
@@ -92,40 +96,22 @@ const HighLevelSelector: FC<HighLevelSelectorProps> = ({
 
       <SelectControl {...getControlStyles(disabled)}>
         <SelectTrigger
+          {...getTriggerStyles(disabled)}
           alignItems="center"
           aria-labelledby={labelId}
           autoFocus={autoFocus}
-          bg="transparent"
-          border="none"
-          color={disabled ? "neutral.500" : "neutral.900"}
-          cursor={disabled ? "not-allowed" : "pointer"}
           data-selector-focus-target
-          display="flex"
-          gap={2}
           height="100%"
-          outline="none"
-          pb={2}
-          pl={2}
-          pr={2}
           pt={6}
           truncate
-          textAlign="left"
-          width="100%"
           {...keyboardFocus.focusRingStyles}
           onBlur={onBlur}
         >
-          <SelectorFolderIcon disabled={disabled} />
-          <SelectValueText
-            color={disabled ? "neutral.500" : "neutral.900"}
-            overflow="hidden"
-            placeholder={placeholder}
-            textOverflow="ellipsis"
-            textStyle={disabled ? "400" : "400-bold"}
-            whiteSpace="nowrap"
+          <SelectorTriggerContent
+            disabled={disabled}
+            open={open}
+            value={<SelectValueText {...getValueTextStyles(disabled)} placeholder={placeholder} />}
           />
-          <Select.IndicatorGroup color={disabled ? "neutral.500" : "primary.900"} marginLeft="auto">
-            <SelectorChevron open={open} />
-          </Select.IndicatorGroup>
         </SelectTrigger>
       </SelectControl>
 

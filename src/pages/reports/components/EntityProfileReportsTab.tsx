@@ -71,6 +71,7 @@ const EntityProfileReportsContent: FC<EntityProfileReportsContentProps> = ({ sou
         source={source}
         sourceUuid={entityUuid}
         projectUuid={project.uuid}
+        projectFrameworkKey={project.frameworkKey}
         reportCount={progressReportCount}
         viewValue={source}
         viewItems={[]}

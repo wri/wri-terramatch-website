@@ -104,7 +104,7 @@ const RouteHistoryProvider = ({ children }: RouterHistoryProviderProps) => {
         return;
       }
 
-      // Wait for next/head <title> updates before reading document.title.
+      // Wait for the new page's <title> to be applied before reading document.title.
       window.setTimeout(() => {
         push({
           path: pathname,

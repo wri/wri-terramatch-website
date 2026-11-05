@@ -23,6 +23,7 @@ import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { getProjectCohortOptions } from "@/constants/options/cohort";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { DisturbanceReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -59,9 +60,9 @@ const DisturbanceReportDataGrid: FC = () => {
         source="updateRequestStatus"
         label="Change Request Status"
         sortable={false}
-        render={(record?: DisturbanceReportLightDto) => {
+        render={(record: DisturbanceReportLightDto) => {
           const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
-            (option: any) => option.value === record?.updateRequestStatus
+            (option: any) => option.value === record.updateRequestStatus
           );
           return readableChangeRequestStatus?.title ? (
             <CustomChipField label={readableChangeRequestStatus.title} />
@@ -135,6 +136,13 @@ export const DisturbanceReportList: FC = () => {
       label="Framework"
       source="frameworkKey"
       choices={frameworkInputChoices}
+      className="select-page-admin"
+    />,
+    <SelectInput
+      key="cohort"
+      label="Cohort"
+      source="cohort"
+      choices={optionToChoices(getProjectCohortOptions())}
       className="select-page-admin"
     />
   ];

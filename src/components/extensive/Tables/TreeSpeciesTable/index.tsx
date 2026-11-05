@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { FC, useMemo } from "react";
+import { type JSX, FC, useMemo } from "react";
 
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";

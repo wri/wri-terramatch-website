@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 
@@ -30,19 +29,22 @@ const ReportsIndexPage: FC = () => {
   const [projectsLoaded, { data: projects }] = useProjectIndex({});
   const [projectLoaded, { data: project }] = useLightProject({ id: sourceUuid, enabled: sourceUuid != null });
 
-  const finalProject = sourceUuid == null ? projects?.[0] ?? null : project;
+  const loadedProject = sourceUuid == null ? projects?.[0] ?? null : project;
+  const [lastProject, setLastProject] = useState(loadedProject);
+  if (loadedProject != null && loadedProject !== lastProject) {
+    setLastProject(loadedProject);
+  }
+  const finalProject = loadedProject ?? (sourceUuid != null && !projectLoaded ? lastProject : null);
   const loading = !router.isReady || (finalProject == null && (sourceUuid == null ? !projectsLoaded : !projectLoaded));
 
   return (
     <FrameworkProvider frameworkKey={finalProject?.frameworkKey}>
       <ReportsProvider>
         <ResponsiveTypography />
-        <Head>
-          <title>{t("Reports")}</title>
-        </Head>
+        <title>{t("Reports")}</title>
         <LoadingContainer loading={loading}>
           {finalProject == null ? null : (
-            <ReportsSelectionProvider key={`project:${finalProject.uuid}`}>
+            <ReportsSelectionProvider>
               <ReportsIndexContent project={finalProject} />
             </ReportsSelectionProvider>
           )}

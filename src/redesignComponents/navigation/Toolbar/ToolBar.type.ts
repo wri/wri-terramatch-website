@@ -78,6 +78,7 @@ export interface SearchProps {
   displayResults?: "none" | "text" | "list" | "custom";
   label?: string;
   resetKey?: string | number;
+  cacheKey?: string;
   onQueryChange?: (query: string) => void;
   onSearchSubmit?: (query: string) => void;
   count?: number;

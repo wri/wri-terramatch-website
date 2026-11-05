@@ -3,7 +3,7 @@ import { type RefObject, useEffect, useState } from "react";
 import { HIDDEN_STICKY_COLUMN_EDGE_STYLES } from "@/redesignComponents/dataDisplay/Table/tableStyles";
 
 type UsePolygonTableStickyStylesParams = {
-  scrollContainerRef: RefObject<HTMLDivElement>;
+  scrollContainerRef: RefObject<HTMLDivElement | null>;
   /** The scroll container mounts and changes with these, so the listener is re-attached when they change. */
   isLoading: boolean;
   isEmpty: boolean;

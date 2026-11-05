@@ -8,7 +8,6 @@ import { connectionHook, connectionLoader } from "@/connections/util/connectionS
 import { deleterAsync } from "@/connections/util/resourceDeleter";
 import type { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import {
-  type UpdateSitePolygonStatusResponse,
   bulkDeleteSitePolygons as bulkDeleteSitePolygonsEndpoint,
   bulkUpdateSitePolygonAttributes as bulkUpdateSitePolygonAttributesEndpoint,
   createSitePolygons,
@@ -138,7 +137,10 @@ const createBulkDeleteBody = (resources: SitePolygonResourceIdentifier[]): SiteP
 
 export type BulkSitePolygonAttributeChanges = SitePolygonBulkAttributeChangesDto;
 
-export type SitePolygonStatusUpdateResponse = UpdateSitePolygonStatusResponse & {
+export type SitePolygonStatusUpdateResponse = Extract<
+  Awaited<ReturnType<typeof updateSitePolygonStatus.fetchAwait>>,
+  { data?: unknown[] }
+> & {
   included?: JsonApiResource[];
 };
 
@@ -254,7 +256,7 @@ export const bulkUpdateSitePolygonStatus = async (
   };
 
   const variables = { body, pathParams: { status } };
-  return updateSitePolygonStatus.fetchAwait(variables);
+  return (await updateSitePolygonStatus.fetchAwait(variables)) as SitePolygonStatusUpdateResponse;
 };
 
 export const bulkDeleteSitePolygons = async (uuids: string[]): Promise<void> => {
@@ -341,9 +343,11 @@ export const loadAllSitePolygons = async (
 };
 
 export const loadSitePolygonByUuid = async ({
+  entityName = "sites",
   entityUuid,
   polygonId
 }: {
+  entityName?: "sites" | "projects";
   entityUuid: string;
   polygonId: string;
 }): Promise<SitePolygonLightDto | undefined> => {
@@ -352,7 +356,7 @@ export const loadSitePolygonByUuid = async ({
   }
 
   const byGeometryResponse = await loadSitePolygons({
-    entityName: "sites",
+    entityName,
     entityUuid,
     enabled: true,
     filter: { "polygonUuid[]": [polygonId] },
@@ -368,7 +372,7 @@ export const loadSitePolygonByUuid = async ({
   }
 
   const mapIndex = await loadSitePolygonMapIndex({
-    entityName: "sites",
+    entityName,
     entityUuid,
     enabled: true
   });
@@ -378,7 +382,7 @@ export const loadSitePolygonByUuid = async ({
   }
 
   const byMapGeometryResponse = await loadSitePolygons({
-    entityName: "sites",
+    entityName,
     entityUuid,
     enabled: true,
     filter: { "polygonUuid[]": [mapEntry.polygonUuid] },
@@ -392,11 +396,13 @@ export const loadSitePolygonByUuid = async ({
 };
 
 export const loadActiveSitePolygonVersion = async ({
+  entityName = "sites",
   entityUuid,
   primaryUuid,
   versionPolygonUuids,
   polygonId
 }: {
+  entityName?: "sites" | "projects";
   entityUuid: string;
   primaryUuid?: string | null;
   versionPolygonUuids: string[];
@@ -404,7 +410,7 @@ export const loadActiveSitePolygonVersion = async ({
 }): Promise<SitePolygonLightDto | undefined> => {
   if (primaryUuid != null && primaryUuid !== "" && versionPolygonUuids.length > 0) {
     const versionsResponse = await loadSitePolygons({
-      entityName: "sites",
+      entityName,
       entityUuid,
       enabled: true,
       filter: { "polygonUuid[]": versionPolygonUuids },
@@ -417,7 +423,7 @@ export const loadActiveSitePolygonVersion = async ({
     }
   }
 
-  return await loadSitePolygonByUuid({ entityUuid, polygonId });
+  return await loadSitePolygonByUuid({ entityName, entityUuid, polygonId });
 };
 
 export const useAllSitePolygons = (

@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import { ReactElement, useCallback, useMemo } from "react";
 
@@ -80,9 +79,7 @@ const OrganizationPage = () => {
   return (
     <LoadingContainer loading={!loaded || organizationLoading}>
       <ResponsiveTypography />
-      <Head>
-        <title>{pageTitle}</title>
-      </Head>
+      <title>{pageTitle}</title>
 
       <div className="contents [&>div:last-child]:!top-[2.5625rem] mobile:[&>div:last-child]:!top-[4.0625rem]">
         <Banner

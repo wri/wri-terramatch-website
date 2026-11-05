@@ -76,7 +76,8 @@ export const useSitePolygonOverlap = ({
     let cancelled = false;
 
     void loadSitePolygonsByUuidBatch({
-      siteUuid,
+      entityName: "sites",
+      entityUuid: siteUuid,
       polygonUuids: overlapPolygonUuids,
       errorContext: "Failed to load overlap polygon geometry"
     }).then(polygons => {

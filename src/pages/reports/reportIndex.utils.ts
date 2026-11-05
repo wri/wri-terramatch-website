@@ -196,17 +196,20 @@ export const REPORTS_INDEX_ATTENTION_STATUSES: ReadonlySet<TagSubmissionState> =
 
 const REPORTS_INDEX_COMPLETE_STATUSES: ReadonlySet<TagSubmissionState> = new Set(["approved"]);
 
-// Drafts are still in progress, so only due reports and reports with information required (on the report or on
-// its update request) need attention.
-export const getReportsRequiringAttention = (
-  reports: Array<{ status: TagSubmissionState; updateRequestStatus?: EntityUpdateStatusValue | null }>
-) =>
-  reports.filter(
-    report =>
-      report.status === "due" ||
-      report.status === "information-required" ||
-      report.updateRequestStatus === "information-required"
-  ).length;
+type ReportWithUpdateStatus = {
+  status: TagSubmissionState;
+  updateRequestStatus?: EntityUpdateStatusValue | null;
+};
+
+// The update request status only takes over while the report itself is approved ("Editing: ..." rows).
+// A draft update is still being edited, so the report keeps counting as approved.
+const getEffectiveStatus = ({ status, updateRequestStatus }: ReportWithUpdateStatus): TagSubmissionState =>
+  status === "approved" && updateRequestStatus != null && updateRequestStatus !== "draft"
+    ? updateRequestStatus
+    : status;
+
+export const getReportsRequiringAttention = (reports: ReportWithUpdateStatus[]) =>
+  reports.filter(report => REPORTS_INDEX_ATTENTION_STATUSES.has(getEffectiveStatus(report))).length;
 
 export const areAllReportsComplete = (reports: Array<{ status: TagSubmissionState }>) =>
   reports.length > 0 && reports.every(report => REPORTS_INDEX_COMPLETE_STATUSES.has(report.status));
@@ -235,30 +238,31 @@ const REPORTS_INDEX_ADMIN_ATTENTION_STATUSES: ReadonlySet<TagSubmissionState> = 
  */
 export const getReportingPeriodDueDateType = (
   dueAt: string | null | undefined,
-  reports: Array<{ status: TagSubmissionState }>,
+  reports: ReportWithUpdateStatus[],
   isAdmin: boolean
 ): ReportingPeriodDueDateType | undefined => {
   if (dueAt == null) return undefined;
   if (!isReportingPeriodDueDatePast(dueAt)) return "info-white";
   const attentionStatuses = isAdmin ? REPORTS_INDEX_ADMIN_ATTENTION_STATUSES : REPORTS_INDEX_ATTENTION_STATUSES;
-  return reports.some(report => attentionStatuses.has(report.status)) ? "error" : "info-grey";
+  return reports.some(report => attentionStatuses.has(getEffectiveStatus(report))) ? "error" : "info-grey";
 };
 
 export type ReportingPeriodAnalyticsStatus = "open" | "overdue";
 
 export const getReportingPeriodAnalyticsStatus = (
   dueAt: string | null | undefined,
-  reports: Array<{ status: TagSubmissionState }>,
+  reports: ReportWithUpdateStatus[],
   isAdmin: boolean
 ): ReportingPeriodAnalyticsStatus =>
   getReportingPeriodDueDateType(dueAt, reports, isAdmin) === "error" ? "overdue" : "open";
 
-export const getReportStatusCounts = (reports: Array<{ status: TagSubmissionState }>) =>
+export const getReportStatusCounts = (reports: ReportWithUpdateStatus[]) =>
   reports.reduce(
     (result, report) => {
-      if (report.status === "due") result.due += 1;
-      if (report.status === "draft") result.draft += 1;
-      if (report.status === "information-required") result.informationRequired += 1;
+      const status = getEffectiveStatus(report);
+      if (status === "due") result.due += 1;
+      if (status === "draft") result.draft += 1;
+      if (status === "information-required") result.informationRequired += 1;
       return result;
     },
     { due: 0, draft: 0, informationRequired: 0 }
