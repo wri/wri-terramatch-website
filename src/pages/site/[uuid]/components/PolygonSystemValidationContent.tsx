@@ -138,7 +138,7 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
     }
 
     setIsValidating(true);
-    trackPolygonRunValidationClicked({ siteUuid, polygonIds: [polygonUuid] });
+    trackPolygonRunValidationClicked({ entityUuid: siteUuid, polygonIds: [polygonUuid] });
     try {
       await onRunValidation([polygonUuid]);
       completePolygonProgressToast(POLYGON_TOAST_IDS.validating, toastLabels.validatingComplete);

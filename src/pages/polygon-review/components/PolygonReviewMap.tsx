@@ -1,15 +1,22 @@
-import { FC, useMemo, useState } from "react";
+import { Box } from "@chakra-ui/react";
+import { ComponentProps, FC, useMemo, useState } from "react";
 
 import LoadingMap from "@/components/elements/Map-mapbox/components/LoadingMap";
-import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
+import { usePolygonMapEditing } from "@/components/elements/Map-mapbox/hooks/usePolygonMapEditing";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
+import type { PolygonEntityScope } from "@/components/elements/Map-mapbox/Map.d";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { SitePolygonMapIndexFilter, useSitePolygonMapIndex } from "@/connections/SitePolygons";
 import { DELETED_AUDIT_POLYGONS } from "@/constants/statuses";
+import { useMapAreaContext } from "@/context/mapArea.provider";
+import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { ProjectMapEntryDto, SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
 
+import PolygonDrawUndoButton from "../../site/[uuid]/components/PolygonDrawUndoButton";
+import { getPolygonMapEditClassName } from "../../site/[uuid]/components/polygonMapEditLayout";
 import { SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS } from "../../site/[uuid]/constants/sitePolygonMapSizing";
+import { usePolygonDrawUndo } from "../../site/[uuid]/hooks/usePolygonDrawUndo";
 import { getProjectMarkersBbox, toProjectMarkerPoints } from "../utils/projectMarkers";
 
 const NO_POLYGONS: SitePolygonMapEntryDto[] = [];
@@ -19,26 +26,43 @@ type PolygonReviewMapProps = {
   selectedProject: ProjectMapEntryDto | null;
   siteUuids: string[];
   polygonFilter: SitePolygonMapIndexFilter;
-  selectedPolygonUuids: string[];
+  polygonTableHighlight: ComponentProps<typeof MapContainer>["polygonTableHighlight"];
   showDeleted?: boolean;
   onViewProjectPolygons: (projectUuid: string) => void;
+  onRefetchPolygons: () => Promise<void>;
 };
 
 /**
  * Shows the project markers until a project is picked, then the project's polygons that match the Level 2 filters.
  * Polygons come from the GeoServer tiles filtered by the project's map index, so only the sparse index is fetched.
+ * Editing a polygon works as on the site polygon map (see PolygonsMap), which shares usePolygonMapEditing.
  */
 const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
   projects,
   selectedProject,
   siteUuids,
   polygonFilter,
-  selectedPolygonUuids,
+  polygonTableHighlight,
   showDeleted = false,
-  onViewProjectPolygons
+  onViewProjectPolygons,
+  onRefetchPolygons
 }) => {
-  const mapFunctions = useBaseMap();
   const projectUuid = selectedProject?.uuid;
+  const { isOpen: isEditPolygonOpen } = usePolygonEditDrawer();
+  const { editPolygon, isUserDrawingEnabled } = useMapAreaContext();
+  const { mapFunctions, polygonFromMap, setPolygonFromMap, sitePolygonData, autoEditPolygon, isRefetchingPolygonData } =
+    usePolygonMapEditing(onRefetchPolygons);
+
+  const { showPolygonUndoButton, handleUndoPolygonDraw } = usePolygonDrawUndo({
+    isEditPolygonOpen,
+    isUserDrawingEnabled,
+    isExistingPolygonOpen: editPolygon.isOpen && editPolygon.uuid !== ""
+  });
+
+  const polygonEntityScope = useMemo<PolygonEntityScope | undefined>(
+    () => (projectUuid == null ? undefined : { entityName: "projects", entityUuid: projectUuid }),
+    [projectUuid]
+  );
 
   const [, { data: polygonMapIndex, loadFailure: polygonLoadFailure }] = useSitePolygonMapIndex({
     entityName: "projects",
@@ -81,7 +105,6 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
       : { projectUuid }
   );
   const bbox = (projectUuid != null ? polygonsBbox : undefined) ?? markersBbox;
-  const polygonTableHighlight = useMemo(() => ({ selectedPolygonUuids }), [selectedPolygonUuids]);
 
   return (
     <ResizeBox
@@ -89,21 +112,30 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
       minHeight={SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS}
       maxHeight={600}
     >
-      <LoadingMap loading={projectUuid != null && projectPolygons == null && polygonLoadFailure == null} />
-      <MapContainer
-        championsMap
-        mapFunctions={mapFunctions}
-        bbox={bbox}
-        projectMarkers={projectMarkers}
-        onViewProjectPolygons={onViewProjectPolygons}
-        mapIndexPolygons={mapIndexPolygons}
-        mapPolygonsForcedStatus={showDeleted ? DELETED_AUDIT_POLYGONS : undefined}
-        polygonTableHighlight={polygonTableHighlight}
-        showLegend
-        hideMediaOnMap
-        disabledPolygonPanel
-        className="h-full w-full flex-1 !rounded-[0.25rem_0.25rem_0_0]"
-      />
+      <Box position="relative" flex="1" className={getPolygonMapEditClassName(isEditPolygonOpen, true)}>
+        <LoadingMap loading={projectUuid != null && projectPolygons == null && polygonLoadFailure == null} />
+        <MapContainer
+          championsMap
+          mapFunctions={mapFunctions}
+          bbox={bbox}
+          projectMarkers={projectMarkers}
+          onViewProjectPolygons={onViewProjectPolygons}
+          mapIndexPolygons={mapIndexPolygons}
+          mapPolygonsForcedStatus={showDeleted ? DELETED_AUDIT_POLYGONS : undefined}
+          polygonTableHighlight={polygonTableHighlight}
+          sitePolygonData={sitePolygonData}
+          polygonEntityScope={polygonEntityScope}
+          polygonFromMap={polygonFromMap}
+          setPolygonFromMap={setPolygonFromMap}
+          autoEditPolygon={autoEditPolygon}
+          shouldBboxZoom={!isRefetchingPolygonData}
+          showLegend
+          hideMediaOnMap
+          disabledPolygonPanel
+          className="h-full w-full flex-1"
+        />
+      </Box>
+      {showPolygonUndoButton && !showDeleted && <PolygonDrawUndoButton onUndo={handleUndoPolygonDraw} />}
     </ResizeBox>
   );
 };
