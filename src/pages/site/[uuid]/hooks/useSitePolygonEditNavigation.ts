@@ -2,24 +2,20 @@ import { useRouter } from "next/router";
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
-  buildSitePolygonEditUrl,
   EDIT_POLYGON_QUERY_PARAM,
   scrollToSitePolygonTabHeader
 } from "@/components/elements/Map-mapbox/sitePolygonNavigation";
 import { resolvePolygonTableRowId } from "@/components/elements/Map-mapbox/sitePolygonPopupUtils";
 import { openPolygonPopupFromMapArea } from "@/context/mapArea.utils";
-import {
-  openPolygonEditDrawerForPolygonId,
-  openPolygonEditDrawerForSitePolygon
-} from "@/context/polygonEditDrawer.utils";
+import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
 import { consumePendingPolygonFocusUuid, setPolygonTableHoveredUuid } from "@/context/polygonTableInteraction.store";
 import type {
   SitePolygonLightDto,
   SitePolygonMapEntryDto
 } from "@/generated/v3/researchService/researchServiceSchemas";
-import Log from "@/utils/log";
 
 import type { PolygonFilterState } from "../components/polygonFilter.constants";
+import { ExistingPolygonDuplicate, useOpenSitePolygonInDrawer } from "./useOpenSitePolygonInDrawer";
 
 type UseSitePolygonEditNavigationParams = {
   siteUuid: string;
@@ -31,11 +27,7 @@ type UseSitePolygonEditNavigationParams = {
   hasOverlapFilter: boolean;
   setPolygonFilters: Dispatch<SetStateAction<PolygonFilterState>>;
   onCloseOverlapFixModal: () => void;
-  existingPolygonDuplicate: {
-    siteUuid: string;
-    sitePolygonUuid: string;
-    polygonUuid: string;
-  } | null;
+  existingPolygonDuplicate: ExistingPolygonDuplicate | null;
 };
 
 export const useSitePolygonEditNavigation = ({
@@ -52,18 +44,19 @@ export const useSitePolygonEditNavigation = ({
 }: UseSitePolygonEditNavigationParams) => {
   const router = useRouter();
   const pendingOverlapFixPolygonIdRef = useRef<string | null>(null);
-  const [uploadedPolygonUuidToOpen, setUploadedPolygonUuidToOpen] = useState<string | null>(null);
   const [focusPolygonUuid, setFocusPolygonUuid] = useState<string | null>(null);
-
-  const openPolygonEditDrawerByPolygonId = useCallback(
-    (polygonId: string) =>
-      openPolygonEditDrawerForPolygonId({
-        polygonId,
-        siteUuid,
-        findCachedSitePolygon: findTableSitePolygon
-      }),
-    [findTableSitePolygon, siteUuid]
-  );
+  const {
+    uploadedPolygonUuidToOpen,
+    setUploadedPolygonUuidToOpen,
+    openPolygonEditDrawerByPolygonId,
+    handleViewExistingPolygon
+  } = useOpenSitePolygonInDrawer({
+    siteUuid,
+    isAdminReview,
+    isTablePolygonsLoading,
+    findTableSitePolygon,
+    existingPolygonDuplicate
+  });
 
   const handleViewOverlapFixPolygon = useCallback(
     (polygonUuid: string) => {
@@ -79,32 +72,6 @@ export const useSitePolygonEditNavigation = ({
     },
     [hasOverlapFilter, onCloseOverlapFixModal, openPolygonEditDrawerByPolygonId, setPolygonFilters]
   );
-
-  const handleViewExistingPolygon = useCallback(() => {
-    if (existingPolygonDuplicate == null) {
-      return;
-    }
-
-    const { siteUuid: duplicateSiteUuid, sitePolygonUuid, polygonUuid } = existingPolygonDuplicate;
-    const isSameSite = duplicateSiteUuid === "" || duplicateSiteUuid === siteUuid;
-
-    if (isSameSite) {
-      const existingInTable = findTableSitePolygon(sitePolygonUuid) ?? findTableSitePolygon(polygonUuid);
-      if (existingInTable != null) {
-        openPolygonEditDrawerForSitePolygon(existingInTable, existingInTable.name ?? undefined);
-        return;
-      }
-
-      setUploadedPolygonUuidToOpen(sitePolygonUuid);
-      return;
-    }
-
-    window.open(
-      buildSitePolygonEditUrl(duplicateSiteUuid, sitePolygonUuid, { adminReview: isAdminReview }),
-      "_blank",
-      "noopener,noreferrer"
-    );
-  }, [existingPolygonDuplicate, findTableSitePolygon, isAdminReview, siteUuid]);
 
   useEffect(() => {
     const pendingPolygonId = pendingOverlapFixPolygonIdRef.current;
@@ -149,33 +116,13 @@ export const useSitePolygonEditNavigation = ({
 
     setUploadedPolygonUuidToOpen(editPolygonQueryParam);
     clearEditPolygonQueryParam();
-  }, [clearEditPolygonQueryParam, editPolygonQueryParam, findTableSitePolygon, isTablePolygonsLoading]);
-
-  useEffect(() => {
-    if (uploadedPolygonUuidToOpen == null) {
-      return;
-    }
-
-    const uploadedPolygon = findTableSitePolygon(uploadedPolygonUuidToOpen);
-    if (uploadedPolygon != null) {
-      openPolygonEditDrawerForSitePolygon(uploadedPolygon, uploadedPolygon.name ?? undefined);
-      setUploadedPolygonUuidToOpen(null);
-      return;
-    }
-
-    if (isTablePolygonsLoading) {
-      return;
-    }
-
-    const polygonIdToOpen = uploadedPolygonUuidToOpen;
-    void openPolygonEditDrawerByPolygonId(polygonIdToOpen)
-      .catch(error => {
-        Log.error("Failed to auto-open uploaded polygon in edit drawer:", error);
-      })
-      .finally(() => {
-        setUploadedPolygonUuidToOpen(current => (current === polygonIdToOpen ? null : current));
-      });
-  }, [findTableSitePolygon, isTablePolygonsLoading, openPolygonEditDrawerByPolygonId, uploadedPolygonUuidToOpen]);
+  }, [
+    clearEditPolygonQueryParam,
+    editPolygonQueryParam,
+    findTableSitePolygon,
+    isTablePolygonsLoading,
+    setUploadedPolygonUuidToOpen
+  ]);
 
   useEffect(() => {
     if (!mapIndexLoaded) {

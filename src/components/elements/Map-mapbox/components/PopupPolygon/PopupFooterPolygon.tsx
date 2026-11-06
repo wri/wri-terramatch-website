@@ -1,5 +1,6 @@
 import { Flex, Grid } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { noop } from "lodash";
 import type { FC } from "react";
 import { useCallback, useMemo } from "react";
 
@@ -109,32 +110,46 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
   if (isAdminReview) {
     return (
       <Flex alignItems="center" gap={2} width="100%">
-        <Button variant="secondary" size="small" onClick={onRunValidation} disabled={!canRunValidation}>
+        <Button
+          variant="secondary"
+          size="small"
+          onClick={onRunValidation}
+          disabled={!canRunValidation}
+          className="flex-auto"
+        >
           {t("Run Validation")}
         </Button>
-        <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={onEdit} disabled={onEdit == null}>
+        <Button
+          variant="secondary"
+          size="small"
+          leftIcon={<EditIcon />}
+          onClick={onEdit}
+          disabled={onEdit == null}
+          className="flex-auto"
+        >
           {t("Edit")}
         </Button>
-        <Flex alignItems="center" gap={1.5} minWidth={0}>
+        <Flex alignItems="center" gap={1.5} flex="1 1 auto">
           <MultiActionButton
             mainActionLabel={t("Review")}
-            mainActionOnClick={() => {}}
+            mainActionOnClick={noop}
             otherActions={[
               {
                 label: t("Approve"),
                 value: "approve",
-                disabled: approveDisabled,
-                onClick: onApprove ?? (() => {})
+                disabled: approveDisabled || onApprove == null,
+                onClick: onApprove ?? noop
               },
               {
                 label: t("Request information"),
                 value: "request-information",
-                onClick: onRequestInformation ?? (() => {})
+                disabled: onRequestInformation == null,
+                onClick: onRequestInformation ?? noop
               }
             ]}
             variant="primary"
             size="small"
-            className="min-w-0 flex-1"
+            isFullWidth
           />
           {approveDisabled && approveDisabledTooltip != null && (
             <Tooltip content={wrapToolbarInfoTooltipContent(approveDisabledTooltip)} position="top">

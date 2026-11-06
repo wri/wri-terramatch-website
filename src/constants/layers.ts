@@ -29,7 +29,8 @@ export const LAYERS_NAMES = {
   DELETED_GEOMETRIES: "deleted_geometries",
   CENTROIDS: "centroids",
   LANDSCAPES: "landscape_geom",
-  POLYGON_CENTROIDS: "polygon_centroids"
+  POLYGON_CENTROIDS: "polygon_centroids",
+  PROJECT_MARKERS: "project_markers"
 };
 
 const POLYGON_GEOMETRY_LAYER_BASE = "polygon_geometry";

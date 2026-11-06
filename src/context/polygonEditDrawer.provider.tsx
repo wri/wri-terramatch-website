@@ -6,8 +6,8 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import type {
   PolygonOverlapFixCallback,
+  PolygonRunValidationCallback,
   PolygonRunValidationWithResultsCallback,
-  PolygonRunValidationWithResultsOptions,
   PolygonSaveCallback,
   PolygonValidationClearedCallback
 } from "@/pages/site/[uuid]/components/polygonEdit.types";
@@ -55,8 +55,6 @@ export const usePolygonEditDrawer = (): PolygonEditDrawerContextValue => {
 type PolygonEditDrawerProviderProps = {
   children: ReactNode;
 };
-
-type PolygonRunValidationCallback = (geometryPolygonUuids: string[]) => Promise<void>;
 
 type PolygonDeletingChangeCallback = (isDeleting: boolean, count?: number) => void;
 
@@ -224,13 +222,13 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({ 
     onPolygonSubmittingChangeRef.current?.(isSubmitting, count);
   }, []);
 
-  const handleRunValidation = useCallback(async (geometryPolygonUuids: string[]) => {
-    await onRunValidationRef.current?.(geometryPolygonUuids);
+  const handleRunValidation = useCallback<PolygonRunValidationCallback>(async polygons => {
+    await onRunValidationRef.current?.(polygons);
   }, []);
 
-  const handleRunValidationWithResultsModal = useCallback(
-    async (geometryPolygonUuids: string[], options?: PolygonRunValidationWithResultsOptions) => {
-      await onRunValidationWithResultsModalRef.current?.(geometryPolygonUuids, options);
+  const handleRunValidationWithResultsModal = useCallback<PolygonRunValidationWithResultsCallback>(
+    async (polygons, options) => {
+      await onRunValidationWithResultsModalRef.current?.(polygons, options);
     },
     []
   );

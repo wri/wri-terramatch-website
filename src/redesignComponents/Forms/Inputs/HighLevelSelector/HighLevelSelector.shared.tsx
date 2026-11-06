@@ -1,4 +1,4 @@
-import { Portal, Text } from "@chakra-ui/react";
+import { Box, Flex, Portal, Text } from "@chakra-ui/react";
 import { FC, Fragment, PropsWithChildren, ReactNode, useState } from "react";
 
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon, FolderOpenIcon } from "@/redesignComponents/foundations/Icons";
@@ -45,6 +45,34 @@ export const SelectorFolderIcon: FC<SelectorFolderIconProps> = ({ absolute = fal
       zIndex: 1
     })}
   />
+);
+
+interface SelectorTriggerContentProps {
+  disabled: boolean;
+  open: boolean;
+  value: ReactNode;
+  subtitle?: ReactNode;
+}
+
+export const SelectorTriggerContent: FC<SelectorTriggerContentProps> = ({ disabled, open, value, subtitle }) => (
+  <>
+    <Flex align="flex-start" gap={2} flex={1} minWidth={0}>
+      <Flex align="center" height="1.5rem" flexShrink={0}>
+        <SelectorFolderIcon disabled={disabled} />
+      </Flex>
+      <Flex direction="column" gap={0.5} flex={1} minWidth={0}>
+        {value}
+        {subtitle != null && (
+          <Text as="span" textStyle="300" color="neutral.700" truncate>
+            {subtitle}
+          </Text>
+        )}
+      </Flex>
+    </Flex>
+    <Box as="span" color={disabled ? "neutral.500" : "primary.900"} flexShrink={0}>
+      <SelectorChevron open={open} />
+    </Box>
+  </>
 );
 
 interface SelectorTextProps {

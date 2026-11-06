@@ -14,6 +14,7 @@ import { userHasNurseries } from "@/utils/userAccessUtils";
 import { NurseryIcon } from "../foundations/Icons/NavigationSections/NurseryIcon";
 import { OpportunitiesIcon } from "../foundations/Icons/NavigationSections/OpportunitiesIcon";
 import { OrganizationIcon } from "../foundations/Icons/NavigationSections/OrganizationIcon";
+import { PolygonsIcon } from "../foundations/Icons/NavigationSections/PolygonsIcon";
 import { ProjectIcon } from "../foundations/Icons/NavigationSections/ProjectIcon";
 import { ReportsIcon } from "../foundations/Icons/NavigationSections/ReportsIcon";
 import { SiteIcon } from "../foundations/Icons/NavigationSections/SiteIcon";
@@ -78,6 +79,15 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
           icon: <SiteIcon boxSize={4} />,
           label: "Sites"
         },
+        ...(isAdmin
+          ? [
+              {
+                href: "/polygon-review",
+                icon: <PolygonsIcon boxSize={4} />,
+                label: "Polygons"
+              }
+            ]
+          : []),
         ...(showNurseries
           ? [
               {

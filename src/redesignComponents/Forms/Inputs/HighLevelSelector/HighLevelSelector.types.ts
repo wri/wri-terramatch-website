@@ -1,4 +1,5 @@
 import type { SelectRootProps } from "@chakra-ui/react";
+import type { ReactNode } from "react";
 
 export interface HighLevelSelectorItem {
   label: string;
@@ -26,6 +27,20 @@ export interface HighLevelSelectorProps {
   onBlur?: () => void;
   onChange?: (value: string, item?: HighLevelSelectorItem) => void;
   onOpenChange?: (open: boolean) => void;
+}
+
+export interface HighLevelPopoverSelectorProps {
+  /** Popover body; only mounted while the popover is open. */
+  children: ReactNode;
+  open: boolean;
+  placeholder: string;
+  className?: string;
+  contentWidth?: string;
+  disabled?: boolean;
+  subtitle?: ReactNode;
+  value?: string | null;
+  width?: SelectRootProps<HighLevelSelectorItem>["width"];
+  onOpenChange: (open: boolean) => void;
 }
 
 export interface SelectorValueChangeDetails {

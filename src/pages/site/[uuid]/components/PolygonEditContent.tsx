@@ -751,7 +751,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       downloadGeoJsonFile(geojson, filename);
       if (resolvedSiteUuid !== "" && geometryPolygonUuid !== "") {
         trackPolygonDownloaded({
-          siteUuid: resolvedSiteUuid,
+          entityUuid: resolvedSiteUuid,
           polygonType: "monitoring_plot",
           polygonId: geometryPolygonUuid,
           polygonCount: 1
@@ -849,7 +849,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       await downloadPolygonGeoJson(geometryPolygonUuid, polygon?.name ?? "polygon");
       if (resolvedSiteUuid !== "") {
         trackPolygonDownloaded({
-          siteUuid: resolvedSiteUuid,
+          entityUuid: resolvedSiteUuid,
           polygonType: "standard",
           polygonId: geometryPolygonUuid,
           polygonCount: 1
@@ -883,7 +883,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         await bulkUpdateSitePolygonStatus([targetPolygon.uuid], POLYGON_PENDING_APPROVAL as PolygonStatus, comment);
         if (resolvedSiteUuid !== "" && targetGeometryPolygonUuid !== "") {
           trackPolygonStatusChanged({
-            siteUuid: resolvedSiteUuid,
+            entityUuid: resolvedSiteUuid,
             polygonId: targetGeometryPolygonUuid,
             fromStatus: targetPolygon.status ?? "draft",
             toStatus: POLYGON_PENDING_APPROVAL
@@ -962,8 +962,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
     if (onRunValidationWithResultsModal != null) {
       try {
-        await onRunValidationWithResultsModal([geometryPolygonUuidForValidation], {
-          fallbackPolygons: [savedPolygon],
+        await onRunValidationWithResultsModal([{ ...savedPolygon, polygonUuid: geometryPolygonUuidForValidation }], {
           validationAfterCriteriaClear: true,
           previousGeometryPolygonUuid
         });

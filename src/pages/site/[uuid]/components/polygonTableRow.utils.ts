@@ -1,5 +1,8 @@
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import type {
+  SitePolygonLightDto,
+  SitePolygonMapEntryDto
+} from "@/generated/v3/researchService/researchServiceSchemas";
 import { TreeDistributionType } from "@/hooks/translation/useTreeDistributionOptions";
 import {
   mapSitePolygonStatusToMappedTagState,
@@ -58,7 +61,22 @@ const buildRestorationPracticeSortKey = (practices: restorationStrategyType[]): 
 const buildTreeDistributionSortKey = (distr: TreeDistributionType[]): string =>
   toSortableJoinedList(distr.map(value => TREE_DISTRIBUTION_SORT_LABELS[value]));
 
-export const mapSitePolygonToTableRow = (polygon: SitePolygonLightDto, t: (key: string) => string): PolygonTableRow => {
+export type SitePolygonTableRowSource = Pick<
+  SitePolygonMapEntryDto,
+  "uuid" | "polygonUuid" | "name" | "status" | "numTrees" | "calcArea" | "validationStatus" | "disturbanceReportUuid"
+> &
+  Pick<SitePolygonLightDto, "practice" | "targetSys"> &
+  Partial<Pick<SitePolygonLightDto, "plantStart" | "distr" | "submissionCycle" | "source">>;
+
+export type ValidatablePolygon = SitePolygonTableRowSource & { polygonUuid: string };
+
+export const isValidatablePolygon = (polygon: SitePolygonTableRowSource): polygon is ValidatablePolygon =>
+  polygon.polygonUuid != null && polygon.polygonUuid !== "";
+
+export const mapSitePolygonToTableRow = (
+  polygon: SitePolygonTableRowSource,
+  t: (key: string) => string
+): PolygonTableRow => {
   const restorationPractice = (polygon.practice ?? []).filter(isRestorationStrategy);
   const targetLandUse = polygon.targetSys != null && isTargetLandUseType(polygon.targetSys) ? polygon.targetSys : null;
   const treeDistribution = (polygon.distr ?? []).filter(isTreeDistributionType);

@@ -6,7 +6,6 @@ import { useSubmissionStatusLabels } from "@/hooks/translation/useSubmissionStat
 import { useTargetLandUseLabels } from "@/hooks/translation/useTargetLandUseLabels";
 import { useValidationStatusLabels } from "@/hooks/translation/useValidationStatusLabels";
 import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
-import { trackPolygonFilterCleared } from "@/utils/polygonAnalytics";
 
 import {
   EMPTY_POLYGON_FILTERS,
@@ -15,11 +14,10 @@ import {
 } from "../components/polygonFilter.constants";
 
 type UseSitePolygonFiltersParams = {
-  siteUuid: string;
   t: (key: string, params?: Record<string, unknown>) => string;
 };
 
-export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersParams) => {
+export const useSitePolygonFilters = ({ t }: UseSitePolygonFiltersParams) => {
   const submissionStatusLabels = useSubmissionStatusLabels();
   const validationStatusLabels = useValidationStatusLabels();
   const restorationPracticeLabels = useRestorationPracticeLabels();
@@ -60,23 +58,29 @@ export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersPara
   }, [debouncedPolygonSearch, polygonFilters]);
 
   const handleClearPolygonFilters = useCallback(() => {
-    trackPolygonFilterCleared({ siteUuid });
     setPolygonFilters(EMPTY_POLYGON_FILTERS);
     setPolygonSearch("");
     setDebouncedPolygonSearch("");
-  }, [siteUuid]);
+  }, []);
 
   const activeFilterLabels = useMemo<SelectedFilter[]>(() => {
     const labels: SelectedFilter[] = [];
     if (polygonFilters.showDeleted) {
-      return [
-        {
-          label: t("Deleted Polygons"),
-          onRemove: () => {
-            setPolygonFilters(current => ({ ...current, showDeleted: false }));
-          }
+      labels.push({
+        label: t("Deleted Polygons"),
+        onRemove: () => {
+          setPolygonFilters(current => ({ ...current, showDeleted: false }));
         }
-      ];
+      });
+    }
+    if (polygonFilters.sites.length > 0) {
+      labels.push({
+        label: polygonFilters.sites.map(({ label }) => label),
+        onRemove: () => {
+          setPolygonFilters(current => ({ ...current, sites: [] }));
+        },
+        category: t("Site")
+      });
     }
     if (polygonFilters.polygonStatus.length > 0) {
       labels.push({
