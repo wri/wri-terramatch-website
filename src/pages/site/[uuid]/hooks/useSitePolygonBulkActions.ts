@@ -26,12 +26,14 @@ import { setPolygonTableHoveredUuid } from "@/context/polygonTableInteraction.st
 import type { SitePolygonLightDto, ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ApiSlice from "@/store/apiSlice";
+import { isNotNull } from "@/utils/array";
 import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
 import {
   type BulkActionType,
   formatPolygonTargetId,
   trackBulkActionCompleted,
+  trackPolygonDeleted,
   trackPolygonDownloaded,
   trackPolygonRunValidationClicked,
   trackPolygonStatusChanged
@@ -351,6 +353,24 @@ export const useSitePolygonBulkActions = ({
       return;
     }
 
+    const deletedRows = deletePayload?.polygons ?? [];
+    const parentSiteUuids = new Set(
+      entityName === "sites" ? [entityUuid] : deletedRows.map(({ entity }) => entity?.siteUuid).filter(isNotNull)
+    );
+    const trackDeleted = () => {
+      trackPolygonDeleted({
+        siteUuid: parentSiteUuids.size === 1 ? Array.from(parentSiteUuids)[0] : undefined,
+        polygonIds: deletedRows.map(({ id }) => id),
+        polygonCount: sitePolygonUuids.length
+      });
+      trackBulkActionCompleted({
+        entityUuid,
+        entityType: entityName,
+        actionType: "delete",
+        polygonCount: sitePolygonUuids.length
+      });
+    };
+
     if (isPolygonBackgroundJob(sitePolygonUuids.length)) {
       setDeletePolygonModal(false);
       setDeletePayload(null);
@@ -358,7 +378,10 @@ export const useSitePolygonBulkActions = ({
         job: "deleting",
         completeLabel: toastLabels.deletingComplete,
         errorLabel: t("Error Deleting Polygons"),
-        run: () => deletePolygons(sitePolygonUuids)
+        run: async () => {
+          await deletePolygons(sitePolygonUuids);
+          trackDeleted();
+        }
       });
       return;
     }
@@ -368,6 +391,7 @@ export const useSitePolygonBulkActions = ({
 
     try {
       await deletePolygons(sitePolygonUuids);
+      trackDeleted();
       setDeletePolygonModal(false);
       setDeletePayload(null);
       completePolygonProgressToast(POLYGON_TOAST_IDS.deleting, toastLabels.deletingComplete);
@@ -380,7 +404,7 @@ export const useSitePolygonBulkActions = ({
       setIsDeletingPolygons(false);
       setDeletingPolygonCount(0);
     }
-  }, [deletePayload, deletePolygons, runPolygonBackgroundJob, t, toastLabels]);
+  }, [deletePayload, deletePolygons, entityName, entityUuid, runPolygonBackgroundJob, t, toastLabels]);
 
   const runPolygonValidation = useCallback(
     async (polygons: ValidatablePolygon[], options?: PolygonValidationJobsStartedOptions) => {
