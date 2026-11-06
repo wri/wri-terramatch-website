@@ -86,8 +86,7 @@ const ProjectContextPickerContent: FC<
     return (
       [
         { facet: "frameworkKey", label: t("Framework") },
-        { facet: "country", label: t("Country"), search: countrySearch },
-        { facet: "cohort", label: t("Cohort") }
+        { facet: "country", label: t("Country"), search: countrySearch }
       ] as const
     ).map(({ facet, label, ...group }) => {
       const options = getFacetOptions(projects, facetFilters, facet);
@@ -103,17 +102,8 @@ const ProjectContextPickerContent: FC<
 
   return (
     <>
-      <Flex alignItems="stretch">
-        <Flex
-          direction="column"
-          gap={3}
-          padding={3}
-          width="17.5rem"
-          flexShrink={0}
-          maxHeight="37.5rem"
-          overflowY="auto"
-          bg="neutral.200"
-        >
+      <Flex alignItems="stretch" flex={1} minHeight={0}>
+        <Flex direction="column" gap={3} padding={3} width="17.5rem" flexShrink={0} overflowY="auto" bg="neutral.200">
           {facetGroups.map(({ facet, label, options, search }) => (
             <ProjectFacetGroup
               key={facet}
@@ -127,7 +117,7 @@ const ProjectContextPickerContent: FC<
             />
           ))}
         </Flex>
-        <Flex flex={1} minWidth={0} padding={4}>
+        <Flex flex={1} minWidth={0} padding={4} overflowY="auto">
           <ProjectPickerList
             projects={filteredProjects}
             filtersSummary={filtersSummary}
@@ -140,6 +130,7 @@ const ProjectContextPickerContent: FC<
         justify="space-between"
         align="center"
         gap={3}
+        flexShrink={0}
         paddingX={4}
         paddingY={2}
         borderTopWidth={SELECTOR_BORDER_WIDTH}
@@ -147,8 +138,8 @@ const ProjectContextPickerContent: FC<
       >
         <Text textStyle="300" color="neutral.700">
           {isLocked
-            ? t("Clear filters to pick a project with a different framework, country or cohort.")
-            : t("Choose a framework, country or cohort to narrow your list of projects.")}
+            ? t("Clear filters to pick a project with a different framework or country.")
+            : t("Choose a framework or country to narrow your list of projects.")}
         </Text>
         <Button variant="borderless" size="small" disabled={!canClear} onClick={onClear}>
           {t("Clear filters")}
