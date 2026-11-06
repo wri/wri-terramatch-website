@@ -120,6 +120,8 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
           championsMap
           mapFunctions={mapFunctions}
           bbox={bbox}
+          tooltipType="edit"
+          showPopups={!showDeleted}
           projectMarkers={projectMarkers}
           onViewProjectPolygons={onViewProjectPolygons}
           mapIndexPolygons={mapIndexPolygons}

@@ -31,12 +31,11 @@ export type PolygonBulkActionToolbarProps = {
   onSubmit: () => void;
   onOpenApproveModal: () => void;
   onOpenRequestInformationModal: () => void;
-  onRunValidation: (geometryPolygonUuids: string[]) => Promise<void>;
+  onRunValidation: () => void;
   isOverlapFixAction?: boolean;
   canAutoFixOverlap?: boolean;
   isSubmitDisabled?: boolean;
   polygons: PolygonTableRow[];
-  selectedGeometryPolygonUuids: string[];
 };
 
 const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
@@ -57,7 +56,6 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   onOpenRequestInformationModal,
   polygons,
   onRunValidation,
-  selectedGeometryPolygonUuids,
   isOverlapFixAction = false,
   canAutoFixOverlap = false,
   isSubmitDisabled = false
@@ -101,7 +99,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
         disabled: isValidating,
         onClick: () => {
           onClearSelection?.();
-          void onRunValidation(selectedGeometryPolygonUuids);
+          onRunValidation();
         }
       },
       {
@@ -110,17 +108,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
         onClick: onEdit
       }
     ],
-    [
-      isDownloading,
-      isValidating,
-      itemCount,
-      onClearSelection,
-      onDownload,
-      onEdit,
-      onRunValidation,
-      selectedGeometryPolygonUuids,
-      t
-    ]
+    [isDownloading, isValidating, itemCount, onClearSelection, onDownload, onEdit, onRunValidation, t]
   );
 
   const cancelAction = useMemo(

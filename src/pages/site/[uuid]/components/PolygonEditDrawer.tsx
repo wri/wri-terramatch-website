@@ -23,6 +23,7 @@ import SubmitPolygonConfirmation from "./Modals/SubmitPolygonConfirmation";
 import PolygonCommentContent from "./PolygonCommentContent";
 import type {
   PolygonOverlapFixCallback,
+  PolygonRunValidationCallback,
   PolygonRunValidationWithResultsCallback,
   PolygonSaveCallback,
   PolygonValidationClearedCallback
@@ -41,7 +42,7 @@ interface PolygonEditDrawerProps {
   onOpenChange?: (open: boolean) => void;
   onSaved?: PolygonSaveCallback;
   onOverlapFixed?: PolygonOverlapFixCallback;
-  onRunValidation?: (geometryPolygonUuids: string[]) => Promise<void>;
+  onRunValidation?: PolygonRunValidationCallback;
   onRunValidationWithResultsModal?: PolygonRunValidationWithResultsCallback;
   onValidationCleared?: PolygonValidationClearedCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;

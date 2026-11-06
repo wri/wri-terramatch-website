@@ -1,4 +1,12 @@
+import type { PolygonRunValidationWithResultsCallback } from "@/pages/site/[uuid]/components/polygonEdit.types";
+
 export type PolygonSubmitConfirmationRequest = string;
+
+export type MapPopupReviewActions = {
+  isAdminReview: boolean;
+  runPolygonValidation: PolygonRunValidationWithResultsCallback;
+  openPolygonEditDrawerByPolygonId: (polygonId: string) => Promise<boolean>;
+};
 
 let openPolygonSubmitConfirmationExternal: ((sitePolygonUuid: PolygonSubmitConfirmationRequest) => void) | null = null;
 let openEditPhotoDetailsExternal: ((mediaUuid: string) => void) | null = null;
@@ -6,9 +14,7 @@ let closeMapPopupsExternal: (() => void) | null = null;
 let openPolygonPopupExternal: ((polygonUuid: string) => void | Promise<void>) | null = null;
 let openPolygonApproveConfirmationExternal: ((sitePolygonUuid: string) => void) | null = null;
 let openPolygonRequestInformationConfirmationExternal: ((sitePolygonUuid: string) => void) | null = null;
-let sitePolygonAdminReviewMode = false;
-let runPolygonValidationFromMapPopupExternal: ((geometryPolygonUuids: string[]) => Promise<void>) | null = null;
-let openPolygonEditDrawerByPolygonIdFromMapPopupExternal: ((polygonId: string) => Promise<boolean>) | null = null;
+let mapPopupReviewActions: MapPopupReviewActions | null = null;
 
 export const registerMapAreaPopupActions = (actions: {
   openPolygonSubmitConfirmation: (sitePolygonUuid: PolygonSubmitConfirmationRequest) => void;
@@ -32,37 +38,22 @@ export const unregisterMapAreaPopupActions = (): void => {
   openPolygonRequestInformationConfirmationExternal = null;
 };
 
-export const registerSitePolygonAdminReviewMode = (isAdminReview: boolean): void => {
-  sitePolygonAdminReviewMode = isAdminReview;
+export const registerMapPopupReviewActions = (actions: MapPopupReviewActions): void => {
+  mapPopupReviewActions = actions;
 };
 
-export const isSitePolygonAdminReviewMode = (): boolean => sitePolygonAdminReviewMode;
-
-export const registerRunPolygonValidationFromMapPopup = (
-  handler: (geometryPolygonUuids: string[]) => Promise<void>
-): void => {
-  runPolygonValidationFromMapPopupExternal = handler;
+export const unregisterMapPopupReviewActions = (): void => {
+  mapPopupReviewActions = null;
 };
 
-export const unregisterRunPolygonValidationFromMapPopup = (): void => {
-  runPolygonValidationFromMapPopupExternal = null;
-};
+export const isSitePolygonAdminReviewMode = (): boolean => mapPopupReviewActions?.isAdminReview ?? false;
 
-export const runPolygonValidationFromMapPopup = (geometryPolygonUuids: string[]): Promise<void> | undefined =>
-  runPolygonValidationFromMapPopupExternal?.(geometryPolygonUuids);
-
-export const registerOpenPolygonEditDrawerByPolygonIdFromMapPopup = (
-  handler: (polygonId: string) => Promise<boolean>
-): void => {
-  openPolygonEditDrawerByPolygonIdFromMapPopupExternal = handler;
-};
-
-export const unregisterOpenPolygonEditDrawerByPolygonIdFromMapPopup = (): void => {
-  openPolygonEditDrawerByPolygonIdFromMapPopupExternal = null;
-};
+export const runPolygonValidationFromMapPopup = (
+  ...args: Parameters<PolygonRunValidationWithResultsCallback>
+): Promise<void> | undefined => mapPopupReviewActions?.runPolygonValidation(...args);
 
 export const openPolygonEditDrawerByPolygonIdFromMapPopup = (polygonId: string): Promise<boolean> | undefined =>
-  openPolygonEditDrawerByPolygonIdFromMapPopupExternal?.(polygonId);
+  mapPopupReviewActions?.openPolygonEditDrawerByPolygonId(polygonId);
 
 export const registerOpenPolygonPopupHandler = (handler: (polygonUuid: string) => void | Promise<void>): void => {
   openPolygonPopupExternal = handler;

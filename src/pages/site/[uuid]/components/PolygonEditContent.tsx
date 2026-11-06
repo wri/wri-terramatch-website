@@ -962,8 +962,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
     if (onRunValidationWithResultsModal != null) {
       try {
-        await onRunValidationWithResultsModal([geometryPolygonUuidForValidation], {
-          fallbackPolygons: [savedPolygon],
+        await onRunValidationWithResultsModal([{ ...savedPolygon, polygonUuid: geometryPolygonUuidForValidation }], {
           validationAfterCriteriaClear: true,
           previousGeometryPolygonUuid
         });
