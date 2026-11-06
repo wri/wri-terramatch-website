@@ -23,7 +23,6 @@ import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer
 import { setPolygonTableHoveredUuid, useSyncPolygonTableSelectionStore } from "@/context/polygonTableInteraction.store";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
-import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 
@@ -33,6 +32,7 @@ import {
   withResolvedValidationStatusFromCriteria
 } from "../components/Modals/validationCriteria";
 import PolygonBulkActionToolbar from "../components/PolygonBulkActionToolbar";
+import PolygonNoResults from "../components/PolygonNoResults";
 import PolygonSubmissionAnnouncement from "../components/PolygonSubmissionAnnouncement";
 import { PolygonTableRow } from "../components/PolygonTableRow";
 import { mapSitePolygonToTableRow } from "../components/polygonTableRow.utils";
@@ -797,10 +797,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           />
         )}
         {shouldShowNoResults ? (
-          <NoResults
-            title={t("No results found")}
-            description={t("We couldn’t find any site areas matching your search. Try a different keyword.")}
-          />
+          <PolygonNoResults />
         ) : (
           <>
             {!isDeletedAuditView && (
