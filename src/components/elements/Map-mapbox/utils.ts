@@ -11,6 +11,7 @@ export * from "./interactions/popupCoordinator";
 export * from "./services/polygonService";
 
 import {
+  exportPolygonsGeoJson,
   loadPolygonGeoJson,
   loadProjectPolygonsGeoJson,
   loadProjectSitePolygonsGeoJson,
@@ -135,46 +136,16 @@ export async function downloadSitePolygonsGeoJson(
   }
 }
 
-export async function fetchMultiplePolygonsGeoJson(
-  polygonUuids: string[],
-  options: PolygonGeoJsonDownloadQueryParams = POLYGON_GEOJSON_DOWNLOAD_QUERY_PARAMS
-): Promise<GeoJSON.FeatureCollection> {
-  try {
-    ApiSlice.pruneCache("geojsonExports", polygonUuids);
-    const results = await Promise.all(
-      polygonUuids.map(uuid => loadPolygonGeoJson({ uuid, ...POLYGON_GEOJSON_DOWNLOAD_QUERY_PARAMS, ...options }))
-    );
-    const features: GeoJSON.Feature[] = [];
-    results.forEach((result, index) => {
-      const geojson = extractGeoJsonFromResponse(result.data);
-      if (geojson?.features != null) {
-        geojson.features.forEach(feature => {
-          const properties = { ...(feature.properties ?? {}) };
-          if (properties.uuid == null) {
-            properties.uuid = polygonUuids[index];
-          }
-          features.push({ ...feature, properties });
-        });
-      }
-    });
-    return { type: "FeatureCollection", features };
-  } catch (error) {
-    Log.error("Failed to fetch multiple polygons GeoJSON:", error);
-    throw error;
-  }
-}
-
 export async function downloadMultiplePolygonsGeoJson(
   polygonUuids: string[],
-  filename: string,
-  options: PolygonGeoJsonDownloadQueryParams = POLYGON_GEOJSON_DOWNLOAD_QUERY_PARAMS
+  singlePolygonFilename: string
 ): Promise<void> {
+  if (polygonUuids.length === 1) {
+    return await downloadPolygonGeoJson(polygonUuids[0], singlePolygonFilename);
+  }
+
   try {
-    const combinedGeojson = await fetchMultiplePolygonsGeoJson(polygonUuids, options);
-    if (combinedGeojson.features == null || combinedGeojson.features.length === 0) {
-      throw new Error("No polygons found to download");
-    }
-    downloadGeoJsonFile(combinedGeojson, formatFileName(filename));
+    await exportPolygonsGeoJson({ polygonUuids });
   } catch (error) {
     Log.error("Failed to download multiple polygons GeoJSON:", error);
     throw error;

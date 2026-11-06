@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import { useCallback, useState } from "react";
 
-import { createSitePolygonsGeoJsonExport } from "@/generated/v3/researchService/researchServiceComponents";
+import { exportPolygonsGeoJson } from "@/connections/GeoJsonExport";
 import type { GeoJsonExportAttributes } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 import { trackPolygonDownloaded } from "@/utils/polygonAnalytics";
@@ -24,9 +24,7 @@ export const usePolygonGeoJsonExport = (projectUuid: string | undefined) => {
   const startExport = useCallback(
     async (attributes: GeoJsonExportAttributes, polygonCount: number | undefined) => {
       const exportPolygons = async () => {
-        await createSitePolygonsGeoJsonExport.downloadFile({
-          body: { data: { type: "geojsonExports", attributes } }
-        });
+        await exportPolygonsGeoJson(attributes);
         if (projectUuid != null) {
           trackPolygonDownloaded({
             entityUuid: projectUuid,

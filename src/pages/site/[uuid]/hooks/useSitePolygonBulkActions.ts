@@ -92,7 +92,6 @@ type PolygonStatusChange = {
 type UseSitePolygonBulkActionsParams = {
   entityName: "sites" | "projects";
   entityUuid: string;
-  downloadName: string | null;
   polygonsData: SitePolygonLightDto[];
   selectedRows: PolygonTableRow[];
   selectedSitePolygons: SitePolygonLightDto[];
@@ -119,7 +118,6 @@ type UseSitePolygonBulkActionsParams = {
 export const useSitePolygonBulkActions = ({
   entityName,
   entityUuid,
-  downloadName,
   polygonsData,
   selectedRows,
   selectedSitePolygons,
@@ -977,11 +975,7 @@ export const useSitePolygonBulkActions = ({
 
   const downloadPolygons = useCallback(
     async (geometryPolygonUuids: string[], downloadSitePolygons: SitePolygonLightDto[]) => {
-      const filename =
-        downloadSitePolygons.length === 1
-          ? downloadSitePolygons[0].name ?? "polygon"
-          : `${downloadName ?? "polygons"}-${new Date().toISOString().slice(0, 10)}`;
-      await downloadMultiplePolygonsGeoJson(geometryPolygonUuids, filename);
+      await downloadMultiplePolygonsGeoJson(geometryPolygonUuids, downloadSitePolygons[0]?.name ?? "polygon");
       trackPolygonDownloaded({
         entityUuid,
         entityType: entityName,
@@ -996,7 +990,7 @@ export const useSitePolygonBulkActions = ({
         polygonCount: geometryPolygonUuids.length
       });
     },
-    [downloadName, entityName, entityUuid]
+    [entityName, entityUuid]
   );
 
   const handleBulkDownload = useCallback(

@@ -1,12 +1,13 @@
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import {
+  createSitePolygonsGeoJsonExport,
   getProjectPolygonGeoJson,
   GetProjectPolygonGeoJsonQueryParams,
   getSitePolygonsGeoJson,
   GetSitePolygonsGeoJsonQueryParams
 } from "@/generated/v3/researchService/researchServiceComponents";
-import { GeoJsonExportDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { GeoJsonExportAttributes, GeoJsonExportDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 export const POLYGON_GEOJSON_DOWNLOAD_QUERY_PARAMS = {
   includeExtendedData: true
@@ -108,6 +109,9 @@ const projectPolygonsGeoJsonConnection = v3Resource("geojsonExports", getProject
   )
   .enabledProp()
   .buildConnection();
+
+export const exportPolygonsGeoJson = (attributes: GeoJsonExportAttributes) =>
+  createSitePolygonsGeoJsonExport.downloadFile({ body: { data: { type: "geojsonExports", attributes } } });
 
 export const usePolygonGeoJson = connectionHook(singlePolygonGeoJsonConnection);
 export const loadPolygonGeoJson = connectionLoader(singlePolygonGeoJsonConnection);
