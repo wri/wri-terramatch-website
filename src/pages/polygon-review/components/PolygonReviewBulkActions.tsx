@@ -15,6 +15,7 @@ import SystemValidationComplete from "../../site/[uuid]/components/Modals/System
 import PolygonBulkActionToolbar from "../../site/[uuid]/components/PolygonBulkActionToolbar";
 import PolygonBulkEditDrawer from "../../site/[uuid]/components/PolygonBulkEditDrawer";
 import type { PolygonTableRow } from "../../site/[uuid]/components/PolygonTableRow";
+import { isPolygonBackgroundJob } from "../../site/[uuid]/hooks/usePolygonBackgroundJob";
 import type { ProjectPolygonBulkActions } from "../hooks/useProjectPolygonBulkActions";
 
 type PolygonReviewBulkActionsProps = {
@@ -85,9 +86,11 @@ const PolygonReviewBulkActions: FC<PolygonReviewBulkActionsProps> = ({
         view="table"
         width="35rem"
         footnote={
-          <Text textStyle="400" color="neutral.900">
-            {t("This runs in the background, you can leave this page.")}
-          </Text>
+          isPolygonBackgroundJob(bulkActions.deletePayload?.sitePolygonUuids.length ?? 0) ? (
+            <Text textStyle="400" color="neutral.900">
+              {t("This runs in the background, you can leave this page.")}
+            </Text>
+          ) : undefined
         }
       />
       <PolygonBulkEditDrawer

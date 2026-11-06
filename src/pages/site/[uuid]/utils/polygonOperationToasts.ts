@@ -18,14 +18,25 @@ export const POLYGON_TOAST_IDS = {
   savingChanges: "polygon-saving-changes-toast",
   fixingOverlaps: "polygon-fixing-overlaps-toast",
   deleting: "polygon-deleting-toast",
-  validating: "polygon-validating-toast"
+  validating: "polygon-validating-toast",
+  approving: "polygon-approving-toast",
+  requestingInformation: "polygon-requesting-information-toast"
 } as const;
 
 export type PolygonToastId = (typeof POLYGON_TOAST_IDS)[keyof typeof POLYGON_TOAST_IDS];
 
-export const showPolygonProgressToast = (t: (key: string) => string, label: string, id: PolygonToastId) =>
+/** Background jobs can overlap, so each one gets its own toast id. */
+export type PolygonBackgroundToastId = `${PolygonToastId}-${string}`;
+
+export const showPolygonProgressToast = (
+  t: (key: string) => string,
+  label: string,
+  id: PolygonToastId | PolygonBackgroundToastId,
+  caption?: string
+) =>
   showToast({
     label,
+    caption,
     id,
     type: "info",
     placement: POLYGON_TOAST_PLACEMENT,
@@ -38,9 +49,9 @@ export const showPolygonProgressToast = (t: (key: string) => string, label: stri
     })
   });
 
-export const closePolygonProgressToast = (id: PolygonToastId) => closeToast(id);
+export const closePolygonProgressToast = (id: PolygonToastId | PolygonBackgroundToastId) => closeToast(id);
 
-export const completePolygonProgressToast = (id: PolygonToastId, label: string) =>
+export const completePolygonProgressToast = (id: PolygonToastId | PolygonBackgroundToastId, label: string) =>
   showToast({
     id,
     label,
@@ -118,3 +129,32 @@ export const getPolygonOperationToastLabels = (t: TranslateFn): PolygonOperation
   downloadingSamplePlotsComplete: t("Download Complete"),
   validatingComplete: t("Validation Complete")
 });
+
+export type PolygonBackgroundJob =
+  | "downloading"
+  | "deleting"
+  | "approving"
+  | "submitting"
+  | "requestingInformation"
+  | "savingChanges"
+  | "fixingOverlaps";
+
+export type PolygonBackgroundJobToastLabels = { label: string; caption: string };
+
+export const getPolygonBackgroundJobToastLabels = (
+  t: TranslateFn
+): Record<PolygonBackgroundJob, PolygonBackgroundJobToastLabels> => {
+  const caption = t("This runs in the background. You can keep working or leave this page.");
+  return {
+    downloading: {
+      label: t("Downloading Polygons"),
+      caption: t("Export is in progress. Don't leave or refresh this page.")
+    },
+    deleting: { label: t("Deleting Polygons"), caption },
+    approving: { label: t("Approving Polygons"), caption },
+    submitting: { label: t("Submitting Polygons"), caption },
+    requestingInformation: { label: t("Requesting Information for Polygons"), caption },
+    savingChanges: { label: t("Saving Changes"), caption },
+    fixingOverlaps: { label: t("Fixing Polygon Overlaps"), caption }
+  };
+};

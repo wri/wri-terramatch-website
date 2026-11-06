@@ -28,6 +28,7 @@ import ExistingPolygon from "../site/[uuid]/components/Modals/ExistingPolygon";
 import MapEditPhotoDetails from "../site/[uuid]/components/Modals/GeotaggedPhotos/MapEditPhotoDetails";
 import UploadError from "../site/[uuid]/components/Modals/UploadError";
 import UploadPolygons from "../site/[uuid]/components/Modals/UploadPolygons";
+import PolygonNoResults from "../site/[uuid]/components/PolygonNoResults";
 import { buildPolygonTableColumns } from "../site/[uuid]/components/polygonTableColumns";
 import type { PolygonTableRow } from "../site/[uuid]/components/PolygonTableRow";
 import SitePolygonIssuesPanel from "../site/[uuid]/components/SitePolygonIssuesPanel";
@@ -118,6 +119,7 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
     sortField,
     sortDirection
   });
+  const hasNoMatchingPolygons = polygonsLoaded && hasLevel2Filters && indexTotal === 0;
   const pagePolygons = polygons ?? NO_POLYGONS;
   const polygonRows = useMemo(
     () => pagePolygons.map(polygon => toPolygonReviewTableRow(polygon, t)),
@@ -263,7 +265,6 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
 
   const polygonBulkActions = useProjectPolygonBulkActions({
     projectUuid: selectedProjectUuid,
-    projectName: selectedProject?.name ?? null,
     polygons: selectionPolygons,
     selectedRows,
     selectedRowIds,
@@ -375,7 +376,7 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
                 onDrawPolygon={startNewPolygonFlow}
                 onUpload={openUploadModal}
               />
-              {selectedProject == null ? (
+              {selectedProject == null || (hasNoMatchingPolygons && !polygonBulkActions.isTableLocked) ? (
                 <Flex
                   direction="column"
                   overflow="hidden"
@@ -385,7 +386,11 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
                   bg="neutral.100"
                 >
                   <Table data={[]} columns={columns} selectable showPagination={false} />
-                  <PolygonReviewEmptyState onSelectProject={openPicker} />
+                  {selectedProject == null ? (
+                    <PolygonReviewEmptyState onSelectProject={openPicker} />
+                  ) : (
+                    <PolygonNoResults className="items-center text-center" />
+                  )}
                 </Flex>
               ) : (
                 <SitePolygonTableSection

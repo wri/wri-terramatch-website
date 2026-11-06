@@ -1,3 +1,5 @@
+import { NAVBAR_HEIGHT, NAVBAR_Z_INDEX } from "@/redesignComponents/navigation/NavBar/Navbar.constants";
+
 export const SELECTOR_BORDER_WIDTH = "0.0625rem";
 
 export const SELECTOR_RADIUS = "0.25rem";
@@ -104,13 +106,17 @@ export const contentMenuStyles = {
 
 export const popoverContentStyles = {
   bg: "neutral.100",
+  display: "flex",
+  flexDirection: "column",
+  maxHeight: `min(calc(100vh - ${NAVBAR_HEIGHT}), var(--available-height))`,
   border: `${SELECTOR_BORDER_WIDTH} solid`,
   borderColor: "neutral.300",
   borderRadius: SELECTOR_RADIUS,
   boxShadow: MENU_SHADOW,
   maxWidth: "calc(100vw - 2rem)",
   outline: "none",
-  overflow: "hidden"
+  overflow: "hidden",
+  zIndex: NAVBAR_Z_INDEX - 1
 } as const;
 
 export const groupedContentMenuStyles = {

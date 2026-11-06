@@ -193,7 +193,9 @@ const ProjectSiteReportEntityTab = ({
     }
   };
 
-  const chartFramework = isTerrafund(frameworkKey as Framework) ? Framework.TF : (frameworkKey as Framework);
+  const chartFramework = isTerrafund(frameworkKey as Framework)
+    ? Framework.TF_NON_PROFITS
+    : (frameworkKey as Framework);
   const showGoalComparison = entity === "projectReports";
   const siteTreesTooltip = isSiteReport ? tooltips.TOOLTIP_TREE_RESTORED_SITE : tooltips.TOOLTIP_TREE_RESTORED_PROJECT;
   const siteSaplingsTooltip = isSiteReport
@@ -201,7 +203,7 @@ const ProjectSiteReportEntityTab = ({
     : tooltips.TOOLTIP_SAPLING_RESTORED_PROJECT;
 
   const chartsDataMapping = {
-    terrafund: [
+    [Framework.TF_NON_PROFITS]: [
       ...(entity === "projectReports"
         ? [
             <ProgressDataCard
@@ -233,7 +235,7 @@ const ProjectSiteReportEntityTab = ({
         tooltipContent={siteTreesTooltip}
       />
     ],
-    ppc: [
+    [Framework.PPC]: [
       ...(isSiteReport && siteGoals != null
         ? [
             <ProgressDataCard
@@ -260,7 +262,7 @@ const ProjectSiteReportEntityTab = ({
         graph={false}
       />
     ],
-    hbf: [
+    [Framework.HBF]: [
       <ProgressDataCard
         key="hbf-1"
         cardValues={chartDataWorkdays.cardValues}

@@ -1,11 +1,12 @@
 import { useT } from "@transifex/react";
 import { useCallback, useState } from "react";
 
-import { createSitePolygonsGeoJsonExport } from "@/generated/v3/researchService/researchServiceComponents";
+import { exportPolygonsGeoJson } from "@/connections/GeoJsonExport";
 import type { GeoJsonExportAttributes } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 import { trackPolygonDownloaded } from "@/utils/polygonAnalytics";
 
+import { isPolygonBackgroundJob, usePolygonBackgroundJob } from "../../site/[uuid]/hooks/usePolygonBackgroundJob";
 import {
   closePolygonProgressToast,
   completePolygonProgressToast,
@@ -17,16 +18,13 @@ import {
 
 export const usePolygonGeoJsonExport = (projectUuid: string | undefined) => {
   const t = useT();
+  const runPolygonBackgroundJob = usePolygonBackgroundJob();
   const [isExporting, setIsExporting] = useState(false);
 
   const startExport = useCallback(
     async (attributes: GeoJsonExportAttributes, polygonCount: number | undefined) => {
-      setIsExporting(true);
-      showPolygonProgressToast(t, getDownloadingPolygonsProgressLabel(t), POLYGON_TOAST_IDS.downloading);
-      try {
-        await createSitePolygonsGeoJsonExport.downloadFile({
-          body: { data: { type: "geojsonExports", attributes } }
-        });
+      const exportPolygons = async () => {
+        await exportPolygonsGeoJson(attributes);
         if (projectUuid != null) {
           trackPolygonDownloaded({
             entityUuid: projectUuid,
@@ -35,16 +33,30 @@ export const usePolygonGeoJsonExport = (projectUuid: string | undefined) => {
             polygonCount
           });
         }
-        completePolygonProgressToast(POLYGON_TOAST_IDS.downloading, t("Download Complete"));
-      } catch (error) {
-        Log.error("Failed to export polygon GeoJSON:", error);
-        closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);
-        showPolygonErrorToast(t("Error Downloading Polygons"));
-      } finally {
-        setIsExporting(false);
+      };
+
+      setIsExporting(true);
+      if (polygonCount != null && isPolygonBackgroundJob(polygonCount)) {
+        await runPolygonBackgroundJob({
+          job: "downloading",
+          completeLabel: t("Download Complete"),
+          errorLabel: t("Error Downloading Polygons"),
+          run: exportPolygons
+        });
+      } else {
+        showPolygonProgressToast(t, getDownloadingPolygonsProgressLabel(t), POLYGON_TOAST_IDS.downloading);
+        try {
+          await exportPolygons();
+          completePolygonProgressToast(POLYGON_TOAST_IDS.downloading, t("Download Complete"));
+        } catch (error) {
+          Log.error("Failed to export polygon GeoJSON:", error);
+          closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);
+          showPolygonErrorToast(t("Error Downloading Polygons"));
+        }
       }
+      setIsExporting(false);
     },
-    [projectUuid, t]
+    [projectUuid, runPolygonBackgroundJob, t]
   );
 
   return { startExport, isExporting };

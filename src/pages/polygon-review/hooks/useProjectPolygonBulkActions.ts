@@ -38,7 +38,6 @@ const refetchPolygons = async () => {
 
 type UseProjectPolygonBulkActionsParams = {
   projectUuid: string | null;
-  projectName: string | null;
   polygons: SitePolygonLightDto[];
   selectedRows: PolygonTableRow[];
   selectedRowIds: Set<string | number>;
@@ -47,7 +46,6 @@ type UseProjectPolygonBulkActionsParams = {
 
 export const useProjectPolygonBulkActions = ({
   projectUuid,
-  projectName,
   polygons,
   selectedRows,
   selectedRowIds,
@@ -100,7 +98,6 @@ export const useProjectPolygonBulkActions = ({
   const bulkActions = useSitePolygonBulkActions({
     entityName: "projects",
     entityUuid,
-    downloadName: projectName,
     polygonsData: polygons,
     selectedRows,
     selectedSitePolygons: selection.selectedSitePolygons,
