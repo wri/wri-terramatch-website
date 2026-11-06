@@ -79,6 +79,7 @@ export const Roles = {
     "admin-fundo-flora": "Fundo Flora Admin",
     "admin-wcb": "WCB Admin",
     "admin-barka-fund": "Barka Fund Admin",
+    "admin-polygon-monitoring": "Polygon Monitoring Admin",
     "project-developer": "Project Developer",
     "project-manager": "Project Manager",
     "greenhouse-service-account": "Greenhouse Service Account",
@@ -91,6 +92,7 @@ export const Roles = {
     "admin-epa-ghana-pilot",
     "admin-fundo-flora",
     "admin-hbf",
+    "admin-polygon-monitoring",
     "admin-ppc",
     "admin-terrafund",
     "admin-wcb"
@@ -100,14 +102,13 @@ export const Roles = {
 export const Frameworks = {
   FRAMEWORK_NAMES: {
     "barka-fund": "Barka Fund",
-    enterprises: "TerraFund Enterprises",
     "epa-ghana-pilot": "EPA-Ghana Pilot",
-    "fundo-flora-1": "Fundo Flora 1",
+    "fundo-flora": "Fundo Flora",
     hbf: "Harit Bharat Fund",
+    "polygon-monitoring": "Polygon Monitoring",
     ppc: "PPC",
-    terrafund: "TerraFund Top 100",
-    "terrafund-3": "TerraFund Cohort Three",
-    "terrafund-landscapes": "TerraFund Landscapes",
+    "terrafund-enterprises": "TerraFund Enterprises",
+    "terrafund-non-profits": "TerraFund Non-Profits",
     wcb: "Wildlife Conservation Bond"
   } as const
 } as const;

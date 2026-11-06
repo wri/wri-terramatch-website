@@ -684,11 +684,11 @@ export type OrganisationUpdateBody = {
 
 export type UserFramework = {
   /**
-   * @example TerraFund Landscapes
+   * @example TerraFund Non-Profits
    */
   name: string;
   /**
-   * @example terrafund-landscapes
+   * @example terrafund-non-profits
    */
   slug: string;
 };
@@ -840,16 +840,15 @@ export type UserTaskDto = {
   organisationUuid?: string | null;
   organisationName?: string | null;
   frameworkKey?:
-    | "terrafund"
-    | "terrafund-landscapes"
-    | "enterprises"
+    | "terrafund-non-profits"
+    | "terrafund-enterprises"
     | "epa-ghana-pilot"
-    | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora-1"
+    | "fundo-flora"
     | "wcb"
     | "barka-fund"
+    | "polygon-monitoring"
     | null;
   status: "due" | "information-required" | "pending-approval" | "approved";
   /**
@@ -877,7 +876,7 @@ export type NotificationDto = {
  */
 export type Roles = {
   /**
-   * @example {"admin-super":"Super Admin","admin-ppc":"PPC Admin","admin-terrafund":"TerraFund Admin","admin-hbf":"HBF Admin","admin-epa-ghana-pilot":"EPA Ghana Pilot Admin","admin-fundo-flora":"Fundo Flora Admin","admin-wcb":"WCB Admin","admin-barka-fund":"Barka Fund Admin","project-developer":"Project Developer","project-manager":"Project Manager","greenhouse-service-account":"Greenhouse Service Account","research-service-account":"Research Service Account","government":"Government","funder":"Funder"}
+   * @example {"admin-super":"Super Admin","admin-ppc":"PPC Admin","admin-terrafund":"TerraFund Admin","admin-hbf":"HBF Admin","admin-epa-ghana-pilot":"EPA Ghana Pilot Admin","admin-fundo-flora":"Fundo Flora Admin","admin-wcb":"WCB Admin","admin-barka-fund":"Barka Fund Admin","admin-polygon-monitoring":"Polygon Monitoring Admin","project-developer":"Project Developer","project-manager":"Project Manager","greenhouse-service-account":"Greenhouse Service Account","research-service-account":"Research Service Account","government":"Government","funder":"Funder"}
    */
   ROLE_NAMES: Record<string, any>;
   /**
@@ -887,6 +886,7 @@ export type Roles = {
    * @example admin-epa-ghana-pilot
    * @example admin-fundo-flora
    * @example admin-hbf
+   * @example admin-polygon-monitoring
    * @example admin-ppc
    * @example admin-terrafund
    * @example admin-wcb
@@ -899,7 +899,7 @@ export type Roles = {
  */
 export type Frameworks = {
   /**
-   * @example {"barka-fund":"Barka Fund","enterprises":"TerraFund Enterprises","epa-ghana-pilot":"EPA-Ghana Pilot","fundo-flora-1":"Fundo Flora 1","hbf":"Harit Bharat Fund","ppc":"PPC","terrafund":"TerraFund Top 100","terrafund-3":"TerraFund Cohort Three","terrafund-landscapes":"TerraFund Landscapes","wcb":"Wildlife Conservation Bond"}
+   * @example {"barka-fund":"Barka Fund","epa-ghana-pilot":"EPA-Ghana Pilot","fundo-flora":"Fundo Flora","hbf":"Harit Bharat Fund","polygon-monitoring":"Polygon Monitoring","ppc":"PPC","terrafund-enterprises":"TerraFund Enterprises","terrafund-non-profits":"TerraFund Non-Profits","wcb":"Wildlife Conservation Bond"}
    */
   FRAMEWORK_NAMES: Record<string, any>;
 };
@@ -946,7 +946,7 @@ export type UserUpdateAttributes = {
    */
   locale?: "en-US" | "es-MX" | "fr-FR" | "pt-BR" | null;
   /**
-   * Replaces the user's full set of roles. Only framework admin roles (admin-barka-fund, admin-epa-ghana-pilot, admin-fundo-flora, admin-hbf, admin-ppc, admin-terrafund, admin-wcb) may be combined; any other role must be the user's only role.
+   * Replaces the user's full set of roles. Only framework admin roles (admin-barka-fund, admin-epa-ghana-pilot, admin-fundo-flora, admin-hbf, admin-polygon-monitoring, admin-ppc, admin-terrafund, admin-wcb) may be combined; any other role must be the user's only role.
    */
   roles?: (
     | "admin-super"
@@ -957,6 +957,7 @@ export type UserUpdateAttributes = {
     | "admin-fundo-flora"
     | "admin-wcb"
     | "admin-barka-fund"
+    | "admin-polygon-monitoring"
     | "project-developer"
     | "project-manager"
     | "greenhouse-service-account"
@@ -966,16 +967,15 @@ export type UserUpdateAttributes = {
   )[];
   directFrameworks?:
     | (
-        | "terrafund"
-        | "terrafund-landscapes"
-        | "enterprises"
+        | "terrafund-non-profits"
+        | "terrafund-enterprises"
         | "epa-ghana-pilot"
-        | "terrafund-3"
         | "ppc"
         | "hbf"
-        | "fundo-flora-1"
+        | "fundo-flora"
         | "wcb"
         | "barka-fund"
+        | "polygon-monitoring"
       )[]
     | null;
 };

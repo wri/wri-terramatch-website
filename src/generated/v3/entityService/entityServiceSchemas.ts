@@ -327,16 +327,15 @@ export type AboutSectionDto = {
   type: "project" | "site" | "nursery" | "project-report" | "site-report" | "nursery-report";
   frameworks?:
     | (
-        | "terrafund"
-        | "terrafund-landscapes"
-        | "enterprises"
+        | "terrafund-non-profits"
+        | "terrafund-enterprises"
         | "epa-ghana-pilot"
-        | "terrafund-3"
         | "ppc"
         | "hbf"
-        | "fundo-flora-1"
+        | "fundo-flora"
         | "wcb"
         | "barka-fund"
+        | "polygon-monitoring"
       )[]
     | null;
   header: string;
@@ -360,16 +359,15 @@ export type StoreAboutSectionAttributes = {
   type: "project" | "site" | "nursery" | "project-report" | "site-report" | "nursery-report";
   frameworks?:
     | (
-        | "terrafund"
-        | "terrafund-landscapes"
-        | "enterprises"
+        | "terrafund-non-profits"
+        | "terrafund-enterprises"
         | "epa-ghana-pilot"
-        | "terrafund-3"
         | "ppc"
         | "hbf"
-        | "fundo-flora-1"
+        | "fundo-flora"
         | "wcb"
         | "barka-fund"
+        | "polygon-monitoring"
       )[]
     | null;
   header: string;
@@ -3589,16 +3587,15 @@ export type SubmissionDto = {
   applicationUuid: string | null;
   projectPitchUuid: string | null;
   frameworkKey:
-    | "terrafund"
-    | "terrafund-landscapes"
-    | "enterprises"
+    | "terrafund-non-profits"
+    | "terrafund-enterprises"
     | "epa-ghana-pilot"
-    | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora-1"
+    | "fundo-flora"
     | "wcb"
     | "barka-fund"
+    | "polygon-monitoring"
     | null;
   formUuid: string;
   status?: "approved" | "pending-approval" | "rejected" | "information-required" | "draft" | null;
@@ -3846,16 +3843,15 @@ export type FormFullDto = {
   subtitle?: string | null;
   description?: string | null;
   frameworkKey?:
-    | "terrafund"
-    | "terrafund-landscapes"
-    | "enterprises"
+    | "terrafund-non-profits"
+    | "terrafund-enterprises"
     | "epa-ghana-pilot"
-    | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora-1"
+    | "fundo-flora"
     | "wcb"
     | "barka-fund"
+    | "polygon-monitoring"
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
@@ -3978,16 +3974,15 @@ export type StoreFormAttributes = {
   subtitle?: string | null;
   description?: string | null;
   frameworkKey?:
-    | "terrafund"
-    | "terrafund-landscapes"
-    | "enterprises"
+    | "terrafund-non-profits"
+    | "terrafund-enterprises"
     | "epa-ghana-pilot"
-    | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora-1"
+    | "fundo-flora"
     | "wcb"
     | "barka-fund"
+    | "polygon-monitoring"
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
@@ -4110,16 +4105,15 @@ export type FundingProgrammeDto = {
    */
   updatedAt: string;
   frameworkKey?:
-    | "terrafund"
-    | "terrafund-landscapes"
-    | "enterprises"
+    | "terrafund-non-profits"
+    | "terrafund-enterprises"
     | "epa-ghana-pilot"
-    | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora-1"
+    | "fundo-flora"
     | "wcb"
     | "barka-fund"
+    | "polygon-monitoring"
     | null;
   name: string;
   description: string;
@@ -4143,16 +4137,15 @@ export type StoreStageAttributes = {
 
 export type StoreFundingProgrammeAttributes = {
   frameworkKey?:
-    | "terrafund"
-    | "terrafund-landscapes"
-    | "enterprises"
+    | "terrafund-non-profits"
+    | "terrafund-enterprises"
     | "epa-ghana-pilot"
-    | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora-1"
+    | "fundo-flora"
     | "wcb"
     | "barka-fund"
+    | "polygon-monitoring"
     | null;
   name: string;
   description: string;

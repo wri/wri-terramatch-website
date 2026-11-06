@@ -490,7 +490,7 @@ const getDemographicsEntryConfigs = (type: TrackingType, framework: Framework) =
     switch (framework) {
       case Framework.HBF:
         return HBF_JOBS_DEMOGRAPHICS_TYPE_MAP;
-      case Framework.FF_1:
+      case Framework.FUNDO_FLORA:
         return type === "volunteers" ? FF_VOLUNTEERS_DEMOGRAPHICS_TYPE_MAP : FF_JOBS_DEMOGRAPHICS_TYPE_MAP;
       default:
         return JOBS_DEMOGRAPHICS_TYPE_MAP;
@@ -500,7 +500,7 @@ const getDemographicsEntryConfigs = (type: TrackingType, framework: Framework) =
       switch (framework) {
         case Framework.HBF:
           return HBF_BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP;
-        case Framework.FF_1:
+        case Framework.FUNDO_FLORA:
           return FF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP;
         default:
           return BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP;
@@ -511,7 +511,7 @@ const getDemographicsEntryConfigs = (type: TrackingType, framework: Framework) =
       switch (framework) {
         case Framework.HBF:
           return HBF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP;
-        case Framework.FF_1:
+        case Framework.FUNDO_FLORA:
           return FF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP;
         default:
           return BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP;
@@ -647,7 +647,7 @@ const getRestorationEntryConfigs = (type: TrackingType, framework: Framework) =>
   } else if (type === "treesPlantedGoal") {
     return TREES_PLANTED_GOAL;
   } else if (type === "hectaresGoal") {
-    return framework === Framework.FF_1 ? FF_HECTARES_GOAL : HECTARES_GOAL;
+    return framework === Framework.FUNDO_FLORA ? FF_HECTARES_GOAL : HECTARES_GOAL;
   } else return HISTORICAL;
 };
 

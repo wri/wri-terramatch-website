@@ -9,7 +9,7 @@ describe("Test useGetReportingWindow hook", () => {
   test("Test `bi-annually` window", () => {
     const { result } = renderHook(() => {
       const dueDate = "2023-04-17T10:20:47.000000Z";
-      return useReportingWindow(Framework.TF, dueDate);
+      return useReportingWindow(Framework.TF_NON_PROFITS, dueDate);
     });
     expect(result.current).toBe("October - March 2023");
   });
