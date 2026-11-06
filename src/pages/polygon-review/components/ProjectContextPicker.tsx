@@ -6,6 +6,7 @@ import { ProjectMapEntryDto } from "@/generated/v3/researchService/researchServi
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { HighLevelPopoverSelector, SELECTOR_BORDER_WIDTH } from "@/redesignComponents/Forms/Inputs/HighLevelSelector";
 import { isNotNull } from "@/utils/array";
+import type { ProjectSelectionMethod } from "@/utils/polygonAnalytics";
 
 import { useProjectFacetLabels } from "../hooks/useProjectFacetLabels";
 import {
@@ -25,7 +26,7 @@ type ProjectContextPickerContentProps = {
   filters: ProjectContextFilters;
   selectedProject: ProjectMapEntryDto | null;
   onFiltersChange: (filters: ProjectContextFilters) => void;
-  onSelectProject: (uuid: string) => void;
+  onSelectProject: (uuid: string, method: ProjectSelectionMethod) => void;
   onClear: () => void;
 };
 

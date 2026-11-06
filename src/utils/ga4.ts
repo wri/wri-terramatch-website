@@ -1,3 +1,6 @@
+import { POLYGON_REVIEW_PATH } from "@/pages/polygon-review/utils/polygonReviewUrl";
+import { PAGE_CONTEXT_POLYGONS_INDEX } from "@/utils/analytics/pageContext";
+
 type PolygonEventName =
   | "polygon_drawn"
   | "polygon_shape_edited"
@@ -24,7 +27,11 @@ type PolygonEventName =
   | "first_pass_validation_passed"
   | "polygon_status_changed"
   | "polygon_information_required"
-  | "bulk_action_completed";
+  | "bulk_action_completed"
+  | "polygon_project_selected"
+  | "polygon_deleted"
+  | "polygon_issue_clicked"
+  | "polygon_approval_warning_resolved";
 
 export type FormSectionEventName = "section_started" | "section_completed" | "section_error_triggered";
 
@@ -132,8 +139,12 @@ export const trackPolygonEvent = (eventName: PolygonEventName, params: Ga4EventP
   const { source, ...rest } = params;
   const normalizedParams = source != null ? { ...rest, polygon_source: source } : rest;
 
+  const pageContext = window.location.pathname === POLYGON_REVIEW_PATH ? PAGE_CONTEXT_POLYGONS_INDEX : undefined;
+
   const payload = Object.fromEntries(
-    Object.entries({ event: eventName, ...normalizedParams }).filter(([, value]) => value != null)
+    Object.entries({ event: eventName, page_context: pageContext, ...normalizedParams }).filter(
+      ([, value]) => value != null
+    )
   );
 
   window.dataLayer = window.dataLayer ?? [];
