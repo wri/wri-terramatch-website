@@ -21,7 +21,7 @@ const HighLevelMetics: FC = () => {
       <Divider sx={{ marginBottom: 2 }} />
 
       <Stack gap={3}>
-        <ContextCondition frameworksShow={[Framework.TF]}>
+        <ContextCondition frameworksShow={[Framework.TF_NON_PROFITS]}>
           <Labeled label="Jobs Created" sx={inlineLabelSx}>
             <NumberField source="totalJobsCreated" emptyText="0" />
           </Labeled>

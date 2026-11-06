@@ -46,13 +46,11 @@ export interface ChartDataVolunteers {
 }
 
 const FRAMEWORK_NAME_MAP = {
-  terrafund: "TerraFund Top 100",
-  "terrafund-landscapes": "TerraFund Landscapes",
+  "terrafund-non-profits": "TerraFund Non-Profits",
   enterprises: "TerraFund Enterprises",
   "terrafund-cohort-1": "TerraFund Cohort One",
   "terrafund-cohort-2": "TerraFund Cohort Two",
   "terrafund-cohort-3": "TerraFund Cohort Three",
-  "terrafund-3": "TerraFund Cohort Three",
   "fundo-flora-cohort-1": "Fundo Flora Cohort One",
   "fundo-flora-cohort-2": "Fundo Flora Cohort Two",
   "barka-fund": "Barka Fund"

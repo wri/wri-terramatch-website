@@ -122,16 +122,15 @@ export type SitePolygonsIndexQueryParams = {
    * Filter results by project framework key(s)
    */
   ["frameworkKey[]"]?: (
-    | "terrafund"
-    | "terrafund-landscapes"
-    | "enterprises"
+    | "terrafund-non-profits"
+    | "terrafund-enterprises"
     | "epa-ghana-pilot"
-    | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora-1"
+    | "fundo-flora"
     | "wcb"
     | "barka-fund"
+    | "polygon-monitoring"
   )[];
   /**
    * Filter results by project country code(s)
@@ -788,16 +787,15 @@ export type SitePolygonsMapIndexQueryParams = {
    * Filter results by project framework key(s)
    */
   ["frameworkKey[]"]?: (
-    | "terrafund"
-    | "terrafund-landscapes"
-    | "enterprises"
+    | "terrafund-non-profits"
+    | "terrafund-enterprises"
     | "epa-ghana-pilot"
-    | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora-1"
+    | "fundo-flora"
     | "wcb"
     | "barka-fund"
+    | "polygon-monitoring"
   )[];
   /**
    * Filter results by project country code(s)
@@ -1011,16 +1009,15 @@ export type SitePolygonsSummaryQueryParams = {
    * Filter results by project framework key(s)
    */
   ["frameworkKey[]"]?: (
-    | "terrafund"
-    | "terrafund-landscapes"
-    | "enterprises"
+    | "terrafund-non-profits"
+    | "terrafund-enterprises"
     | "epa-ghana-pilot"
-    | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora-1"
+    | "fundo-flora"
     | "wcb"
     | "barka-fund"
+    | "polygon-monitoring"
   )[];
   /**
    * Filter results by project country code(s)
@@ -3734,16 +3731,15 @@ export type PolygonAttributeDefinitionsIndexQueryParams = {
    * Framework slug. Required. Admin list includes inactive definitions.
    */
   frameworkKey:
-    | "terrafund"
-    | "terrafund-landscapes"
-    | "enterprises"
+    | "terrafund-non-profits"
+    | "terrafund-enterprises"
     | "epa-ghana-pilot"
-    | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora-1"
+    | "fundo-flora"
     | "wcb"
-    | "barka-fund";
+    | "barka-fund"
+    | "polygon-monitoring";
 };
 
 export type PolygonAttributeDefinitionsIndexError = Fetcher.ErrorWrapper<
@@ -4541,16 +4537,15 @@ export type ProjectsMapIndexQueryParams = {
    * Filter results by project framework key(s)
    */
   ["frameworkKey[]"]?: (
-    | "terrafund"
-    | "terrafund-landscapes"
-    | "enterprises"
+    | "terrafund-non-profits"
+    | "terrafund-enterprises"
     | "epa-ghana-pilot"
-    | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora-1"
+    | "fundo-flora"
     | "wcb"
     | "barka-fund"
+    | "polygon-monitoring"
   )[];
   /**
    * Filter results by project country code(s)
