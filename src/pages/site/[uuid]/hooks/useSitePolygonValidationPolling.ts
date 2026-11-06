@@ -8,19 +8,13 @@ import { isValidationPollingResolved } from "@/helpers/polygonValidation";
 import Log from "@/utils/log";
 import { trackBulkActionCompleted, trackPolygonValidationResults } from "@/utils/polygonAnalytics";
 
-import type { PolygonValidationJobsStartedOptions } from "../components/polygonEdit.types";
+import type { PolygonValidationJobsStartedCallback } from "../components/polygonEdit.types";
 import { prunePolygonValidationCache } from "../components/polygonEditSave";
 import { showPolygonErrorToast } from "../utils/polygonOperationToasts";
 
 type TranslateFn = (key: string, params?: Record<string, unknown>) => string;
 
-type FindTableSitePolygon = (polygonId: string) => { validationStatus?: string | null } | undefined;
-
-type UseSitePolygonValidationStateParams = {
-  findTableSitePolygon: FindTableSitePolygon;
-};
-
-export const useSitePolygonValidationState = ({ findTableSitePolygon }: UseSitePolygonValidationStateParams) => {
+export const useSitePolygonValidationState = () => {
   const [pendingValidationPolygonUuids, setPendingValidationPolygonUuids] = useState<string[]>([]);
   const [validationZoomPolygonUuids, setValidationZoomPolygonUuids] = useState<string[]>([]);
   const [skipNextSiteBboxZoomNonce, setSkipNextSiteBboxZoomNonce] = useState(0);
@@ -60,29 +54,24 @@ export const useSitePolygonValidationState = ({ findTableSitePolygon }: UseSiteP
     });
   }, []);
 
-  const handleValidationJobsStarted = useCallback(
-    (polygonUuids: string[], options?: PolygonValidationJobsStartedOptions) => {
-      const priorStatuses = new Map<string, string | null | undefined>();
-      polygonUuids.forEach(polygonUuid => {
-        const sitePolygon = findTableSitePolygon(polygonUuid);
-        priorStatuses.set(polygonUuid, sitePolygon?.validationStatus);
-      });
-      priorValidationStatusRef.current = priorStatuses;
-      pendingValidationTrackBulkRef.current = options?.trackBulkCompletion ?? true;
-      validationAfterCriteriaClearRef.current = options?.validationAfterCriteriaClear === true;
-      validationRunStartedAtRef.current = options?.startedAtMs ?? Date.now();
+  const handleValidationJobsStarted = useCallback<PolygonValidationJobsStartedCallback>((polygons, options) => {
+    const polygonUuids = polygons.map(polygon => polygon.polygonUuid);
+    priorValidationStatusRef.current = new Map(
+      polygons.map(polygon => [polygon.polygonUuid, polygon.validationStatus])
+    );
+    pendingValidationTrackBulkRef.current = options?.trackBulkCompletion ?? true;
+    validationAfterCriteriaClearRef.current = options?.validationAfterCriteriaClear === true;
+    validationRunStartedAtRef.current = options?.startedAtMs ?? Date.now();
 
-      const key = [...polygonUuids].sort().join(",");
-      prunePolygonValidationCache(...polygonUuids);
-      pendingValidationKeyRef.current = key;
-      setSupplementalValidations(prev =>
-        prev.filter(validation => validation.polygonUuid == null || !polygonUuids.includes(validation.polygonUuid))
-      );
-      setPendingValidationPolygonUuids(polygonUuids);
-      void listDelayedJobs.fetch({});
-    },
-    [findTableSitePolygon]
-  );
+    const key = [...polygonUuids].sort().join(",");
+    prunePolygonValidationCache(...polygonUuids);
+    pendingValidationKeyRef.current = key;
+    setSupplementalValidations(prev =>
+      prev.filter(validation => validation.polygonUuid == null || !polygonUuids.includes(validation.polygonUuid))
+    );
+    setPendingValidationPolygonUuids(polygonUuids);
+    void listDelayedJobs.fetch({});
+  }, []);
 
   const handleValidationZoomConsumed = useCallback(() => {
     setValidationZoomPolygonUuids([]);

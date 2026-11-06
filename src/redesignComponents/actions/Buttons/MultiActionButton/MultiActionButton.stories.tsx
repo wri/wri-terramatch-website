@@ -360,6 +360,24 @@ export const FewActions: Story = {
   }
 };
 
+export const FullWidth: Story = {
+  render: () => (
+    <div style={{ display: "flex", gap: "0.5rem", width: "20rem" }}>
+      <MultiActionButton
+        variant="primary"
+        size="small"
+        isFullWidth
+        mainActionLabel="Review"
+        mainActionOnClick={() => alert("Review clicked!")}
+        otherActions={[
+          { label: "Approve", value: "approve", onClick: () => alert("Approve clicked!") },
+          { label: "Request information", value: "request-information", onClick: () => {} }
+        ]}
+      />
+    </div>
+  )
+};
+
 // All Variants Showcase
 export const AllVariants: Story = {
   render: () => (

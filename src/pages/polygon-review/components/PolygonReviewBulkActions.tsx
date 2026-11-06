@@ -65,7 +65,6 @@ const PolygonReviewBulkActions: FC<PolygonReviewBulkActionsProps> = ({
         isAdminReview
         submitLabel={t("Approve")}
         polygons={selectedRows}
-        selectedGeometryPolygonUuids={actions.selectedGeometryPolygonUuids}
         isDownloading={bulkActions.isDownloadingSelectedPolygons}
         isValidating={bulkActions.isValidatingPolygons}
         onCancel={actions.clearBulkTableSelection}
@@ -73,7 +72,7 @@ const PolygonReviewBulkActions: FC<PolygonReviewBulkActionsProps> = ({
         onDelete={bulkActions.handleOpenDeletePolygonModal}
         onDownload={bulkActions.handleBulkDownloadClick}
         onEdit={bulkActions.handleBulkEditDetails}
-        onRunValidation={bulkActions.runValidationWithResultsModal}
+        onRunValidation={bulkActions.handleBulkRunValidation}
         onSubmit={noop}
         onOpenApproveModal={reviewActions.handleOpenApprovePolygonModal}
         onOpenRequestInformationModal={reviewActions.handleOpenRequestInformationModal}

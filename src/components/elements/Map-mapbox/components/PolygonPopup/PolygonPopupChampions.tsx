@@ -14,6 +14,7 @@ import {
 } from "@/context/mapArea.utils";
 import type { SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { isRestorationStrategy, isTargetLandUseType } from "@/pages/site/[uuid]/components/polygonTable.constants";
+import { isValidatablePolygon } from "@/pages/site/[uuid]/components/polygonTableRow.utils";
 import { showPolygonErrorToast } from "@/pages/site/[uuid]/utils/polygonOperationToasts";
 import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
 import PointMarker from "@/redesignComponents/geospatial/PointMarker/PointMarker";
@@ -167,11 +168,11 @@ export function PolygonPopupChampions({
   const geometryUuid = getSitePolygonGeometryUuid(sitePolygon);
 
   const handleRunValidation = useCallback(() => {
-    if (geometryUuid == null || geometryUuid === "") {
+    if (sitePolygon == null || !isValidatablePolygon(sitePolygon)) {
       return;
     }
 
-    const runValidation = runPolygonValidationFromMapPopup([geometryUuid]);
+    const runValidation = runPolygonValidationFromMapPopup([sitePolygon]);
     if (runValidation == null) {
       return;
     }
@@ -181,7 +182,7 @@ export function PolygonPopupChampions({
       Log.error("Failed to validate polygon from map popup:", error);
       showPolygonErrorToast(t("Failed to Validate Polygons"));
     });
-  }, [closeMapPopup, geometryUuid, t]);
+  }, [closeMapPopup, sitePolygon, t]);
 
   const handleViewDetails = useCallback(() => {
     if (geometryUuid == null) {

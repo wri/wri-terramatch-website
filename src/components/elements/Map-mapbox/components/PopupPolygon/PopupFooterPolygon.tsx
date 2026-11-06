@@ -1,5 +1,6 @@
-import { type SystemStyleObject, Flex, Grid } from "@chakra-ui/react";
+import { Flex, Grid } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { noop } from "lodash";
 import type { FC } from "react";
 import { useCallback, useMemo } from "react";
 
@@ -20,10 +21,6 @@ import { DownloadIcon, EditIcon, InfoIcon } from "@/redesignComponents/foundatio
 import { wrapToolbarInfoTooltipContent } from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
 
 import type { TooltipType } from "../../Map.d";
-
-const REVIEW_GROUP_CSS: SystemStyleObject = {
-  "& > [role='group']": { flex: "1 1 auto" }
-};
 
 type PopupFooterPolygonProps = {
   polygonUuid?: string;
@@ -132,26 +129,27 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
         >
           {t("Edit")}
         </Button>
-        <Flex alignItems="center" gap={1.5} flex="1 1 auto" css={REVIEW_GROUP_CSS}>
+        <Flex alignItems="center" gap={1.5} flex="1 1 auto">
           <MultiActionButton
             mainActionLabel={t("Review")}
-            mainActionOnClick={() => {}}
+            mainActionOnClick={noop}
             otherActions={[
               {
                 label: t("Approve"),
                 value: "approve",
-                disabled: approveDisabled,
-                onClick: onApprove ?? (() => {})
+                disabled: approveDisabled || onApprove == null,
+                onClick: onApprove ?? noop
               },
               {
                 label: t("Request information"),
                 value: "request-information",
-                onClick: onRequestInformation ?? (() => {})
+                disabled: onRequestInformation == null,
+                onClick: onRequestInformation ?? noop
               }
             ]}
             variant="primary"
             size="small"
-            className="flex-auto"
+            isFullWidth
           />
           {approveDisabled && approveDisabledTooltip != null && (
             <Tooltip content={wrapToolbarInfoTooltipContent(approveDisabledTooltip)} position="top">

@@ -7,13 +7,6 @@ import { usePolygonValidations } from "@/connections/Validation";
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import {
-  registerOpenPolygonEditDrawerByPolygonIdFromMapPopup,
-  registerRunPolygonValidationFromMapPopup,
-  registerSitePolygonAdminReviewMode,
-  unregisterOpenPolygonEditDrawerByPolygonIdFromMapPopup,
-  unregisterRunPolygonValidationFromMapPopup
-} from "@/context/mapArea.utils";
-import {
   EMPTY_POLYGONS,
   PolygonEditDrawerDataSync,
   PolygonEditDrawerProvider,
@@ -50,6 +43,7 @@ import {
 import { useCrossSiteOverlapGeometries } from "../hooks/useCrossSiteOverlapGeometries";
 import { useDownloadSitePolygons } from "../hooks/useDownloadSitePolygons";
 import { useExistingPolygonModal } from "../hooks/useExistingPolygonModal";
+import { useMapPopupReviewActions } from "../hooks/useMapPopupReviewActions";
 import { usePolygonDrawUndo } from "../hooks/usePolygonDrawUndo";
 import { usePolygonTablePaging } from "../hooks/usePolygonTablePaging";
 import { usePolygonTableStickyStyles } from "../hooks/usePolygonTableStickyStyles";
@@ -203,7 +197,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     handleValidationUiCleared,
     handleValidationJobsStarted,
     handleValidationZoomConsumed
-  } = useSitePolygonValidationState({ findTableSitePolygon });
+  } = useSitePolygonValidationState();
 
   const { validations: pageValidations, fetchValidations: fetchPageValidations } =
     usePolygonValidations(tablePagePolygonUuids);
@@ -422,6 +416,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     handleBulkEditDetails,
     handleBulkEditDrawerOpenChange,
     handleBulkEditSave,
+    handleBulkRunValidation,
     handleConfirmBulkSubmit,
     handleConfirmMapPopupSubmit,
     handleDeletePolygonModalChange,
@@ -490,16 +485,11 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     t
   });
 
-  useEffect(() => {
-    registerSitePolygonAdminReviewMode(isAdminReview);
-    registerRunPolygonValidationFromMapPopup(runValidationWithResultsModal);
-    registerOpenPolygonEditDrawerByPolygonIdFromMapPopup(openPolygonEditDrawerByPolygonId);
-    return () => {
-      registerSitePolygonAdminReviewMode(false);
-      unregisterRunPolygonValidationFromMapPopup();
-      unregisterOpenPolygonEditDrawerByPolygonIdFromMapPopup();
-    };
-  }, [isAdminReview, openPolygonEditDrawerByPolygonId, runValidationWithResultsModal]);
+  useMapPopupReviewActions({
+    isAdminReview,
+    runPolygonValidation: runValidationWithResultsModal,
+    openPolygonEditDrawerByPolygonId
+  });
 
   const handleViewValidationDetails = useCallback(
     (row: PolygonTableRow) => {
@@ -846,7 +836,6 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           isAdminReview={isAdminReview}
           submitLabel={bulkToolbarSubmitLabel}
           polygons={selectedRows}
-          selectedGeometryPolygonUuids={selectedGeometryPolygonUuids}
           isDownloading={isDownloadingSelectedPolygons}
           isValidating={isValidatingPolygons}
           onCancel={clearBulkTableSelection}
@@ -854,7 +843,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           onDelete={handleOpenDeletePolygonModal}
           onDownload={handleBulkDownloadClick}
           onEdit={handleBulkEditDetails}
-          onRunValidation={runValidationWithResultsModal}
+          onRunValidation={handleBulkRunValidation}
           onSubmit={handleOpenSubmitPolygonsModal}
           onOpenApproveModal={handleOpenApprovePolygonModal}
           onOpenRequestInformationModal={handleOpenRequestInformationModal}
