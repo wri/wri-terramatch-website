@@ -9,10 +9,8 @@ import { useBoundingBox } from "@/connections/BoundingBox";
 import { SitePolygonMapIndexFilter, useSitePolygonMapIndex } from "@/connections/SitePolygons";
 import { DELETED_AUDIT_POLYGONS } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { registerSitePolygonAdminReviewMode } from "@/context/mapArea.utils";
 import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { ProjectMapEntryDto, SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import { useOnMount } from "@/hooks/useOnMount";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
 
 import PolygonDrawUndoButton from "../../site/[uuid]/components/PolygonDrawUndoButton";
@@ -51,11 +49,6 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
   onRefetchPolygons
 }) => {
   const projectUuid = selectedProject?.uuid;
-  // Polygon popups use the admin review footer (Run Validation, Edit, Review), as on the site polygon review page.
-  useOnMount(() => {
-    registerSitePolygonAdminReviewMode(true);
-    return () => registerSitePolygonAdminReviewMode(false);
-  });
   const { isOpen: isEditPolygonOpen } = usePolygonEditDrawer();
   const { editPolygon, isUserDrawingEnabled } = useMapAreaContext();
   const { mapFunctions, polygonFromMap, setPolygonFromMap, sitePolygonData, autoEditPolygon, isRefetchingPolygonData } =

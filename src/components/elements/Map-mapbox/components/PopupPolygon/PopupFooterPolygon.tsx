@@ -1,4 +1,4 @@
-import { Flex, Grid } from "@chakra-ui/react";
+import { type SystemStyleObject, Flex, Grid } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import type { FC } from "react";
 import { useCallback, useMemo } from "react";
@@ -20,6 +20,10 @@ import { DownloadIcon, EditIcon, InfoIcon } from "@/redesignComponents/foundatio
 import { wrapToolbarInfoTooltipContent } from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
 
 import type { TooltipType } from "../../Map.d";
+
+const REVIEW_GROUP_CSS: SystemStyleObject = {
+  "& > [role='group']": { flex: "1 1 auto" }
+};
 
 type PopupFooterPolygonProps = {
   polygonUuid?: string;
@@ -109,13 +113,26 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
   if (isAdminReview) {
     return (
       <Flex alignItems="center" gap={2} width="100%">
-        <Button variant="secondary" size="small" onClick={onRunValidation} disabled={!canRunValidation}>
+        <Button
+          variant="secondary"
+          size="small"
+          onClick={onRunValidation}
+          disabled={!canRunValidation}
+          className="flex-auto"
+        >
           {t("Run Validation")}
         </Button>
-        <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={onEdit} disabled={onEdit == null}>
+        <Button
+          variant="secondary"
+          size="small"
+          leftIcon={<EditIcon />}
+          onClick={onEdit}
+          disabled={onEdit == null}
+          className="flex-auto"
+        >
           {t("Edit")}
         </Button>
-        <Flex alignItems="center" gap={1.5} minWidth={0}>
+        <Flex alignItems="center" gap={1.5} flex="1 1 auto" css={REVIEW_GROUP_CSS}>
           <MultiActionButton
             mainActionLabel={t("Review")}
             mainActionOnClick={() => {}}
@@ -134,7 +151,7 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
             ]}
             variant="primary"
             size="small"
-            className="min-w-0 flex-1"
+            className="flex-auto"
           />
           {approveDisabled && approveDisabledTooltip != null && (
             <Tooltip content={wrapToolbarInfoTooltipContent(approveDisabledTooltip)} position="top">

@@ -1,15 +1,21 @@
 import { useT } from "@transifex/react";
 import { noop } from "lodash";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { pruneSitePolygonsCache } from "@/connections/SitePolygons";
 import { usePolygonValidations } from "@/connections/Validation";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import {
+  registerOpenPolygonEditDrawerByPolygonIdFromMapPopup,
+  registerRunPolygonValidationFromMapPopup,
+  registerSitePolygonAdminReviewMode,
+  unregisterOpenPolygonEditDrawerByPolygonIdFromMapPopup,
+  unregisterRunPolygonValidationFromMapPopup
+} from "@/context/mapArea.utils";
 import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { openPolygonEditDrawerForPolygonId } from "@/context/polygonEditDrawer.utils";
 import { setPolygonTableHoveredUuid } from "@/context/polygonTableInteraction.store";
 import type { SitePolygonLightDto, ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import Log from "@/utils/log";
 
 import { buildPolygonValidationsMap } from "../../site/[uuid]/components/Modals/validationCriteria";
 import type { PolygonTableRow } from "../../site/[uuid]/components/PolygonTableRow";
@@ -21,7 +27,6 @@ import {
   useSitePolygonValidationPoll,
   useSitePolygonValidationState
 } from "../../site/[uuid]/hooks/useSitePolygonValidationPolling";
-import { showPolygonErrorToast } from "../../site/[uuid]/utils/polygonOperationToasts";
 import { getPolygonTableLoadingLabel } from "../../site/[uuid]/utils/polygonTableLoadingLabel";
 
 const NO_OVERLAP_FIX_SUMMARY: OverlapFixSelectionSummary = {
@@ -159,23 +164,27 @@ export const useProjectPolygonBulkActions = ({
   });
 
   const openPolygonEditDrawerByPolygonId = useCallback(
-    (polygonId: string) => {
+    (polygonId: string) =>
       openPolygonEditDrawerForPolygonId({
         polygonId,
         entityName: "projects",
         entityUuid,
         findCachedSitePolygon: findTableSitePolygon
-      })
-        .then(opened => {
-          if (!opened) showPolygonErrorToast(t("Could not find this polygon"));
-        })
-        .catch(error => {
-          Log.error("Failed to open polygon edit drawer", error);
-          showPolygonErrorToast(t("Could not open this polygon"));
-        });
-    },
-    [entityUuid, findTableSitePolygon, t]
+      }),
+    [entityUuid, findTableSitePolygon]
   );
+
+  const { runValidationWithResultsModal } = bulkActions;
+  useEffect(() => {
+    registerSitePolygonAdminReviewMode(true);
+    registerRunPolygonValidationFromMapPopup(runValidationWithResultsModal);
+    registerOpenPolygonEditDrawerByPolygonIdFromMapPopup(openPolygonEditDrawerByPolygonId);
+    return () => {
+      registerSitePolygonAdminReviewMode(false);
+      unregisterRunPolygonValidationFromMapPopup();
+      unregisterOpenPolygonEditDrawerByPolygonIdFromMapPopup();
+    };
+  }, [openPolygonEditDrawerByPolygonId, runValidationWithResultsModal]);
 
   const { pendingValidationPolygonUuids } = validationState;
   const { isValidatingPolygons, isDeletingPolygons } = bulkActions;
