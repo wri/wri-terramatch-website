@@ -1,3 +1,4 @@
+import { Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { noop } from "lodash";
 import { FC, useCallback } from "react";
@@ -82,6 +83,13 @@ const PolygonReviewBulkActions: FC<PolygonReviewBulkActionsProps> = ({
         onOpenChange={bulkActions.handleDeletePolygonModalChange}
         polygons={bulkActions.deletePayload?.polygons ?? []}
         onDelete={bulkActions.handleBulkDelete}
+        view="table"
+        width="35rem"
+        footnote={
+          <Text textStyle="400" color="neutral.900">
+            {t("This runs in the background, you can leave this page.")}
+          </Text>
+        }
       />
       <PolygonBulkEditDrawer
         selectedPolygons={bulkActions.bulkEditPayload?.polygons ?? []}

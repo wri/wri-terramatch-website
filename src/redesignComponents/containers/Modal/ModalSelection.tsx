@@ -27,7 +27,7 @@ interface SelectionCopy {
 export interface ModalSelectionProps
   extends Pick<
     ModalConfirmationProps,
-    "open" | "onOpenChange" | "modal" | "trapFocus" | "restoreFocus" | "blocking" | "size"
+    "open" | "onOpenChange" | "modal" | "trapFocus" | "restoreFocus" | "blocking" | "size" | "width"
   > {
   items: ModalSelectionItem[];
   singular: SelectionCopy;
