@@ -276,7 +276,7 @@ export type SitePolygonsIndexQueryParams = {
    */
   hasDisturbance?: boolean;
   /**
-   * Soft-deleted polygons for one site. Search is supported; other filters are ignored.
+   * Soft-deleted polygons for the siteId[] and / or projectId[] scope. Search is supported; other filters are ignored.
    *
    * @default false
    */
@@ -547,16 +547,6 @@ export type BulkDeleteSitePolygonsError = Fetcher.ErrorWrapper<
     }
 >;
 
-export type BulkDeleteSitePolygonsResponse = {
-  meta?: {
-    resourceType?: "sitePolygons" | "sitePolygons";
-    /**
-     * @format uuid
-     */
-    resourceId?: string;
-  };
-};
-
 export type BulkDeleteSitePolygonsVariables = {
   body: Schemas.SitePolygonBulkDeleteBodyDto;
 };
@@ -567,9 +557,38 @@ export type BulkDeleteSitePolygonsVariables = {
  *        ALL related site polygons by primaryUuid (version management) and deletes polygon
  *        geometry for all related site polygons. The request body follows JSON:API format with
  *        an array of resource identifiers (type and id).
+ *
+ *        Up to 50 polygons are deleted in the request. Larger selections return a delayed job.
  */
 export const bulkDeleteSitePolygons = new V3ApiEndpoint<
-  BulkDeleteSitePolygonsResponse,
+  | {
+      meta?: {
+        resourceType?: "sitePolygons" | "sitePolygons";
+        /**
+         * @format uuid
+         */
+        resourceId?: string;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
   BulkDeleteSitePolygonsError,
   BulkDeleteSitePolygonsVariables,
   {}
@@ -686,6 +705,83 @@ export const getSitePolygonsGeoJson = new V3ApiEndpoint<
   GetSitePolygonsGeoJsonVariables,
   {}
 >("/research/v3/sitePolygons/geojson", "GET");
+
+export type CreateSitePolygonsGeoJsonExportError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type CreateSitePolygonsGeoJsonExportResponse = {
+  meta?: {
+    /**
+     * @example delayedJobs
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example delayedJobs
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.DelayedJobDto;
+  };
+};
+
+export type CreateSitePolygonsGeoJsonExportVariables = {
+  body: Schemas.GeoJsonExportBodyDto;
+};
+
+/**
+ * Provide exactly one of projectUuids, siteUuids or polygonUuids. The file is written to S3
+ *     in the background; the completed delayed job payload holds a fileDownloads resource with a signed URL.
+ */
+export const createSitePolygonsGeoJsonExport = new V3ApiEndpoint<
+  CreateSitePolygonsGeoJsonExportResponse,
+  CreateSitePolygonsGeoJsonExportError,
+  CreateSitePolygonsGeoJsonExportVariables,
+  {}
+>("/research/v3/sitePolygons/exports", "POST");
 
 export type SitePolygonsMapIndexQueryParams = {
   /**
@@ -828,7 +924,7 @@ export type SitePolygonsMapIndexQueryParams = {
    */
   hasDisturbance?: boolean;
   /**
-   * Soft-deleted polygons for one site. Requires exactly one siteId[] value.
+   * Soft-deleted polygons for the siteId[] and / or projectId[] scope. Requires siteId[] or projectId[].
    *
    * @default false
    */
@@ -1051,7 +1147,7 @@ export type SitePolygonsSummaryQueryParams = {
    */
   hasDisturbance?: boolean;
   /**
-   * Soft-deleted polygons for one site. Requires exactly one siteId[] value.
+   * Soft-deleted polygons for the siteId[] and / or projectId[] scope. Requires siteId[] or projectId[].
    *
    * @default false
    */
@@ -1178,56 +1274,6 @@ export type BulkUpdateSitePolygonAttributesError = Fetcher.ErrorWrapper<
     }
 >;
 
-export type BulkUpdateSitePolygonAttributesResponse = {
-  meta?: {
-    /**
-     * @example sitePolygons
-     */
-    resourceType?: string;
-    indices?: {
-      /**
-       * The resource type for this included index
-       */
-      resource?: string;
-      /**
-       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
-       */
-      requestPath?: string;
-      /**
-       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
-       */
-      ids?: string[];
-      /**
-       * The total number of records available.
-       *
-       * @example 42
-       */
-      total?: number;
-    }[];
-    deleted?: {
-      /**
-       * The resource type for this deleted resource
-       */
-      resource?: string;
-      /**
-       * The ID of the deleted resource
-       */
-      id?: string;
-    }[];
-  };
-  data?: {
-    /**
-     * @example sitePolygons
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.SitePolygonLightDto;
-  }[];
-};
-
 export type BulkUpdateSitePolygonAttributesVariables = {
   body: Schemas.SitePolygonBulkAttributeUpdateBodyDto;
 };
@@ -1237,9 +1283,78 @@ export type BulkUpdateSitePolygonAttributesVariables = {
  *     Supported fields: plantStart, practice, targetSys, distr, numTrees, submissionCycle.
  *     At least one attribute field must be provided. Empty string or empty array explicitly clears a field.
  *     Omitted fields inherit values from each polygon's active version.
+ *
+ *     Up to 50 polygons are updated in the request. Larger selections return a delayed job.
  */
 export const bulkUpdateSitePolygonAttributes = new V3ApiEndpoint<
-  BulkUpdateSitePolygonAttributesResponse,
+  | {
+      meta?: {
+        /**
+         * @example sitePolygons
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
+      };
+      data?: {
+        /**
+         * @example sitePolygons
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SitePolygonLightDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
   BulkUpdateSitePolygonAttributesError,
   BulkUpdateSitePolygonAttributesVariables,
   {}
@@ -1291,66 +1406,85 @@ export type UpdateSitePolygonStatusError = Fetcher.ErrorWrapper<
     }
 >;
 
-export type UpdateSitePolygonStatusResponse = {
-  meta?: {
-    /**
-     * @example sitePolygons
-     */
-    resourceType?: string;
-    indices?: {
-      /**
-       * The resource type for this included index
-       */
-      resource?: string;
-      /**
-       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
-       */
-      requestPath?: string;
-      /**
-       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
-       */
-      ids?: string[];
-      /**
-       * The total number of records available.
-       *
-       * @example 42
-       */
-      total?: number;
-    }[];
-    deleted?: {
-      /**
-       * The resource type for this deleted resource
-       */
-      resource?: string;
-      /**
-       * The ID of the deleted resource
-       */
-      id?: string;
-    }[];
-  };
-  data?: {
-    /**
-     * @example sitePolygons
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.SitePolygonLightDto;
-  }[];
-};
-
 export type UpdateSitePolygonStatusVariables = {
   body: Schemas.SitePolygonStatusBulkUpdateBodyDto;
   pathParams: UpdateSitePolygonStatusPathParams;
 };
 
 /**
- * Update the status of the list of site polygons
+ * Update the status of the list of site polygons.
+ *
+ *     Up to 50 polygons are updated in the request. Larger selections return a delayed job.
  */
 export const updateSitePolygonStatus = new V3ApiEndpoint<
-  UpdateSitePolygonStatusResponse,
+  | {
+      meta?: {
+        /**
+         * @example sitePolygons
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
+      };
+      data?: {
+        /**
+         * @example sitePolygons
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SitePolygonLightDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
   UpdateSitePolygonStatusError,
   UpdateSitePolygonStatusVariables,
   {}
@@ -4487,9 +4621,10 @@ export type ProjectsMapIndexVariables = {
 
 /**
  * Returns one resource whose attributes hold every project as
- *     `{ uuid, name, lat, long, frameworkKey, level0Project, cohort, polygonCount }`, plus a `total`. There is no
- *     pagination: the payload stays small because each row carries only the fields needed to place a project marker
- *     and to build the framework / country / cohort facets.
+ *     `{ uuid, name, lat, long, frameworkKey, level0Project, cohort, polygonCount, sumNumTrees, sumCalcArea,
+ *     latestQaCycle, latestQaStatus }`, plus a `total`. There is no pagination: the payload stays small because each
+ *     row carries only the fields needed to place a project marker, fill its tooltip and build the framework / country /
+ *     cohort facets.
  *
  *     frameworkKey[], country[], organisationUuid[] and plantingStatus are optional and combine. Test projects
  *     are excluded. Projects without polygons are included with a null lat / long, so they can still be selected.
@@ -4508,6 +4643,7 @@ export const operationsByTag = {
     bulkUpdateSitePolygons,
     bulkDeleteSitePolygons,
     getSitePolygonsGeoJson,
+    createSitePolygonsGeoJsonExport,
     sitePolygonsMapIndex,
     sitePolygonsSummary,
     bulkUpdateSitePolygonAttributes,
