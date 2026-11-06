@@ -31,7 +31,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
     ? (project.treesPlantedCount ?? 0) + (project.seedsPlantedCount ?? 0) + treesFromReportsAnr
     : project.treesPlantedCount ?? 0;
   // Fundo Flora reports regenerating trees and nursery seedlings by species.
-  const isFundoFlora = project.frameworkKey === Framework.FF_1;
+  const isFundoFlora = project.frameworkKey === Framework.FUNDO_FLORA;
   const treesRegeneratedProgress = isFundoFlora ? project.treesRegeneratingSpeciesCount : treesFromReportsAnr;
   const seedlingsGrownProgress = isFundoFlora ? project.treesSeedlingsGrownCount : project.seedsPlantedCount ?? 0;
   const treesGrownGoal = isFundoFlora ? project.treesPlantedGoal : project.treesGrownGoal ?? 0;

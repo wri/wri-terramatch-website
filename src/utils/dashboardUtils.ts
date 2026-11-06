@@ -47,7 +47,7 @@ export interface ChartDataVolunteers {
 
 const FRAMEWORK_NAME_MAP = {
   "terrafund-non-profits": "TerraFund Non-Profits",
-  enterprises: "TerraFund Enterprises",
+  "terrafund-enterprises": "TerraFund Enterprises",
   "terrafund-cohort-1": "TerraFund Cohort One",
   "terrafund-cohort-2": "TerraFund Cohort Two",
   "terrafund-cohort-3": "TerraFund Cohort Three",

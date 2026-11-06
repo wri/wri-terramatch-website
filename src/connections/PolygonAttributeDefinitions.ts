@@ -23,11 +23,11 @@ export type FrameworkKey = PolygonAttributeDefinitionsIndexQueryParams["framewor
 
 const FRAMEWORK_KEYS: readonly FrameworkKey[] = [
   "terrafund-non-profits",
-  "enterprises",
+  "terrafund-enterprises",
   "epa-ghana-pilot",
   "ppc",
   "hbf",
-  "fundo-flora-1",
+  "fundo-flora",
   "wcb",
   "barka-fund"
 ];
