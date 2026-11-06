@@ -31,7 +31,6 @@ import type {
   SitePolygonStatusBulkUpdateBodyDto,
   SitePolygonSummaryDto
 } from "@/generated/v3/researchService/researchServiceSchemas";
-import { resolveUrl } from "@/generated/v3/utils";
 import { useStableProps } from "@/hooks/useStableProps";
 import ApiSlice, { type JsonApiResource, PendingError } from "@/store/apiSlice";
 import { ConnectionProps, Filter } from "@/types/connection";
@@ -181,6 +180,8 @@ export const getStatusUpdateCommentCreatedAt = (response: SitePolygonStatusUpdat
   return null;
 };
 
+// fetchAwait (unlike fetch) sends every call, so a bulk action started while a background job for the same
+// endpoint is still running is not skipped by the pending request guard.
 export const bulkUpdateSitePolygonAttributes = async (
   uuids: string[],
   attributeChanges: BulkSitePolygonAttributeChanges
@@ -193,46 +194,7 @@ export const bulkUpdateSitePolygonAttributes = async (
     attributeChanges
   };
 
-  const variables = { body };
-  const fullUrl = resolveUrl(bulkUpdateSitePolygonAttributesEndpoint.url, {});
-  const failureSelector = bulkUpdateSitePolygonAttributesEndpoint.fetchFailedSelector({});
-  const previousFailure = failureSelector(ApiSlice.currentState);
-
-  if (previousFailure != null) {
-    ApiSlice.clearPending(fullUrl, bulkUpdateSitePolygonAttributesEndpoint.method);
-  }
-
-  bulkUpdateSitePolygonAttributesEndpoint.fetch(variables);
-
-  const initialPending = ApiSlice.currentState.meta.pending[bulkUpdateSitePolygonAttributesEndpoint.method][fullUrl];
-  const initialFailure = failureSelector(ApiSlice.currentState);
-
-  if (initialPending == null && initialFailure == null) {
-    pruneSitePolygonsCache();
-    pruneBoundingBoxesCache();
-    return;
-  }
-
-  if (initialFailure != null) {
-    throw initialFailure;
-  }
-
-  await new Promise<void>((resolve, reject) => {
-    const unsubscribe = ApiSlice.redux.subscribe(() => {
-      const currentState = ApiSlice.currentState;
-      const pending = currentState.meta.pending[bulkUpdateSitePolygonAttributesEndpoint.method][fullUrl];
-      const failure = failureSelector(currentState);
-
-      if (pending == null && failure == null) {
-        unsubscribe();
-        resolve();
-      } else if (failure != null) {
-        unsubscribe();
-        reject(failure);
-      }
-    });
-  });
-
+  await bulkUpdateSitePolygonAttributesEndpoint.fetchAwait({ body });
   pruneSitePolygonsCache();
   pruneBoundingBoxesCache();
 };
@@ -265,32 +227,7 @@ export const bulkDeleteSitePolygons = async (uuids: string[]): Promise<void> => 
     id: uuid
   }));
 
-  const failureSelector = bulkDeleteSitePolygonsEndpoint.fetchFailedSelector({});
-  const previousFailure = failureSelector(ApiSlice.currentState);
-  if (previousFailure != null) {
-    ApiSlice.clearPending(resolveUrl(bulkDeleteSitePolygonsEndpoint.url, {}), bulkDeleteSitePolygonsEndpoint.method);
-  }
-
-  const body = createBulkDeleteBody(deleteResources);
-  bulkDeleteSitePolygonsEndpoint.fetch({ body });
-
-  await new Promise<void>((resolve, reject) => {
-    const unsubscribe = ApiSlice.redux.subscribe(() => {
-      const currentState = ApiSlice.currentState;
-      const deleted = currentState.meta.deleted.sitePolygons ?? [];
-      const allDeleted = uuids.every(uuid => deleted.includes(uuid));
-      const failure = failureSelector(currentState);
-
-      if (allDeleted) {
-        unsubscribe();
-        resolve();
-      } else if (failure != null) {
-        unsubscribe();
-        reject(failure);
-      }
-    });
-  });
-
+  await bulkDeleteSitePolygonsEndpoint.fetchAwait({ body: createBulkDeleteBody(deleteResources) });
   pruneSitePolygonsCache();
   pruneBoundingBoxesCache();
 };
