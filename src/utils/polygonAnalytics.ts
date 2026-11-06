@@ -1,7 +1,7 @@
 import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { getExcludedCriteriaIds, isValidCriteriaData } from "@/helpers/polygonValidation";
 
-import { getPolygonAnalyticsContext, trackPolygonEvent } from "./ga4";
+import { getPolygonAnalyticsContext, trackPolygonEvent, trackPolygonIssueEvent } from "./ga4";
 
 export type PolygonType = "monitoring_plot" | "standard";
 
@@ -145,6 +145,27 @@ export const trackPolygonFilterApplied = ({
 export const trackPolygonFilterCleared = ({ siteUuid }: { siteUuid: string }): void => {
   trackPolygonEvent("polygon_filter_cleared", {
     ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid })
+  });
+};
+
+export type PolygonIssueType = "overlap" | "disturbance";
+
+export type PolygonIssueSource = "banner" | "issues_panel";
+
+export const trackPolygonIssueClicked = ({
+  issueType,
+  issueCount,
+  source
+}: {
+  issueType: PolygonIssueType;
+  issueCount: number;
+  source: PolygonIssueSource;
+}): void => {
+  trackPolygonIssueEvent("polygon_issue_clicked", {
+    page_context: "polygons_index",
+    issue_type: issueType,
+    issue_count: issueCount,
+    source
   });
 };
 
@@ -396,22 +417,6 @@ export const trackPolygonDeleted = ({
     ...(siteUuid != null ? getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }) : {}),
     polygon_id: formatPolygonTargetId(polygonIds),
     polygon_count: polygonCount
-  });
-};
-
-export const trackPolygonIssueClicked = ({
-  issueType,
-  issueCount,
-  source
-}: {
-  issueType: "overlap" | "disturbance";
-  issueCount: number;
-  source: "banner" | "issues_panel";
-}): void => {
-  trackPolygonEvent("polygon_issue_clicked", {
-    issue_type: issueType,
-    issue_count: issueCount,
-    source
   });
 };
 
