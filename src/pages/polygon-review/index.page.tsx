@@ -265,7 +265,6 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
 
   const polygonBulkActions = useProjectPolygonBulkActions({
     projectUuid: selectedProjectUuid,
-    projectName: selectedProject?.name ?? null,
     polygons: selectionPolygons,
     selectedRows,
     selectedRowIds,

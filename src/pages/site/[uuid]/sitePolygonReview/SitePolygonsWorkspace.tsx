@@ -447,7 +447,6 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   } = useSitePolygonBulkActions({
     entityName: "sites",
     entityUuid: site.uuid,
-    downloadName: site.name,
     polygonsData: selectionPolygonsData,
     selectedRows,
     selectedSitePolygons,
