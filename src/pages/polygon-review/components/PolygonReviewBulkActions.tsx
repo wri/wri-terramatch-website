@@ -1,10 +1,11 @@
-import { Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { noop } from "lodash";
 import { FC, useCallback } from "react";
 
 import { PolygonEditDrawerDataSync } from "@/context/polygonEditDrawer.provider";
 import type { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { InfoIcon } from "@/redesignComponents/foundations/Icons";
+import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 
 import ApprovePolygonConfirmation from "../../site/[uuid]/components/Modals/ApprovePolygon/ApprovePolygonConfirmation";
 import PolygonApproved from "../../site/[uuid]/components/Modals/ApprovePolygon/PolygonApproved";
@@ -87,9 +88,12 @@ const PolygonReviewBulkActions: FC<PolygonReviewBulkActionsProps> = ({
         width="35rem"
         footnote={
           isPolygonBackgroundJob(bulkActions.deletePayload?.sitePolygonUuids.length ?? 0) ? (
-            <Text textStyle="400" color="neutral.900">
-              {t("This runs in the background, you can leave this page.")}
-            </Text>
+            <InlineMessage
+              label={t("This runs in the background, you can leave this page.")}
+              variant="info-grey"
+              size="full-width"
+              icon={<InfoIcon />}
+            />
           ) : undefined
         }
       />

@@ -5,6 +5,8 @@ import { useT } from "@transifex/react";
 import { useState } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import { InfoIcon } from "@/redesignComponents/foundations/Icons";
+import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 
 import ModalDelete from "./ModalDelete";
 import { LABEL_COLUMN_KEY } from "./ModalSelection";
@@ -57,9 +59,12 @@ const TABLE_ITEMS = Array.from({ length: 10 }, (_, index) => ({
 }));
 
 const BACKGROUND_NOTE = (
-  <Text textStyle="400" color="neutral.900">
-    This runs in the background, you can leave this page.
-  </Text>
+  <InlineMessage
+    label="This runs in the background, you can leave this page."
+    variant="info-grey"
+    size="small"
+    icon={<InfoIcon />}
+  />
 );
 
 export const TableView: Story = {
@@ -82,7 +87,7 @@ export const TableViewCollapsed: Story = {
     items: TABLE_ITEMS.slice(0, 3),
     footnote: (
       <Flex className="mt-3 flex-col gap-3">
-        <Text textStyle="300" color="neutral.800">
+        <Text textStyle="300" color="neutral.800" textAlign="center">
           and 42 more polygons
         </Text>
         {BACKGROUND_NOTE}
