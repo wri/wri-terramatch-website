@@ -1344,16 +1344,15 @@ export type PolygonAttributeDefinitionDto = {
   label: string;
   inputType: "single_select" | "multi_select" | "date";
   frameworkKey:
-    | "terrafund"
-    | "terrafund-landscapes"
-    | "enterprises"
+    | "terrafund-non-profits"
+    | "terrafund-enterprises"
     | "epa-ghana-pilot"
-    | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora-1"
+    | "fundo-flora"
     | "wcb"
-    | "barka-fund";
+    | "barka-fund"
+    | "polygon-monitoring";
   isActive: boolean;
   /**
    * Display order within the framework.
@@ -1383,16 +1382,15 @@ export type CreatePolygonAttributeDefinitionAttributes = {
   label: string;
   inputType: "single_select" | "multi_select" | "date";
   frameworkKey:
-    | "terrafund"
-    | "terrafund-landscapes"
-    | "enterprises"
+    | "terrafund-non-profits"
+    | "terrafund-enterprises"
     | "epa-ghana-pilot"
-    | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora-1"
+    | "fundo-flora"
     | "wcb"
-    | "barka-fund";
+    | "barka-fund"
+    | "polygon-monitoring";
   /**
    * @default true
    */
@@ -1530,16 +1528,15 @@ export type ProjectMapEntryDto = {
    * Framework key of the project.
    */
   frameworkKey:
-    | "terrafund"
-    | "terrafund-landscapes"
-    | "enterprises"
+    | "terrafund-non-profits"
+    | "terrafund-enterprises"
     | "epa-ghana-pilot"
-    | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora-1"
+    | "fundo-flora"
     | "wcb"
     | "barka-fund"
+    | "polygon-monitoring"
     | null;
   /**
    * Project country codes (GADM level 0).

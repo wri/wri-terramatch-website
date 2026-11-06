@@ -70,13 +70,13 @@ const ReportsIndexTable: FC<{
         label: t("Status"),
         sortable: true,
         sortValue: row => getReportStatusSortValue((row as ReportsIndexReport).status),
-        width: "10.75rem"
+        width: "12.5rem"
       },
       {
         key: "updateRequestStatus",
         label: t("Updates"),
         sortable: true,
-        width: "11rem"
+        width: "15.625rem"
       },
       {
         key: "updatedAt",

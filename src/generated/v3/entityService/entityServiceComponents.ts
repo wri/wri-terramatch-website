@@ -676,16 +676,15 @@ export type AboutSectionIndexQueryParams = {
   ["page[number]"]?: number;
   type?: "project" | "site" | "nursery" | "project-report" | "site-report" | "nursery-report";
   framework?:
-    | "terrafund"
-    | "terrafund-landscapes"
-    | "enterprises"
+    | "terrafund-non-profits"
+    | "terrafund-enterprises"
     | "epa-ghana-pilot"
-    | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora-1"
+    | "fundo-flora"
     | "wcb"
-    | "barka-fund";
+    | "barka-fund"
+    | "polygon-monitoring";
 };
 
 export type AboutSectionIndexError = Fetcher.ErrorWrapper<{
@@ -4427,16 +4426,15 @@ export type EntityExportAllQueryParams = {
    * Filter by framework. If projectUuid is provided, this is ignored.
    */
   frameworkKey?:
-    | "terrafund"
-    | "terrafund-landscapes"
-    | "enterprises"
+    | "terrafund-non-profits"
+    | "terrafund-enterprises"
     | "epa-ghana-pilot"
-    | "terrafund-3"
     | "ppc"
     | "hbf"
-    | "fundo-flora-1"
+    | "fundo-flora"
     | "wcb"
-    | "barka-fund";
+    | "barka-fund"
+    | "polygon-monitoring";
   /**
    * Filter by project
    */

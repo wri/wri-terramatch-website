@@ -18,7 +18,7 @@ const meta: Meta<typeof ProjectBanner> = {
   decorators: [
     (Story, context) => {
       const project = context.args?.project as ProjectFullDto | undefined;
-      const frameworkKey = project?.frameworkKey ?? "terrafund";
+      const frameworkKey = project?.frameworkKey ?? "terrafund-non-profits";
       return (
         <FrameworkProvider frameworkKey={frameworkKey}>
           <Story />
@@ -50,7 +50,7 @@ const mockBreadcrumbs = [
 const mockProject = {
   lightResource: false,
   uuid: "project-1",
-  frameworkKey: "terrafund",
+  frameworkKey: "terrafund-non-profits",
   organisationName: "WRI Example Organization",
   organisationUuid: "org-1",
   organisationType: "ngo",
