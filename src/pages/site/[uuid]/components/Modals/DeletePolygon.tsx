@@ -92,7 +92,7 @@ const DeletePolygon: FC<DeletePolygonProps> = ({
         hiddenPolygonCount > 0 || footnote != null ? (
           <Flex className="mt-3 flex-col gap-3">
             {hiddenPolygonCount > 0 && (
-              <Text textStyle="300" color="neutral.800">
+              <Text textStyle="300" color="neutral.800" textAlign="center">
                 {t("and {count} more polygons", { count: hiddenPolygonCount.toLocaleString() })}
               </Text>
             )}
