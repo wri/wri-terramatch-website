@@ -1,8 +1,8 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useCallback, useMemo } from "react";
+import { FC, ReactNode, useCallback, useMemo } from "react";
 
-import ModalDelete from "@/redesignComponents/containers/Modal/ModalDelete";
+import ModalDelete, { type ModalDeleteProps } from "@/redesignComponents/containers/Modal/ModalDelete";
 import { LABEL_COLUMN_KEY } from "@/redesignComponents/containers/Modal/ModalSelection";
 
 import type { PolygonTableRow } from "../PolygonTableRow";
@@ -18,6 +18,8 @@ export interface DeletePolygonProps {
   modal?: boolean;
   restoreFocus?: boolean;
   view?: "list" | "table";
+  width?: ModalDeleteProps["width"];
+  footnote?: ReactNode;
 }
 
 const DeletePolygon: FC<DeletePolygonProps> = ({
@@ -27,7 +29,9 @@ const DeletePolygon: FC<DeletePolygonProps> = ({
   onDelete,
   modal = true,
   restoreFocus = true,
-  view = "list"
+  view = "list",
+  width,
+  footnote
 }) => {
   const t = useT();
 
@@ -61,6 +65,8 @@ const DeletePolygon: FC<DeletePolygonProps> = ({
     [t]
   );
 
+  const singleSiteName = view === "table" && polygons.length === 1 ? polygons[0].entity?.siteName : undefined;
+
   return (
     <ModalDelete
       modal={modal}
@@ -70,25 +76,29 @@ const DeletePolygon: FC<DeletePolygonProps> = ({
       items={items}
       view={view}
       columns={columns}
+      width={width}
       singular={{
         title: t("Delete polygon?"),
-        description: t("will be permanently removed from this site.")
+        description:
+          singleSiteName != null
+            ? t("will be permanently removed from {siteName}.", { siteName: singleSiteName })
+            : t("will be permanently removed from this site.")
       }}
       plural={{
         title: t("Delete polygons?"),
         description: t("The following polygons will be permanently removed.")
       }}
       footnote={
-        <Flex className="mt-3 flex-col gap-3">
-          {hiddenPolygonCount > 0 && (
-            <Text textStyle="300" color="neutral.800">
-              {t("and {count} more polygons", { count: hiddenPolygonCount.toLocaleString() })}
-            </Text>
-          )}
-          <Text textStyle="400" color="neutral.900">
-            {t("This runs in the background, you can leave this page.")}
-          </Text>
-        </Flex>
+        hiddenPolygonCount > 0 || footnote != null ? (
+          <Flex className="mt-3 flex-col gap-3">
+            {hiddenPolygonCount > 0 && (
+              <Text textStyle="300" color="neutral.800">
+                {t("and {count} more polygons", { count: hiddenPolygonCount.toLocaleString() })}
+              </Text>
+            )}
+            {footnote}
+          </Flex>
+        ) : undefined
       }
       onConfirm={handleDelete}
     />
