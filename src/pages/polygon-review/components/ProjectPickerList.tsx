@@ -41,13 +41,13 @@ const ProjectPickerList: FC<ProjectPickerListProps> = ({ projects, filtersSummar
 
   return (
     <Flex direction="column" gap={2} minWidth={0} flex={1}>
-      <Flex justify="space-between" align="baseline">
+      <Flex justify="space-between" align="center">
         <Text textStyle="500-bold" color="neutral.900">
           {filtersSummary.length === 0
             ? t("{count} projects", { count: visibleProjects.length })
             : t("{count} projects in {filters}", { count: visibleProjects.length, filters: filtersSummary })}
         </Text>
-        <Text textStyle="300" color="neutral.600">
+        <Text textStyle="300" color="neutral.600" whiteSpace="nowrap">
           {t("Pick one project")}
         </Text>
       </Flex>

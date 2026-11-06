@@ -10,6 +10,7 @@ import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDiv
 import { NavigationMenuItem } from "@/redesignComponents/navigation/NavBar/NavigationMenu/NavigationMenu";
 
 import Avatar from "../Avatar/Avatar";
+import { NAVBAR_HEIGHT, NAVBAR_Z_INDEX } from "./Navbar.constants";
 import NavbarMenu from "./NavbarMenu/NavbarMenu";
 import NavbarMobileDrawer from "./NavbarMobileDrawer/NavbarMobileDrawer";
 import type { SideNavigationGroup } from "./SideNavigation/SideNavigation";
@@ -70,8 +71,8 @@ const Navbar: FC<NavbarProps> = ({
     <Avatar name={`${data.user?.firstName ?? ""} ${data.user?.lastName ?? ""}`.trim()} size="small" />
   );
   return (
-    <Box as="header" backgroundColor="primary.900" position="sticky" top={0} zIndex={50}>
-      <Flex justifyContent="space-between" alignItems="center" gap={{ base: 2, md: 4 }} h="3rem">
+    <Box as="header" backgroundColor="primary.900" position="sticky" top={0} zIndex={NAVBAR_Z_INDEX}>
+      <Flex justifyContent="space-between" alignItems="center" gap={{ base: 2, md: 4 }} h={NAVBAR_HEIGHT}>
         <Flex gap={{ base: 2, md: 4 }} alignItems="center" pl={4}>
           <TMLogo boxSize="3.25rem" />
           <Flex gap={4} alignItems="center" display={{ base: "none", md: "flex" }}>
