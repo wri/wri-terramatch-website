@@ -76,7 +76,7 @@ export const mapStatusToTagStateBySource = (
   }
 };
 
-export const mapSitePolygonStatusToMappedTagState = (status: SitePolygonLightDto["status"]): MappedTagState => {
+export const mapSitePolygonStatusToMappedTagState = (status: SitePolygonLightDto["status"] | null): MappedTagState => {
   switch (status) {
     case "approved":
       return "approved";

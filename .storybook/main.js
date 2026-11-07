@@ -3,16 +3,8 @@ const path = require("path");
 
 /** @type {import('@storybook/nextjs').StorybookConfig} */
 module.exports = {
-  stories: [
-    "../src/**/*.stories.@(mdx|js|jsx|ts|tsx)"
-  ],
-  addons: [
-    "@storybook/addon-links",
-    "@storybook/addon-essentials",
-    "@storybook/addon-interactions",
-    "@storybook/addon-styling",
-    "@storybook/addon-mdx-gfm"
-  ],
+  stories: ["../src/**/*.stories.@(mdx|js|jsx|ts|tsx)"],
+  addons: ["@storybook/addon-links", "@storybook/addon-essentials", "@storybook/addon-interactions"],
   refs: () => {
     return {};
   },
@@ -51,8 +43,5 @@ module.exports = {
     });
 
     return config;
-  },
-  docs: {
-    autodocs: true
   }
 };

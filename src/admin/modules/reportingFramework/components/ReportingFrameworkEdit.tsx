@@ -3,6 +3,8 @@ import { AutocompleteInput, Edit, ReferenceInput, required, SimpleForm, TextInpu
 
 import modules from "@/admin/modules";
 
+import { REQUIRED_WHEN_REPORTING_HELPER_TEXT, requiredWhenReporting } from "./requiredWhenReporting";
+
 export const ReportingFrameworkEdit: FC = () => {
   return (
     <Edit mutationMode="pessimistic">
@@ -30,7 +32,13 @@ export const ReportingFrameworkEdit: FC = () => {
           reference={modules.form.ResourceName}
           filter={{ type: "project-report" }}
         >
-          <AutocompleteInput optionText="title" label="Project Reporting Form" fullWidth validate={required()} />
+          <AutocompleteInput
+            optionText="title"
+            label="Project Reporting Form"
+            fullWidth
+            validate={requiredWhenReporting}
+            helperText={REQUIRED_WHEN_REPORTING_HELPER_TEXT}
+          />
         </ReferenceInput>
 
         <ReferenceInput
@@ -38,7 +46,13 @@ export const ReportingFrameworkEdit: FC = () => {
           reference={modules.form.ResourceName}
           filter={{ type: "site-report" }}
         >
-          <AutocompleteInput optionText="title" label="Site Reporting Form" fullWidth validate={required()} />
+          <AutocompleteInput
+            optionText="title"
+            label="Site Reporting Form"
+            fullWidth
+            validate={requiredWhenReporting}
+            helperText={REQUIRED_WHEN_REPORTING_HELPER_TEXT}
+          />
         </ReferenceInput>
 
         <ReferenceInput

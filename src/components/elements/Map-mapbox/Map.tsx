@@ -49,6 +49,7 @@ import { useMapMedia } from "./hooks/useMapMedia";
 import { useMapOverlapIndicators } from "./hooks/useMapOverlapIndicators";
 import { useMapOverlays } from "./hooks/useMapOverlays";
 import { useMapPopups } from "./hooks/useMapPopups";
+import { useMapProjectMarkers } from "./hooks/useMapProjectMarkers";
 import { useMapStyle } from "./hooks/useMapStyle";
 import { usePolygonEditFocusStyle } from "./hooks/usePolygonEditFocusStyle";
 import {
@@ -61,6 +62,7 @@ import { MapMedia } from "./layers/mediaTypes";
 import { CrossSiteOverlapPolygon, OverlapPolygonPoint } from "./layers/overlapTypes";
 import { buildCrossSiteOverlapFeatureCollection, buildCrossSiteOverlapMarkerPoints } from "./layers/overlayLayers";
 import { EMPTY_STATUS_POLYGON_MAP, parsePolygonDataV3 } from "./layers/polygonLayers";
+import type { ProjectMarkerPoint } from "./layers/projectMarkerLayer";
 import type {
   DashboardGetProjectsData,
   DashboardPopupContext,
@@ -122,6 +124,8 @@ export interface BaseMapProps {
   };
   overlapPolygons?: OverlapPolygonPoint[];
   crossSiteOverlapPolygons?: CrossSiteOverlapPolygon[];
+  projectMarkers?: ProjectMarkerPoint[];
+  onViewProjectPolygons?: (projectUuid: string) => void;
   autoEditPolygon?: boolean;
   onPolygonTilesLoadingChange?: (value: boolean) => void;
   alwaysShowPhotosOnMap?: boolean;
@@ -155,7 +159,7 @@ export interface AdminMapExtras {
   hideFullscreenControl?: boolean;
   setPolygonFromMap?: SetPolygonFromMap;
   polygonFromMap?: PolygonFromMapState;
-  imageGalleryRef?: React.RefObject<HTMLDivElement>;
+  imageGalleryRef?: React.RefObject<HTMLDivElement | null>;
   showViewGallery?: boolean;
 }
 
@@ -262,6 +266,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     polygonTableHighlight,
     overlapPolygons,
     crossSiteOverlapPolygons,
+    projectMarkers,
+    onViewProjectPolygons,
     onPolygonTilesLoadingChange,
     alwaysShowPhotosOnMap,
     hideMediaPopupActions,
@@ -611,6 +617,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     styleVersion,
     overlapPolygons: overlapPolygonsWithExternal
   });
+
+  useMapProjectMarkers({ map, styleReady, styleVersion, projectMarkers, onViewProjectPolygons });
 
   const { handleEditPolygon, onSaveEdit, onCancelEdit } = useMapDraw({
     map,

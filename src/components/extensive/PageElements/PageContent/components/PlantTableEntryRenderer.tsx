@@ -75,7 +75,7 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tabl
     [plants, totalAmount]
   );
 
-  if (tableType === "noGoal" || framework === Framework.TF) {
+  if (tableType === "noGoal" || framework === Framework.TF_NON_PROFITS) {
     return (
       <Table
         data={noGoalTableData}

@@ -127,7 +127,7 @@ const HighLevelMetrics: FC = () => {
             </ContextCondition>
           </>
           <div className="hidden">
-            <ContextCondition frameworksShow={[Framework.TF]}>
+            <ContextCondition frameworksShow={[Framework.TF_NON_PROFITS]}>
               <Labeled label="Hectares Restored Goal" sx={inlineLabelSx} className="label-field-aside">
                 <NumberField source="hectaresToRestoreGoal" emptyText="0" />
               </Labeled>

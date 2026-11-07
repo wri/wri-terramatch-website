@@ -1,11 +1,11 @@
 import { useT } from "@transifex/react";
 import { FC, memo, useCallback, useState } from "react";
 
+import AttentionBadge from "@/components/extensive/EntityIndex/AttentionBadge";
 import type { ProjectNurseriesMetaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useIndexAccordionOpen } from "@/hooks/useIndexAccordionOpen";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
-import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
 import { type NurseryProjectFilters, useNurseryProjectRows } from "../useNurseryProjectRows";
 import NurseryProjectBody from "./NurseryProjectBody";
@@ -56,15 +56,7 @@ const NurseryProjectSection: FC<NurseryProjectSectionProps> = ({
           titleHref={`/project/${meta.uuid}`}
           caption={meta.organisationName ?? ""}
           open={open}
-          statusLabels={
-            <>
-              {meta.nurseriesRequiringAttention > 0 ? (
-                <TextBadge variant="primary">
-                  {t("{count} Require Attention", { count: meta.nurseriesRequiringAttention })}
-                </TextBadge>
-              ) : null}
-            </>
-          }
+          statusLabels={<AttentionBadge count={meta.nurseriesRequiringAttention} />}
         />
       }
     >

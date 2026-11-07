@@ -10,7 +10,7 @@ import Icon, { IconNames } from "../Icon/Icon";
 import IconSocialImpactStory from "../Icon/IconSocialImpactStory";
 import { ModalBase, ModalProps } from "./Modal";
 
-export interface ModalShareImpactStoryProps extends ModalProps {
+export interface ModalShareImpactStoryProps extends Omit<ModalProps, "content"> {
   onClose: () => void;
   onCopySuccess: () => void;
   shareUrl: string;

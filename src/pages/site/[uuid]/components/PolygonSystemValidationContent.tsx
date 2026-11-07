@@ -21,7 +21,8 @@ import {
   showPolygonErrorToast,
   showPolygonProgressToast
 } from "../utils/polygonOperationToasts";
-import type { PolygonOverlapFixCallback } from "./polygonEdit.types";
+import type { PolygonOverlapFixCallback, PolygonRunValidationCallback } from "./polygonEdit.types";
+import { isValidatablePolygon } from "./polygonTableRow.utils";
 import SubmissionValidationTags from "./SubmissionValidationTags";
 import ValidationDetail from "./ValidationDetail";
 
@@ -30,7 +31,7 @@ export type PolygonSystemValidationContentProps = {
   polygon?: SitePolygonLightDto;
   treatValidationAsNotStarted?: boolean;
   onOverlapFixed?: PolygonOverlapFixCallback;
-  onRunValidation?: (geometryPolygonUuids: string[]) => Promise<void>;
+  onRunValidation?: PolygonRunValidationCallback;
 };
 
 const formatValidationCheckedAt = (date: Date): string => {
@@ -133,14 +134,14 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
     !hasValidation && !isLoadingValidation && polygonUuid != null && polygonUuid !== "" && onRunValidation != null;
 
   const handleRunValidation = useCallback(async () => {
-    if (isValidating || !canRunValidation || polygonUuid == null || polygonUuid === "") {
+    if (isValidating || !canRunValidation || polygon == null || !isValidatablePolygon(polygon)) {
       return;
     }
 
     setIsValidating(true);
-    trackPolygonRunValidationClicked({ siteUuid, polygonIds: [polygonUuid] });
+    trackPolygonRunValidationClicked({ entityUuid: siteUuid, polygonIds: [polygon.polygonUuid] });
     try {
-      await onRunValidation([polygonUuid]);
+      await onRunValidation([polygon]);
       completePolygonProgressToast(POLYGON_TOAST_IDS.validating, toastLabels.validatingComplete);
     } catch (error) {
       Log.error("Failed to validate polygon:", error);
@@ -149,7 +150,7 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
     } finally {
       setIsValidating(false);
     }
-  }, [canRunValidation, isValidating, onRunValidation, polygonUuid, siteUuid, t, toastLabels]);
+  }, [canRunValidation, isValidating, onRunValidation, polygon, siteUuid, t, toastLabels]);
 
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">

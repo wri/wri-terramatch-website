@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { type FC, type MouseEvent, memo, ReactNode, useCallback, useMemo, useState } from "react";
 
+import AttentionBadge from "@/components/extensive/EntityIndex/AttentionBadge";
+import DownloadActionCell from "@/components/extensive/EntityIndex/DownloadActionCell";
 import EntityUpdateStatus from "@/components/extensive/EntityIndex/EntityUpdateStatus";
 import IndexLoadingRow from "@/components/extensive/EntityIndex/IndexLoadingRow";
 import { Framework, isTerrafund, toFramework } from "@/context/framework.provider";
@@ -12,6 +14,7 @@ import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler"
 import { useDate } from "@/hooks/useDate";
 import { useIndexAccordionOpen } from "@/hooks/useIndexAccordionOpen";
 import { InfiniteScrollSentinel } from "@/hooks/useInfiniteScrollSentinel";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { useKeyIndicatorsTooltipContent } from "@/pages/project/[uuid]/tabs/constants/keyIndicatorsTooltipContent";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
@@ -36,12 +39,12 @@ import {
   SeedlingsIcon,
   TreeIcon
 } from "@/redesignComponents/foundations/Icons";
-import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
 import type { SiteIndexProject, SiteIndexSite } from "./siteIndex.types";
 import { getSiteDetailUrl, isSiteApproved } from "./siteIndex.utils";
 import { useSiteTableSelection } from "./SiteIndexSelection.provider";
 import { isSiteEditable } from "./siteIndexSubmit";
+import { downloadSites } from "./useSiteIndexBulkActions";
 import { type SiteProjectFilters, useSiteProjectRows } from "./useSiteProjectRows";
 
 const keyIndicatorTooltip = (title?: string, content?: string): ReactNode => {
@@ -174,10 +177,18 @@ type SiteProjectRowProps = {
   context?: TableRenderRowContext;
   embeddedInProject: boolean;
   isSelected: boolean;
+  isMobile: boolean;
   onRowSelected: (site: SiteIndexSite, selected: boolean) => void;
 };
 
-const SiteProjectRow: FC<SiteProjectRowProps> = ({ site, context, embeddedInProject, isSelected, onRowSelected }) => {
+const SiteProjectRow: FC<SiteProjectRowProps> = ({
+  site,
+  context,
+  embeddedInProject,
+  isSelected,
+  isMobile,
+  onRowSelected
+}) => {
   const t = useT();
   const router = useRouter();
   const { format } = useDate();
@@ -196,14 +207,16 @@ const SiteProjectRow: FC<SiteProjectRowProps> = ({ site, context, embeddedInProj
       aria-selected={isSelected}
       onClick={() => void router.push(getSiteDetailUrl(site.id, !embeddedInProject))}
     >
-      <TableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)} onClick={stopRowClick}>
-        <Checkbox
-          name={`site-${site.id}`}
-          aria-label={t("Select {siteName}", { siteName: site.name })}
-          checked={isSelected}
-          onCheckedChange={({ checked }) => onRowSelected(site, checked === true)}
-        />
-      </TableCell>
+      {isMobile ? null : (
+        <TableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)} onClick={stopRowClick}>
+          <Checkbox
+            name={`site-${site.id}`}
+            aria-label={t("Select {siteName}", { siteName: site.name })}
+            checked={isSelected}
+            onCheckedChange={({ checked }) => onRowSelected(site, checked === true)}
+          />
+        </TableCell>
+      )}
       <TableCell {...context?.getCellProps("name")}>
         <Link href={getSiteDetailUrl(site.id, !embeddedInProject)} className="block max-w-full truncate">
           <Text
@@ -254,21 +267,30 @@ const SiteProjectRow: FC<SiteProjectRowProps> = ({ site, context, embeddedInProj
         )}
       </TableCell>
       <TableCell {...context?.getCellProps("actions")} onClick={stopRowClick}>
-        {EditModals}
-        <Box className="flex justify-end pr-2">
-          <ActionCell
-            button={
-              isSiteEditable(site)
-                ? {
-                    children: t("Edit"),
-                    leftIcon: <EditIcon boxSize={2.5} />,
-                    "aria-label": t("Edit {siteName}", { siteName: site.name }),
-                    onClick: () => handleEdit()
-                  }
-                : undefined
-            }
+        {isMobile ? (
+          <DownloadActionCell
+            ariaLabel={t("Download {siteName}", { siteName: site.name })}
+            onDownload={() => downloadSites([site], t)}
           />
-        </Box>
+        ) : (
+          <>
+            {EditModals}
+            <Box className="flex justify-end pr-2">
+              <ActionCell
+                button={
+                  isSiteEditable(site)
+                    ? {
+                        children: t("Edit"),
+                        leftIcon: <EditIcon boxSize={2.5} />,
+                        "aria-label": t("Edit {siteName}", { siteName: site.name }),
+                        onClick: () => handleEdit()
+                      }
+                    : undefined
+                }
+              />
+            </Box>
+          </>
+        )}
       </TableCell>
     </TableRow>
   );
@@ -279,6 +301,7 @@ const SiteProjectTable: FC<{
   embeddedInProject: boolean;
 }> = ({ sites, embeddedInProject }) => {
   const t = useT();
+  const isMobile = useIsMobile();
   const { selectedRows, isSiteSelected, handleRowSelected, handleAllItemsSelected } = useSiteTableSelection(sites);
 
   const columns = useMemo<TableColumn[]>(
@@ -288,9 +311,9 @@ const SiteProjectTable: FC<{
       { key: "update", label: t("Updates"), sortable: true },
       { key: "updatedAt", label: t("Latest Update"), sortable: true },
       { key: "createdAt", label: t("Date Created"), sortable: true },
-      { key: "actions", label: "" }
+      { key: "actions", label: "", ...(isMobile ? { width: "9rem" } : {}) }
     ],
-    [t]
+    [isMobile, t]
   );
 
   const renderRow = useCallback(
@@ -301,10 +324,11 @@ const SiteProjectTable: FC<{
         context={context}
         embeddedInProject={embeddedInProject}
         isSelected={isSiteSelected(site)}
+        isMobile={isMobile}
         onRowSelected={handleRowSelected}
       />
     ),
-    [embeddedInProject, handleRowSelected, isSiteSelected]
+    [embeddedInProject, handleRowSelected, isMobile, isSiteSelected]
   );
 
   return (
@@ -317,8 +341,9 @@ const SiteProjectTable: FC<{
         }
       }}
       columns={columns}
-      selectable
+      selectable={!isMobile}
       pageSize={10}
+      paginationVariant={isMobile ? "compact" : "default"}
       showPagination
       selectedRows={selectedRows}
       onRowSelected={handleRowSelected}
@@ -345,6 +370,7 @@ export const SiteProjectBody: FC<SiteProjectBodyProps> = ({
   embeddedInProject
 }) => {
   const t = useT();
+  const isMobile = useIsMobile();
   const { selectedRows } = useSiteTableSelection(sites.rows);
   const selectedApproved = selectedRows.filter(isSiteApproved);
   const filtered = isFiltered
@@ -371,12 +397,14 @@ export const SiteProjectBody: FC<SiteProjectBodyProps> = ({
         <IndexLoadingRow label={t("Loading sites...")} minHeight="10rem" />
       ) : (
         <>
-          <SiteProjectMetrics
-            frameworkKey={frameworkKey}
-            metrics={sites.metrics}
-            filtered={filtered}
-            selection={selection}
-          />
+          {isMobile ? null : (
+            <SiteProjectMetrics
+              frameworkKey={frameworkKey}
+              metrics={sites.metrics}
+              filtered={filtered}
+              selection={selection}
+            />
+          )}
           <SiteProjectTable sites={sites.rows} embeddedInProject={embeddedInProject} />
           <InfiniteScrollSentinel
             hasMore={sites.hasMore}
@@ -440,11 +468,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
           open={open}
           titleHref={`/project/${meta.uuid}`}
           caption={meta.organisationName ?? ""}
-          statusLabels={
-            meta.sitesRequiringAttention > 0 ? (
-              <TextBadge>{t("{count} Require Attention", { count: meta.sitesRequiringAttention })}</TextBadge>
-            ) : null
-          }
+          statusLabels={<AttentionBadge count={meta.sitesRequiringAttention} />}
         />
       }
     >

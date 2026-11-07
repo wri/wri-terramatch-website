@@ -70,7 +70,7 @@ const FinancialMetrics = ({
     [fincialReportData]
   );
 
-  const showBudgetOnlyMetrics = framework === Framework.TF_LANDSCAPES && organisationType === NON_PROFIT_ORG_TYPE;
+  const showBudgetOnlyMetrics = framework === Framework.TF_NON_PROFITS && organisationType === NON_PROFIT_ORG_TYPE;
 
   const indicatorRows = useMemo(
     () => (showBudgetOnlyMetrics ? data.filter(f => f.collection === "budget") : data),

@@ -1,5 +1,5 @@
 import { Dictionary, isObject, isString } from "lodash";
-import { Fragment } from "react";
+import { type JSX, Fragment } from "react";
 
 export type ListProps<T, U> = U & {
   uniqueId?: string;

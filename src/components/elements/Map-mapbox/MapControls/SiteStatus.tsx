@@ -43,7 +43,7 @@ const SiteStatus = ({ record, refresh }: { record: any; refresh: any }) => {
         commentArea
         content={
           <Text variant="text-14-light" className="text-center">
-            {t("Are you sure you want to change the site status to")} {optionSelected?.title}?
+            {t("Are you sure you want to change the site status to {status}?", { status: optionSelected?.title })}
           </Text>
         }
         onClose={() => closeModal(ModalId.CONFIRM_SITES_STATUS_CHANGE)}

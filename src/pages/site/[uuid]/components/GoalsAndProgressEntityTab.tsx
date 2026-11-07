@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import React, { FC } from "react";
+import React, { type JSX, FC } from "react";
 
 import ProgressGoalsDoughnutChart, {
   ProgressGoalsData
@@ -32,11 +32,7 @@ interface ProgressDataCardItem {
   tooltipContent?: TranslatedText;
 }
 
-type ChartsData = {
-  terrafund: JSX.Element[];
-  ppc: JSX.Element[];
-  hbf: JSX.Element[];
-};
+type ChartsData = Record<Framework.TF_NON_PROFITS | Framework.PPC | Framework.HBF, JSX.Element[]>;
 
 const ProgressDataCard: FC<ProgressDataCardItem> = values => {
   return (
@@ -163,7 +159,7 @@ const GoalsAndProgressEntityTab: FC<GoalsAndProgressEntityTabProps> = ({ entity,
   };
 
   const chartsDataMapping: ChartsData = {
-    terrafund: [
+    [Framework.TF_NON_PROFITS]: [
       ...(project
         ? [
             <ProgressDataCard
@@ -191,7 +187,7 @@ const GoalsAndProgressEntityTab: FC<GoalsAndProgressEntityTabProps> = ({ entity,
         tooltipContent={project ? tooltips.TOOLTIP_TREE_RESTORED_PROJECT : tooltips.TOOLTIP_TREE_RESTORED_SITE}
       />
     ],
-    ppc: [
+    [Framework.PPC]: [
       <ProgressDataCard
         key={"ppc-1"}
         cardValues={chartDataHectares.cardValues}
@@ -214,7 +210,7 @@ const GoalsAndProgressEntityTab: FC<GoalsAndProgressEntityTabProps> = ({ entity,
         graph={false}
       />
     ],
-    hbf: [
+    [Framework.HBF]: [
       <ProgressDataCard
         key={"hbf-1"}
         cardValues={chartDataWorkdays.cardValues}
@@ -237,7 +233,7 @@ const GoalsAndProgressEntityTab: FC<GoalsAndProgressEntityTabProps> = ({ entity,
       />
     ]
   };
-  const chartFramework = isTerrafund(framework) ? Framework.TF : framework;
+  const chartFramework = isTerrafund(framework) ? Framework.TF_NON_PROFITS : framework;
   const totalCountReplanting = usePlantTotalCount({
     entity: project ? "projects" : "sites",
     entityUuid: entity.uuid,
@@ -292,7 +288,9 @@ const GoalsAndProgressEntityTab: FC<GoalsAndProgressEntityTabProps> = ({ entity,
 
   return (
     <div className="flex w-full flex-wrap items-start justify-between gap-4">
-      {(chartFramework === Framework.TF || chartFramework === Framework.PPC || chartFramework === Framework.HBF) &&
+      {(chartFramework === Framework.TF_NON_PROFITS ||
+        chartFramework === Framework.PPC ||
+        chartFramework === Framework.HBF) &&
         chartsDataMapping[chartFramework]}
       <GoalProgressCard
         label={t("Trees restored")}
