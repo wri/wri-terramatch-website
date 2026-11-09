@@ -191,7 +191,8 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
   const { overlapPolygonUuids, disturbancePolygonUuids } = useProjectPolygonIssues({
     projectUuid: selectedProjectUuid,
     siteUuids,
-    polygonFilter: sitePolygonFilter
+    polygonFilter: sitePolygonFilter,
+    showDeleted: polygonFilters.showDeleted
   });
   const selectOverlapPolygons = useCallback(() => {
     trackPolygonIssueClicked({ issueType: "overlap", issueCount: overlapPolygonUuids.length, source: "issues_panel" });
