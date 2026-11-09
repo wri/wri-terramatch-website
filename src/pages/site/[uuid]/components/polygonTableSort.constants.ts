@@ -2,6 +2,8 @@ export const POLYGON_TABLE_SORT_FIELD_BY_COLUMN: Record<string, string> = {
   polygonName: "name",
   submission: "status",
   validation: "validationStatus",
+  siteName: "siteName",
+  projectName: "projectName",
   restorationPracticeSort: "practice",
   targetLandUseSort: "targetSys",
   treeDistributionSort: "distr",
