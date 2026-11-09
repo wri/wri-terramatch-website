@@ -5,6 +5,7 @@ import { FC, UIEvent, useCallback, useMemo, useState } from "react";
 import { ProjectMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Search from "@/redesignComponents/Forms/Actions/Search/Search";
 import { SELECTOR_BORDER_WIDTH, SELECTOR_RADIUS } from "@/redesignComponents/Forms/Inputs/HighLevelSelector";
+import type { ProjectSelectionMethod } from "@/utils/polygonAnalytics";
 
 import ProjectPickerRow from "./ProjectPickerRow";
 
@@ -16,7 +17,7 @@ type ProjectPickerListProps = {
   projects: ProjectMapEntryDto[];
   filtersSummary: string;
   selectedUuid: string | null;
-  onSelect: (uuid: string) => void;
+  onSelect: (uuid: string, method: ProjectSelectionMethod) => void;
 };
 
 const ProjectPickerList: FC<ProjectPickerListProps> = ({ projects, filtersSummary, selectedUuid, onSelect }) => {
@@ -30,6 +31,11 @@ const ProjectPickerList: FC<ProjectPickerListProps> = ({ projects, filtersSummar
       ? projects
       : projects.filter(({ name }) => name != null && name.toLowerCase().includes(normalized));
   }, [projects, query]);
+
+  const handleSelect = useCallback(
+    (uuid: string) => onSelect(uuid, query.trim() === "" ? "list" : "search"),
+    [onSelect, query]
+  );
 
   const handleScroll = useCallback((event: UIEvent<HTMLDivElement>) => {
     const { scrollTop, clientHeight } = event.currentTarget;
@@ -92,7 +98,7 @@ const ProjectPickerList: FC<ProjectPickerListProps> = ({ projects, filtersSummar
                 polygonCount={polygonCount}
                 height={ROW_HEIGHT}
                 isSelected={uuid === selectedUuid}
-                onSelect={onSelect}
+                onSelect={handleSelect}
               />
             ))
           )}

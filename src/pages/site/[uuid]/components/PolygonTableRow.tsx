@@ -32,6 +32,7 @@ import {
   WetlandIcon,
   WoodlotIcon
 } from "@/redesignComponents/foundations/Icons";
+import { trackPolygonsIndexRowActionClicked } from "@/utils/analytics/polygonsIndexAnalytics";
 import { formatNumberLocaleString } from "@/utils/dashboardUtils";
 
 import { type SubmissionCycleOption, formatSubmissionCycleDisplay } from "./polygonFilter.constants";
@@ -148,13 +149,18 @@ const renderTreeDistribution = (
   return <Text>{treeDistribution.map(value => labelByValue[value]).join(", ")}</Text>;
 };
 
-const renderEntityLink = (entityName: "projects" | "sites", uuid: string | null, name: string | null) => {
+const renderEntityLink = (
+  entityName: "projects" | "sites",
+  uuid: string | null,
+  name: string | null,
+  onClick: () => void
+) => {
   if (uuid == null || name == null) {
     return <Text>—</Text>;
   }
 
   return (
-    <Link href={getEntityDetailPageLink(entityName, uuid)} className="block max-w-full truncate">
+    <Link href={getEntityDetailPageLink(entityName, uuid)} className="block max-w-full truncate" onClick={onClick}>
       <Text
         as="span"
         textStyle="400-bold"
@@ -228,6 +234,15 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
     [row, onSelectChange]
   );
 
+  const handleSiteLinkClick = useCallback(
+    () => trackPolygonsIndexRowActionClicked({ actionType: "open_site", status: row.submission }),
+    [row.submission]
+  );
+  const handleProjectLinkClick = useCallback(
+    () => trackPolygonsIndexRowActionClicked({ actionType: "open_project", status: row.submission }),
+    [row.submission]
+  );
+
   const handleMouseEnter = useCallback(() => {
     onHover(row.id);
   }, [row.id, onHover]);
@@ -264,10 +279,10 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
       {row.entity != null && (
         <>
           <TableCell {...context?.getCellProps("siteName")}>
-            {renderEntityLink("sites", row.entity.siteUuid, row.entity.siteName)}
+            {renderEntityLink("sites", row.entity.siteUuid, row.entity.siteName, handleSiteLinkClick)}
           </TableCell>
           <TableCell {...context?.getCellProps("projectName")}>
-            {renderEntityLink("projects", row.entity.projectUuid, row.entity.projectName)}
+            {renderEntityLink("projects", row.entity.projectUuid, row.entity.projectName, handleProjectLinkClick)}
           </TableCell>
         </>
       )}
