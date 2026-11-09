@@ -23,11 +23,13 @@ import { PolygonsIcon } from "@/redesignComponents/foundations/Icons";
 import Layout from "@/redesignComponents/Layout/Layout";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
+import { ProjectSelectionMethod, trackPolygonProjectSelected } from "@/utils/polygonAnalytics";
 
 import ExistingPolygon from "../site/[uuid]/components/Modals/ExistingPolygon";
 import MapEditPhotoDetails from "../site/[uuid]/components/Modals/GeotaggedPhotos/MapEditPhotoDetails";
 import UploadError from "../site/[uuid]/components/Modals/UploadError";
 import UploadPolygons from "../site/[uuid]/components/Modals/UploadPolygons";
+import { EMPTY_POLYGON_FILTERS } from "../site/[uuid]/components/polygonFilter.constants";
 import PolygonNoResults from "../site/[uuid]/components/PolygonNoResults";
 import { buildPolygonTableColumns } from "../site/[uuid]/components/polygonTableColumns";
 import type { PolygonTableRow } from "../site/[uuid]/components/PolygonTableRow";
@@ -49,6 +51,7 @@ import PolygonReviewTableActions from "./components/PolygonReviewTableActions";
 import PolygonReviewToolbar from "./components/PolygonReviewToolbar";
 import ProjectContextPicker from "./components/ProjectContextPicker";
 import { useInitialPolygonReviewState } from "./hooks/useInitialPolygonReviewState";
+import { usePolygonReviewAnalytics } from "./hooks/usePolygonReviewAnalytics";
 import { useProjectPolygonBulkActions } from "./hooks/useProjectPolygonBulkActions";
 import { useProjectPolygonIssues } from "./hooks/useProjectPolygonIssues";
 import { useProjectPolygonMetrics } from "./hooks/useProjectPolygonMetrics";
@@ -96,10 +99,6 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
     handleClearPolygonFilters
   } = useSitePolygonFilters({ t });
   const [searchResetKey, setSearchResetKey] = useState(0);
-  const clearPolygonFilters = useCallback(() => {
-    handleClearPolygonFilters();
-    setSearchResetKey(current => current + 1);
-  }, [handleClearPolygonFilters]);
   const siteUuids = useMemo(() => polygonFilters.sites.map(({ value }) => value), [polygonFilters.sites]);
   const hasLevel2Filters = !isEmpty(sitePolygonFilter) || siteUuids.length > 0;
   const singleSiteUuid = siteUuids.length === 1 ? siteUuids[0] : undefined;
@@ -136,6 +135,44 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
   useSyncPolygonTableSelectionStore(selectedRowIds);
   const selectedPolygonUuids = useMemo(() => Array.from(selectedRowIds, String), [selectedRowIds]);
 
+  const { markNextFilterChange, markUserSelection, trackSortChange } = usePolygonReviewAnalytics({
+    polygonFilters,
+    search: sitePolygonFilter.search,
+    isResultsLoaded: polygonsLoaded,
+    resultCount: indexTotal ?? 0,
+    selectedRows
+  });
+  const resetPolygonFilters = useCallback(
+    (source: "cleared_all" | "silent") => {
+      if (polygonFilters !== EMPTY_POLYGON_FILTERS) markNextFilterChange(source);
+      handleClearPolygonFilters();
+      setSearchResetKey(current => current + 1);
+    },
+    [handleClearPolygonFilters, markNextFilterChange, polygonFilters]
+  );
+  const clearPolygonFilters = useCallback(() => resetPolygonFilters("cleared_all"), [resetPolygonFilters]);
+  const handleTrackedRowSelected = useCallback<typeof handleRowSelected>(
+    (row, checked) => {
+      markUserSelection();
+      handleRowSelected(row, checked);
+    },
+    [handleRowSelected, markUserSelection]
+  );
+  const handleTrackedAllItemsSelected = useCallback<typeof onAllItemsSelected>(
+    (checked, dataByPage) => {
+      markUserSelection();
+      onAllItemsSelected(checked, dataByPage);
+    },
+    [markUserSelection, onAllItemsSelected]
+  );
+  const handleTrackedSortChange = useCallback<typeof handleSortChange>(
+    sortColumn => {
+      trackSortChange(sortColumn);
+      handleSortChange(sortColumn);
+    },
+    [handleSortChange, trackSortChange]
+  );
+
   // A selection only makes sense within the polygons currently in scope.
   useEffect(() => {
     setSelectedRowIds(new Set());
@@ -153,14 +190,14 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
     polygonFilter: sitePolygonFilter,
     showDeleted: polygonFilters.showDeleted
   });
-  const selectOverlapPolygons = useCallback(
-    () => setSelectedRowIds(new Set(overlapPolygonUuids)),
-    [overlapPolygonUuids, setSelectedRowIds]
-  );
-  const selectDisturbancePolygons = useCallback(
-    () => setSelectedRowIds(new Set(disturbancePolygonUuids)),
-    [disturbancePolygonUuids, setSelectedRowIds]
-  );
+  const selectOverlapPolygons = useCallback(() => {
+    markUserSelection();
+    setSelectedRowIds(new Set(overlapPolygonUuids));
+  }, [markUserSelection, overlapPolygonUuids, setSelectedRowIds]);
+  const selectDisturbancePolygons = useCallback(() => {
+    markUserSelection();
+    setSelectedRowIds(new Set(disturbancePolygonUuids));
+  }, [disturbancePolygonUuids, markUserSelection, setSelectedRowIds]);
   const tableContainerRef = useRef<HTMLDivElement>(null);
 
   const clearTableSelection = useCallback(() => setSelectedRowIds(new Set()), [setSelectedRowIds]);
@@ -227,8 +264,9 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
 
     setHasAppliedInitialState(true);
     setSelectedProject(initialProject);
+    markNextFilterChange("silent");
     setPolygonFilters(initialState.polygonFilters);
-  }, [hasAppliedInitialState, initialState, projects, setPolygonFilters, setSelectedProject]);
+  }, [hasAppliedInitialState, initialState, markNextFilterChange, projects, setPolygonFilters, setSelectedProject]);
 
   useEffect(() => {
     if (initialState == null || !hasAppliedInitialState) return;
@@ -242,19 +280,26 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
   const openPicker = useCallback(() => setIsPickerOpen(true), []);
 
   const selectProject = useCallback(
-    (uuid: string) => {
+    (uuid: string, method: ProjectSelectionMethod) => {
       setSelectedProject(projects.find(project => project.uuid === uuid) ?? null);
       setIsPickerOpen(false);
-      clearPolygonFilters();
+      resetPolygonFilters("silent");
+      trackPolygonProjectSelected({
+        projectUuid: uuid,
+        selectionMethod: method,
+        frameworkFacetUsed: filters.frameworkKey.length > 0,
+        countryFacetUsed: filters.country.length > 0
+      });
     },
-    [clearPolygonFilters, projects, setSelectedProject]
+    [filters.country.length, filters.frameworkKey.length, projects, resetPolygonFilters, setSelectedProject]
   );
+  const selectProjectFromMap = useCallback((uuid: string) => selectProject(uuid, "map"), [selectProject]);
 
   const clearProjectContext = useCallback(() => {
     setFilters(EMPTY_PROJECT_CONTEXT_FILTERS);
     setSelectedProject(null);
-    clearPolygonFilters();
-  }, [clearPolygonFilters, setSelectedProject]);
+    resetPolygonFilters("silent");
+  }, [resetPolygonFilters, setSelectedProject]);
 
   const { setPolygonData, resetSiteMapInteractionState, editPhotoDetailsMediaUuid, setEditPhotoDetailsMediaUuid } =
     useMapAreaContext();
@@ -339,7 +384,7 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
             polygonFilter={sitePolygonFilter}
             polygonTableHighlight={polygonTableHighlight}
             showDeleted={polygonFilters.showDeleted}
-            onViewProjectPolygons={selectProject}
+            onViewProjectPolygons={selectProjectFromMap}
             onRefetchPolygons={polygonBulkActions.refetchPolygons}
           />
           <Flex
@@ -404,15 +449,15 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
                     polygonBulkActions.isTableLocked ? polygonBulkActions.tableLoadingLabel : t("Loading polygons...")
                   }
                   readOnly={polygonFilters.showDeleted}
-                  onAllItemsSelected={onAllItemsSelected}
+                  onAllItemsSelected={handleTrackedAllItemsSelected}
                   onClearHover={clearTableHover}
-                  onRowSelected={handleRowSelected}
+                  onRowSelected={handleTrackedRowSelected}
                   totalItems={indexTotal ?? 0}
                   currentPage={pageNumber}
                   pageSize={pageSize}
                   onPageChange={setPageNumber}
                   onPageSizeChange={handlePageSizeChange}
-                  onSortChange={handleSortChange}
+                  onSortChange={handleTrackedSortChange}
                 />
               )}
             </Flex>
