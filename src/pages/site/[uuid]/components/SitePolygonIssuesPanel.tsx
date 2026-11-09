@@ -3,6 +3,7 @@ import { useT } from "@transifex/react";
 import type { FC } from "react";
 
 import { InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
+import { trackPolygonIssueClicked } from "@/utils/polygonAnalytics";
 
 type IssueSelectLinkProps = {
   label: string;
@@ -37,6 +38,16 @@ const SitePolygonIssuesPanel: FC<SitePolygonIssuesPanelProps> = ({
     return null;
   }
 
+  const handleSelectOverlap = () => {
+    trackPolygonIssueClicked({ issueType: "overlap", issueCount: totalIssueCount, source: "issues_panel" });
+    onSelectOverlapPolygons();
+  };
+
+  const handleSelectDisturbance = () => {
+    trackPolygonIssueClicked({ issueType: "disturbance", issueCount: totalIssueCount, source: "issues_panel" });
+    onSelectDisturbancePolygons();
+  };
+
   return (
     <Flex
       direction="column"
@@ -56,13 +67,13 @@ const SitePolygonIssuesPanel: FC<SitePolygonIssuesPanelProps> = ({
         {overlapCount > 0 && (
           <IssueSelectLink
             label={overlapCount === 1 ? t("1 Overlap") : t("{count} Overlaps", { count: overlapCount })}
-            onClick={onSelectOverlapPolygons}
+            onClick={handleSelectOverlap}
           />
         )}
         {disturbanceCount > 0 && (
           <IssueSelectLink
             label={disturbanceCount === 1 ? t("1 Disturbance") : t("{count} Disturbances", { count: disturbanceCount })}
-            onClick={onSelectDisturbancePolygons}
+            onClick={handleSelectDisturbance}
           />
         )}
       </Flex>

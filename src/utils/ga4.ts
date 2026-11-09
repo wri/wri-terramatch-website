@@ -184,3 +184,10 @@ export const trackOnboardingCardEvent = (eventName: OnboardingCardEventName, par
 export const trackReportsIndexEvent = (eventName: ReportsIndexEventName, params: Ga4EventParams): void => {
   trackGa4Event(eventName, params);
 };
+
+export type PolygonIssueEventName = "polygon_issue_clicked";
+
+// Uses trackGa4Event (not trackPolygonEvent) so the `source` param keeps its name instead of being renamed to polygon_source.
+export const trackPolygonIssueEvent = (eventName: PolygonIssueEventName, params: Ga4EventParams): void => {
+  trackGa4Event(eventName, params);
+};
