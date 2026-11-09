@@ -339,6 +339,8 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
             polygonFilter={sitePolygonFilter}
             polygonTableHighlight={polygonTableHighlight}
             showDeleted={polygonFilters.showDeleted}
+            overlapPolygonUuids={overlapPolygonUuids}
+            disturbancePolygonUuids={disturbancePolygonUuids}
             onViewProjectPolygons={selectProject}
             onRefetchPolygons={polygonBulkActions.refetchPolygons}
           />
