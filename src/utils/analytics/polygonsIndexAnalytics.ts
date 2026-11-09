@@ -75,6 +75,7 @@ const POLYGONS_INDEX_SORT_FIELD_BY_COLUMN: Record<string, string> = {
   submission: "submission_status",
   validation: "validation_status",
   siteName: "site_name",
+  projectName: "project_name",
   restorationPracticeSort: "restoration_practice",
   targetLandUseSort: "target_land_use",
   treeDistributionSort: "tree_distribution",
