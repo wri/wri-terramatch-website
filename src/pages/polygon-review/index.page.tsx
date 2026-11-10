@@ -173,9 +173,11 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
     [handleSortChange, trackSortChange]
   );
 
+  const pendingIssueSelectionRef = useRef<Set<string> | null>(null);
   // A selection only makes sense within the polygons currently in scope.
   useEffect(() => {
-    setSelectedRowIds(new Set());
+    setSelectedRowIds(pendingIssueSelectionRef.current ?? new Set());
+    pendingIssueSelectionRef.current = null;
   }, [selectedProjectUuid, sitePolygonFilter, siteUuids, setSelectedRowIds]);
 
   const metrics = useProjectPolygonMetrics({
@@ -190,14 +192,26 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
     polygonFilter: sitePolygonFilter,
     showDeleted: polygonFilters.showDeleted
   });
-  const selectOverlapPolygons = useCallback(() => {
-    markUserSelection();
-    setSelectedRowIds(new Set(overlapPolygonUuids));
-  }, [markUserSelection, overlapPolygonUuids, setSelectedRowIds]);
-  const selectDisturbancePolygons = useCallback(() => {
-    markUserSelection();
-    setSelectedRowIds(new Set(disturbancePolygonUuids));
-  }, [disturbancePolygonUuids, markUserSelection, setSelectedRowIds]);
+  const filterToIssuePolygons = useCallback(
+    (issueFilter: "hasOverlap" | "hasDisturbance", polygonUuids: string[]) => {
+      markUserSelection();
+      if (polygonFilters[issueFilter]) {
+        setSelectedRowIds(new Set(polygonUuids));
+        return;
+      }
+      pendingIssueSelectionRef.current = new Set(polygonUuids);
+      setPolygonFilters(current => ({ ...current, [issueFilter]: true }));
+    },
+    [markUserSelection, polygonFilters, setPolygonFilters, setSelectedRowIds]
+  );
+  const selectOverlapPolygons = useCallback(
+    () => filterToIssuePolygons("hasOverlap", overlapPolygonUuids),
+    [filterToIssuePolygons, overlapPolygonUuids]
+  );
+  const selectDisturbancePolygons = useCallback(
+    () => filterToIssuePolygons("hasDisturbance", disturbancePolygonUuids),
+    [filterToIssuePolygons, disturbancePolygonUuids]
+  );
   const tableContainerRef = useRef<HTMLDivElement>(null);
 
   const clearTableSelection = useCallback(() => setSelectedRowIds(new Set()), [setSelectedRowIds]);
