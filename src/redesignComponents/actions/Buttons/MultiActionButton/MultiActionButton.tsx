@@ -26,7 +26,7 @@ const MultiActionButton: FC<IMultiActionButtonProps> = ({
 }) => {
   const buttonClassName = clsx(
     className,
-    variant === "secondary" && secondaryTextColorClass,
+    variant === "secondary" && !disabled && secondaryTextColorClass,
     isFullWidth && "flex-auto"
   );
   const button = (
