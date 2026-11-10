@@ -39,12 +39,12 @@ const SitePolygonIssuesPanel: FC<SitePolygonIssuesPanelProps> = ({
   }
 
   const handleSelectOverlap = () => {
-    trackPolygonIssueClicked({ issueType: "overlap", issueCount: totalIssueCount, source: "issues_panel" });
+    trackPolygonIssueClicked({ issueType: "overlap", issueCount: totalIssueCount, source: "banner" });
     onSelectOverlapPolygons();
   };
 
   const handleSelectDisturbance = () => {
-    trackPolygonIssueClicked({ issueType: "disturbance", issueCount: totalIssueCount, source: "issues_panel" });
+    trackPolygonIssueClicked({ issueType: "disturbance", issueCount: totalIssueCount, source: "banner" });
     onSelectDisturbancePolygons();
   };
 
