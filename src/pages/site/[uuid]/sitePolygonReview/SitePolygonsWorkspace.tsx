@@ -373,12 +373,14 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   }, [clearTableSelection, closeMapPopups]);
 
   const handleSelectOverlapPolygons = useCallback(() => {
+    setPolygonFilters(current => ({ ...current, hasOverlap: true }));
     setSelectedRowIds(new Set(overlapPolygonUuids));
-  }, [overlapPolygonUuids, setSelectedRowIds]);
+  }, [overlapPolygonUuids, setPolygonFilters, setSelectedRowIds]);
 
   const handleSelectDisturbancePolygons = useCallback(() => {
+    setPolygonFilters(current => ({ ...current, hasDisturbance: true }));
     setSelectedRowIds(new Set(disturbancePolygonUuids));
-  }, [disturbancePolygonUuids, setSelectedRowIds]);
+  }, [disturbancePolygonUuids, setPolygonFilters, setSelectedRowIds]);
 
   const {
     bulkEditPayload,
