@@ -132,8 +132,10 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
       )}
       <ToolbarTable
         className={classNames(
-          "!px-6 !pb-6 !pt-5",
-          embeddedInProject ? "border-b border-theme-neutral-300 !bg-theme-neutral-100" : "!bg-theme-neutral-200"
+          "sticky z-10 !px-6 !pb-6 !pt-5",
+          embeddedInProject
+            ? "top-[5.5625rem] border-b border-theme-neutral-300 !bg-theme-neutral-100 mobile:top-[7.8125rem]"
+            : "top-11 !bg-theme-neutral-200"
         )}
         classNameContentLeft={embeddedInProject ? "min-w-0 flex-1 !shrink" : "w-full"}
         classNameContentSearch="w-[19rem] max-w-full mobile:w-auto mobile:min-w-0 mobile:flex-1"

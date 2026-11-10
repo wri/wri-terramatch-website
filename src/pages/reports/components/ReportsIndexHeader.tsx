@@ -1,3 +1,4 @@
+import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
@@ -252,75 +253,81 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
           }
         />
       )}
-      {!entityProfile && (
-        <Toolbar
-          className="sticky top-11 z-10 items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-2 pt-5 mobile:flex-col-reverse mobile:items-stretch mobile:gap-3"
-          classNameContentLeft="min-w-0 mobile:flex-shrink"
-          classNameContentRight="mt-[-1.25rem] mobile:mt-0 mobile:w-full mobile:flex-shrink"
-          contentLeft={
-            <TabBar
-              key={activeTab}
-              variant="transparent"
-              defaultValue={activeTab}
-              tabs={[
-                { value: "progress-reports", label: t("Progress Reports") },
-                { value: "additional-reports", label: t("Additional Reports") }
-              ]}
-              onTabClick={onTabChange}
-            />
-          }
-          contentRight={
-            showViewSelector ? (
-              <HighLevelSelector
-                label={t("View:")}
-                items={viewItems}
-                value={viewValue}
-                emptyMessage={t("No results found")}
-                width="25rem"
-                className="mobile:!w-full"
-                onChange={onViewChange}
+      {/* The tab bar and the table toolbar stick together so search and filters stay in view while scrolling. */}
+      <Box className={classNames("sticky z-10", entityProfile ? "top-[5.5625rem] mobile:top-[7.8125rem]" : "top-11")}>
+        {!entityProfile && (
+          <Toolbar
+            className="items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-2 pt-5 mobile:flex-col-reverse mobile:items-stretch mobile:gap-3"
+            classNameContentLeft="min-w-0 mobile:flex-shrink"
+            classNameContentRight="mt-[-1.25rem] mobile:mt-0 mobile:w-full mobile:flex-shrink"
+            contentLeft={
+              <TabBar
+                key={activeTab}
+                variant="transparent"
+                defaultValue={activeTab}
+                tabs={[
+                  { value: "progress-reports", label: t("Progress Reports") },
+                  { value: "additional-reports", label: t("Additional Reports") }
+                ]}
+                onTabClick={onTabChange}
               />
-            ) : undefined
+            }
+            contentRight={
+              showViewSelector ? (
+                <HighLevelSelector
+                  label={t("View:")}
+                  items={viewItems}
+                  value={viewValue}
+                  emptyMessage={t("No results found")}
+                  width="25rem"
+                  className="mobile:!w-full"
+                  onChange={onViewChange}
+                />
+              ) : undefined
+            }
+          />
+        )}
+        <ToolbarTable
+          className={classNames(
+            "!px-6 !pb-6 !pt-5",
+            entityProfile ? "!bg-theme-neutral-100" : "!bg-theme-neutral-200 "
+          )}
+          classNameContentLeft="flex-1"
+          search={
+            onQueryChange == null
+              ? undefined
+              : {
+                  placeholder: t("Search"),
+                  options: [],
+                  displayResults: "none",
+                  count: reportCount,
+                  label: t("Reports"),
+                  cacheKey: activeTab,
+                  onQueryChange
+                }
+          }
+          showSearchInput={showSearchInput}
+          classNameContentSearch="w-[19rem] mobile:w-auto mobile:min-w-0 mobile:flex-1"
+          selectedFilters={activeFilterLabels}
+          showClearFilters={activeFilterLabels.length > 0}
+          onClickFilterButton={() => setIsFilterDrawerOpen(true)}
+          onClearFilters={clearFilters}
+          button={
+            !entityProfile || source !== "project"
+              ? undefined
+              : {
+                  size: "small",
+                  leftIcon: <PlusIcon boxSize="0.625rem" />,
+                  disabled: addDisturbanceReportDisabled || projectFrameworkKey == null,
+                  onClick: () => {
+                    trackDisturbanceReportClicked();
+                    openDisturbanceReportIntro();
+                  },
+                  children: t("Add Disturbance Report")
+                }
           }
         />
-      )}
-      <ToolbarTable
-        className={classNames("!px-6 !pb-6 !pt-5", entityProfile ? "!bg-theme-neutral-100" : "!bg-theme-neutral-200 ")}
-        classNameContentLeft="flex-1"
-        search={
-          onQueryChange == null
-            ? undefined
-            : {
-                placeholder: t("Search"),
-                options: [],
-                displayResults: "none",
-                count: reportCount,
-                label: t("Reports"),
-                cacheKey: activeTab,
-                onQueryChange
-              }
-        }
-        showSearchInput={showSearchInput}
-        classNameContentSearch="w-[19rem] mobile:w-auto mobile:min-w-0 mobile:flex-1"
-        selectedFilters={activeFilterLabels}
-        showClearFilters={activeFilterLabels.length > 0}
-        onClickFilterButton={() => setIsFilterDrawerOpen(true)}
-        onClearFilters={clearFilters}
-        button={
-          !entityProfile || source !== "project"
-            ? undefined
-            : {
-                size: "small",
-                leftIcon: <PlusIcon boxSize="0.625rem" />,
-                disabled: addDisturbanceReportDisabled || projectFrameworkKey == null,
-                onClick: () => {
-                  trackDisturbanceReportClicked();
-                  openDisturbanceReportIntro();
-                },
-                children: t("Add Disturbance Report")
-              }
-        }
-      />
+      </Box>
       <ReportsFilterDrawer
         open={isFilterDrawerOpen}
         activeTab={activeTab}
