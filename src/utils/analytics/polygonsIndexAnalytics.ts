@@ -17,7 +17,7 @@ export type PolygonsIndexFilterField =
   | "show_deleted";
 
 export type PolygonsIndexFilterAction = "applied" | "removed" | "cleared_all";
-export type PolygonsIndexRowActionType = "open_polygon" | "open_site" | "open_project";
+export type PolygonsIndexRowActionType = "open_site" | "open_project";
 
 type FilterDescriptor = {
   field: PolygonsIndexFilterField;
