@@ -353,7 +353,6 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
           <ProjectContextPicker
             open={isPickerOpen}
             projects={projects}
-            filteredProjects={filteredProjects}
             filters={filters}
             selectedProject={selectedProject}
             onOpenChange={setIsPickerOpen}
