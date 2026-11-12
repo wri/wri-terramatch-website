@@ -257,7 +257,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
       <Box className={classNames("sticky z-10", entityProfile ? "top-[5.5625rem] mobile:top-[7.8125rem]" : "top-11")}>
         {!entityProfile && (
           <Toolbar
-            className="border-theme-neutral-200 bg-theme-neutral-100 items-end border-b !px-2 pt-5 mobile:flex-col-reverse mobile:items-stretch mobile:gap-3"
+            className="items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-2 pt-5 mobile:flex-col-reverse mobile:items-stretch mobile:gap-3"
             classNameContentLeft="min-w-0 mobile:flex-shrink"
             classNameContentRight="mt-[-1.25rem] mobile:mt-0 mobile:w-full mobile:flex-shrink"
             contentLeft={
