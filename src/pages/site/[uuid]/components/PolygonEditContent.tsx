@@ -46,6 +46,7 @@ import { DownloadIcon, RefreshIcon, UploadIcon } from "@/redesignComponents/foun
 import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/FloatingActionToolbar";
 import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ApiSlice from "@/store/apiSlice";
+import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
 import { trackPolygonDownloaded, trackPolygonStatusChanged } from "@/utils/polygonAnalytics";
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
@@ -580,6 +581,13 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
       try {
         const previousPolygonUuid = geometryPolygonUuid !== "" ? geometryPolygonUuid : undefined;
+        // Read before the save: finalizing it resets the baseline.
+        const attributesChanged = hasUnsavedFormChanges(
+          formBaselineRef.current,
+          getFormValues(),
+          false,
+          dateValueToIsoString
+        );
         const updatedPolygon = await saveExistingPolygonVersion({
           primaryUuid: polygon.primaryUuid,
           siteId: polygon.siteId as string,
@@ -597,6 +605,13 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
           previousPolygonUuid,
           closeOnSave: options?.closeOnSave
         });
+        if (attributesChanged && polygon.siteId != null && polygon.siteId !== "") {
+          trackPolygonEvent("polygon_attributes_edited", {
+            ...getPolygonAnalyticsContext({ entityType: "site", entityId: polygon.siteId }),
+            polygon_id: previousPolygonUuid ?? savedPolygon.polygonUuid,
+            entry_point: "edit_panel"
+          });
+        }
         if (options?.deferSuccessToast) {
           closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
         } else {

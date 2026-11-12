@@ -5,7 +5,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { indexProjectConnection } from "@/connections/Entity";
-import { useReportsContext, useReportsTabFilters } from "@/context/reports.provider";
+import { useReportsContext } from "@/context/reports.provider";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useAllPages } from "@/hooks/useConnection";
 import { IndexAccordionStorageContext } from "@/hooks/useIndexAccordionOpen";
@@ -35,7 +35,7 @@ import { useReportsIndexFilters } from "../useReportsIndexFilters";
 import AdditionalReportsContent from "./AdditionalReportsContent";
 import ProjectReportsMetaSection from "./ProjectReportsMetaSection";
 import ProjectReportsSection from "./ProjectReportsSection";
-import { getDefaultProgressFiltersForSource } from "./reportFilter.constants";
+import { getDefaultProgressFiltersForSource, getFiltersForReportsTab } from "./reportFilter.constants";
 import ReportsIndexBulkBar from "./ReportsIndexBulkBar";
 import ReportsIndexHeader from "./ReportsIndexHeader";
 
@@ -52,8 +52,8 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
   const tabFromQuery = typeof router.query.tab === "string" ? router.query.tab : undefined;
   const activeTab: ReportsIndexTab = isReportsIndexTab(tabFromQuery) ? tabFromQuery : "progress-reports";
   // Read for the tab being rendered, so a tab switch never shows the other tab's filters.
-  const filters = useReportsTabFilters(activeTab);
-  const { queryByTab, setQueryByTab, viewByTab, setViewByTab, accordionStates } = useReportsContext();
+  const { filters: sharedFilters, queryByTab, setQueryByTab, accordionStates } = useReportsContext();
+  const filters = useMemo(() => getFiltersForReportsTab(sharedFilters, activeTab), [activeTab, sharedFilters]);
   const query = queryByTab[activeTab] ?? "";
   const setQuery = useCallback(
     (nextQuery: string) => setQueryByTab(current => ({ ...current, [activeTab]: nextQuery })),
@@ -350,8 +350,9 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
   const handleTabChange = useCallback(
     (tab: string) => {
       clearSelection();
-      const nextView = viewByTab[tab] ?? ALL_PROJECTS_VIEW_VALUE;
-      setViewByTab(current => ({ ...current, [activeTab]: viewValue }));
+      // The project filter holds across tabs. Organisation views only exist in Additional Reports, so
+      // they fall back to All Projects when switching to Progress Reports.
+      const nextView = tab === "progress-reports" && isOrganisationView ? ALL_PROJECTS_VIEW_VALUE : viewValue;
       setViewValue(nextView);
       const query = { ...router.query };
       if (tab === "progress-reports" && nextView === project.uuid) {
@@ -367,7 +368,7 @@ const ReportsIndexContent: FC<ReportsIndexContentProps> = ({ project }) => {
       }
       void router.replace({ pathname: router.pathname, query }, undefined, { shallow: true });
     },
-    [activeTab, clearSelection, project.uuid, router, setViewByTab, viewByTab, viewValue]
+    [clearSelection, isOrganisationView, project.uuid, router, viewValue]
   );
 
   return (

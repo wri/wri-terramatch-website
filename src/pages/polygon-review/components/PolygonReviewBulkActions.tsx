@@ -1,11 +1,14 @@
 import { useT } from "@transifex/react";
 import { noop } from "lodash";
-import { FC, useCallback } from "react";
+import { FC, useCallback, useMemo } from "react";
 
 import { PolygonEditDrawerDataSync } from "@/context/polygonEditDrawer.provider";
 import type { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { InfoIcon } from "@/redesignComponents/foundations/Icons";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
+import { trackPolygonsIndexBulkActionSubmitted } from "@/utils/analytics/polygonsIndexAnalytics";
+import type { BulkActionType } from "@/utils/polygonAnalytics";
+import { isSitePolygonApprovable, toReviewAvailabilityPolygon } from "@/utils/sitePolygonReview";
 
 import ApprovePolygonConfirmation from "../../site/[uuid]/components/Modals/ApprovePolygon/ApprovePolygonConfirmation";
 import PolygonApproved from "../../site/[uuid]/components/Modals/ApprovePolygon/PolygonApproved";
@@ -39,6 +42,37 @@ const PolygonReviewBulkActions: FC<PolygonReviewBulkActionsProps> = ({
   const { handleSystemValidationCompleteModalChange } = bulkActions;
   const { openPolygonEditDrawerByPolygonId } = actions;
 
+  const selectedCount = selectedRows.length;
+  const approvableCount = useMemo(
+    () => selectedRows.filter(row => isSitePolygonApprovable(toReviewAvailabilityPolygon(row))).length,
+    [selectedRows]
+  );
+  const trackSubmitted = useCallback(
+    (actionType: BulkActionType, eligibleCount: number) =>
+      trackPolygonsIndexBulkActionSubmitted({ actionType, selectedCount, eligibleCount }),
+    [selectedCount]
+  );
+  const handleDownload = useCallback(() => {
+    trackSubmitted("download", selectedCount);
+    bulkActions.handleBulkDownloadClick();
+  }, [bulkActions, selectedCount, trackSubmitted]);
+  const handleRunValidation = useCallback(() => {
+    trackSubmitted("run_validation", selectedCount);
+    bulkActions.handleBulkRunValidation();
+  }, [bulkActions, selectedCount, trackSubmitted]);
+  const handleOpenDelete = useCallback(() => {
+    trackSubmitted("delete", selectedCount);
+    bulkActions.handleOpenDeletePolygonModal();
+  }, [bulkActions, selectedCount, trackSubmitted]);
+  const handleOpenApprove = useCallback(() => {
+    trackSubmitted("approve", approvableCount);
+    reviewActions.handleOpenApprovePolygonModal();
+  }, [approvableCount, reviewActions, trackSubmitted]);
+  const handleOpenRequestInformation = useCallback(() => {
+    trackSubmitted("request_information", selectedCount);
+    reviewActions.handleOpenRequestInformationModal();
+  }, [reviewActions, selectedCount, trackSubmitted]);
+
   const handleViewValidationDetails = useCallback(
     (row: PolygonTableRow) => {
       handleSystemValidationCompleteModalChange(false);
@@ -71,13 +105,13 @@ const PolygonReviewBulkActions: FC<PolygonReviewBulkActionsProps> = ({
         isValidating={bulkActions.isValidatingPolygons}
         onCancel={actions.clearBulkTableSelection}
         onClearSelection={actions.clearBulkTableSelection}
-        onDelete={bulkActions.handleOpenDeletePolygonModal}
-        onDownload={bulkActions.handleBulkDownloadClick}
+        onDelete={handleOpenDelete}
+        onDownload={handleDownload}
         onEdit={bulkActions.handleBulkEditDetails}
-        onRunValidation={bulkActions.handleBulkRunValidation}
+        onRunValidation={handleRunValidation}
         onSubmit={noop}
-        onOpenApproveModal={reviewActions.handleOpenApprovePolygonModal}
-        onOpenRequestInformationModal={reviewActions.handleOpenRequestInformationModal}
+        onOpenApproveModal={handleOpenApprove}
+        onOpenRequestInformationModal={handleOpenRequestInformation}
       />
       <DeletePolygon
         open={bulkActions.showDeletePolygonModal}

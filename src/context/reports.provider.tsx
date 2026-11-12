@@ -14,41 +14,33 @@ export type ReportsFilterValues = {
 };
 
 type ReportsType = {
-  // Filters are kept per tab so that each tab always reads the filters that belong to the tab it renders.
-  filtersByTab: Record<string, ReportFilterState>;
-  setFiltersByTab: React.Dispatch<React.SetStateAction<Record<string, ReportFilterState>>>;
+  // One filter state for every tab, so a filter applied in one tab still applies after switching tabs.
+  filters: ReportFilterState;
+  setFilters: React.Dispatch<React.SetStateAction<ReportFilterState>>;
   searchTerm: string;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
   queryByTab: Record<string, string>;
   setQueryByTab: React.Dispatch<React.SetStateAction<Record<string, string>>>;
-  viewByTab: Record<string, string>;
-  setViewByTab: React.Dispatch<React.SetStateAction<Record<string, string>>>;
   accordionStates: IndexAccordionStates;
 };
 
 const ReportsContext = createContext<ReportsType | undefined>(undefined);
 
 export const ReportsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [filtersByTab, setFiltersByTab] = React.useState<Record<string, ReportFilterState>>({
-    "progress-reports": EMPTY_REPORT_FILTERS,
-    "additional-reports": EMPTY_REPORT_FILTERS
-  });
+  const [filters, setFilters] = React.useState<ReportFilterState>(EMPTY_REPORT_FILTERS);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [queryByTab, setQueryByTab] = React.useState<Record<string, string>>({});
-  const [viewByTab, setViewByTab] = React.useState<Record<string, string>>({});
   const [accordionStates] = React.useState<IndexAccordionStates>(() => new Map());
 
   return (
     <ReportsContext.Provider
       value={{
-        filtersByTab,
-        setFiltersByTab,
+        filters,
+        setFilters,
         searchTerm,
         setSearchTerm,
         queryByTab,
         setQueryByTab,
-        viewByTab,
-        setViewByTab,
         accordionStates
       }}
     >
@@ -65,8 +57,5 @@ export const useReportsContext = () => {
   return context;
 };
 
-/** The filters of one tab. Pass the tab that is being rendered so the filters always match it. */
-export const useReportsTabFilters = (tab: string): ReportFilterState => {
-  const { filtersByTab } = useReportsContext();
-  return filtersByTab[tab] ?? EMPTY_REPORT_FILTERS;
-};
+/** The report filters shared by every tab of the page. */
+export const useReportsFilters = (): ReportFilterState => useReportsContext().filters;

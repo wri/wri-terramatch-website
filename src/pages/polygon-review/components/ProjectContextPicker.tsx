@@ -6,9 +6,11 @@ import { ProjectMapEntryDto } from "@/generated/v3/researchService/researchServi
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { HighLevelPopoverSelector, SELECTOR_BORDER_WIDTH } from "@/redesignComponents/Forms/Inputs/HighLevelSelector";
 import { isNotNull } from "@/utils/array";
+import type { ProjectSelectionMethod } from "@/utils/polygonAnalytics";
 
 import { useProjectFacetLabels } from "../hooks/useProjectFacetLabels";
 import {
+  filterProjects,
   getFacetOptions,
   getFacetValue,
   getProjectFacetFilters,
@@ -21,11 +23,10 @@ import ProjectPickerList from "./ProjectPickerList";
 
 type ProjectContextPickerContentProps = {
   projects: ProjectMapEntryDto[];
-  filteredProjects: ProjectMapEntryDto[];
   filters: ProjectContextFilters;
   selectedProject: ProjectMapEntryDto | null;
   onFiltersChange: (filters: ProjectContextFilters) => void;
-  onSelectProject: (uuid: string) => void;
+  onSelectProject: (uuid: string, method: ProjectSelectionMethod) => void;
   onClear: () => void;
 };
 
@@ -57,17 +58,7 @@ const getFiltersSummary = (filters: ProjectContextFilters, getLabel: FacetLabelG
  */
 const ProjectContextPickerContent: FC<
   ProjectContextPickerContentProps & { filtersSummary: string; getLabel: FacetLabelGetter }
-> = ({
-  projects,
-  filteredProjects,
-  filters,
-  filtersSummary,
-  selectedProject,
-  getLabel,
-  onFiltersChange,
-  onSelectProject,
-  onClear
-}) => {
+> = ({ projects, filters, filtersSummary, selectedProject, getLabel, onFiltersChange, onSelectProject, onClear }) => {
   const t = useT();
   const isLocked = selectedProject != null;
   const canClear = isLocked || filtersSummary.length > 0;
@@ -76,6 +67,10 @@ const ProjectContextPickerContent: FC<
     () => (selectedProject != null ? getProjectFacetFilters(selectedProject) : filters),
     [filters, selectedProject]
   );
+
+  const listFilters = useMemo(() => ({ ...facetFilters, cohort: [] }), [facetFilters]);
+  const listProjects = useMemo(() => filterProjects(projects, listFilters), [listFilters, projects]);
+  const listFiltersSummary = useMemo(() => getFiltersSummary(listFilters, getLabel), [listFilters, getLabel]);
 
   const facetGroups = useMemo(() => {
     const countrySearch: FacetSearch = {
@@ -119,8 +114,8 @@ const ProjectContextPickerContent: FC<
         </Flex>
         <Flex flex={1} minWidth={0} padding={4} overflowY="auto">
           <ProjectPickerList
-            projects={filteredProjects}
-            filtersSummary={filtersSummary}
+            projects={listProjects}
+            filtersSummary={listFiltersSummary}
             selectedUuid={selectedProject?.uuid ?? null}
             onSelect={onSelectProject}
           />
