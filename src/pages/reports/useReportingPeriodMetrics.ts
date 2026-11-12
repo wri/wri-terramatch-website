@@ -24,8 +24,8 @@ export type ReportingPeriodMetricCard = {
   title: string;
   tooltip: string;
   progress: number;
-  filtered?: number | null;
-  selection?: number | null;
+  filtered?: number;
+  selection?: number;
   color: string;
 };
 
@@ -49,7 +49,7 @@ const totalsFromLoadedReports = (
     (totals, report) => {
       if (report.type === "site-report") {
         const siteReport = sitesById.get(report.id);
-        if (siteReport == null) return totals;
+        if (siteReport == null || siteReport.nothingToReport === true) return totals;
         return {
           ...totals,
           treesGrowing: totals.treesGrowing + treesGrowingFromSite(siteReport),
@@ -58,7 +58,7 @@ const totalsFromLoadedReports = (
       }
       if (report.type === "nursery-report") {
         const nurseryReport = nurseriesById.get(report.id);
-        if (nurseryReport == null) return totals;
+        if (nurseryReport == null || nurseryReport.nothingToReport === true) return totals;
         return {
           ...totals,
           seedlingsGrown: totals.seedlingsGrown + (nurseryReport.seedlingsYoungTrees ?? 0)
@@ -84,10 +84,10 @@ const includesProjectReport = (reports: ReportsIndexReport[]) =>
   reports.some(report => report.type === "project-report");
 
 type MetricLayerTotals = {
-  treesGrowing: number | null;
-  treesRegenerated: number | null;
-  seedlingsGrown: number | null;
-  jobs: number | null;
+  treesGrowing?: number;
+  treesRegenerated?: number;
+  seedlingsGrown?: number;
+  jobs?: number;
 };
 
 const layerTotalsFromReports = (
@@ -97,11 +97,13 @@ const layerTotalsFromReports = (
   jobsTotal: number | null | undefined
 ): MetricLayerTotals => {
   const totals = totalsFromLoadedReports(subset, siteReports, nurseryReports);
+  const hasSiteReport = subset.some(report => report.type === "site-report");
+  const hasNurseryReport = subset.some(report => report.type === "nursery-report");
   return {
-    treesGrowing: subset.some(report => report.type === "site-report") ? totals.treesGrowing : null,
-    treesRegenerated: subset.some(report => report.type === "site-report") ? totals.treesRegenerated : null,
-    seedlingsGrown: subset.some(report => report.type === "nursery-report") ? totals.seedlingsGrown : null,
-    jobs: includesProjectReport(subset) ? jobsTotal ?? 0 : null
+    treesGrowing: hasSiteReport ? totals.treesGrowing : undefined,
+    treesRegenerated: hasSiteReport ? totals.treesRegenerated : undefined,
+    seedlingsGrown: hasNurseryReport ? totals.seedlingsGrown : undefined,
+    jobs: includesProjectReport(subset) ? jobsTotal ?? 0 : undefined
   };
 };
 
@@ -180,13 +182,9 @@ export const useReportingPeriodMetricCards = (
   return useMemo(() => {
     const layers = (
       progress: number,
-      filteredValue: number | null | undefined,
-      selectionValue: number | null | undefined
-    ): Pick<ReportingPeriodMetricCard, "progress" | "filtered" | "selection"> => ({
-      progress,
-      filtered: filteredTotals == null ? undefined : filteredValue ?? null,
-      selection: selectionTotals == null ? undefined : selectionValue ?? null
-    });
+      filtered: number | undefined,
+      selection: number | undefined
+    ): Pick<ReportingPeriodMetricCard, "progress" | "filtered" | "selection"> => ({ progress, filtered, selection });
 
     if (framework === "ppc") {
       return [
