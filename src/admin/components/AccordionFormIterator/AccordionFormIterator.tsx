@@ -31,6 +31,8 @@ import { UseFieldArrayReturn } from "react-hook-form";
 
 import { AccordionFormIteratorItem } from "@/admin/components/AccordionFormIterator/AccordionFormIteratorItem";
 
+type IteratorInputProps = { source?: string; defaultValue?: unknown };
+
 export interface AccordionFormIteratorProps extends SimpleFormIteratorProps, Partial<UseFieldArrayReturn> {
   accordionSummaryTitle: (index: number, fields: any[]) => string;
   summaryChildren?: React.ReactNode;
@@ -84,7 +86,7 @@ export const AccordionFormIterator: FC<AccordionFormIteratorProps> = props => {
     } else if (
       Children.count(children) === 1 &&
       React.isValidElement(Children.only(children)) &&
-      (Children.only(children)! as ReactElement).props.source == null
+      (Children.only(children) as ReactElement<IteratorInputProps>).props.source == null
     ) {
       // ArrayInput used for an array of scalar values
       // (e.g. tags: ['foo', 'bar'])
@@ -94,7 +96,11 @@ export const AccordionFormIterator: FC<AccordionFormIteratorProps> = props => {
       // (e.g. authors: [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Doe' }])
       const defaultValue = initialDefaultValue.current ?? ({} as Record<string, unknown>);
       Children.forEach(children, input => {
-        if (React.isValidElement(input) && input.type !== FormDataConsumer && input.props.source) {
+        if (
+          React.isValidElement<IteratorInputProps>(input) &&
+          input.type !== FormDataConsumer &&
+          input.props.source != null
+        ) {
           defaultValue[input.props.source] = input.props.defaultValue ?? "";
         }
       });

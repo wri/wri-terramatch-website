@@ -73,6 +73,7 @@ const LinkedFieldInput: FC<LinkedFieldInputProps> = ({ getLinkedFieldById, ...pr
       const defaults = linkedField == null ? undefined : formBuilderDefaults?.(linkedField);
       const newField: LocalFieldWithChildren = {
         name,
+        linkedFieldKey: value,
         inputType,
         label,
         description,

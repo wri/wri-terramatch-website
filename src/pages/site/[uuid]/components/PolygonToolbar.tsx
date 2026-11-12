@@ -6,6 +6,7 @@ import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/T
 import {
   resolveActivePolygonFilterTypes,
   trackPolygonFilterApplied,
+  trackPolygonFilterCleared,
   trackPolygonSearchUsed
 } from "@/utils/polygonAnalytics";
 
@@ -61,6 +62,7 @@ const PolygonToolbar: FC<PolygonToolbarProps> = ({
   };
 
   const handleOnClearFilters = () => {
+    trackPolygonFilterCleared({ siteUuid });
     onClearFilters();
     setSearchResetKey(current => current + 1);
   };

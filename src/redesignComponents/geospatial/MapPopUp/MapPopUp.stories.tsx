@@ -1,6 +1,6 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { action } from "@storybook/addon-actions";
-import { Meta, StoryFn, StoryObj } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 import { createRef, useRef, useState } from "react";
 
 import { getThemedColor } from "@/lib/theme";
@@ -20,7 +20,7 @@ const meta = {
   },
   tags: ["autodocs"],
   decorators: [
-    (Story: StoryFn) => (
+    Story => (
       <div
         style={{
           height: "64.375rem",

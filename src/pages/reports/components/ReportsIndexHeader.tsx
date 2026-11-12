@@ -24,6 +24,7 @@ import {
   clearReportPeriodFilters,
   EMPTY_REPORT_FILTERS,
   formatReportPeriodLabel,
+  getFiltersForReportsTab,
   getInitialProgressFilters,
   getReportPeriodControl,
   getReportTypeLabels,
@@ -78,29 +79,29 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
   const t = useT();
   const router = useRouter();
   const { format } = useDate();
-  const { filtersByTab, setFiltersByTab } = useReportsContext();
+  const { filters, setFilters } = useReportsContext();
   const { trackFilterApplied, trackDisturbanceReportClicked } = useReportsIndexAnalytics();
 
   const reportTypeFromQuery = typeof router.query.reportType === "string" ? router.query.reportType : undefined;
 
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
-  const selectedFilters = filtersByTab[activeTab] ?? EMPTY_REPORT_FILTERS;
+  const selectedFilters = useMemo(
+    () => (entityProfile ? filters : getFiltersForReportsTab(filters, activeTab)),
+    [activeTab, entityProfile, filters]
+  );
   const statusOptions = useMemo(() => getReportStatusOptions(t), [t]);
   const updateStatusOptions = useMemo(() => getUpdateStatusFilterOptions(t), [t]);
 
   const updateActiveFilters = useCallback(
     (next: ReportFilterState) => {
-      setFiltersByTab(current => ({ ...current, [activeTab]: next }));
+      setFilters(next);
     },
-    [activeTab, setFiltersByTab]
+    [setFilters]
   );
 
   useEffect(() => {
-    setFiltersByTab({
-      "progress-reports": getInitialProgressFilters(source, reportTypeFromQuery),
-      "additional-reports": EMPTY_REPORT_FILTERS
-    });
-  }, [reportTypeFromQuery, setFiltersByTab, source, sourceUuid]);
+    setFilters(getInitialProgressFilters(source, reportTypeFromQuery));
+  }, [reportTypeFromQuery, setFilters, source, sourceUuid]);
 
   // The report is only created once the user continues from the introduction, so cancelling it leaves no draft behind.
   const openDisturbanceReportIntro = useCallback(() => {
@@ -254,9 +255,9 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
       )}
       {!entityProfile && (
         <Toolbar
-          className="sticky top-11 z-10 items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-2 pt-5"
-          classNameContentLeft="min-w-0"
-          classNameContentRight="mt-[-1.25rem]"
+          className="sticky top-11 z-10 items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-2 pt-5 mobile:flex-col-reverse mobile:items-stretch mobile:gap-3"
+          classNameContentLeft="min-w-0 mobile:flex-shrink"
+          classNameContentRight="mt-[-1.25rem] mobile:mt-0 mobile:w-full mobile:flex-shrink"
           contentLeft={
             <TabBar
               key={activeTab}
@@ -301,7 +302,7 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
               }
         }
         showSearchInput={showSearchInput}
-        classNameContentSearch="w-[19rem]"
+        classNameContentSearch="w-[19rem] mobile:w-auto mobile:min-w-0 mobile:flex-1"
         selectedFilters={activeFilterLabels}
         showClearFilters={activeFilterLabels.length > 0}
         onClickFilterButton={() => setIsFilterDrawerOpen(true)}

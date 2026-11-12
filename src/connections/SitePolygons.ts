@@ -8,7 +8,6 @@ import { connectionHook, connectionLoader } from "@/connections/util/connectionS
 import { deleterAsync } from "@/connections/util/resourceDeleter";
 import type { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import {
-  type UpdateSitePolygonStatusResponse,
   bulkDeleteSitePolygons as bulkDeleteSitePolygonsEndpoint,
   bulkUpdateSitePolygonAttributes as bulkUpdateSitePolygonAttributesEndpoint,
   createSitePolygons,
@@ -32,7 +31,6 @@ import type {
   SitePolygonStatusBulkUpdateBodyDto,
   SitePolygonSummaryDto
 } from "@/generated/v3/researchService/researchServiceSchemas";
-import { resolveUrl } from "@/generated/v3/utils";
 import { useStableProps } from "@/hooks/useStableProps";
 import ApiSlice, { type JsonApiResource, PendingError } from "@/store/apiSlice";
 import { ConnectionProps, Filter } from "@/types/connection";
@@ -45,46 +43,54 @@ export type PolygonStatus = Required<SitePolygonsIndexQueryParams>["polygonStatu
   ? T
   : never;
 
+export type PolygonEntityScopeProps = {
+  entityName?: "projects" | "sites";
+  entityUuid?: string;
+  siteUuids?: string[];
+};
+
+// Filters can't set these keys: lodash `merge` would combine their arrays with the scope's index by index.
+type PolygonScopedFilter<Query> = Omit<Query, "projectId[]" | "siteId[]">;
+
+const polygonEntityScopeVariables = ({ entityName, entityUuid, siteUuids }: PolygonEntityScopeProps) => {
+  if (entityUuid == null) return {};
+  if (entityName === "sites") return { queryParams: { "siteId[]": [entityUuid] } };
+  if (entityName !== "projects") return {};
+  return {
+    queryParams: isEmpty(siteUuids)
+      ? { "projectId[]": [entityUuid] }
+      : { "projectId[]": [entityUuid], "siteId[]": siteUuids }
+  };
+};
+
 export const sitePolygonsConnection = v3Resource("sitePolygons", sitePolygonsIndex)
   .index<SitePolygonLightDto>(() => ({ queryParams: { lightResource: true } }))
   .pagination()
   .enabledProp()
-  .filter<Omit<Filter<SitePolygonsIndexQueryParams>, "projectId[]" | "siteId[]">>()
-  .addProps<{ entityName?: "projects" | "sites"; entityUuid?: string }>(({ entityName, entityUuid }) => {
-    if (entityName === "projects" && entityUuid != null) return { queryParams: { "projectId[]": [entityUuid] } };
-    if (entityName === "sites" && entityUuid != null) return { queryParams: { "siteId[]": [entityUuid] } };
-    return {};
-  })
+  .filter<PolygonScopedFilter<Filter<SitePolygonsIndexQueryParams>>>()
+  .addProps<PolygonEntityScopeProps>(polygonEntityScopeVariables)
   .buildConnection();
 
 export const useSitePolygons = connectionHook(sitePolygonsConnection);
 export const loadSitePolygons = connectionLoader(sitePolygonsConnection);
 
-export type SitePolygonMapIndexFilter = Omit<SitePolygonsMapIndexQueryParams, "siteId[]" | "projectId[]">;
+export type SitePolygonMapIndexFilter = PolygonScopedFilter<SitePolygonsMapIndexQueryParams>;
 
 const sitePolygonMapIndexConnection = v3Resource("sitePolygonMapIndexes", sitePolygonsMapIndex)
-  .singleByFilter<SitePolygonMapIndexDto, SitePolygonsMapIndexQueryParams>()
+  .singleByFilter<SitePolygonMapIndexDto, SitePolygonMapIndexFilter>()
   .enabledProp()
-  .addProps<{ entityName?: "projects" | "sites"; entityUuid?: string }>(({ entityName, entityUuid }) => {
-    if (entityName === "projects" && entityUuid != null) return { queryParams: { "projectId[]": [entityUuid] } };
-    if (entityName === "sites" && entityUuid != null) return { queryParams: { "siteId[]": [entityUuid] } };
-    return {};
-  })
+  .addProps<PolygonEntityScopeProps>(polygonEntityScopeVariables)
   .buildConnection();
 
 export const useSitePolygonMapIndex = connectionHook(sitePolygonMapIndexConnection);
 export const loadSitePolygonMapIndex = connectionLoader(sitePolygonMapIndexConnection);
 
-export type SitePolygonSummaryFilter = Omit<SitePolygonsSummaryQueryParams, "siteId[]" | "projectId[]">;
+export type SitePolygonSummaryFilter = PolygonScopedFilter<SitePolygonsSummaryQueryParams>;
 
 const sitePolygonSummaryConnection = v3Resource("sitePolygonSummaries", sitePolygonsSummary)
-  .singleByFilter<SitePolygonSummaryDto, SitePolygonsSummaryQueryParams>()
+  .singleByFilter<SitePolygonSummaryDto, SitePolygonSummaryFilter>()
   .enabledProp()
-  .addProps<{ entityName?: "projects" | "sites"; entityUuid?: string }>(({ entityName, entityUuid }) => {
-    if (entityName === "projects" && entityUuid != null) return { queryParams: { "projectId[]": [entityUuid] } };
-    if (entityName === "sites" && entityUuid != null) return { queryParams: { "siteId[]": [entityUuid] } };
-    return {};
-  })
+  .addProps<PolygonEntityScopeProps>(polygonEntityScopeVariables)
   .buildConnection();
 
 export const useSitePolygonSummary = connectionHook(sitePolygonSummaryConnection);
@@ -130,7 +136,10 @@ const createBulkDeleteBody = (resources: SitePolygonResourceIdentifier[]): SiteP
 
 export type BulkSitePolygonAttributeChanges = SitePolygonBulkAttributeChangesDto;
 
-export type SitePolygonStatusUpdateResponse = UpdateSitePolygonStatusResponse & {
+export type SitePolygonStatusUpdateResponse = Extract<
+  Awaited<ReturnType<typeof updateSitePolygonStatus.fetchAwait>>,
+  { data?: unknown[] }
+> & {
   included?: JsonApiResource[];
 };
 
@@ -171,6 +180,8 @@ export const getStatusUpdateCommentCreatedAt = (response: SitePolygonStatusUpdat
   return null;
 };
 
+// fetchAwait (unlike fetch) sends every call, so a bulk action started while a background job for the same
+// endpoint is still running is not skipped by the pending request guard.
 export const bulkUpdateSitePolygonAttributes = async (
   uuids: string[],
   attributeChanges: BulkSitePolygonAttributeChanges
@@ -183,46 +194,7 @@ export const bulkUpdateSitePolygonAttributes = async (
     attributeChanges
   };
 
-  const variables = { body };
-  const fullUrl = resolveUrl(bulkUpdateSitePolygonAttributesEndpoint.url, {});
-  const failureSelector = bulkUpdateSitePolygonAttributesEndpoint.fetchFailedSelector({});
-  const previousFailure = failureSelector(ApiSlice.currentState);
-
-  if (previousFailure != null) {
-    ApiSlice.clearPending(fullUrl, bulkUpdateSitePolygonAttributesEndpoint.method);
-  }
-
-  bulkUpdateSitePolygonAttributesEndpoint.fetch(variables);
-
-  const initialPending = ApiSlice.currentState.meta.pending[bulkUpdateSitePolygonAttributesEndpoint.method][fullUrl];
-  const initialFailure = failureSelector(ApiSlice.currentState);
-
-  if (initialPending == null && initialFailure == null) {
-    pruneSitePolygonsCache();
-    pruneBoundingBoxesCache();
-    return;
-  }
-
-  if (initialFailure != null) {
-    throw initialFailure;
-  }
-
-  await new Promise<void>((resolve, reject) => {
-    const unsubscribe = ApiSlice.redux.subscribe(() => {
-      const currentState = ApiSlice.currentState;
-      const pending = currentState.meta.pending[bulkUpdateSitePolygonAttributesEndpoint.method][fullUrl];
-      const failure = failureSelector(currentState);
-
-      if (pending == null && failure == null) {
-        unsubscribe();
-        resolve();
-      } else if (failure != null) {
-        unsubscribe();
-        reject(failure);
-      }
-    });
-  });
-
+  await bulkUpdateSitePolygonAttributesEndpoint.fetchAwait({ body });
   pruneSitePolygonsCache();
   pruneBoundingBoxesCache();
 };
@@ -246,7 +218,7 @@ export const bulkUpdateSitePolygonStatus = async (
   };
 
   const variables = { body, pathParams: { status } };
-  return updateSitePolygonStatus.fetchAwait(variables);
+  return (await updateSitePolygonStatus.fetchAwait(variables)) as SitePolygonStatusUpdateResponse;
 };
 
 export const bulkDeleteSitePolygons = async (uuids: string[]): Promise<void> => {
@@ -255,32 +227,7 @@ export const bulkDeleteSitePolygons = async (uuids: string[]): Promise<void> => 
     id: uuid
   }));
 
-  const failureSelector = bulkDeleteSitePolygonsEndpoint.fetchFailedSelector({});
-  const previousFailure = failureSelector(ApiSlice.currentState);
-  if (previousFailure != null) {
-    ApiSlice.clearPending(resolveUrl(bulkDeleteSitePolygonsEndpoint.url, {}), bulkDeleteSitePolygonsEndpoint.method);
-  }
-
-  const body = createBulkDeleteBody(deleteResources);
-  bulkDeleteSitePolygonsEndpoint.fetch({ body });
-
-  await new Promise<void>((resolve, reject) => {
-    const unsubscribe = ApiSlice.redux.subscribe(() => {
-      const currentState = ApiSlice.currentState;
-      const deleted = currentState.meta.deleted.sitePolygons ?? [];
-      const allDeleted = uuids.every(uuid => deleted.includes(uuid));
-      const failure = failureSelector(currentState);
-
-      if (allDeleted) {
-        unsubscribe();
-        resolve();
-      } else if (failure != null) {
-        unsubscribe();
-        reject(failure);
-      }
-    });
-  });
-
+  await bulkDeleteSitePolygonsEndpoint.fetchAwait({ body: createBulkDeleteBody(deleteResources) });
   pruneSitePolygonsCache();
   pruneBoundingBoxesCache();
 };
@@ -333,9 +280,11 @@ export const loadAllSitePolygons = async (
 };
 
 export const loadSitePolygonByUuid = async ({
+  entityName = "sites",
   entityUuid,
   polygonId
 }: {
+  entityName?: "sites" | "projects";
   entityUuid: string;
   polygonId: string;
 }): Promise<SitePolygonLightDto | undefined> => {
@@ -344,7 +293,7 @@ export const loadSitePolygonByUuid = async ({
   }
 
   const byGeometryResponse = await loadSitePolygons({
-    entityName: "sites",
+    entityName,
     entityUuid,
     enabled: true,
     filter: { "polygonUuid[]": [polygonId] },
@@ -360,7 +309,7 @@ export const loadSitePolygonByUuid = async ({
   }
 
   const mapIndex = await loadSitePolygonMapIndex({
-    entityName: "sites",
+    entityName,
     entityUuid,
     enabled: true
   });
@@ -370,7 +319,7 @@ export const loadSitePolygonByUuid = async ({
   }
 
   const byMapGeometryResponse = await loadSitePolygons({
-    entityName: "sites",
+    entityName,
     entityUuid,
     enabled: true,
     filter: { "polygonUuid[]": [mapEntry.polygonUuid] },
@@ -384,11 +333,13 @@ export const loadSitePolygonByUuid = async ({
 };
 
 export const loadActiveSitePolygonVersion = async ({
+  entityName = "sites",
   entityUuid,
   primaryUuid,
   versionPolygonUuids,
   polygonId
 }: {
+  entityName?: "sites" | "projects";
   entityUuid: string;
   primaryUuid?: string | null;
   versionPolygonUuids: string[];
@@ -396,7 +347,7 @@ export const loadActiveSitePolygonVersion = async ({
 }): Promise<SitePolygonLightDto | undefined> => {
   if (primaryUuid != null && primaryUuid !== "" && versionPolygonUuids.length > 0) {
     const versionsResponse = await loadSitePolygons({
-      entityName: "sites",
+      entityName,
       entityUuid,
       enabled: true,
       filter: { "polygonUuid[]": versionPolygonUuids },
@@ -409,7 +360,7 @@ export const loadActiveSitePolygonVersion = async ({
     }
   }
 
-  return await loadSitePolygonByUuid({ entityUuid, polygonId });
+  return await loadSitePolygonByUuid({ entityName, entityUuid, polygonId });
 };
 
 export const useAllSitePolygons = (

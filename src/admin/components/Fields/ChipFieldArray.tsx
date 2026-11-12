@@ -20,15 +20,13 @@ const ChipFieldArray: React.FC<ChipFieldArrayProps> = ({ data, emptyText, ...pro
     <ArrayField {...props} record={{ [props.source!]: data }}>
       <SingleFieldList linkType={false}>
         <FunctionField
-          render={(record?: { id: string; label: string; className?: string }) =>
-            record ? (
-              <ChipField
-                record={{ label: record.label }}
-                source="label"
-                className={classNames("!h-fit !rounded-[3px] text-grey-500", record.className)}
-              />
-            ) : null
-          }
+          render={(record: { id: string; label: string; className?: string }) => (
+            <ChipField
+              record={{ label: record.label }}
+              source="label"
+              className={classNames("!h-fit !rounded-[3px] text-grey-500", record.className)}
+            />
+          )}
         />
       </SingleFieldList>
     </ArrayField>

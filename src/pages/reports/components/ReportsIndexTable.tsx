@@ -2,8 +2,10 @@ import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/re
 import { useT } from "@transifex/react";
 import { FC, useCallback, useMemo } from "react";
 
+import DownloadActionCell from "@/components/extensive/EntityIndex/DownloadActionCell";
 import EntityUpdateStatus from "@/components/extensive/EntityIndex/EntityUpdateStatus";
 import { useDate } from "@/hooks/useDate";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
@@ -25,6 +27,7 @@ import {
 } from "../reportIndex.utils";
 import { useReportProfileOrigin } from "../ReportProfileOrigin.provider";
 import { useReportTableSelection } from "../ReportsSelection.provider";
+import { downloadReports } from "../useReportsBulkActions";
 import ReportsIndexEditButton from "./ReportsIndexEditButton";
 
 const ReportsIndexTable: FC<{
@@ -36,6 +39,7 @@ const ReportsIndexTable: FC<{
   const t = useT();
   const { format } = useDate();
   const profileOrigin = useReportProfileOrigin();
+  const isMobile = useIsMobile();
   const { selectedRows, isReportSelected, handleRowSelected, handleAllItemsSelected } =
     useReportTableSelection(reports);
 
@@ -66,13 +70,13 @@ const ReportsIndexTable: FC<{
         label: t("Status"),
         sortable: true,
         sortValue: row => getReportStatusSortValue((row as ReportsIndexReport).status),
-        width: "10.75rem"
+        width: "12.5rem"
       },
       {
         key: "updateRequestStatus",
         label: t("Updates"),
         sortable: true,
-        width: "11rem"
+        width: "15.625rem"
       },
       {
         key: "updatedAt",
@@ -83,10 +87,10 @@ const ReportsIndexTable: FC<{
       {
         key: "actions",
         label: "",
-        width: "4.6875rem"
+        width: isMobile ? "9rem" : "4.6875rem"
       }
     ],
-    [t]
+    [isMobile, t]
   );
 
   const renderRow = useCallback(
@@ -100,14 +104,16 @@ const ReportsIndexTable: FC<{
           data-report-id={report.id}
           style={{ scrollMarginTop: "7rem" }}
         >
-          <ChakraTableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)}>
-            <Checkbox
-              name={`report-${report.id}`}
-              aria-label={t("Select {report}", { report: report.name ?? typeLabels[report.type] })}
-              checked={isSelected}
-              onCheckedChange={({ checked }) => handleRowSelected(report, checked === true)}
-            />
-          </ChakraTableCell>
+          {isMobile ? null : (
+            <ChakraTableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)}>
+              <Checkbox
+                name={`report-${report.id}`}
+                aria-label={t("Select {report}", { report: report.name ?? typeLabels[report.type] })}
+                checked={isSelected}
+                onCheckedChange={({ checked }) => handleRowSelected(report, checked === true)}
+              />
+            </ChakraTableCell>
+          )}
           <ChakraTableCell {...context?.getCellProps("name")}>
             <TitleCell
               label={report.name ?? typeLabels[report.type]}
@@ -130,7 +136,7 @@ const ReportsIndexTable: FC<{
             )}
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("updateRequestStatus")}>
-            <EntityUpdateStatus status={report.updateRequestStatus} />
+            <EntityUpdateStatus status={report.nothingToReport ? null : report.updateRequestStatus} />
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("updatedAt")}>
             {report.status === "due" ? (
@@ -146,12 +152,16 @@ const ReportsIndexTable: FC<{
             )}
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("actions")}>
-            <ReportsIndexEditButton report={report} indexHref={indexHref} />
+            {isMobile ? (
+              <DownloadActionCell onDownload={() => downloadReports([report], t)} />
+            ) : (
+              <ReportsIndexEditButton report={report} indexHref={indexHref} />
+            )}
           </ChakraTableCell>
         </TableRow>
       );
     },
-    [format, handleRowSelected, indexHref, isReportSelected, profileOrigin, t, typeLabels]
+    [format, handleRowSelected, indexHref, isMobile, isReportSelected, profileOrigin, t, typeLabels]
   );
 
   if (reports.length === 0) {
@@ -169,12 +179,13 @@ const ReportsIndexTable: FC<{
       <Table<ReportsIndexReport>
         data={reports}
         columns={columns}
-        selectable
+        selectable={!isMobile}
         selectedRows={selectedRows}
         onRowSelected={handleRowSelected}
         onAllItemsSelected={handleAllItemsSelected}
         renderRow={renderRow}
         pageSize={10}
+        paginationVariant={isMobile ? "compact" : "default"}
         totalItems={reports.length}
         restoreRowId={restoreRowId}
         onRowRestored={onRowRestored}

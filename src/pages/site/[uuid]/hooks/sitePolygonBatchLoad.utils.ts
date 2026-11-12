@@ -5,14 +5,16 @@ import Log from "@/utils/log";
 const DEFAULT_POLYGON_BATCH_SIZE = 100;
 
 type LoadSitePolygonsByUuidBatchParams = {
-  siteUuid: string;
+  entityName: "sites" | "projects";
+  entityUuid: string;
   polygonUuids: string[];
   errorContext: string;
   batchSize?: number;
 };
 
 export const loadSitePolygonsByUuidBatch = async ({
-  siteUuid,
+  entityName,
+  entityUuid,
   polygonUuids,
   errorContext,
   batchSize = DEFAULT_POLYGON_BATCH_SIZE
@@ -22,8 +24,8 @@ export const loadSitePolygonsByUuidBatch = async ({
   for (let offset = 0; offset < polygonUuids.length; offset += batchSize) {
     const uuidBatch = polygonUuids.slice(offset, offset + batchSize);
     const response = await loadSitePolygons({
-      entityName: "sites",
-      entityUuid: siteUuid,
+      entityName,
+      entityUuid,
       enabled: true,
       filter: { "polygonUuid[]": uuidBatch },
       pageNumber: 1,
@@ -31,7 +33,7 @@ export const loadSitePolygonsByUuidBatch = async ({
     });
 
     if (response.loadFailure != null) {
-      Log.error(errorContext, { siteUuid, loadFailure: response.loadFailure });
+      Log.error(errorContext, { entityName, entityUuid, loadFailure: response.loadFailure });
       continue;
     }
 

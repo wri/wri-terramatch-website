@@ -26,6 +26,7 @@ import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVaria
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useGadmChoices } from "@/connections/Gadm";
+import { getProjectCohortOptions } from "@/constants/options/cohort";
 import { getPolygonsSubmittedTypes } from "@/constants/options/polygonsSubmittedTypes";
 import {
   getChangeRequestStatusOptions,
@@ -78,8 +79,8 @@ const SiteDataGrid: FC = () => {
         source="status"
         label="Status"
         sortable={false}
-        render={(record?: SiteLightDto) => {
-          const { title } = getStatusOptions().find((option: any) => option.value === record?.status) ?? {};
+        render={(record: SiteLightDto) => {
+          const { title } = getStatusOptions().find((option: any) => option.value === record.status) ?? {};
           return <CustomChipField label={title} />;
         }}
       />
@@ -179,6 +180,13 @@ export const SitesList: FC = () => {
       label="Framework"
       source="frameworkKey"
       choices={frameworkInputChoices}
+      className="select-page-admin"
+    />,
+    <SelectInput
+      key="cohort"
+      label="Cohort"
+      source="cohort"
+      choices={optionToChoices(getProjectCohortOptions())}
       className="select-page-admin"
     />,
     <SelectInput

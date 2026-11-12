@@ -54,13 +54,16 @@ const SaveAndCloseModal = (props: SaveAndCloseModalProps) => {
       return (
         <Box>
           <Text as="span" textStyle="400">
-            {t("Your progress will be saved as a draft. You can access this form again from the ")}
-          </Text>
-          <Text as="span" textStyle="400-bold">
-            {t("Reporting Tasks")}
-          </Text>
-          <Text as="span" textStyle="400">
-            {t(" section on your project page.")}
+            {t(
+              "Your progress will be saved as a draft. You can access this form again from the {section} section on your project page.",
+              {
+                section: (
+                  <Text as="span" textStyle="400-bold">
+                    {t("Reporting Tasks")}
+                  </Text>
+                )
+              }
+            )}
           </Text>
         </Box>
       );
@@ -69,13 +72,13 @@ const SaveAndCloseModal = (props: SaveAndCloseModalProps) => {
     return (
       <Box>
         <Text as="span" textStyle="400">
-          {t("Your progress will be saved as a draft. You can access this form again from the ")}
-        </Text>
-        <Text as="span" textStyle="400-bold">
-          {t("Opportunities ")}
-        </Text>
-        <Text as="span" textStyle="400">
-          {t(" section.")}
+          {t("Your progress will be saved as a draft. You can access this form again from the {section} section.", {
+            section: (
+              <Text as="span" textStyle="400-bold">
+                {t("Opportunities")}
+              </Text>
+            )
+          })}
         </Text>
       </Box>
     );

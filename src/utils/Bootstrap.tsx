@@ -11,6 +11,10 @@ import ApiSlice, { JsonApiDocument } from "@/store/apiSlice";
 import Log from "@/utils/log";
 import { PathMatcher, Redirect } from "@/utils/PathMatcher";
 
+const POLYGON_REVIEW_PATH_PATTERN = /^(?:\/site\/[^/]+)?\/polygon-review(?:[/?#]|$)/;
+
+export const isPolygonReviewPath = (path: string) => POLYGON_REVIEW_PATH_PATTERN.test(path);
+
 const useRedirect = () => {
   const router = useRouter();
   const [loaded, { user, isAdmin, isFunderOrGovernment }] = useMyUser();
@@ -48,10 +52,9 @@ const useRedirect = () => {
       // If they were already on dashboard, they were caught by the dashboard allow() at the top.
       matcher.when(isFunderOrGovernment)?.redirect("/dashboard/learn-more?tab=about-us");
 
-      // The standalone admin polygon review page lives outside of /admin while react-admin is
-      // being removed. Let admins reach it without being forced back to the RA panel;
-      // the page itself enforces admin access.
-      matcher.when(/^\/site\/[^/]+\/polygon-review(?:[/?#]|$)/.test(router.asPath))?.allow();
+      // Let admins reach the standalone polygon review pages without being forced back to the RA
+      // panel; the pages themselves enforce admin access.
+      matcher.when(isPolygonReviewPath(router.asPath))?.allow();
 
       matcher.when(isAdmin)?.ensure("/admin");
 

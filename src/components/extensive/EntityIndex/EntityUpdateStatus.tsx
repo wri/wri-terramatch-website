@@ -30,7 +30,7 @@ const EntityUpdateStatus: FC<EntityUpdateStatusProps> = ({ status }) => {
   }[status];
 
   return (
-    <Box className="flex items-center gap-1 text-theme-neutral-800">
+    <Box className="flex items-center gap-1 whitespace-nowrap text-theme-neutral-800">
       <EditIcon boxSize={2.5} />
       {status !== "approved" ? (
         <Text as="span" textStyle="200">

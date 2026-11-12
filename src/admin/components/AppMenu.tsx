@@ -5,6 +5,7 @@ import { createElement, FC } from "react";
 import { Menu, useGetResourceLabel, useResourceDefinitions } from "react-admin";
 import { useLocation } from "react-router-dom";
 
+import { PolygonsIcon } from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
 
 import modules from "../modules";
@@ -57,6 +58,9 @@ const AppMenu = () => {
       </div>
       <div className={classNames({ "Sidebar-active": hash === "site" })}>
         <FilterClearMenuItem resourceName={modules.site.ResourceName} />
+      </div>
+      <div className={classNames({ "Sidebar-active": hash === "polygons" })}>
+        <Menu.Item to="/polygons" primaryText="Polygons" leftIcon={<PolygonsIcon boxSize={6} />} />
       </div>
       <div className={classNames({ "Sidebar-active": hash === "nursery" })}>
         <FilterClearMenuItem resourceName={modules.nursery.ResourceName} />

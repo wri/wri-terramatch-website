@@ -1,9 +1,11 @@
 import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { getExcludedCriteriaIds, isValidCriteriaData } from "@/helpers/polygonValidation";
 
-import { getPolygonAnalyticsContext, trackPolygonEvent } from "./ga4";
+import { getPolygonAnalyticsContext, trackPolygonEvent, trackPolygonIssueEvent } from "./ga4";
 
 export type PolygonType = "monitoring_plot" | "standard";
+
+export type PolygonAnalyticsEntityName = "sites" | "projects";
 
 export type BulkActionType =
   | "fix_overlap"
@@ -11,9 +13,14 @@ export type BulkActionType =
   | "submit"
   | "download"
   | "approve"
-  | "request_information";
+  | "request_information"
+  | "delete";
 
-export type PolygonUploadErrorType = "file_format" | "geometry" | "size_limit";
+export type PolygonUploadErrorType = "file_format" | "geometry" | "size_limit" | "duplicate";
+
+export type ProjectSelectionMethod = "list" | "search" | "map";
+
+export type PolygonDownloadScope = "project" | "site";
 
 export type PolygonValidationErrorType =
   | "overlap"
@@ -98,14 +105,16 @@ export const isFirstPassValidation = (priorValidationStatus: string | null | und
 };
 
 export const trackPolygonRunValidationClicked = ({
-  siteUuid,
+  entityUuid,
+  entityType = "sites",
   polygonIds
 }: {
-  siteUuid: string;
+  entityUuid: string;
+  entityType?: PolygonAnalyticsEntityName;
   polygonIds: string[];
 }): void => {
   trackPolygonEvent("polygon_run_validation_clicked", {
-    ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+    ...getPolygonAnalyticsContext({ entityType, entityId: entityUuid }),
     polygon_id: formatPolygonTargetId(polygonIds)
   });
 };
@@ -139,36 +148,61 @@ export const trackPolygonFilterCleared = ({ siteUuid }: { siteUuid: string }): v
   });
 };
 
+export type PolygonIssueType = "overlap" | "disturbance";
+
+export type PolygonIssueSource = "banner" | "issues_panel";
+
+export const trackPolygonIssueClicked = ({
+  issueType,
+  issueCount,
+  source
+}: {
+  issueType: PolygonIssueType;
+  issueCount: number;
+  source: PolygonIssueSource;
+}): void => {
+  trackPolygonIssueEvent("polygon_issue_clicked", {
+    issue_type: issueType,
+    issue_count: issueCount,
+    source
+  });
+};
+
 export const trackBulkActionCompleted = ({
-  siteUuid,
+  entityUuid,
+  entityType = "sites",
   actionType,
   polygonCount
 }: {
-  siteUuid: string;
+  entityUuid: string;
+  entityType?: PolygonAnalyticsEntityName;
   actionType: BulkActionType;
   polygonCount: number;
 }): void => {
   trackPolygonEvent("bulk_action_completed", {
-    ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+    ...getPolygonAnalyticsContext({ entityType, entityId: entityUuid }),
     action_type: actionType,
     polygon_count: polygonCount
   });
 };
 
 export const trackPolygonDownloaded = ({
-  siteUuid,
+  entityUuid,
+  entityType = "sites",
   polygonType,
   polygonId,
   polygonCount
 }: {
-  siteUuid: string;
+  entityUuid: string;
+  entityType?: PolygonAnalyticsEntityName;
   polygonType: PolygonType;
   polygonId?: string;
   polygonCount?: number;
 }): void => {
   trackPolygonEvent("polygon_downloaded", {
-    ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+    ...getPolygonAnalyticsContext({ entityType, entityId: entityUuid }),
     polygon_type: polygonType,
+    download_scope: entityType === "projects" ? "project" : "site",
     ...(polygonId != null && polygonId !== "" ? { polygon_id: polygonId } : {}),
     ...(polygonCount != null ? { polygon_count: polygonCount } : {})
   });
@@ -243,12 +277,14 @@ export const trackPolygonUploadError = ({
 };
 
 export const trackPolygonValidationResults = ({
-  siteUuid,
+  entityUuid,
+  entityType = "sites",
   polygonId,
   validation,
   priorValidationStatus
 }: {
-  siteUuid: string;
+  entityUuid: string;
+  entityType?: PolygonAnalyticsEntityName;
   polygonId: string;
   validation: ValidationDto;
   priorValidationStatus?: string | null;
@@ -257,7 +293,7 @@ export const trackPolygonValidationResults = ({
   const validationResult = passed ? "pass" : "fail";
 
   trackPolygonEvent("polygon_validation_run", {
-    ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+    ...getPolygonAnalyticsContext({ entityType, entityId: entityUuid }),
     polygon_id: polygonId,
     validation_result: validationResult
   });
@@ -266,7 +302,7 @@ export const trackPolygonValidationResults = ({
     const errorTypes = resolveValidationErrorTypes(validation);
     for (const errorType of errorTypes) {
       trackPolygonEvent("polygon_validation_error", {
-        ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+        ...getPolygonAnalyticsContext({ entityType, entityId: entityUuid }),
         polygon_id: polygonId,
         error_type: errorType
       });
@@ -276,25 +312,27 @@ export const trackPolygonValidationResults = ({
 
   if (isFirstPassValidation(priorValidationStatus)) {
     trackPolygonEvent("first_pass_validation_passed", {
-      ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+      ...getPolygonAnalyticsContext({ entityType, entityId: entityUuid }),
       polygon_id: polygonId
     });
   }
 };
 
 export const trackPolygonStatusChanged = ({
-  siteUuid,
+  entityUuid,
+  entityType = "sites",
   polygonId,
   fromStatus,
   toStatus
 }: {
-  siteUuid: string;
+  entityUuid: string;
+  entityType?: PolygonAnalyticsEntityName;
   polygonId: string;
   fromStatus: string;
   toStatus: string;
 }): void => {
   trackPolygonEvent("polygon_status_changed", {
-    ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+    ...getPolygonAnalyticsContext({ entityType, entityId: entityUuid }),
     polygon_id: polygonId,
     from_status: fromStatus,
     to_status: toStatus
@@ -302,7 +340,7 @@ export const trackPolygonStatusChanged = ({
 
   if (toStatus === "information-required") {
     trackPolygonEvent("polygon_information_required", {
-      ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+      ...getPolygonAnalyticsContext({ entityType, entityId: entityUuid }),
       polygon_id: polygonId
     });
   }
@@ -343,4 +381,54 @@ export const resolveActivePolygonFilterTypes = ({
   if (hasOverlap) filterTypes.push("overlap");
   if (hasDisturbance) filterTypes.push("disturbance");
   return filterTypes;
+};
+
+export const trackPolygonProjectSelected = ({
+  projectUuid,
+  selectionMethod,
+  frameworkFacetUsed,
+  countryFacetUsed
+}: {
+  projectUuid: string;
+  selectionMethod: ProjectSelectionMethod;
+  frameworkFacetUsed: boolean;
+  countryFacetUsed: boolean;
+}): void => {
+  trackPolygonEvent("polygon_project_selected", {
+    entity_type: "project",
+    entity_id: projectUuid,
+    selection_method: selectionMethod,
+    framework_facet_used: frameworkFacetUsed,
+    country_facet_used: countryFacetUsed
+  });
+};
+
+export const trackPolygonDeleted = ({
+  siteUuid,
+  polygonIds,
+  polygonCount
+}: {
+  siteUuid?: string;
+  polygonIds: string[];
+  polygonCount: number;
+}): void => {
+  trackPolygonEvent("polygon_deleted", {
+    ...(siteUuid != null ? getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }) : {}),
+    polygon_id: formatPolygonTargetId(polygonIds),
+    polygon_count: polygonCount
+  });
+};
+
+export const trackPolygonApprovalWarningResolved = ({
+  polygonId,
+  outcome
+}: {
+  polygonId: string;
+  outcome: "proceeded" | "cancelled";
+}): void => {
+  trackPolygonEvent("polygon_approval_warning_resolved", {
+    polygon_id: polygonId,
+    warning_type: "area_over_125",
+    outcome
+  });
 };

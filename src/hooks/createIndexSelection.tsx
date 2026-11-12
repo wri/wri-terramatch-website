@@ -67,7 +67,7 @@ export function createIndexSelection<T>(getKey: (item: T) => string) {
   const StoreContext = createContext<IndexSelectionStore<T> | undefined>(undefined);
 
   const IndexSelectionProvider: FC<PropsWithChildren> = ({ children }) => {
-    const storeRef = useRef<IndexSelectionStore<T>>();
+    const storeRef = useRef<IndexSelectionStore<T>>(undefined);
     if (storeRef.current == null) storeRef.current = new IndexSelectionStore(getKey);
 
     return <StoreContext.Provider value={storeRef.current}>{children}</StoreContext.Provider>;

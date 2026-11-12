@@ -34,7 +34,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
     : site.treesPlantedCount ?? 0;
   // Fundo Flora reports regenerating trees by species.
   const treesRegeneratedProgress =
-    framework === Framework.FF_1 ? site.treesRegeneratingSpeciesCount : treesFromReportsAnr;
+    framework === Framework.FUNDO_FLORA ? site.treesRegeneratingSpeciesCount : treesFromReportsAnr;
 
   const keyIndicatorsTooltipContentItem = useMemo(() => {
     return KEY_INDICATORS_TOOLTIP_CONTENT.find(content => content.frameworks.includes(site.frameworkKey!));
@@ -67,7 +67,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
         }
       />
       <ContextCondition frameworksHide={[Framework.PPC, Framework.HBF]}>
-        <ContextCondition frameworksHide={ALL_TF.concat(Framework.EPA_GHANA_PILOT, Framework.FF_1)}>
+        <ContextCondition frameworksHide={ALL_TF.concat(Framework.EPA_GHANA_PILOT, Framework.FUNDO_FLORA)}>
           <MetricCard
             className="flex-[0_0_calc(50%_-_0.75rem)]"
             title={t(`${keyIndicatorsTooltipContentItem?.saplingsRestored.title}`)}

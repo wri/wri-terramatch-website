@@ -23,6 +23,7 @@ import SubmitPolygonConfirmation from "./Modals/SubmitPolygonConfirmation";
 import PolygonCommentContent from "./PolygonCommentContent";
 import type {
   PolygonOverlapFixCallback,
+  PolygonRunValidationCallback,
   PolygonRunValidationWithResultsCallback,
   PolygonSaveCallback,
   PolygonValidationClearedCallback
@@ -41,7 +42,7 @@ interface PolygonEditDrawerProps {
   onOpenChange?: (open: boolean) => void;
   onSaved?: PolygonSaveCallback;
   onOverlapFixed?: PolygonOverlapFixCallback;
-  onRunValidation?: (geometryPolygonUuids: string[]) => Promise<void>;
+  onRunValidation?: PolygonRunValidationCallback;
   onRunValidationWithResultsModal?: PolygonRunValidationWithResultsCallback;
   onValidationCleared?: PolygonValidationClearedCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
@@ -72,7 +73,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   defaultTab = "edit"
 }) => {
   const t = useT();
-  const [, { user, isAdmin }] = useMyUser();
+  const [, { user }] = useMyUser();
   const { draftPolygonGeometry, siteData } = useMapAreaContext();
   const [activeTab, setActiveTab] = useState<string>(defaultTab);
   const [saveEditContent, setSaveEditContent] = useState<
@@ -354,9 +355,6 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
         onOpenChange={onOpenChange}
         size="md"
         placement="start"
-        paddingTop={isAdmin ? 12 : 0}
-        paddingLeft={isAdmin ? 12 : 0}
-        maxH={isAdmin ? "calc(100vh - 3rem)" : "100vh"}
       >
         {({ onClose }) => (
           <>

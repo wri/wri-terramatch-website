@@ -1,29 +1,40 @@
-import { ComponentType, createContext, ReactNode, useContext, useMemo } from "react";
-import { useShowContext } from "react-admin";
+import { useShowContext } from "ra-core";
+import { type JSX, ComponentType, createContext, ReactNode, useContext, useMemo } from "react";
+
+import { Frameworks } from "@/generated/v3/userService/userServiceConstants";
 
 export enum Framework {
   PPC = "ppc",
-  TF = "terrafund",
-  TF_LANDSCAPES = "terrafund-landscapes",
-  TF_3 = "terrafund-3",
-  ENTERPRISES = "enterprises",
+  TF_NON_PROFITS = "terrafund-non-profits",
+  TF_ENTERPRISES = "terrafund-enterprises",
   HBF = "hbf",
   EPA_GHANA_PILOT = "epa-ghana-pilot",
-  FF_1 = "fundo-flora-1",
+  FUNDO_FLORA = "fundo-flora",
   WCB = "wcb",
   BARKA_FUND = "barka-fund",
+  POLYGON_MONITORING = "polygon-monitoring",
 
   UNDEFINED = "undefined"
 }
 
-export const ALL_TF = [Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES, Framework.TF_3];
+type ApiFrameworkKey = keyof typeof Frameworks.FRAMEWORK_NAMES;
+type AssertNever<T extends never> = T;
+
+/**
+ * Fails to compile if the Framework enum drifts from the framework keys defined by the BE (regenerated
+ * from the v3 API on build). When this breaks, add or remove the mismatched member(s) in the enum above.
+ */
+export type FrameworkEnumMatchesApi = AssertNever<
+  Exclude<ApiFrameworkKey, `${Framework}`> | Exclude<`${Framework}`, ApiFrameworkKey | `${Framework.UNDEFINED}`>
+>;
+
+export const ALL_TF = [Framework.TF_NON_PROFITS, Framework.TF_ENTERPRISES];
 export const isTerrafund = (framework: Framework) => ALL_TF.includes(framework as (typeof ALL_TF)[number]);
 
-/** TerraFund for AFR100 project banner logo: Top 100, Landscapes, Enterprises, EPA-Ghana only */
+/** TerraFund for AFR100 project banner logo: Non-Profits, Enterprises, EPA-Ghana only */
 export const TERRAFUND_AFR100_BANNER_LOGO_FRAMEWORKS: readonly Framework[] = [
-  Framework.TF,
-  Framework.TF_LANDSCAPES,
-  Framework.ENTERPRISES,
+  Framework.TF_NON_PROFITS,
+  Framework.TF_ENTERPRISES,
   Framework.EPA_GHANA_PILOT
 ];
 

@@ -8,7 +8,7 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import Search from "@/redesignComponents/Forms/Actions/Search/Search";
-import { CloseIcon, FilterIcon, InfoIcon } from "@/redesignComponents/foundations/Icons";
+import { CloseIcon, FilterIcon, InfoIcon, LockIcon } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
 import Toolbar from "../Toolbar";
@@ -19,6 +19,8 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
   search,
   filters,
   button,
+  actions,
+  lockedMessage,
   className,
   onClearFilters,
   tooltipContent,
@@ -31,6 +33,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
 }) => {
   const t = useT();
   const queryRef = useRef("");
+  const isLocked = lockedMessage != null;
 
   const cacheKey = search?.cacheKey;
   const [cachedSearchKeys, setCachedSearchKeys] = useState<string[]>([]);
@@ -58,20 +61,20 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
     [onSearchSubmit]
   );
 
-  const hasContentRight = button != null || !isEmpty(tooltipContent);
+  const hasContentRight = actions != null || button != null || !isEmpty(tooltipContent);
 
   return (
     <Toolbar
-      className={classNames("max-w-full gap-4 mobile:mb-6 mobile:flex-col mobile:!items-start", className)}
+      className={classNames("max-w-full gap-4 mobile:mb-6 mobile:flex-col mobile:!items-start mobile:gap-0", className)}
       classNameContentLeft={classNames(
-        "!max-w-full",
+        "!max-w-full mobile:w-full",
         { "min-w-0 flex-1 !shrink ": hasContentRight },
         classNameContentLeft
       )}
       contentLeft={
-        <Flex className="min-w-0 max-w-full items-center gap-4 mobile:mb-5 mobile:flex-col mobile:items-start mobile:gap-0 mobile:gap-y-4">
+        <Flex className="min-w-0 max-w-full items-center gap-4 mobile:w-full mobile:flex-col mobile:items-start mobile:gap-0 mobile:gap-y-4 ">
           {search != null && (
-            <Flex className="w-full min-w-max max-w-max items-center gap-4">
+            <Flex className="w-full min-w-max max-w-max items-center gap-4 mobile:min-w-0 mobile:max-w-full">
               {!showSearchInput &&
                 (cacheKey == null ? [search.resetKey ?? "search"] : cachedSearchKeys).map(key => (
                   <Box
@@ -82,7 +85,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
                     <Search
                       {...({
                         placeholder: search.placeholder,
-                        disabled: search.disabled,
+                        disabled: search.disabled === true || isLocked,
                         options: search.options,
                         resultsMaxHeight: search.resultsMaxHeight,
                         isLoading: search.isLoading,
@@ -94,15 +97,17 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
                   </Box>
                 ))}
 
-              <Flex className="items-center gap-1">
-                <Text textStyle="400-bold" color="primary.900">
-                  {search.count != null ? `${search.count.toLocaleString("en-US")}` : ""}
-                </Text>
+              {(search.count != null || search.label != null) && (
+                <Flex className="flex-shrink-0 items-center gap-1 whitespace-nowrap">
+                  <Text textStyle="400-bold" color="primary.900">
+                    {search.count != null ? `${search.count.toLocaleString("en-US")}` : ""}
+                  </Text>
 
-                <Text textStyle="400" color="primary.900">
-                  {search.label}
-                </Text>
-              </Flex>
+                  <Text textStyle="400" color="primary.900">
+                    {search.label}
+                  </Text>
+                </Flex>
+              )}
             </Flex>
           )}
 
@@ -120,11 +125,25 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
                 ))}
               </Flex>
             ) : (
-              <Button variant="secondary" size="small" onClick={onClickFilterButton} leftIcon={<FilterIcon />}>
+              <Button
+                variant="secondary"
+                size="small"
+                onClick={onClickFilterButton}
+                leftIcon={<FilterIcon />}
+                disabled={isLocked}
+              >
                 {selectedFilters && selectedFilters.length > 0
                   ? t("Filter" + " (" + selectedFilters.length + ")")
                   : t("Add Filter")}
               </Button>
+            )}
+            {isLocked && (
+              <Flex className="items-center gap-1.5">
+                <LockIcon boxSize="0.875rem" color="neutral.700" />
+                <Text textStyle="300" color="neutral.700">
+                  {lockedMessage}
+                </Text>
+              </Flex>
             )}
             <FilterTag selectedFilters={selectedFilters} />
 
@@ -138,6 +157,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
       }
       contentRight={
         <Flex gap={2} alignItems="center" justifyContent="right">
+          {actions}
           {button != null && <Button {...button} size="small" />}
 
           {tooltipContent && (

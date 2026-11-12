@@ -46,6 +46,7 @@ import { DownloadIcon, RefreshIcon, UploadIcon } from "@/redesignComponents/foun
 import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/FloatingActionToolbar";
 import { showToast } from "@/redesignComponents/status/Toast/showToast";
 import ApiSlice from "@/store/apiSlice";
+import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
 import { trackPolygonDownloaded, trackPolygonStatusChanged } from "@/utils/polygonAnalytics";
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
@@ -580,6 +581,13 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
       try {
         const previousPolygonUuid = geometryPolygonUuid !== "" ? geometryPolygonUuid : undefined;
+        // Read before the save: finalizing it resets the baseline.
+        const attributesChanged = hasUnsavedFormChanges(
+          formBaselineRef.current,
+          getFormValues(),
+          false,
+          dateValueToIsoString
+        );
         const updatedPolygon = await saveExistingPolygonVersion({
           primaryUuid: polygon.primaryUuid,
           siteId: polygon.siteId as string,
@@ -597,6 +605,13 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
           previousPolygonUuid,
           closeOnSave: options?.closeOnSave
         });
+        if (attributesChanged && polygon.siteId != null && polygon.siteId !== "") {
+          trackPolygonEvent("polygon_attributes_edited", {
+            ...getPolygonAnalyticsContext({ entityType: "site", entityId: polygon.siteId }),
+            polygon_id: previousPolygonUuid ?? savedPolygon.polygonUuid,
+            entry_point: "edit_panel"
+          });
+        }
         if (options?.deferSuccessToast) {
           closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
         } else {
@@ -751,7 +766,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       downloadGeoJsonFile(geojson, filename);
       if (resolvedSiteUuid !== "" && geometryPolygonUuid !== "") {
         trackPolygonDownloaded({
-          siteUuid: resolvedSiteUuid,
+          entityUuid: resolvedSiteUuid,
           polygonType: "monitoring_plot",
           polygonId: geometryPolygonUuid,
           polygonCount: 1
@@ -849,7 +864,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       await downloadPolygonGeoJson(geometryPolygonUuid, polygon?.name ?? "polygon");
       if (resolvedSiteUuid !== "") {
         trackPolygonDownloaded({
-          siteUuid: resolvedSiteUuid,
+          entityUuid: resolvedSiteUuid,
           polygonType: "standard",
           polygonId: geometryPolygonUuid,
           polygonCount: 1
@@ -883,7 +898,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         await bulkUpdateSitePolygonStatus([targetPolygon.uuid], POLYGON_PENDING_APPROVAL as PolygonStatus, comment);
         if (resolvedSiteUuid !== "" && targetGeometryPolygonUuid !== "") {
           trackPolygonStatusChanged({
-            siteUuid: resolvedSiteUuid,
+            entityUuid: resolvedSiteUuid,
             polygonId: targetGeometryPolygonUuid,
             fromStatus: targetPolygon.status ?? "draft",
             toStatus: POLYGON_PENDING_APPROVAL
@@ -962,8 +977,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
     if (onRunValidationWithResultsModal != null) {
       try {
-        await onRunValidationWithResultsModal([geometryPolygonUuidForValidation], {
-          fallbackPolygons: [savedPolygon],
+        await onRunValidationWithResultsModal([{ ...savedPolygon, polygonUuid: geometryPolygonUuidForValidation }], {
           validationAfterCriteriaClear: true,
           previousGeometryPolygonUuid
         });
