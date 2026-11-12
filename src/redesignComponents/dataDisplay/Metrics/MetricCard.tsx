@@ -114,7 +114,7 @@ const MetricTooltipTrigger: FC<MetricTooltipTriggerProps> = ({
 
   return (
     <Flex className="leading-none">
-      <Tooltip content={tooltipContent} position="top">
+      <Tooltip content={tooltipContent} position="top" preserveFocusOnChild>
         <button
           type="button"
           className="inline-flex items-center"
@@ -477,7 +477,7 @@ const MetricCard: FC<MetricCardProps> = props => {
       gap={1}
       padding={3}
       className={twMerge(
-        "h-fit justify-start rounded-lg border-[0.125rem] border-theme-neutral-300 bg-theme-neutral-100 p-3",
+        "border-theme-neutral-300 bg-theme-neutral-100 h-fit justify-start rounded-lg border-[0.125rem] p-3",
         className
       )}
     >
