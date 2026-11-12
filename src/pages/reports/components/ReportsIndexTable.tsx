@@ -1,9 +1,11 @@
 import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { FC, useCallback, useMemo } from "react";
 
 import DownloadActionCell from "@/components/extensive/EntityIndex/DownloadActionCell";
 import EntityUpdateStatus from "@/components/extensive/EntityIndex/EntityUpdateStatus";
+import { stopRowClick } from "@/components/extensive/EntityIndex/stopRowClick";
 import { useDate } from "@/hooks/useDate";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -99,13 +101,14 @@ const ReportsIndexTable: FC<{
 
       return (
         <TableRow
-          className={context?.className != null ? `group ${context.className}` : "group"}
+          className={classNames("group", context?.className, { "cursor-pointer": !isMobile })}
           aria-selected={isSelected}
+          onClick={isMobile ? undefined : () => handleRowSelected(report, !isSelected)}
           data-report-id={report.id}
           style={{ scrollMarginTop: "7rem" }}
         >
           {isMobile ? null : (
-            <ChakraTableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)}>
+            <ChakraTableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)} onClick={stopRowClick}>
               <Checkbox
                 name={`report-${report.id}`}
                 aria-label={t("Select {report}", { report: report.name ?? typeLabels[report.type] })}
@@ -120,7 +123,10 @@ const ReportsIndexTable: FC<{
               link={getReportViewHref(report, indexHref, profileOrigin)}
               linkTarget="_self"
               showChevron={false}
-              onClick={() => rememberReportsIndexPosition(indexHref, report.id, report.projectUuid)}
+              onClick={event => {
+                stopRowClick(event);
+                rememberReportsIndexPosition(indexHref, report.id, report.projectUuid);
+              }}
             />
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("type")}>
@@ -151,7 +157,7 @@ const ReportsIndexTable: FC<{
               />
             )}
           </ChakraTableCell>
-          <ChakraTableCell {...context?.getCellProps("actions")}>
+          <ChakraTableCell {...context?.getCellProps("actions")} onClick={stopRowClick}>
             {isMobile ? (
               <DownloadActionCell onDownload={() => downloadReports([report], t)} />
             ) : (
