@@ -48,7 +48,6 @@ const SiteIndexBulkActionToolbar: FC<SiteIndexBulkActionToolbarProps> = ({
     () => (canDelete ? undefined : getProfileDeleteDisabledTooltip(selectedStatuses, t)),
     [canDelete, selectedStatuses, t]
   );
-  // Delete is hidden once no selected site can still be deleted; a mixed selection keeps it visible but disabled.
   const showDelete = useMemo(() => selectedSites.some(isSiteDeletable), [selectedSites]);
 
   useEffect(() => {

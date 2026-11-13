@@ -56,7 +56,6 @@ const NurseriesIndexBulkActionToolbar: FC<NurseriesIndexBulkActionToolbarProps> 
     () => (canDelete ? undefined : getProfileDeleteDisabledTooltip(selectedStatuses, t)),
     [canDelete, selectedStatuses, t]
   );
-  // Delete is hidden once no selected nursery can still be deleted; a mixed selection keeps it visible but disabled.
   const showDelete = useMemo(() => selectedNurseries.some(isNurseryDeletable), [selectedNurseries]);
 
   if (!visible) return null;

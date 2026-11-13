@@ -48,11 +48,6 @@ const SUBMITTED_UPDATE_REQUEST_STATUSES: ReadonlySet<TagSubmissionState> = new S
 
 const NOTHING_TO_REPORT_TYPES: ReadonlySet<ReportIndexItem["type"]> = new Set(["site-report", "nursery-report"]);
 
-/**
- * "Nothing to Report" is only offered when every selected report is a Site or Nursery report, and is
- * hidden once no selected report can still take it (all are information required, pending approval,
- * approved or already marked as nothing to report).
- */
 export const isNothingToReportAllowedFor = (reports: ReportIndexItem[]) =>
   reports.every(report => NOTHING_TO_REPORT_TYPES.has(report.type)) && reports.some(isReportNothingToReportEligible);
 
