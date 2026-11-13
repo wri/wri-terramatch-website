@@ -9,17 +9,13 @@ import { CalcAreaBounds, CalcAreaRange, formatHectares } from "./polygonFilter.c
 
 const SLIDER_STEPS = 200;
 
-const HIDE_VALUE_PREVIEW = { "& .ds-slider-value-preview": { display: "none" } };
-
-const roundHectares = (value: number) => Math.round(value * 100) / 100;
-
 const logScale = ({ min, max }: CalcAreaBounds) => {
   const low = Math.log1p(min);
   const span = Math.log1p(max) - low;
   return {
     toPosition: (hectares: number) =>
       clamp(Math.round(((Math.log1p(hectares) - low) / span) * SLIDER_STEPS), 0, SLIDER_STEPS),
-    toHectares: (position: number) => roundHectares(Math.expm1(low + (position / SLIDER_STEPS) * span))
+    toHectares: (position: number) => Math.expm1(low + (position / SLIDER_STEPS) * span)
   };
 };
 
@@ -47,14 +43,14 @@ const HectaresFilterCard: FC<HectaresFilterCardProps> = ({
     [calcAreaMin, calcAreaMax, toPosition]
   );
 
-  // A thumb resting on the project bound means "no bound", so polygons without a calculated area stay included.
+  // A thumb resting on the end of the track means "no bound", so polygons without a calculated area stay included.
   const handleValueChange = useCallback(
-    ({ value: [start, end] }: { value: number[] }) => {
-      const min = toHectares(start);
-      const max = toHectares(end);
-      onChange({ calcAreaMin: min > bounds.min ? min : null, calcAreaMax: max < bounds.max ? max : null });
-    },
-    [bounds, onChange, toHectares]
+    ({ value: [start, end] }: { value: number[] }) =>
+      onChange({
+        calcAreaMin: start === 0 ? null : toHectares(start),
+        calcAreaMax: end === SLIDER_STEPS ? null : toHectares(end)
+      }),
+    [onChange, toHectares]
   );
 
   const getAriaValueText = useCallback(
@@ -80,7 +76,7 @@ const HectaresFilterCard: FC<HectaresFilterCardProps> = ({
         step={1}
         value={positions}
         disabled={disabled}
-        css={HIDE_VALUE_PREVIEW}
+        hideValuePreview
         // eslint-disable-next-line jsx-a11y/aria-proptypes -- Chakra's range slider takes one label per thumb.
         aria-label={[t("Minimum hectares"), t("Maximum hectares")]}
         getAriaValueText={getAriaValueText}

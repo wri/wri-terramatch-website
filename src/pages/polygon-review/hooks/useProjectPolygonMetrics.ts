@@ -29,8 +29,9 @@ const toTotals = (summary: SitePolygonSummaryDto | null | undefined): PolygonMet
 
 const toCalcAreaBounds = (summary: SitePolygonSummaryDto | null | undefined): CalcAreaBounds | undefined => {
   if (summary?.minCalcArea == null || summary.maxCalcArea == null) return undefined;
-  const bounds = { min: Math.floor(summary.minCalcArea * 100) / 100, max: Math.ceil(summary.maxCalcArea * 100) / 100 };
-  return bounds.max > bounds.min ? bounds : undefined;
+  const { minCalcArea, maxCalcArea } = summary;
+  if (Math.round(maxCalcArea * 100) <= Math.round(minCalcArea * 100)) return undefined;
+  return { min: Math.floor(minCalcArea * 100) / 100, max: Math.ceil(maxCalcArea * 100) / 100 };
 };
 
 export const useProjectPolygonMetrics = ({
