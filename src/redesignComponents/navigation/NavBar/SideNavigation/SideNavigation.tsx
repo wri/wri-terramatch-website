@@ -1,10 +1,17 @@
 import { Button, Flex, Text } from "@chakra-ui/react";
 import classNames from "classnames";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, MouseEvent, useEffect, useState } from "react";
 
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { MenuItemOption } from "@/redesignComponents/actions/Buttons/Menu/MenuCustom.types";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
+import {
+  getSideNavInputMethod,
+  SideNavItem,
+  toSideNavState,
+  trackSideNavToggled
+} from "@/utils/analytics/sideNavigationAnalytics";
 
 import SideNavigationItem from "./SideNavigationItem";
 
@@ -12,6 +19,7 @@ const EXPANDED_WIDTH_CLASS = "w-56";
 const COLLAPSED_WIDTH_CLASS = "w-12";
 
 export interface SideNavigationLink {
+  navItem?: SideNavItem;
   icon: React.ReactNode;
   label: string;
   href?: string;
@@ -50,6 +58,7 @@ const SideNavigation: FC<SideNavigationProps> = ({
   isCollapsedDisabled = false
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
+  const isAdmin = useIsAdmin();
 
   useEffect(() => {
     if (isCollapsedDisabled) {
@@ -57,9 +66,14 @@ const SideNavigation: FC<SideNavigationProps> = ({
     }
   }, [isCollapsedDisabled]);
 
-  const handleCollapse = () => {
+  const handleCollapse = (event: MouseEvent<HTMLButtonElement>) => {
     setIsCollapsed(!isCollapsed);
     onCollapsedChange?.(!isCollapsed);
+    trackSideNavToggled({
+      navAction: toSideNavState(!isCollapsed),
+      inputMethod: getSideNavInputMethod(event),
+      userRole: isAdmin ? "admin" : "project-developer"
+    });
   };
 
   const shellTransition = "overflow-hidden transition-[width] duration-300 ease-in-out motion-reduce:transition-none";
@@ -107,6 +121,7 @@ const SideNavigation: FC<SideNavigationProps> = ({
             {group.links.map(link => (
               <SideNavigationItem
                 key={link.label}
+                navItem={link.navItem}
                 icon={link.icon}
                 label={link.label}
                 href={link.href}
