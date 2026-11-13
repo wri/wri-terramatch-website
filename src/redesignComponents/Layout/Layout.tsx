@@ -2,12 +2,13 @@ import { Box, Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
-import { FC, Fragment, PropsWithChildren } from "react";
+import { FC, Fragment, PropsWithChildren, useEffect } from "react";
 
 import { useMyOrg } from "@/connections/Organisation";
 import { useMyUser } from "@/connections/User";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import LayoutChromeScale from "@/styles/LayoutChromeScale";
+import { toSideNavState, trackSideNavDisplayedOnce } from "@/utils/analytics/sideNavigationAnalytics";
 import { getSidebarCollapsed, setSidebarCollapsed } from "@/utils/sidebarCollapsedState";
 import { userHasNurseries } from "@/utils/userAccessUtils";
 
@@ -54,6 +55,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
       id: "management",
       links: [
         {
+          navItem: "organization",
           href: isAdmin
             ? "/admin#/organisation"
             : myOrg?.organisationId != null
@@ -63,6 +65,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
           label: isAdmin ? "Organizations" : "My Organization"
         },
         {
+          navItem: "projects",
           href: "/my-projects",
           activePaths: [
             "/my-projects",
@@ -74,6 +77,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
           label: "Projects"
         },
         {
+          navItem: "sites",
           href: isAdmin ? "/admin#/site" : "/site",
           activePaths: profileOpenedFromProject ? [] : undefined,
           icon: <SiteIcon boxSize={4} />,
@@ -91,6 +95,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
         ...(showNurseries
           ? [
               {
+                navItem: "nurseries" as const,
                 href: isAdmin ? "/admin#/nursery" : "/nursery",
                 activePaths: nurseryOpenedFromProject ? [] : undefined,
                 icon: <NurseryIcon boxSize={4} />,
@@ -99,12 +104,14 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
             ]
           : []),
         {
+          navItem: "reports",
           href: isAdmin ? "/admin#/projectReport" : "/reports?view=all",
           activePaths: isAdmin ? undefined : ["/reports"],
           icon: <ReportsIcon boxSize={4} />,
           label: "Reports"
         },
         {
+          navItem: "opportunities",
           href: "/opportunities",
           icon: <OpportunitiesIcon boxSize={4} />,
           label: "Opportunities"
@@ -112,6 +119,20 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
       ]
     }
   ];
+
+  const isSideNavigationReady = data.isLoggedIn && showSideNavigation && myUser != null;
+
+  useEffect(() => {
+    if (!isSideNavigationReady) return;
+
+    trackSideNavDisplayedOnce({
+      navState: toSideNavState(isSidebarCollapseDisabled || getSidebarCollapsed()),
+      visibleItems: sideNavigationGroups.flatMap(group => group.links.flatMap(link => link.navItem ?? [])),
+      userRole: isAdmin ? "admin" : "project-developer"
+    });
+    // Fires once per full page load; the helper ignores later runs, so route changes never re-fire it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSideNavigationReady]);
 
   return (
     <Flex height="100vh" width="100%" flexDirection="column">
