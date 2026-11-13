@@ -5,7 +5,7 @@ import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 
 import { STATE_PROGRESS_TAG } from "./constants/stateProgressTag";
 
-export type ProgressState = "not-started" | "in-progress" | "completed";
+export type ProgressState = "not-started" | "in-progress" | "completed" | "not-available";
 
 export interface ProgressTagProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   state?: ProgressState | null;
@@ -19,26 +19,22 @@ export const ProgressTag: FC<ProgressTagProps> = ({ state = null, className }) =
     return null;
   }
 
-  const config = STATE_PROGRESS_TAG[state];
+  const { label, icon } = STATE_PROGRESS_TAG[state];
 
   return (
     <Tag.Root
       className={classNames(
-        "box-shadow-none flex w-fit min-w-fit items-center gap-2 rounded-full border-2 bg-theme-neutral-100 px-2 py-1 shadow-none",
-        {
-          "border-theme-neutral-400": state === "not-started",
-          "border-theme-primary-400": state === "in-progress",
-          "border-theme-success-300": state === "completed"
-        },
+        "flex w-fit min-w-fit items-center gap-1 rounded-full border-0 px-2 py-1 shadow-none",
+        state === "not-available" ? "bg-theme-neutral-300" : "bg-theme-neutral-100",
         className
       )}
     >
-      <Tag.Label className="flex items-center gap-2">
-        {config.icon}
-        <Text color="netral.900" textStyle="200">
-          {t("Planting: ")}
-          <Text color="netral.900" textStyle="300-bold" as="span">
-            {t(config.label)}
+      <Tag.Label className="flex items-center gap-1">
+        {icon}
+        <Text as="span" color="neutral.900" textStyle="200" whiteSpace="nowrap">
+          {t("Planting:")}{" "}
+          <Text as="span" textStyle="200-bold">
+            {t(label)}
           </Text>
         </Text>
       </Tag.Label>

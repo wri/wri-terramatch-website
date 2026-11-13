@@ -3,8 +3,8 @@ export const STATE_PROGRESS_TAG = {
     label: "Not Started",
     icon: (
       <svg
-        width="16"
-        height="16"
+        width="1rem"
+        height="1rem"
         viewBox="0 0 16 16"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -21,8 +21,8 @@ export const STATE_PROGRESS_TAG = {
     label: "In Progress",
     icon: (
       <svg
-        width="16"
-        height="16"
+        width="1rem"
+        height="1rem"
         viewBox="0 0 16 16"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -39,8 +39,8 @@ export const STATE_PROGRESS_TAG = {
     label: "Complete",
     icon: (
       <svg
-        width="16"
-        height="16"
+        width="1rem"
+        height="1rem"
         viewBox="0 0 16 16"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -52,5 +52,9 @@ export const STATE_PROGRESS_TAG = {
         />
       </svg>
     )
+  },
+  "not-available": {
+    label: "Not Available",
+    icon: null
   }
 };
