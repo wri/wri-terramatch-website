@@ -7,6 +7,7 @@ import ToolbarInfoTooltipContent from "@/redesignComponents/navigation/Toolbar/T
 import { getProfileDeleteDisabledTooltip, getProfileSubmitDisabledTooltip } from "@/utils/profileActionTooltips";
 
 import type { NurseryIndexRow } from "../nurseryIndex.types";
+import { isNurseryDeletable } from "../nurseryIndexSubmit";
 
 interface NurseriesIndexBulkActionToolbarProps {
   selectedNurseries: NurseryIndexRow[];
@@ -55,6 +56,8 @@ const NurseriesIndexBulkActionToolbar: FC<NurseriesIndexBulkActionToolbarProps> 
     () => (canDelete ? undefined : getProfileDeleteDisabledTooltip(selectedStatuses, t)),
     [canDelete, selectedStatuses, t]
   );
+  // Delete is hidden once no selected nursery can still be deleted; a mixed selection keeps it visible but disabled.
+  const showDelete = useMemo(() => selectedNurseries.some(isNurseryDeletable), [selectedNurseries]);
 
   if (!visible) return null;
 
@@ -66,14 +69,18 @@ const NurseriesIndexBulkActionToolbar: FC<NurseriesIndexBulkActionToolbarProps> 
         onClick: onCancel,
         disabled: isUpdating
       }}
-      deleteAction={{
-        id: "delete",
-        tone: "danger",
-        children: t("Delete"),
-        onClick: onDelete,
-        disabled: !canDelete || isUpdating,
-        tooltip: deleteTooltip
-      }}
+      deleteAction={
+        showDelete
+          ? {
+              id: "delete",
+              tone: "danger",
+              children: t("Delete"),
+              onClick: onDelete,
+              disabled: !canDelete || isUpdating,
+              tooltip: deleteTooltip
+            }
+          : undefined
+      }
       actions={[
         {
           id: "download",
