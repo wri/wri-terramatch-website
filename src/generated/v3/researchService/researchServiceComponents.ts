@@ -145,6 +145,18 @@ export type SitePolygonsIndexQueryParams = {
    */
   plantingStatus?: "no-restoration-expected" | "not-started" | "in-progress" | "replacement-planting" | "completed";
   /**
+   * Inclusive lower bound for calculated area in hectares (calcArea). Polygons without calcArea are excluded.
+   *
+   * @minimum 0
+   */
+  calcAreaMin?: number;
+  /**
+   * Inclusive upper bound for calculated area in hectares (calcArea). Polygons without calcArea are excluded.
+   *
+   * @minimum 0
+   */
+  calcAreaMax?: number;
+  /**
    * Filter results by polygon status
    */
   ["polygonStatus[]"]?: ("draft" | "pending-approval" | "information-required" | "approved")[];
@@ -613,7 +625,7 @@ export type GetSitePolygonsGeoJsonQueryParams = {
    */
   projectUuid?: string;
   /**
-   * Include extended data from site_polygon_data table
+   * Include the uploaded file's extra attributes (site_polygon_data table) as a JSON string in `extraAttributes`
    *
    * @default true
    */
@@ -695,7 +707,7 @@ export type GetSitePolygonsGeoJsonVariables = {
 /**
  * Export site polygons as GeoJSON FeatureCollection.
  *     Provide exactly one of: uuid (single polygon), siteUuid (all active polygons in a site), or projectUuid (all active polygons across all sites in a project).
- *     Use includeExtendedData to include additional data from site_polygon_data table.
+ *     Use includeExtendedData to include the uploaded file's extra attributes (site_polygon_data table) as a JSON string in the extraAttributes property.
  *     Use geometryOnly to return only geometry without properties (only applicable when using uuid).
  */
 export const getSitePolygonsGeoJson = new V3ApiEndpoint<
@@ -809,6 +821,18 @@ export type SitePolygonsMapIndexQueryParams = {
    * Filter results by the planting status of the project's latest approved project report
    */
   plantingStatus?: "no-restoration-expected" | "not-started" | "in-progress" | "replacement-planting" | "completed";
+  /**
+   * Inclusive lower bound for calculated area in hectares (calcArea). Polygons without calcArea are excluded.
+   *
+   * @minimum 0
+   */
+  calcAreaMin?: number;
+  /**
+   * Inclusive upper bound for calculated area in hectares (calcArea). Polygons without calcArea are excluded.
+   *
+   * @minimum 0
+   */
+  calcAreaMax?: number;
   /**
    * Scope results to site UUID(s). mapIndex requires siteId[] and / or projectId[].
    */
@@ -1031,6 +1055,18 @@ export type SitePolygonsSummaryQueryParams = {
    * Filter results by the planting status of the project's latest approved project report
    */
   plantingStatus?: "no-restoration-expected" | "not-started" | "in-progress" | "replacement-planting" | "completed";
+  /**
+   * Inclusive lower bound for calculated area in hectares (calcArea). Polygons without calcArea are excluded.
+   *
+   * @minimum 0
+   */
+  calcAreaMin?: number;
+  /**
+   * Inclusive upper bound for calculated area in hectares (calcArea). Polygons without calcArea are excluded.
+   *
+   * @minimum 0
+   */
+  calcAreaMax?: number;
   /**
    * Scope results to site UUID(s). mapIndex requires siteId[] and / or projectId[].
    */

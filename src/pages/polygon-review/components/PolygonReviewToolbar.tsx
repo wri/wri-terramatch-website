@@ -4,13 +4,14 @@ import { FC, useCallback, useState } from "react";
 import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
 
-import { PolygonFilterState } from "../../site/[uuid]/components/polygonFilter.constants";
+import { CalcAreaBounds, PolygonFilterState } from "../../site/[uuid]/components/polygonFilter.constants";
 import PolygonFilterDrawer from "../../site/[uuid]/components/PolygonFilterDrawer";
 
 type PolygonReviewToolbarProps = {
   projectUuid?: string;
   matchingPolygonCount?: number;
   projectPolygonCount?: number;
+  calcAreaBounds?: CalcAreaBounds;
   polygonFilters: PolygonFilterState;
   activeFilterLabels: SelectedFilter[];
   searchResetKey: number;
@@ -23,6 +24,7 @@ const PolygonReviewToolbar: FC<PolygonReviewToolbarProps> = ({
   projectUuid,
   matchingPolygonCount,
   projectPolygonCount,
+  calcAreaBounds,
   polygonFilters,
   activeFilterLabels,
   searchResetKey,
@@ -63,6 +65,7 @@ const PolygonReviewToolbar: FC<PolygonReviewToolbarProps> = ({
         filters={polygonFilters}
         isAdminReview
         siteFilterProjectUuid={projectUuid}
+        calcAreaBounds={calcAreaBounds}
         onApplyFilters={onApplyFilters}
         onClearFilters={onClearFilters}
         onOpenChange={setIsFilterDrawerOpen}
