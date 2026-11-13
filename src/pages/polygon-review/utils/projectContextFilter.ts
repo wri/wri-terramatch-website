@@ -1,6 +1,11 @@
 import { ProjectMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
-export const PROJECT_CONTEXT_FACETS = ["frameworkKey", "country", "cohort"] as const;
+export const PROJECT_CONTEXT_FACETS = ["frameworkKey", "country", "organisation", "cohort"] as const;
+
+export type ProjectContextEntry = ProjectMapEntryDto & {
+  organisationUuid?: string | null;
+  organisationName?: string | null;
+};
 
 export type ProjectContextFacet = (typeof PROJECT_CONTEXT_FACETS)[number];
 
@@ -8,12 +13,20 @@ export type ProjectContextFilters = Record<ProjectContextFacet, string[]>;
 
 export type FacetOption = { value: string; count: number };
 
-export const EMPTY_PROJECT_CONTEXT_FILTERS: ProjectContextFilters = { frameworkKey: [], country: [], cohort: [] };
+export const EMPTY_PROJECT_CONTEXT_FILTERS: ProjectContextFilters = {
+  frameworkKey: [],
+  country: [],
+  organisation: [],
+  cohort: []
+};
 
-export const getFacetValue = (project: ProjectMapEntryDto, facet: ProjectContextFacet): string | null =>
-  facet === "country" ? project.level0Project?.[0] ?? null : project[facet];
+export const getFacetValue = (project: ProjectContextEntry, facet: ProjectContextFacet): string | null => {
+  if (facet === "country") return project.level0Project?.[0] ?? null;
+  if (facet === "organisation") return project.organisationUuid ?? null;
+  return project[facet];
+};
 
-const matchesFacet = (project: ProjectMapEntryDto, filters: ProjectContextFilters, facet: ProjectContextFacet) => {
+const matchesFacet = (project: ProjectContextEntry, filters: ProjectContextFilters, facet: ProjectContextFacet) => {
   const selected = filters[facet];
   if (selected.length === 0) return true;
 
@@ -22,7 +35,7 @@ const matchesFacet = (project: ProjectMapEntryDto, filters: ProjectContextFilter
 };
 
 const matchesFilters = (
-  project: ProjectMapEntryDto,
+  project: ProjectContextEntry,
   filters: ProjectContextFilters,
   ignoredFacet?: ProjectContextFacet
 ) => PROJECT_CONTEXT_FACETS.every(facet => facet === ignoredFacet || matchesFacet(project, filters, facet));
@@ -34,7 +47,7 @@ export const filterProjects = (projects: ProjectMapEntryDto[], filters: ProjectC
   projects.filter(project => matchesFilters(project, filters));
 
 export const getFacetOptions = (
-  projects: ProjectMapEntryDto[],
+  projects: ProjectContextEntry[],
   filters: ProjectContextFilters,
   facet: ProjectContextFacet
 ): FacetOption[] => {
@@ -54,8 +67,9 @@ export const getFacetOptions = (
 const toFilterValues = (value: string | null) => (value == null ? [] : [value]);
 
 /** Once a project is picked, its own facet values become the (locked) filter context. */
-export const getProjectFacetFilters = (project: ProjectMapEntryDto): ProjectContextFilters => ({
+export const getProjectFacetFilters = (project: ProjectContextEntry): ProjectContextFilters => ({
   frameworkKey: toFilterValues(getFacetValue(project, "frameworkKey")),
   country: toFilterValues(getFacetValue(project, "country")),
+  organisation: toFilterValues(getFacetValue(project, "organisation")),
   cohort: toFilterValues(getFacetValue(project, "cohort"))
 });

@@ -15,6 +15,7 @@ import {
   getFacetValue,
   getProjectFacetFilters,
   PROJECT_CONTEXT_FACETS,
+  ProjectContextEntry,
   ProjectContextFacet,
   ProjectContextFilters
 } from "../utils/projectContextFilter";
@@ -39,18 +40,30 @@ type FacetLabelGetter = ReturnType<typeof useProjectFacetLabels>;
 
 const MAX_CHECKBOX_OPTIONS = 7;
 
-const SUBTITLE_FACETS = ["frameworkKey", "country"] as const;
+const SELECTOR_SUBTITLE_FACETS = ["frameworkKey", "country"] as const;
 
-const getProjectSubtitle = (project: ProjectMapEntryDto, getLabel: FacetLabelGetter) => {
-  const parts = SUBTITLE_FACETS.map(facet => {
-    const value = getFacetValue(project, facet);
-    return value == null ? null : getLabel(facet, value);
-  }).filter(isNotNull);
+const ROW_SUBTITLE_FACETS = ["organisation", "country"] as const;
+
+const getProjectSubtitle = (
+  project: ProjectContextEntry,
+  facets: readonly ProjectContextFacet[],
+  getLabel: FacetLabelGetter
+) => {
+  const parts = facets
+    .map(facet => {
+      const value = getFacetValue(project, facet);
+      return value == null ? null : getLabel(facet, value);
+    })
+    .filter(isNotNull);
   return parts.length === 0 ? undefined : parts.join(" · ");
 };
 
-const getFiltersSummary = (filters: ProjectContextFilters, getLabel: FacetLabelGetter) =>
-  PROJECT_CONTEXT_FACETS.flatMap(facet => filters[facet].map(value => getLabel(facet, value))).join(", ");
+const getFiltersSummary = (filters: ProjectContextFilters, getLabel: FacetLabelGetter, t: ReturnType<typeof useT>) =>
+  PROJECT_CONTEXT_FACETS.flatMap(facet =>
+    facet === "organisation" && filters[facet].length > 1
+      ? [t("{count} organizations", { count: filters[facet].length })]
+      : filters[facet].map(value => getLabel(facet, value))
+  ).join(", ");
 
 /**
  * Popover body. It only mounts while the popover is open, so the project rows and facet counts cost nothing
@@ -70,18 +83,29 @@ const ProjectContextPickerContent: FC<
 
   const listFilters = useMemo(() => ({ ...facetFilters, cohort: [] }), [facetFilters]);
   const listProjects = useMemo(() => filterProjects(projects, listFilters), [listFilters, projects]);
-  const listFiltersSummary = useMemo(() => getFiltersSummary(listFilters, getLabel), [listFilters, getLabel]);
+  const listFiltersSummary = useMemo(() => getFiltersSummary(listFilters, getLabel, t), [listFilters, getLabel, t]);
+  const getRowSubtitle = useCallback(
+    (project: ProjectContextEntry) => getProjectSubtitle(project, ROW_SUBTITLE_FACETS, getLabel),
+    [getLabel]
+  );
 
   const facetGroups = useMemo(() => {
     const countrySearch: FacetSearch = {
       placeholder: t("Type to search countries"),
+      addPlaceholder: t("Add another country"),
       getCaption: count => t("{count} countries available", { count })
+    };
+    const organisationSearch: FacetSearch = {
+      placeholder: t("Type to search organizations"),
+      addPlaceholder: t("Add another organization"),
+      getCaption: count => t("{count} organizations available", { count })
     };
 
     return (
       [
         { facet: "frameworkKey", label: t("Framework") },
-        { facet: "country", label: t("Country"), search: countrySearch }
+        { facet: "country", label: t("Country"), search: countrySearch },
+        { facet: "organisation", label: t("Organization"), search: organisationSearch }
       ] as const
     ).map(({ facet, label, ...group }) => {
       const options = getFacetOptions(projects, facetFilters, facet);
@@ -116,7 +140,8 @@ const ProjectContextPickerContent: FC<
           <ProjectPickerList
             projects={listProjects}
             filtersSummary={listFiltersSummary}
-            selectedUuid={selectedProject?.uuid ?? null}
+            selectedProject={selectedProject}
+            getSubtitle={getRowSubtitle}
             onSelect={onSelectProject}
           />
         </Flex>
@@ -133,8 +158,8 @@ const ProjectContextPickerContent: FC<
       >
         <Text textStyle="300" color="neutral.700">
           {isLocked
-            ? t("Clear filters to pick a project with a different framework or country.")
-            : t("Choose a framework or country to narrow your list of projects.")}
+            ? t("Clear filters to pick a project with a different framework, country or organization.")
+            : t("Choose a framework, country or organization to narrow your list of projects.")}
         </Text>
         <Button variant="borderless" size="small" disabled={!canClear} onClick={onClear}>
           {t("Clear filters")}
@@ -146,12 +171,12 @@ const ProjectContextPickerContent: FC<
 
 const ProjectContextPicker: FC<ProjectContextPickerProps> = ({ open, onOpenChange, ...contentProps }) => {
   const t = useT();
-  const getLabel = useProjectFacetLabels();
-  const { filters, selectedProject } = contentProps;
-  const filtersSummary = useMemo(() => getFiltersSummary(filters, getLabel), [filters, getLabel]);
+  const { projects, filters, selectedProject } = contentProps;
+  const getLabel = useProjectFacetLabels(projects);
+  const filtersSummary = useMemo(() => getFiltersSummary(filters, getLabel, t), [filters, getLabel, t]);
 
   const subtitle = useMemo(() => {
-    if (selectedProject != null) return getProjectSubtitle(selectedProject, getLabel);
+    if (selectedProject != null) return getProjectSubtitle(selectedProject, SELECTOR_SUBTITLE_FACETS, getLabel);
     return filtersSummary.length === 0 ? undefined : t("Narrowed by: {filters}", { filters: filtersSummary });
   }, [filtersSummary, getLabel, selectedProject, t]);
 
