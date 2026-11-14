@@ -1,167 +1,70 @@
-import { useMemo } from "react";
-import {
-  DateInput,
-  Edit,
-  RecordContextProvider,
-  SelectInput,
-  TabbedForm,
-  TextInput,
-  useEditContext
-} from "react-admin";
-import * as yup from "yup";
+import { Dictionary } from "lodash";
+import { useCallback, useEffect } from "react";
+import { Edit, useCreatePath, useEditContext, useResourceContext } from "react-admin";
+import { useNavigate, useParams } from "react-router-dom";
 
-import { FileUploadInput } from "@/admin/components/Inputs/FileUploadInput";
-import { ImageUploadInput } from "@/admin/components/Inputs/ImageUploadInput";
-import { SelectCountryInput } from "@/admin/components/Inputs/SelectCountryInput";
-import { validateForm } from "@/admin/utils/forms";
-import { useOrganisationMedia } from "@/connections/Organisation";
-import { getOrganisationTypeOptions } from "@/constants/options/organisations";
-import { FileType } from "@/types/common";
-import { optionToChoices } from "@/utils/options";
+import WizardForm from "@/components/extensive/WizardForm";
+import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { Framework } from "@/context/framework.provider";
+import { normalizedFormData } from "@/helpers/customForms";
+import { useFormUpdate } from "@/hooks/useFormUpdate";
+import { useOnUnmount } from "@/hooks/useOnMount";
+import { useOrganisationForm } from "@/hooks/useOrganisationForm";
+import Log from "@/utils/log";
 
-const validationSchema = yup.object({
-  name: yup.string().nullable().required(),
-  type: yup.string().nullable().required(),
-  hqStreet1: yup.string().nullable().required(),
-  hqStreet2: yup.string().nullable(),
-  hqCity: yup.string().nullable().required(),
-  hqState: yup.string().nullable().required(),
-  hqCountry: yup.string().nullable().required(),
-  phone: yup.string().nullable().required(),
-  description: yup.string().nullable().required(),
-  logo: yup.object().nullable(),
-  cover: yup.object().nullable(),
-  reference: yup.array(),
-  additional: yup.array(),
-  legal_registration: yup.array().min(1).required(),
-  webUrl: yup.string().url().nullable(),
-  facebookUrl: yup.string().url().nullable(),
-  instagramUrl: yup.string().url().nullable(),
-  linkedinUrl: yup.string().url().nullable(),
-  twitterUrl: yup.string().url().nullable(),
-  finStartMonth: yup.number().nullable(),
-  haRestoredTotal: yup.number().nullable(),
-  haRestored3year: yup.number().nullable(),
-  treesGrownTotal: yup.number().nullable(),
-  treesGrown3year: yup.number().nullable()
-});
+const OrganisationEditDisplay = () => {
+  const { id } = useParams<"id">();
+  const resource = useResourceContext();
+  const { refetch } = useEditContext();
+  const navigate = useNavigate();
+  const createPath = useCreatePath();
 
-const EnrichedOrganisationEditContent = () => {
-  const { record: baseRecord } = useEditContext();
+  const { models, form, fieldsProvider, defaultValues, isReady, loadFailure } = useOrganisationForm(id);
+  const { updateEntityAnswers, entityAnswersUpdating } = useFormUpdate("organisations", id);
 
-  const [, { media: allMediaFiles }] = useOrganisationMedia({
-    organisationUuid: baseRecord?.uuid ?? ""
-  });
+  useOnUnmount(refetch);
 
-  const enrichedRecord = useMemo(() => {
-    if (!baseRecord) return baseRecord;
+  const onChange = useCallback(
+    (data: Dictionary<unknown>) => updateEntityAnswers({ answers: normalizedFormData(data, fieldsProvider) }),
+    [fieldsProvider, updateEntityAnswers]
+  );
 
-    const mediaFilesByCollection: Record<string, any[]> = {
-      logo: [],
-      cover: [],
-      reference: [],
-      additional: [],
-      legal_registration: []
-    };
+  useEffect(() => {
+    if (loadFailure == null) return;
+    Log.error("Organisation form data load failed", loadFailure);
+    navigate(createPath({ resource, type: "list" }));
+  }, [createPath, loadFailure, navigate, resource]);
 
-    allMediaFiles.forEach(media => {
-      const collectionName = media.collectionName;
-      if (collectionName && Object.prototype.hasOwnProperty.call(mediaFilesByCollection, collectionName)) {
-        mediaFilesByCollection[collectionName].push({
-          uuid: media.uuid,
-          url: media.url ?? "",
-          thumbUrl: media.thumbUrl ?? undefined,
-          size: media.size,
-          fileName: media.fileName,
-          mimeType: media.mimeType ?? "",
-          createdAt: media.createdAt,
-          collectionName: media.collectionName,
-          isPublic: media.isPublic ?? undefined,
-          isCover: media.isCover ?? undefined,
-          lat: media.lat ?? undefined,
-          lng: media.lng ?? undefined
-        });
-      }
-    });
-
-    return {
-      ...baseRecord,
-      logo: mediaFilesByCollection.logo[0] ?? baseRecord.logo,
-      cover: mediaFilesByCollection.cover[0] ?? baseRecord.cover,
-      reference: mediaFilesByCollection.reference.length > 0 ? mediaFilesByCollection.reference : baseRecord.reference,
-      additional:
-        mediaFilesByCollection.additional.length > 0 ? mediaFilesByCollection.additional : baseRecord.additional,
-      legal_registration:
-        mediaFilesByCollection.legal_registration.length > 0
-          ? mediaFilesByCollection.legal_registration
-          : baseRecord.legal_registration
-    };
-  }, [baseRecord, allMediaFiles]);
-
-  if (!enrichedRecord) return null;
+  if (loadFailure != null) return null;
 
   return (
-    <RecordContextProvider value={enrichedRecord}>
-      <TabbedForm validate={validateForm(validationSchema)}>
-        <TabbedForm.Tab label="Organization Details">
-          <TextInput source="name" label="Legal Name" fullWidth />
-          <SelectInput
-            source="type"
-            label="Organization Type"
-            choices={optionToChoices(getOrganisationTypeOptions())}
-            fullWidth
-          />
-          <TextInput source="hqStreet1" label="Headquarters Street address" fullWidth />
-          <TextInput source="hqStreet2" label="Headquarters Street address 2" fullWidth />
-          <TextInput source="hqCity" label="Headquarters City" fullWidth />
-          <TextInput source="hqState" label="Headquarters address State/Province" fullWidth />
-          <TextInput source="hqZipcode" label="Headquarters address Zipcode" fullWidth />
-          <SelectCountryInput source="hqCountry" label="Headquarters address Country" fullWidth />
-          <TextInput source="phone" label="Organization WhatsApp Enabled Phone Number" fullWidth />
-          <DateInput source="foundingDate" label="Date organization founded" fullWidth />
-          <TextInput source="description" label="Organization Details" fullWidth multiline />
-          <ImageUploadInput source="logo" label="Logo" fullWidth />
-          <ImageUploadInput source="cover" label="Cover" fullWidth />
-
-          <FileUploadInput source="reference" label="Reference Letters" multiple accept={FileType.Pdf} />
-          <FileUploadInput
-            source="additional"
-            label="Other additional documents"
-            multiple
-            accept={FileType.ImagesAndDocs}
-          />
-          <FileUploadInput
-            source="legal_registration"
-            label="Proof of legal registrations"
-            multiple
-            accept={FileType.ImagesAndDocs}
-          />
-        </TabbedForm.Tab>
-
-        <TabbedForm.Tab label="Social media">
-          <TextInput source="webUrl" label="Website" fullWidth />
-          <TextInput source="facebookUrl" label="Facebook" fullWidth />
-          <TextInput source="instagramUrl" label="Instagram" fullWidth />
-          <TextInput source="linkedinUrl" label="LinkedIn" fullWidth />
-          <TextInput source="twitterUrl" label="Twitter" fullWidth />
-        </TabbedForm.Tab>
-
-        <TabbedForm.Tab label="Financial Scope of Work (Historic)">
-          <TextInput source="finStartMonth" label="Start of financial year (month)" type="number" fullWidth />
-          <TextInput source="haRestoredTotal" label="Total Hectares Restored" type="number" fullWidth />
-          <TextInput source="haRestored3Year" label="Hecatres Restored in the last 3 years" type="number" fullWidth />
-          <TextInput source="treesGrownTotal" label="Total Trees Grown" type="number" fullWidth />
-          <TextInput source="treesGrown3Year" label="Trees Grown in the last 3 years" type="number" fullWidth />
-        </TabbedForm.Tab>
-      </TabbedForm>
-    </RecordContextProvider>
+    <LoadingContainer loading={!isReady}>
+      <WizardForm
+        models={models}
+        fieldsProvider={fieldsProvider}
+        framework={Framework.UNDEFINED}
+        onBackFirstStep={() => navigate("..")}
+        onChange={onChange}
+        formStatus={entityAnswersUpdating ? "saving" : "saved"}
+        onSubmit={() => navigate(createPath({ resource, id, type: "show" }))}
+        defaultValues={defaultValues}
+        title={form?.title}
+        summaryOptions={{
+          title: "Review Details",
+          downloadButtonText: "Download"
+        }}
+        roundedCorners
+        hideSaveAndCloseButton
+        redirectEntityPage={"admin#" + createPath({ resource, id, type: "show" })}
+        adminListPath={"admin#" + createPath({ resource, type: "list" })}
+        cancelEditForm={() => navigate(createPath({ resource, id, type: "show" }))}
+      />
+    </LoadingContainer>
   );
 };
 
-export const OrganisationEdit = () => {
-  return (
-    <Edit actions={false}>
-      <EnrichedOrganisationEditContent />
-    </Edit>
-  );
-};
+export const OrganisationEdit = () => (
+  <Edit actions={false}>
+    <OrganisationEditDisplay />
+  </Edit>
+);

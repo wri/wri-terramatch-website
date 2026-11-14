@@ -617,56 +617,10 @@ export type TreeSpeciesDto = {
 
 export type OrganisationUpdateAttributes = {
   status?: "approved" | "pending-approval" | "rejected" | "draft";
-  type?: "non-profit-organization" | "for-profit-organization";
   /**
    * Update the isTest flag.
    */
   isTest?: boolean;
-  name?: Record<string, any> | null;
-  phone?: Record<string, any> | null;
-  hqStreet1?: Record<string, any> | null;
-  hqStreet2?: Record<string, any> | null;
-  hqCity?: Record<string, any> | null;
-  hqState?: Record<string, any> | null;
-  hqZipcode?: Record<string, any> | null;
-  hqCountry?: Record<string, any> | null;
-  /**
-   * @format date-time
-   */
-  foundingDate?: string | null;
-  description?: Record<string, any> | null;
-  countries?: string[] | null;
-  languages?: string[] | null;
-  webUrl?: Record<string, any> | null;
-  facebookUrl?: Record<string, any> | null;
-  instagramUrl?: Record<string, any> | null;
-  linkedinUrl?: Record<string, any> | null;
-  twitterUrl?: Record<string, any> | null;
-  finStartMonth?: number | null;
-  additionalFundingDetails?: Record<string, any> | null;
-  engagementFarmers?: string[] | null;
-  engagementWomen?: string[] | null;
-  engagementYouth?: string[] | null;
-  communityExperience?: Record<string, any> | null;
-  totalEngagedCommunityMembers3Yr?: number | null;
-  relevantExperienceYears?: number | null;
-  haRestoredTotal?: number | null;
-  haRestored3Year?: number | null;
-  treesGrownTotal?: number | null;
-  treesGrown3Year?: number | null;
-  avgTreeSurvivalRate?: number | null;
-  restorationTypesImplemented?: string[] | null;
-  treeMaintenanceAftercareApproach?: Record<string, any> | null;
-  restoredAreasDescription?: Record<string, any> | null;
-  monitoringEvaluationExperience?: Record<string, any> | null;
-  historicMonitoringGeojson?: Record<string, any> | null;
-  ftPermanentEmployees?: number | null;
-  ptPermanentEmployees?: number | null;
-  tempEmployees?: number | null;
-  femaleEmployees?: number | null;
-  maleEmployees?: number | null;
-  youngEmployees?: number | null;
-  over35Employees?: number | null;
 };
 
 export type OrganisationUpdateData = {
@@ -753,25 +707,9 @@ export type OrganisationCreateAttributes = {
    * @default pending-approval
    */
   status?: "draft" | "pending-approval";
-  name?: string;
-  type?: "non-profit-organization" | "for-profit-organization";
-  hqStreet1?: string;
-  hqStreet2?: string;
-  hqCity?: string;
-  hqState?: string;
-  hqZipcode?: string;
-  hqCountry?: string;
-  phone?: string;
-  countries?: string[];
   fundingProgrammeUuid?: string;
-  /**
-   * @default USD
-   */
-  currency?: string;
   level0Proposed?: string[];
   level1Proposed?: string[];
-  level0PastRestoration?: string[];
-  level1PastRestoration?: string[];
   userFirstName?: string;
   userLastName?: string;
   userEmailAddress?: string;

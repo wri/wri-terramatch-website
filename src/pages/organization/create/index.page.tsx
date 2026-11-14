@@ -1,42 +1,32 @@
 import { useT } from "@transifex/react";
 import { Dictionary } from "lodash";
 import { useRouter } from "next/router";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useGadmOptions } from "@/connections/Gadm";
 import { deleteOrganisation, updateOrganisation, useMyOrg, useOrganisation } from "@/connections/Organisation";
 import { Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { useLocalStepsProvider } from "@/context/wizardForm.provider";
-import { OrganisationUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
-import { formDefaultValues } from "@/helpers/customForms";
+import { normalizedFormData } from "@/helpers/customForms";
+import { useFormUpdate } from "@/hooks/useFormUpdate";
+import { useOrganisationForm } from "@/hooks/useOrganisationForm";
 import Log from "@/utils/log";
-
-import { getSteps } from "./getCreateOrganisationSteps";
 
 const CreateOrganisationForm = () => {
   const t = useT();
   const router = useRouter();
   const [, { organisationId }] = useMyOrg();
   const { openModal, closeModal } = useModalContext();
-  const countryOptions = useGadmOptions({ level: 0 });
 
   const uuid = (organisationId || router?.query?.uuid) as string;
 
-  const [orgLoaded, { data: orgData, update, isUpdating: isLoading, updateFailure }] = useOrganisation(
-    uuid != null ? { id: uuid } : {}
-  );
-
-  const isSuccess = useMemo(() => {
-    if (updateFailure != null) return false;
-    if (isLoading) return false;
-    return orgData != null;
-  }, [updateFailure, isLoading, orgData]);
+  const [orgLoaded, { data: orgData }] = useOrganisation(uuid != null ? { id: uuid } : {});
+  const { models, fieldsProvider, defaultValues, isReady } = useOrganisationForm(uuid);
+  const { updateEntityAnswers, entityAnswersUpdating } = useFormUpdate("organisations", uuid);
 
   const handleSubmit = useCallback(async () => {
     if (uuid == null) return;
@@ -58,10 +48,6 @@ const CreateOrganisationForm = () => {
       Log.error("Failed to delete draft organization:", error);
     }
   }, [uuid, router, closeModal]);
-
-  const formSteps = useMemo(() => getSteps(t, countryOptions ?? []), [countryOptions, t]);
-  const provider = useLocalStepsProvider(formSteps);
-  const defaultValues = useMemo(() => formDefaultValues(orgData ?? {}, provider), [orgData, provider]);
 
   const onBackFirstStep = (shouldHideWarning?: boolean) => {
     if (shouldHideWarning) {
@@ -85,32 +71,27 @@ const CreateOrganisationForm = () => {
     );
   };
 
-  const models = useMemo(() => ({ model: "organisations", uuid } as const), [uuid]);
-
   const onChange = useCallback(
-    (data: Dictionary<unknown>) => {
-      if (update == null || uuid == null) return;
-      const attributes = data as unknown as OrganisationUpdateAttributes;
-      update(attributes);
-    },
-    [update, uuid]
+    (data: Dictionary<unknown>) => updateEntityAnswers({ answers: normalizedFormData(data, fieldsProvider) }),
+    [fieldsProvider, updateEntityAnswers]
   );
 
   return (
     <BackgroundLayout>
-      <LoadingContainer loading={!orgLoaded && uuid != null}>
+      <LoadingContainer loading={uuid != null && (!orgLoaded || !isReady)}>
         <WizardForm
           framework={Framework.UNDEFINED}
           models={models}
-          fieldsProvider={provider}
-          formStatus={isSuccess ? "saved" : isLoading ? "saving" : undefined}
+          fieldsProvider={fieldsProvider}
+          formStatus={entityAnswersUpdating ? "saving" : "saved"}
           defaultValues={defaultValues}
           onChange={onChange}
           onSubmit={handleSubmit}
-          submitButtonDisable={isLoading}
+          submitButtonDisable={entityAnswersUpdating}
           onBackFirstStep={onBackFirstStep}
           title={t("Create Organization")}
           hideSaveAndCloseButton
+          stepNavigationFooter
           roundedCorners
           entity={orgData ?? undefined}
         />
