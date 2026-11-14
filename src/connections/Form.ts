@@ -98,8 +98,10 @@ export const pushFormTranslation = (formUuid: string) =>
     pathParams: { entity: "forms", uuid: formUuid }
   });
 
-export type FormEntity = FormDataGetPathParams["entity"];
-const idFactory = (props: { entity?: FormEntity; uuid?: string }) => `${props.entity}|${props.uuid}`;
+export type FormDataEntity = FormDataGetPathParams["entity"];
+/** Form data entities that also support change requests, feedback and audit status. */
+export type FormEntity = Exclude<FormDataEntity, "organisations">;
+const idFactory = (props: { entity?: FormDataEntity; uuid?: string }) => `${props.entity}|${props.uuid}`;
 
 const entityFormDataConnection = v3Resource("formData", formDataGet)
   .singleByCustomId<FormDataDto, Partial<FormDataGetPathParams>>(
@@ -110,6 +112,7 @@ const entityFormDataConnection = v3Resource("formData", formDataGet)
   .enabledProp()
   .buildConnection();
 export const useEntityFormData = connectionHook(entityFormDataConnection);
+export const updateEntityFormData = resourceUpdater(entityFormDataConnection);
 
 const updateRequestConnection = v3Resource("updateRequests", updateRequestGet)
   .singleByCustomId<UpdateRequestDto, Partial<UpdateRequestGetPathParams>>(

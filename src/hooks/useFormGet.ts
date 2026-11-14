@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { FormEntity, useEntityFormData, useForm } from "@/connections/Form";
+import { FormDataEntity, useEntityFormData, useForm } from "@/connections/Form";
 import { useSubmission } from "@/connections/FormSubmission";
 import { FormFieldsProvider } from "@/context/wizardForm.provider";
 import { FormDataDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -20,7 +20,7 @@ export const useFormSubmission = (uuid?: string) => {
     : { isLoading: true };
 };
 
-export const useEntityForm = (entity?: FormEntity, uuid?: string) => {
+export const useEntityForm = (entity?: FormDataEntity, uuid?: string) => {
   const enabled = entity != null && uuid != null;
   const [formDataLoaded, { data: formData, loadFailure }] = useEntityFormData({ entity, uuid, enabled });
   const [formLoaded, { data: form, loadFailure: formLoadFailure }] = useForm({
