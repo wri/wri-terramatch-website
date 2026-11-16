@@ -20,6 +20,7 @@ import PolygonBulkActionToolbar from "../../site/[uuid]/components/PolygonBulkAc
 import PolygonBulkEditDrawer from "../../site/[uuid]/components/PolygonBulkEditDrawer";
 import type { PolygonTableRow } from "../../site/[uuid]/components/PolygonTableRow";
 import { isPolygonBackgroundJob } from "../../site/[uuid]/hooks/usePolygonBackgroundJob";
+import type { PolygonDownloadFormat } from "../../site/[uuid]/hooks/useSitePolygonBulkActions";
 import type { ProjectPolygonBulkActions } from "../hooks/useProjectPolygonBulkActions";
 
 type PolygonReviewBulkActionsProps = {
@@ -52,10 +53,13 @@ const PolygonReviewBulkActions: FC<PolygonReviewBulkActionsProps> = ({
       trackPolygonsIndexBulkActionSubmitted({ actionType, selectedCount, eligibleCount }),
     [selectedCount]
   );
-  const handleDownload = useCallback(() => {
-    trackSubmitted("download", selectedCount);
-    bulkActions.handleBulkDownloadClick();
-  }, [bulkActions, selectedCount, trackSubmitted]);
+  const handleDownload = useCallback(
+    (format: PolygonDownloadFormat) => {
+      trackSubmitted("download", selectedCount);
+      bulkActions.handleBulkDownloadClick(format);
+    },
+    [bulkActions, selectedCount, trackSubmitted]
+  );
   const handleRunValidation = useCallback(() => {
     trackSubmitted("run_validation", selectedCount);
     bulkActions.handleBulkRunValidation();

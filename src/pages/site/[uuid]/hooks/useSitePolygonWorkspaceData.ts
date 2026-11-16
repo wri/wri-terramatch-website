@@ -57,6 +57,8 @@ export const useSitePolygonWorkspaceData = ({
     mapPolygonUuids,
     disturbancePolygonUuids,
     totalTreesPlanted: summaryData?.sumNumTrees ?? 0,
-    totalRestorationAreaHa: Math.round((summaryData?.sumCalcArea ?? 0) * 100) / 100
+    totalRestorationAreaHa: Math.round((summaryData?.sumCalcArea ?? 0) * 100) / 100,
+    // Filtered count, so "Download All" for the whole entity reports the same polygons the download exports.
+    wholeEntityTotal: summaryData?.totalPolygons ?? 0
   };
 };

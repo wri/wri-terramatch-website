@@ -44,3 +44,9 @@
 .ds-text-input-container {
   margin-bottom: 0 !important;
 }
+
+/* Section titles in the Download All menu are disabled options; keep them at full opacity.
+   Scoped to menu items that contain this marker, so other menus are unaffected. */
+[role="menuitem"]:has(.polygon-download-section-title) {
+  opacity: 1 !important;
+}
