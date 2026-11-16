@@ -1,51 +1,56 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Flex, IconProps, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, ReactElement, ReactNode } from "react";
+import { ComponentType, FC, ReactNode } from "react";
 
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import ProgressBar from "@/redesignComponents/dataDisplay/Metrics/ProgressBar";
 import { InfoIcon } from "@/redesignComponents/foundations/Icons";
-import { formatNumberLocaleString } from "@/utils/dashboardUtils";
 
 export interface ProjectCardMetric {
+  key: string;
+  Icon: ComponentType<IconProps>;
+  label: string;
+  color: string;
   value: number;
-  goal: number;
+  goal?: number | null;
   tooltipContent?: ReactNode;
 }
 
 export interface ProjectCardMetricRowProps {
-  icon: ReactElement;
-  label: string;
   metric: ProjectCardMetric;
-  color: string;
 }
 
-const ProjectCardMetricRow: FC<ProjectCardMetricRowProps> = ({ icon, label, metric, color }) => {
+const EMPTY_ICON_COLOR = "neutral.500";
+
+const ProjectCardMetricRow: FC<ProjectCardMetricRowProps> = ({
+  metric: { Icon, label, color, value, goal, tooltipContent }
+}) => {
   const t = useT();
-  const progress = metric.goal > 0 ? (metric.value / metric.goal) * 100 : 0;
 
   return (
     <Flex alignItems="center" gap={4}>
       <Flex alignItems="center" gap={1}>
-        {icon}
+        <Icon boxSize="0.875rem" color={value > 0 ? color : EMPTY_ICON_COLOR} />
         <Text textStyle="200" color="neutral.800" whiteSpace="nowrap">
           {label}
         </Text>
-        {metric.tooltipContent != null && (
-          <Tooltip content={metric.tooltipContent} position="top">
+        {tooltipContent != null && (
+          <Tooltip content={tooltipContent} position="top">
             <InfoIcon boxSize="0.6875rem" color="neutral.800" aria-label={t("Metric information")} />
           </Tooltip>
         )}
       </Flex>
       <Flex alignItems="center" gap={2}>
-        <ProgressBar progress={progress} width="3.75rem" color={color} />
+        {goal != null && <ProgressBar progress={goal > 0 ? (value / goal) * 100 : 0} width="3.75rem" color={color} />}
         <Flex alignItems="center" gap={0.5} whiteSpace="nowrap">
           <Text textStyle="300-bold" color="neutral.900">
-            {formatNumberLocaleString(metric.value)}
+            {value.toLocaleString()}
           </Text>
-          <Text textStyle="300" color="neutral.800">
-            {t("of {goal}", { goal: formatNumberLocaleString(metric.goal) })}
-          </Text>
+          {goal != null && (
+            <Text textStyle="300" color="neutral.800">
+              {t("of {goal}", { goal: goal.toLocaleString() })}
+            </Text>
+          )}
         </Flex>
       </Flex>
     </Flex>

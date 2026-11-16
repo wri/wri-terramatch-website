@@ -1,90 +1,97 @@
+import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import Link from "next/link";
-import { FC, Fragment } from "react";
+import classNames from "classnames";
+import { FC, useCallback, useMemo, useState } from "react";
 
-import Button from "@/components/elements/Button/Button";
-import ProjectCard from "@/components/elements/Cards/ProjectCard/ProjectCard";
-import EmptyState from "@/components/elements/EmptyState/EmptyState";
-import { DEFAULT_PAGE_SIZE } from "@/components/elements/ServerSideTable/ServerSideTable";
-import Text from "@/components/elements/Text/Text";
-import { IconNames } from "@/components/extensive/Icon/Icon";
-import List from "@/components/extensive/List/List";
-import PageBody from "@/components/extensive/PageElements/Body/PageBody";
-import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
-import PageSection from "@/components/extensive/PageElements/Section/PageSection";
-import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useProjectIndex } from "@/connections/Entity";
-import { useMyOrg } from "@/connections/Organisation";
+import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
+import NoResults from "@/redesignComponents/content/NoResults/NoResults";
+import { DEFAULT_PAGE_SIZE } from "@/redesignComponents/dataDisplay/Table/tableUtils";
+import PaginationTable from "@/redesignComponents/navigation/Pagination/PaginationTable";
+import ResponsiveTypography from "@/styles/ResponsiveTypography";
+
+import MyProjectCard from "./components/MyProjectCard";
+import MyProjectsHeader from "./components/MyProjectsHeader";
+import { MOCK_MY_PROJECTS } from "./myProjects.mock";
+
+const MIN_PROJECTS_FOR_TOOLBAR = 3;
+const FIRST_PAGE = 1;
 
 const MyProjectsPage: FC = () => {
   const t = useT();
-  const [, { organisation }] = useMyOrg();
+  const [query, setQuery] = useState("");
+  const [statuses, setStatuses] = useState<string[]>([]);
+  const [plantingStatuses, setPlantingStatuses] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(FIRST_PAGE);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
-  const [isLoaded, { data: projects }] = useProjectIndex({
-    sideloads: [
-      { entity: "sites", pageSize: DEFAULT_PAGE_SIZE },
-      { entity: "nurseries", pageSize: DEFAULT_PAGE_SIZE }
-    ]
-  });
+  const projects = MOCK_MY_PROJECTS;
+  const showToolbar = projects.length >= MIN_PROJECTS_FOR_TOOLBAR;
 
-  const hasProjects = projects != null && projects.length > 0;
+  const filteredProjects = useMemo(() => {
+    const search = query.trim().toLowerCase();
+    return projects.filter(
+      project =>
+        (search === "" || project.name.toLowerCase().includes(search)) &&
+        (statuses.length === 0 || statuses.includes(project.status)) &&
+        (plantingStatuses.length === 0 || plantingStatuses.includes(project.plantingStatus))
+    );
+  }, [plantingStatuses, projects, query, statuses]);
+
+  const pageProjects = useMemo(
+    () => filteredProjects.slice((currentPage - 1) * pageSize, currentPage * pageSize),
+    [currentPage, filteredProjects, pageSize]
+  );
+
+  const handleQueryChange = useCallback((nextQuery: string) => {
+    setQuery(nextQuery);
+    setCurrentPage(FIRST_PAGE);
+  }, []);
+
+  const handleApplyFilters = useCallback((nextStatuses: string[], nextPlantingStatuses: string[]) => {
+    setStatuses(nextStatuses);
+    setPlantingStatuses(nextPlantingStatuses);
+    setCurrentPage(FIRST_PAGE);
+  }, []);
+
+  const handlePageSizeChange = useCallback((nextPageSize: number) => {
+    setPageSize(nextPageSize);
+    setCurrentPage(FIRST_PAGE);
+  }, []);
+
   return (
     <>
+      <ResponsiveTypography />
       <title>{t("My Projects")}</title>
-      <PageHeader className="h-[203px]" title={t("My Projects")}>
-        {hasProjects && (
-          <Button as={Link} href="/project/reporting-framework-select">
-            {t("Create Project")}
-          </Button>
-        )}
-      </PageHeader>
-
-      <PageBody>
-        {organisation?.status === "approved" ? (
-          <LoadingContainer loading={!isLoaded}>
-            {hasProjects ? (
-              <PageSection className="space-y-8">
-                <Text variant="text-bold-headline-1000">
-                  {t("Projects I’m monitoring ({count})", { count: projects.length })}
-                </Text>
-                <List
-                  as={Fragment}
-                  itemAs={Fragment}
-                  items={projects}
-                  render={project => <ProjectCard project={project} />}
-                />
-              </PageSection>
-            ) : (
-              <PageSection>
-                <EmptyState
-                  title={t("Start monitoring your project")}
-                  subtitle={t(
-                    "Your organization currently has no projects. To begin monitoring your restoration activities, you need to create a project in TerraMatch."
-                  )}
-                  iconProps={{ name: IconNames.TREE_CIRCLE, className: "fill-success" }}
-                  ctaProps={{
-                    as: Link,
-                    href: "/project/reporting-framework-select",
-                    children: t("Create Project")
-                  }}
-                />
-              </PageSection>
-            )}
-          </LoadingContainer>
+      <MyProjectsHeader
+        projectCount={filteredProjects.length}
+        showToolbar={showToolbar}
+        statuses={statuses}
+        plantingStatuses={plantingStatuses}
+        onApplyFilters={handleApplyFilters}
+        onQueryChange={handleQueryChange}
+      />
+      <PageContent className={classNames("h-auto flex-1 gap-6", { "pt-0": showToolbar })}>
+        {filteredProjects.length === 0 ? (
+          <NoResults title={t("No projects found")} description={t("Try changing your search or filters.")} />
         ) : (
-          <PageSection>
-            <EmptyState
-              iconProps={{ name: IconNames.LIGHT_BULB_CIRCLE, className: "fill-success" }}
-              title={t("Explore Funding Projects")}
-              subtitle={t(
-                "Your organization's approval is currently pending, which is why you can't view any listed projects here. Once your organization receives approval, this page will showcase all available projects, enabling you to apply for them. In the meantime, if you have questions or require assistance, please don't hesitate to contact our support team through the help center."
-              )}
-            />
-          </PageSection>
+          <Box className="grid grid-cols-2 gap-6 mobile:grid-cols-1">
+            {pageProjects.map(project => (
+              <MyProjectCard key={project.uuid} project={project} />
+            ))}
+          </Box>
         )}
-        <br />
-        <br />
-      </PageBody>
+        {showToolbar && filteredProjects.length > 0 && (
+          <PaginationTable
+            pageSize={pageSize}
+            currentPage={currentPage}
+            totalItems={filteredProjects.length}
+            onPageSizeChange={handlePageSizeChange}
+            onPageChange={setCurrentPage}
+            showItemCountText
+            variant="compact"
+          />
+        )}
+      </PageContent>
     </>
   );
 };

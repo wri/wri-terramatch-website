@@ -1,44 +1,48 @@
 import { Box, Flex, IconProps, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { ComponentType, FC, Fragment } from "react";
+import Twemoji from "react-twemoji";
 import { twMerge } from "tailwind-merge";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ProgressTag, { ProgressState } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
 import TagSubmission, { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import {
-  AreaHectaresIcon,
   ChevronRightIcon,
-  JobsIcon,
   NurseryIcon,
   OrganizationIcon,
   ProgrammeIcon,
   ReportsIcon,
-  SiteIcon,
-  TreeIcon
+  SiteIcon
 } from "@/redesignComponents/foundations/Icons";
 import EllipsisDivider from "@/redesignComponents/miscellaneous/Dividers/EllipsisDivider";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
+import { isNotNull } from "@/utils/array";
 
 import ProjectCardImage from "./ProjectCardImage";
 import ProjectCardMetricRow, { ProjectCardMetric } from "./ProjectCardMetricRow";
 
-type CardIcon = ComponentType<IconProps>;
+type CardAction = {
+  key: string;
+  Icon: ComponentType<IconProps>;
+  label: string;
+  disabled: boolean;
+  onClick?: () => void;
+};
 
 export interface ProjectCardProps {
   title: string;
   organisationName: string;
   programmeName: string;
   country: string;
+  countryFlag?: string;
   imageUrl?: string | null;
   status: TagSubmissionState;
   plantingStatus?: ProgressState | null;
-  treesGrown: ProjectCardMetric;
-  areaRestored: ProjectCardMetric;
-  jobsCreated: ProjectCardMetric;
+  metrics: ProjectCardMetric[];
   sitesCount: number;
-  nurseriesCount: number;
-  isIncomplete?: boolean;
+  nurseriesCount?: number;
+  hasReports: boolean;
   onSitesClick?: () => void;
   onNurseriesClick?: () => void;
   onReportsClick?: () => void;
@@ -46,22 +50,19 @@ export interface ProjectCardProps {
   className?: string;
 }
 
-const DISABLED_COLOR = "neutral.500";
-
 const ProjectCard: FC<ProjectCardProps> = ({
   title,
   organisationName,
   programmeName,
   country,
+  countryFlag,
   imageUrl,
   status,
   plantingStatus,
-  treesGrown,
-  areaRestored,
-  jobsCreated,
+  metrics,
   sitesCount,
   nurseriesCount,
-  isIncomplete = false,
+  hasReports,
   onSitesClick,
   onNurseriesClick,
   onReportsClick,
@@ -70,39 +71,31 @@ const ProjectCard: FC<ProjectCardProps> = ({
 }) => {
   const t = useT();
 
-  const details: { key: string; Icon?: CardIcon; text: string }[] = [
-    { key: "organisation", Icon: OrganizationIcon, text: organisationName },
-    { key: "programme", Icon: ProgrammeIcon, text: programmeName },
-    { key: "country", text: country }
-  ];
-
-  const metrics: { key: string; Icon: CardIcon; label: string; metric: ProjectCardMetric; color: string }[] = [
-    { key: "trees", Icon: TreeIcon, label: t("Trees Grown:"), metric: treesGrown, color: "secondary.600" },
+  const actions: CardAction[] = [
     {
-      key: "area",
-      Icon: AreaHectaresIcon,
-      label: t("Area Restored (ha):"),
-      metric: areaRestored,
-      color: "secondary.800"
+      key: "sites",
+      Icon: SiteIcon,
+      label: t("{count} Sites", { count: sitesCount }),
+      disabled: sitesCount === 0,
+      onClick: onSitesClick
     },
-    { key: "jobs", Icon: JobsIcon, label: t("Jobs Created:"), metric: jobsCreated, color: "primary.600" }
-  ];
-
-  const actions: { key: string; Icon: CardIcon; label: string; onClick?: () => void }[] = [
-    { key: "sites", Icon: SiteIcon, label: t("{count} Sites", { count: sitesCount }), onClick: onSitesClick },
-    {
-      key: "nurseries",
-      Icon: NurseryIcon,
-      label: t("{count} Nurseries", { count: nurseriesCount }),
-      onClick: onNurseriesClick
-    },
-    { key: "reports", Icon: ReportsIcon, label: t("Reports"), onClick: onReportsClick }
-  ];
+    nurseriesCount == null
+      ? undefined
+      : {
+          key: "nurseries",
+          Icon: NurseryIcon,
+          label: t("{count} Nurseries", { count: nurseriesCount }),
+          disabled: nurseriesCount === 0,
+          onClick: onNurseriesClick
+        },
+    { key: "reports", Icon: ReportsIcon, label: t("Reports"), disabled: !hasReports, onClick: onReportsClick }
+  ].filter(isNotNull);
 
   return (
     <Flex
       direction="column"
       width="100%"
+      minWidth={0}
       bg="secondary.neutral"
       borderRadius="0.5rem"
       boxShadow="xs"
@@ -111,21 +104,30 @@ const ProjectCard: FC<ProjectCardProps> = ({
       <Flex gap={3} paddingX={4} paddingTop={3} paddingBottom={4}>
         <ProjectCardImage imageUrl={imageUrl} alt={title} />
         <Flex direction="column" justifyContent="flex-end" gap={1} minWidth={0} flex={1}>
-          <Text textStyle="400-bold" color="primary.900">
+          <Text textStyle="400-bold" color="primary.900" className="truncate" title={title}>
             {title}
           </Text>
-          <Flex alignItems="center" gap={2} paddingLeft={0.5} paddingBottom={1} flexWrap="wrap">
-            {details.map(({ key, Icon, text }, index) => (
-              <Fragment key={key}>
-                {index > 0 && <EllipsisDivider color="primary.900" />}
-                <Flex alignItems="center" gap={1}>
-                  {Icon != null && <Icon boxSize="0.75rem" color="primary.900" />}
-                  <Text textStyle="300" color="primary.900">
-                    {text}
-                  </Text>
-                </Flex>
-              </Fragment>
-            ))}
+          <Flex alignItems="center" columnGap={2} paddingLeft={0.5} paddingBottom={1} flexWrap="wrap">
+            <Flex alignItems="center" gap={1}>
+              <OrganizationIcon boxSize="0.75rem" color="primary.900" />
+              <Text textStyle="300" color="primary.900">
+                {organisationName}
+              </Text>
+            </Flex>
+            <EllipsisDivider color="primary.900" />
+            <Flex alignItems="center" gap={1}>
+              <ProgrammeIcon boxSize="0.75rem" color="primary.900" />
+              <Text textStyle="300" color="primary.900">
+                {programmeName}
+              </Text>
+            </Flex>
+            <EllipsisDivider color="primary.900" />
+            <Flex alignItems="center" gap={1}>
+              {countryFlag != null && <Twemoji options={{ className: "h-3 w-3" }}>{countryFlag}</Twemoji>}
+              <Text textStyle="300" color="primary.900">
+                {country}
+              </Text>
+            </Flex>
           </Flex>
           <Flex gap={2} paddingTop={0.5} flexWrap="wrap">
             <TagSubmission state={status} size="small" />
@@ -143,14 +145,8 @@ const ProjectCard: FC<ProjectCardProps> = ({
         borderBottomWidth="0.0625rem"
         borderColor="secondary.neutral"
       >
-        {metrics.map(({ key, Icon, label, metric, color }) => (
-          <ProjectCardMetricRow
-            key={key}
-            icon={<Icon boxSize="0.875rem" color={isIncomplete ? DISABLED_COLOR : color} />}
-            label={label}
-            metric={metric}
-            color={color}
-          />
+        {metrics.map(metric => (
+          <ProjectCardMetricRow key={metric.key} metric={metric} />
         ))}
       </Flex>
 
@@ -164,7 +160,7 @@ const ProjectCard: FC<ProjectCardProps> = ({
         bg="neutral.100"
       >
         <Flex alignItems="center" gap={1}>
-          {actions.map(({ key, Icon, label, onClick }, index) => (
+          {actions.map(({ key, Icon, label, disabled, onClick }, index) => (
             <Fragment key={key}>
               {index > 0 && (
                 <Box height="1.8125rem">
@@ -176,7 +172,7 @@ const ProjectCard: FC<ProjectCardProps> = ({
                 size="small"
                 leftIcon={<Icon />}
                 className="[&_svg]:!h-3 [&_svg]:!w-3"
-                disabled={isIncomplete}
+                disabled={disabled}
                 onClick={onClick}
               >
                 {label}
