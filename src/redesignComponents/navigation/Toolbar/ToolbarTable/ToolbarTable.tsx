@@ -148,7 +148,13 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
             <FilterTag selectedFilters={selectedFilters} />
 
             {showClearFilters && (
-              <Button variant="secondary" size="small" leftIcon={<CloseIcon />} onClick={onClearFilters}>
+              <Button
+                variant="secondary"
+                size="small"
+                leftIcon={<CloseIcon />}
+                disabled={isLocked}
+                onClick={onClearFilters}
+              >
                 {t("Clear All Filters")}
               </Button>
             )}
