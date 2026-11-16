@@ -15,7 +15,7 @@ import {
   JobsIcon,
   RegenerationIcon,
   SurvivalRateIcon,
-  TreeIcon
+  TreePlantingIcon
 } from "@/redesignComponents/foundations/Icons";
 
 interface SiteReportKeyIndicatorsInsightsProps {
@@ -63,7 +63,7 @@ const TerrafundSiteReportKeyIndicators: FC<TerrafundSiteReportKeyIndicatorsProps
         progress={siteReport.totalTreesPlantedCount ?? 0}
         goal={0}
         variant="large"
-        icon={<TreeIcon />}
+        icon={<TreePlantingIcon />}
         color="secondary.600"
         className={"flex-1 mobile:basis-full"}
         metricLabel="trees_planted"
@@ -106,7 +106,7 @@ const PpcSiteReportKeyIndicators: FC<PpcSiteReportKeyIndicatorsProps> = ({ siteR
         progress={siteReport.totalTreesPlantedCount ?? 0}
         goal={0}
         variant="large"
-        icon={<TreeIcon />}
+        icon={<TreePlantingIcon />}
         color="secondary.600"
         className={REPORT_METRIC_CARD_CLASS}
         metricLabel="trees_planted"
@@ -160,7 +160,7 @@ const HbfSiteReportKeyIndicators: FC<HbfSiteReportKeyIndicatorsProps> = ({ siteR
       progress={siteReport.totalTreesPlantedCount ?? 0}
       goal={0}
       variant="large"
-      icon={<TreeIcon />}
+      icon={<TreePlantingIcon />}
       color="secondary.600"
       className="flex-[1]"
       metricLabel="trees_planted"
