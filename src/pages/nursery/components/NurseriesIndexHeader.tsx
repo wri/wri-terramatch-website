@@ -101,7 +101,7 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
       className={classNames(
         "!px-6 !pb-6 !pt-5",
         embeddedInProject
-          ? "border-theme-neutral-300 !bg-theme-neutral-100 sticky top-[5.5625rem] z-10 border-b mobile:top-[7.8125rem]"
+          ? "sticky top-[5.5625rem] z-10 border-b border-theme-neutral-300 !bg-theme-neutral-100 mobile:top-[7.8125rem]"
           : "!bg-theme-neutral-200"
       )}
       classNameContentLeft={embeddedInProject ? "min-w-0 flex-1 !shrink" : "w-full"}
