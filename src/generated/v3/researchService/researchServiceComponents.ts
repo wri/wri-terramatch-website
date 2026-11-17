@@ -613,7 +613,7 @@ export type GetSitePolygonsGeoJsonQueryParams = {
    */
   projectUuid?: string;
   /**
-   * Include extended data from site_polygon_data table
+   * Include the uploaded file's extra attributes (site_polygon_data table) as a JSON string in `extraAttributes`
    *
    * @default true
    */
@@ -695,7 +695,7 @@ export type GetSitePolygonsGeoJsonVariables = {
 /**
  * Export site polygons as GeoJSON FeatureCollection.
  *     Provide exactly one of: uuid (single polygon), siteUuid (all active polygons in a site), or projectUuid (all active polygons across all sites in a project).
- *     Use includeExtendedData to include additional data from site_polygon_data table.
+ *     Use includeExtendedData to include the uploaded file's extra attributes (site_polygon_data table) as a JSON string in the extraAttributes property.
  *     Use geometryOnly to return only geometry without properties (only applicable when using uuid).
  */
 export const getSitePolygonsGeoJson = new V3ApiEndpoint<

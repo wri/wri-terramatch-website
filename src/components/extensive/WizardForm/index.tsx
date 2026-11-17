@@ -109,6 +109,11 @@ export interface WizardFormProps {
   backButtonText?: string;
   hideBackButton?: boolean;
   hideSaveAndCloseButton?: boolean;
+  /**
+   * Replaces the standard footer with Back and Save and continue / Submit only. There is no Save and Exit
+   * or Download, and Back on the first step calls onBackFirstStep.
+   */
+  stepNavigationFooter?: boolean;
 
   saveAndCloseModal?: Omit<SaveAndCloseModalProps, "shouldHideWarning" | "models">;
 
@@ -381,13 +386,36 @@ function WizardForm(props: WizardFormProps) {
             "absolute right-0 left-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]",
             isAdmin ? "bottom-0" : "bottom-[0px]"
           )}
-          primaryButtonProps={{
-            children: t(`${selectedStepIndex === lastIndex ? "Submit" : "Next"}`),
-            disabled: hasValidationErrorInAnyStep && selectedStepIndex === lastIndex,
-            onClick: formHook.handleSubmit(onSubmitStep, onSubmitStepError)
-          }}
+          cancelButtonProps={
+            props.stepNavigationFooter
+              ? {
+                  children: t("Back"),
+                  onClick: () => {
+                    if (selectedStepIndex > 0) setSelectedStepIndex(n => n - 1);
+                    else props.onBackFirstStep();
+                  }
+                }
+              : undefined
+          }
+          primaryButtonProps={
+            props.stepNavigationFooter
+              ? {
+                  children: selectedStepIndex === lastIndex ? t("Submit") : t("Save and continue"),
+                  disabled:
+                    selectedStepIndex === lastIndex &&
+                    (hasValidationErrorInAnyStep || props.submitButtonDisable === true),
+                  onClick: formHook.handleSubmit(onSubmitStep, onSubmitStepError)
+                }
+              : {
+                  children: t(`${selectedStepIndex === lastIndex ? "Submit" : "Next"}`),
+                  disabled: hasValidationErrorInAnyStep && selectedStepIndex === lastIndex,
+                  onClick: formHook.handleSubmit(onSubmitStep, onSubmitStepError)
+                }
+          }
           secondaryButtonProps={
-            !isSubmissionModel
+            props.stepNavigationFooter
+              ? undefined
+              : !isSubmissionModel
               ? {
                   children: t("Save and Exit"),
                   onClick: () => {
@@ -405,10 +433,14 @@ function WizardForm(props: WizardFormProps) {
                   onClick: onClickSaveAndClose
                 }
           }
-          tertiaryButtonProps={{
-            children: t("Download"),
-            onClick: handleDownloadAnswers
-          }}
+          tertiaryButtonProps={
+            props.stepNavigationFooter
+              ? undefined
+              : {
+                  children: t("Download"),
+                  onClick: handleDownloadAnswers
+                }
+          }
         />
       </div>
     ),
@@ -427,7 +459,8 @@ function WizardForm(props: WizardFormProps) {
       isSubmissionModel,
       handleDownloadAnswers,
       props,
-      onClickSaveAndClose
+      onClickSaveAndClose,
+      setSelectedStepIndex
     ]
   );
 

@@ -3,7 +3,7 @@ import { isEqual } from "lodash";
 import { useCallback, useEffect, useReducer } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-import { FormEntity, useEntityFormData } from "@/connections/Form";
+import { FormDataEntity, useEntityFormData } from "@/connections/Form";
 import { useSubmission } from "@/connections/FormSubmission";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { StoreFormDataAttributes, UpdateSubmissionAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -70,7 +70,7 @@ const useFormReducer = <T extends FormBody>(update: (body: T) => void, isUpdatin
  *  1) The WizardForm calls onChange really aggressively, and sometimes with the same data multiple times in a row.
  *  2) Blocks attempts to do two updates at the same time.
  */
-export const useFormUpdate = (entity?: FormEntity, uuid?: string) => {
+export const useFormUpdate = (entity?: FormDataEntity, uuid?: string) => {
   const enabled = entity != null && uuid != null;
   const [, { update, isUpdating, updateFailure }] = useEntityFormData({ entity, uuid, enabled });
   const t = useT();
