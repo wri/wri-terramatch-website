@@ -38,6 +38,8 @@ export function useMapCamera({
   const suppressNextAutoCameraMoveRef = useRef<boolean>(false);
   const wasDrawingEnabledRef = useRef<boolean>(false);
   const suppressAutoCameraUntilPolygonSelectionRef = useRef<boolean>(false);
+  const lastSeenBboxKeyRef = useRef<string>("");
+  const suppressedBboxKeyRef = useRef<string>("");
   const lastSkipNextSiteBboxZoomNonceRef = useRef(0);
 
   useEffect(() => {
@@ -56,6 +58,7 @@ export function useMapCamera({
     }
     if (wasDrawingEnabledRef.current === true) {
       suppressAutoCameraUntilPolygonSelectionRef.current = true;
+      suppressedBboxKeyRef.current = lastSeenBboxKeyRef.current;
     }
     wasDrawingEnabledRef.current = false;
     if (polygonFromMap?.uuid != null && polygonFromMap.uuid !== polygonUuidAtDrawStartRef.current) {
@@ -72,17 +75,28 @@ export function useMapCamera({
     if (wasPolygonDrawerOpenRef.current === true && isPolygonDrawerOpen === false) {
       suppressNextAutoCameraMoveRef.current = true;
       suppressAutoCameraUntilPolygonSelectionRef.current = true;
+      suppressedBboxKeyRef.current = lastSeenBboxKeyRef.current;
     }
     wasPolygonDrawerOpenRef.current = isPolygonDrawerOpen;
   }, [polygonFromMap?.isOpen, polygonFromMap?.uuid]);
 
   useEffect(() => {
+    const bboxKey = bbox?.join(",") ?? "";
+    lastSeenBboxKeyRef.current = bboxKey;
     if (map.current == null || shouldBboxZoom !== true) return;
     if (isUserDrawingEnabled === true) return;
 
     const polygonIsOpen = polygonFromMap?.isOpen === true && polygonFromMap?.uuid != null && polygonFromMap.uuid !== "";
     if (polygonIsOpen) {
       return;
+    }
+    if (
+      suppressAutoCameraUntilPolygonSelectionRef.current === true &&
+      bbox != null &&
+      bboxKey !== suppressedBboxKeyRef.current
+    ) {
+      suppressAutoCameraUntilPolygonSelectionRef.current = false;
+      suppressNextAutoCameraMoveRef.current = false;
     }
     if (suppressAutoCameraUntilPolygonSelectionRef.current === true) {
       return;
