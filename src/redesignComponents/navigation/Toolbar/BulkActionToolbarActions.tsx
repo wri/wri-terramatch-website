@@ -1,24 +1,37 @@
-import { Flex } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import { type ReactElement, Fragment, memo } from "react";
 import { twMerge } from "tailwind-merge";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import MultiActionButton, {
+  IMultiActionButtonProps
+} from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import { InfoIcon } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
-import { BulkToolbarAction } from "./ToolBar.type";
+import { BulkToolbarAction, BulkToolbarItem } from "./ToolBar.type";
 import { wrapToolbarInfoTooltipContent } from "./ToolbarInfoTooltipContent";
 
 const ACTION_DIVIDER_CLASS = "!h-3.5 !w-[0.0625rem]";
 const BORDERLESS_NEUTRAL_CLASS = "!px-1.5 !text-theme-neutral-100";
 const BORDERLESS_DANGER_CLASS = "!px-1.5 !text-theme-error-300";
 const BORDERLESS_DISABLED_CLASS = "disabled:!text-theme-neutral-400 disabled:!opacity-100";
+// Scoped to the group wrapper so these win over the design system's secondary text color.
+// The label is white and borderless; the arrow trigger is a white icon on the primary background.
+const MULTI_ACTION_GROUP_CLASS =
+  "[&_button]:!border-transparent [&_button]:!bg-transparent [&_button]:!text-white [&_button]:disabled:!opacity-100 [&_[data-part='trigger']]:!bg-theme-primary-500 [&_[data-part='trigger']]:!text-white [&_[data-part='trigger']_svg]:!text-white";
 
 type BulkActionToolbarActionsProps = {
   deleteAction?: BulkToolbarAction;
-  actions: BulkToolbarAction[];
+  actions: BulkToolbarItem[];
 };
+
+const renderMultiAction = ({ className, ...multiActionProps }: IMultiActionButtonProps): ReactElement => (
+  <Box className={MULTI_ACTION_GROUP_CLASS}>
+    <MultiActionButton variant="secondary" {...multiActionProps} className={className} />
+  </Box>
+);
 
 const renderToolbarAction = ({
   tone,
@@ -70,12 +83,16 @@ const BulkActionToolbarActions = memo(function BulkActionToolbarActions({
 
   return (
     <Flex alignItems="center" gap={2} flexWrap="wrap">
-      {items.map((action, index) => (
-        <Fragment key={action.id}>
-          {index > 0 && action.variant !== "primary" && <SimpleDivider className={ACTION_DIVIDER_CLASS} />}
-          {renderToolbarAction(action)}
-        </Fragment>
-      ))}
+      {items.map((action, index) => {
+        const isMultiAction = "multiAction" in action;
+        const isPrimary = !isMultiAction && action.variant === "primary";
+        return (
+          <Fragment key={action.id}>
+            {index > 0 && !isPrimary && <SimpleDivider className={ACTION_DIVIDER_CLASS} />}
+            {isMultiAction ? renderMultiAction(action.multiAction) : renderToolbarAction(action)}
+          </Fragment>
+        );
+      })}
     </Flex>
   );
 });

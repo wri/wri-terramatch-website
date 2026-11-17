@@ -113,6 +113,11 @@ const projectPolygonsGeoJsonConnection = v3Resource("geojsonExports", getProject
 export const exportPolygonsGeoJson = (attributes: GeoJsonExportAttributes) =>
   createSitePolygonsGeoJsonExport.downloadFile({ body: { data: { type: "geojsonExports", attributes } } });
 
+export const exportPolygonsCsv = (attributes: Omit<GeoJsonExportAttributes, "format">) =>
+  createSitePolygonsGeoJsonExport.downloadFile({
+    body: { data: { type: "geojsonExports", attributes: { ...attributes, format: "csv" } } }
+  });
+
 export const usePolygonGeoJson = connectionHook(singlePolygonGeoJsonConnection);
 export const loadPolygonGeoJson = connectionLoader(singlePolygonGeoJsonConnection);
 export const useSitePolygonsGeoJson = connectionHook(sitePolygonsGeoJsonConnection);

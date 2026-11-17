@@ -11,6 +11,7 @@ export * from "./interactions/popupCoordinator";
 export * from "./services/polygonService";
 
 import {
+  exportPolygonsCsv,
   exportPolygonsGeoJson,
   loadPolygonGeoJson,
   loadProjectPolygonsGeoJson,
@@ -148,6 +149,15 @@ export async function downloadMultiplePolygonsGeoJson(
     await exportPolygonsGeoJson({ polygonUuids });
   } catch (error) {
     Log.error("Failed to download multiple polygons GeoJSON:", error);
+    throw error;
+  }
+}
+
+export async function downloadMultiplePolygonsCsv(polygonUuids: string[]): Promise<void> {
+  try {
+    await exportPolygonsCsv({ polygonUuids });
+  } catch (error) {
+    Log.error("Failed to download multiple polygons CSV:", error);
     throw error;
   }
 }

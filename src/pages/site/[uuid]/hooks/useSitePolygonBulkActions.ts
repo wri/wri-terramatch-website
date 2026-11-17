@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { downloadMultiplePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
+import { downloadMultiplePolygonsCsv, downloadMultiplePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
 import { clipPolygonListAsync } from "@/connections/PolygonClipping";
 import type { BulkSitePolygonAttributeChanges, PolygonStatus } from "@/connections/SitePolygons";
 import {
@@ -79,6 +79,8 @@ import {
 import { isPolygonBackgroundJob, usePolygonBackgroundJob } from "./usePolygonBackgroundJob";
 
 const formatAuthorName = formatCommentAuthorName;
+
+export type PolygonDownloadFormat = "csv" | "geojson";
 
 export type SubmittedPolygonComment = PolygonStatusChangeComment;
 
@@ -991,8 +993,16 @@ export const useSitePolygonBulkActions = ({
   );
 
   const downloadPolygons = useCallback(
-    async (geometryPolygonUuids: string[], downloadSitePolygons: SitePolygonLightDto[]) => {
-      await downloadMultiplePolygonsGeoJson(geometryPolygonUuids, downloadSitePolygons[0]?.name ?? "polygon");
+    async (
+      geometryPolygonUuids: string[],
+      downloadSitePolygons: SitePolygonLightDto[],
+      format: PolygonDownloadFormat
+    ) => {
+      if (format === "csv") {
+        await downloadMultiplePolygonsCsv(geometryPolygonUuids);
+      } else {
+        await downloadMultiplePolygonsGeoJson(geometryPolygonUuids, downloadSitePolygons[0]?.name ?? "polygon");
+      }
       trackPolygonDownloaded({
         entityUuid,
         entityType: entityName,
@@ -1011,7 +1021,11 @@ export const useSitePolygonBulkActions = ({
   );
 
   const handleBulkDownload = useCallback(
-    async (geometryPolygonUuids: string[], downloadSitePolygons: SitePolygonLightDto[]) => {
+    async (
+      geometryPolygonUuids: string[],
+      downloadSitePolygons: SitePolygonLightDto[],
+      format: PolygonDownloadFormat
+    ) => {
       if (geometryPolygonUuids.length === 0) {
         showToast({
           label: t("Could not find selected polygons to download"),
@@ -1028,7 +1042,7 @@ export const useSitePolygonBulkActions = ({
           job: "downloading",
           completeLabel: toastLabels.downloadingPolygonsComplete,
           errorLabel: t("Error Downloading Polygons"),
-          run: () => downloadPolygons(geometryPolygonUuids, downloadSitePolygons)
+          run: () => downloadPolygons(geometryPolygonUuids, downloadSitePolygons, format)
         });
       } else {
         showPolygonProgressToast(
@@ -1037,7 +1051,7 @@ export const useSitePolygonBulkActions = ({
           POLYGON_TOAST_IDS.downloading
         );
         try {
-          await downloadPolygons(geometryPolygonUuids, downloadSitePolygons);
+          await downloadPolygons(geometryPolygonUuids, downloadSitePolygons, format);
           completePolygonProgressToast(POLYGON_TOAST_IDS.downloading, toastLabels.downloadingPolygonsComplete);
         } catch (error) {
           Log.error("Failed to download selected polygons:", error);
@@ -1055,12 +1069,15 @@ export const useSitePolygonBulkActions = ({
     [downloadPolygons, runPolygonBackgroundJob, t, toastLabels]
   );
 
-  const handleBulkDownloadClick = useCallback(() => {
-    const geometryPolygonUuids = selectedGeometryPolygonUuids;
-    const downloadSitePolygons = selectedSitePolygons;
-    clearBulkTableSelection();
-    void handleBulkDownload(geometryPolygonUuids, downloadSitePolygons);
-  }, [clearBulkTableSelection, handleBulkDownload, selectedGeometryPolygonUuids, selectedSitePolygons]);
+  const handleBulkDownloadClick = useCallback(
+    (format: PolygonDownloadFormat) => {
+      const geometryPolygonUuids = selectedGeometryPolygonUuids;
+      const downloadSitePolygons = selectedSitePolygons;
+      clearBulkTableSelection();
+      void handleBulkDownload(geometryPolygonUuids, downloadSitePolygons, format);
+    },
+    [clearBulkTableSelection, handleBulkDownload, selectedGeometryPolygonUuids, selectedSitePolygons]
+  );
 
   const handleBulkEditDetails = useCallback(() => {
     if (selectedRows.length === 0) {
