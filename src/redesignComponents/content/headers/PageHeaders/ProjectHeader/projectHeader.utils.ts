@@ -47,3 +47,6 @@ export const mapPlantingStatusToProgressState = (status?: string | null): Progre
       return null;
   }
 };
+
+export const getPlantingProgressState = (status?: string | null): ProgressState =>
+  mapPlantingStatusToProgressState(status) ?? "not-available";
