@@ -28,7 +28,7 @@ const DEFAULT_PROJECT: ProjectCardProject = {
 };
 
 const meta: Meta<typeof ProjectCard> = {
-  title: "Redesign Components/Content/Content Card/Project Card",
+  title: "Redesign Components/Containers/Cards/Project Card",
   component: ProjectCard,
   tags: ["autodocs"],
   parameters: {
