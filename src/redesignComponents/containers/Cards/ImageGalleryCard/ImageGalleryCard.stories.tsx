@@ -5,7 +5,7 @@ import { FC } from "react";
 import ImageGalleryCard, { GalleryImageType } from "./ImageGalleryCard";
 
 const meta: Meta<typeof ImageGalleryCard> = {
-  title: "Redesign Components/Content/Content Card/Image Gallery Card",
+  title: "Redesign Components/Containers/Cards/Image Gallery Card",
   component: ImageGalleryCard,
   tags: ["autodocs"],
   argTypes: {

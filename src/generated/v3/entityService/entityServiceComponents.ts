@@ -5377,7 +5377,7 @@ export type FormDataGetPathParams = {
    */
   uuid: string;
   /**
-   * Entity type to retrieve
+   * Entity type for the form data
    */
   entity:
     | "projects"
@@ -5388,7 +5388,8 @@ export type FormDataGetPathParams = {
     | "siteReports"
     | "financialReports"
     | "disturbanceReports"
-    | "srpReports";
+    | "srpReports"
+    | "organisations";
 };
 
 export type FormDataGetError = Fetcher.ErrorWrapper<
@@ -5465,7 +5466,7 @@ export type FormDataUpdatePathParams = {
    */
   uuid: string;
   /**
-   * Entity type to retrieve
+   * Entity type for the form data
    */
   entity:
     | "projects"
@@ -5476,7 +5477,8 @@ export type FormDataUpdatePathParams = {
     | "siteReports"
     | "financialReports"
     | "disturbanceReports"
-    | "srpReports";
+    | "srpReports"
+    | "organisations";
 };
 
 export type FormDataUpdateError = Fetcher.ErrorWrapper<
@@ -6710,6 +6712,7 @@ export type FormIndexQueryParams = {
     | "application"
     | "disturbance-report"
     | "financial-report"
+    | "organisation"
     | "project"
     | "project-report"
     | "site"

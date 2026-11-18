@@ -96,9 +96,37 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
     />
   ) : null;
 
+  const toolbar = (
+    <ToolbarTable
+      className={classNames(
+        "!px-6 !pb-6 !pt-5",
+        embeddedInProject
+          ? "sticky top-[5.5625rem] z-10 border-b border-theme-neutral-300 !bg-theme-neutral-100 mobile:top-[7.8125rem]"
+          : "!bg-theme-neutral-200"
+      )}
+      classNameContentLeft={embeddedInProject ? "min-w-0 flex-1 !shrink" : "w-full"}
+      classNameContentSearch="w-[19rem] max-w-full mobile:w-auto mobile:min-w-0 mobile:flex-1"
+      search={{
+        placeholder: t("Search"),
+        options: [],
+        displayResults: "none",
+        count: nurseryCount,
+        label: nurseryCount === 1 ? t("Nursery") : t("Nurseries"),
+        onQueryChange
+      }}
+      selectedFilters={activeFilterLabels}
+      showClearFilters={activeFilterLabels.length > 0}
+      onClickFilterButton={() => setIsFilterDrawerOpen(true)}
+      onClearFilters={() => onApplyFilters([], [])}
+      button={embeddedInProject ? addNurseryButton : undefined}
+    />
+  );
+
   return (
     <>
-      {embeddedInProject ? null : (
+      {embeddedInProject ? (
+        toolbar
+      ) : (
         <>
           <ToolbarObject
             className="sticky top-0 z-20 !px-6"
@@ -113,46 +141,26 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
               ]
             }}
           />
-          <PageHeader
-            className=" !bg-theme-neutral-100 !pb-0 !pt-1"
-            title={t("Nurseries")}
-            actions={
-              isMobile ? (
-                <Button size="small" {...addNurseryButton} />
-              ) : (
-                <Flex gap={4} alignItems="center">
-                  {viewSelector}
+          <Box className="sticky top-11 z-10">
+            <PageHeader
+              className=" !bg-theme-neutral-100 !pb-0 !pt-1"
+              title={t("Nurseries")}
+              actions={
+                isMobile ? (
                   <Button size="small" {...addNurseryButton} />
-                </Flex>
-              )
-            }
-          />
-          {isMobile && viewSelector != null && <Box className="bg-theme-neutral-100 px-6 pt-4">{viewSelector}</Box>}
+                ) : (
+                  <Flex gap={4} alignItems="center">
+                    {viewSelector}
+                    <Button size="small" {...addNurseryButton} />
+                  </Flex>
+                )
+              }
+            />
+            {isMobile && viewSelector != null && <Box className="bg-theme-neutral-100 px-6 pt-4">{viewSelector}</Box>}
+            {toolbar}
+          </Box>
         </>
       )}
-      <ToolbarTable
-        className={classNames(
-          "sticky z-10 !px-6 !pb-6 !pt-5",
-          embeddedInProject
-            ? "top-[5.5625rem] border-b border-theme-neutral-300 !bg-theme-neutral-100 mobile:top-[7.8125rem]"
-            : "top-11 !bg-theme-neutral-200"
-        )}
-        classNameContentLeft={embeddedInProject ? "min-w-0 flex-1 !shrink" : "w-full"}
-        classNameContentSearch="w-[19rem] max-w-full mobile:w-auto mobile:min-w-0 mobile:flex-1"
-        search={{
-          placeholder: t("Search"),
-          options: [],
-          displayResults: "none",
-          count: nurseryCount,
-          label: nurseryCount === 1 ? t("Nursery") : t("Nurseries"),
-          onQueryChange
-        }}
-        selectedFilters={activeFilterLabels}
-        showClearFilters={activeFilterLabels.length > 0}
-        onClickFilterButton={() => setIsFilterDrawerOpen(true)}
-        onClearFilters={() => onApplyFilters([], [])}
-        button={embeddedInProject ? addNurseryButton : undefined}
-      />
       <NurseriesFilterDrawer
         open={isFilterDrawerOpen}
         statuses={statuses}

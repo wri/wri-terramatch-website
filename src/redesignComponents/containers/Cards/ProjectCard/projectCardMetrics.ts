@@ -15,12 +15,10 @@ export const getProjectCardMetrics = (
   framework: Framework,
   project: ProjectCardProject
 ): ProjectCardMetric[] => {
-  // Fundo Flora tracks its tree and job goals in different fields (same as the project page).
-  const isFundoFlora = framework === Framework.FUNDO_FLORA;
   const treesPlanted = project.treesPlantedCount ?? 0;
-  const treesGoal = (isFundoFlora ? project.treesPlantedGoal : project.treesGrownGoal) ?? 0;
+  const treesGoal = project.treesGrownGoal ?? 0;
   const trees = { key: "trees", Icon: TreeIcon, color: TREES_COLOR, value: treesPlanted, goal: treesGoal };
-  const jobsGoal = (isFundoFlora ? project.fullTimeJobsGoal : project.jobsCreatedGoal) ?? 0;
+  const jobsGoal = project.jobsCreatedGoal ?? 0;
   const treesGrowing = treesPlanted + project.seedsPlantedCount + project.regeneratedTreesCount;
   const area: ProjectCardMetric = {
     key: "area",

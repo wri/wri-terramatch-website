@@ -348,9 +348,9 @@ const TeamTabContent: FC = () => {
   );
 
   return (
-    <Flex direction="column" paddingX={6} paddingTop={3} paddingBottom={8} minHeight="644px" width="100%">
+    <Flex direction="column" paddingX={6} paddingTop={2} paddingBottom={8} minHeight="644px" width="100%">
       <ToolbarTable
-        className="mb-7 mt-3 !px-0"
+        className="sticky top-[5.3125rem] z-10 -mx-6 mb-3 !px-6 !py-4 mobile:top-[6.8125rem]"
         classNameContentLeft="min-w-0"
         onClearFilters={() => {
           setSelectedStatus(null);

@@ -40,7 +40,7 @@ const TableCell: React.FC<TableCellProps> = ({
           <Flex>
             {visibleAvatars.map(avatar => (
               <div key={avatar.name} className="h-6 w-4">
-                <div className="absolute z-10">
+                <div className="absolute">
                   <Avatar key={avatar.name} {...avatar} size="small" />
                 </div>
               </div>

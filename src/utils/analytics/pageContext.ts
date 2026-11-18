@@ -4,6 +4,7 @@ export type PageContext = string;
 export const PAGE_CONTEXT_REPORT_OVERVIEW = "report_overview";
 export const PAGE_CONTEXT_REPORTS_INDEX = "reports_index";
 export const PAGE_CONTEXT_POLYGONS_INDEX = "polygons_index";
+export const PAGE_CONTEXT_SIDE_NAVIGATION = "side_navigation";
 
 export const ACCORDION_CONTEXT_REPORT_DETAILS = "report_details";
 export const ACCORDION_CONTEXT_REPORTING_PERIOD_GROUP = "reporting_period_group";

@@ -15,13 +15,11 @@ const DEFAULT_PROJECT: ProjectCardProject = {
   seedsPlantedCount: 0,
   regeneratedTreesCount: 0,
   treesGrownGoal: 200000,
-  treesPlantedGoal: 0,
   totalHectaresRestoredSum: 600,
   totalHectaresRestoredGoal: 1000,
   combinedWorkdayCount: 0,
   totalJobsCreated: 300,
   jobsCreatedGoal: 500,
-  fullTimeJobsGoal: 0,
   totalSites: 12,
   totalNurseries: 4,
   totalProjectReports: 3

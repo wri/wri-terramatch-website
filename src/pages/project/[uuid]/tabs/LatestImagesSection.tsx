@@ -4,7 +4,7 @@ import { FC, useCallback, useMemo } from "react";
 
 import Loader from "@/components/generic/Loading/Loader";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
-import ImageGalleryCard from "@/redesignComponents/content/ContentCard/ImageGalleryCard/ImageGalleryCard";
+import ImageGalleryCard from "@/redesignComponents/containers/Cards/ImageGalleryCard/ImageGalleryCard";
 import { HookProps } from "@/types/connection";
 
 const DEFAULT_LATEST_IMAGES_PAGE_SIZE = 4;

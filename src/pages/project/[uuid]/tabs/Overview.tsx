@@ -19,7 +19,7 @@ import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler"
 import { SITE_POLYGON_MAP_INITIAL_HEIGHT } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import type { ButtonGroupButtonProps } from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
-import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
+import ProfileListCard from "@/redesignComponents/containers/Cards/ProfileListCard/ProfileListCard";
 import { ChevronRightIcon, DownloadIcon, SiteIcon } from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
 
