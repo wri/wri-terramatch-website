@@ -9,6 +9,7 @@ import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import { ChevronDownIcon, MoreVertIcon, PlusIcon } from "@/redesignComponents/foundations/Icons";
 import Badge from "@/redesignComponents/status/Badge/Badge";
 import NumberBadge from "@/redesignComponents/status/Badge/NumberBadge";
+import { SideNavItem } from "@/utils/analytics/sideNavigationAnalytics";
 
 import SideNavigationLinkItem from "./SideNavigationLinkItem";
 
@@ -25,6 +26,7 @@ type SideNavigationChildItem = {
 const actionButtonClassName = "min-h-0 min-w-0 h-fit";
 
 interface SideNavigationItemProps {
+  navItem?: SideNavItem;
   icon?: ReactNode;
   label?: string;
   notificationValue?: number;
@@ -50,6 +52,7 @@ const interactiveItemProps = {
 
 const SideNavigationItem: FC<SideNavigationItemProps> = props => {
   const {
+    navItem,
     icon,
     label = "",
     notificationValue = 0,
@@ -191,6 +194,7 @@ const SideNavigationItem: FC<SideNavigationItemProps> = props => {
   if (hasHref) {
     return (
       <SideNavigationLinkItem
+        navItem={navItem}
         icon={icon}
         label={label}
         href={href}

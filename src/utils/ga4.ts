@@ -63,6 +63,12 @@ export type ReportsIndexEventName =
   | "attention_count_displayed"
   | "add_disturbance_report_clicked";
 
+export type SideNavigationEventName =
+  | "side_nav_displayed"
+  | "side_nav_toggled"
+  | "side_nav_item_clicked"
+  | "side_nav_tooltip_viewed";
+
 export type Ga4EntityType = "project" | "site" | "nursery" | "unknown";
 
 type Ga4EventParams = Record<string, string | number | boolean | null | undefined>;
@@ -185,6 +191,10 @@ export const trackOnboardingCardEvent = (eventName: OnboardingCardEventName, par
 };
 
 export const trackReportsIndexEvent = (eventName: ReportsIndexEventName, params: Ga4EventParams): void => {
+  trackGa4Event(eventName, params);
+};
+
+export const trackSideNavigationEvent = (eventName: SideNavigationEventName, params: Ga4EventParams): void => {
   trackGa4Event(eventName, params);
 };
 
