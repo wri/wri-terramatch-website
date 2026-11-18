@@ -6,7 +6,7 @@ import { TranslatedText } from "@/i18n/types";
 import ProfileListCard, { IProfile } from "./ProfileListCard";
 
 const meta: Meta<typeof ProfileListCard> = {
-  title: "Redesign Components/Content/Content Card/Profile List Card",
+  title: "Redesign Components/Containers/Cards/Profile List Card",
   component: ProfileListCard,
   tags: ["autodocs"],
   parameters: {
@@ -72,9 +72,6 @@ const sampleProfiles: IProfile[] = [
   }
 ];
 
-/**
- * Default profile list card with multiple profiles
- */
 export const Default: Story = {
   args: {
     onInviteClick: () => {},
@@ -96,9 +93,6 @@ export const Default: Story = {
   }
 };
 
-/**
- * Profile list card with a single profile
- */
 export const SingleProfile: Story = {
   args: {
     onInviteClick: () => {},
@@ -118,9 +112,6 @@ export const SingleProfile: Story = {
   }
 };
 
-/**
- * Profile list card with many profiles
- */
 export const ManyProfiles: Story = {
   args: {
     onInviteClick: () => {},
@@ -170,9 +161,6 @@ export const ManyProfiles: Story = {
   }
 };
 
-/**
- * Profile list card with profiles without images (showing initials)
- */
 export const ProfilesWithoutImages: Story = {
   args: {
     onInviteClick: () => {},
@@ -202,9 +190,6 @@ export const ProfilesWithoutImages: Story = {
   }
 };
 
-/**
- * Profile list card with no profiles (empty state)
- */
 export const NoData: Story = {
   args: {
     onInviteClick: () => {},

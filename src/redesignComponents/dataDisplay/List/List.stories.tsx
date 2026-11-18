@@ -1,7 +1,7 @@
 import { Flex } from "@chakra-ui/react";
 import type { Meta, StoryObj } from "@storybook/react";
 
-import ProfileItem from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileItem";
+import ProfileItem from "@/redesignComponents/containers/Cards/ProfileListCard/ProfileItem";
 
 import { TreeCircleIcon, UserIcon } from "../../foundations/Icons";
 import List from "./List";
