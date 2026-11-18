@@ -87,7 +87,7 @@ const OrganisationHeader: FC<OrganisationHeaderProps> = ({
             src={logoSrc}
             alt={name}
             onClickEdit={onLogoClick}
-            className="bg-theme-neutral-100 !border-0"
+            className="!border-0 bg-theme-neutral-100"
           />
         )}
 
