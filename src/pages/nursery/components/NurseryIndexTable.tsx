@@ -5,7 +5,7 @@ import { FC, useCallback, useMemo } from "react";
 
 import DownloadActionCell from "@/components/extensive/EntityIndex/DownloadActionCell";
 import EntityUpdateStatus from "@/components/extensive/EntityIndex/EntityUpdateStatus";
-import { stopRowClick } from "@/components/extensive/EntityIndex/stopRowClick";
+import { stopInteractiveClick, stopRowClick } from "@/components/extensive/EntityIndex/stopRowClick";
 import { useDate } from "@/hooks/useDate";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
@@ -109,7 +109,7 @@ const NurseryIndexTable: FC<{ nurseries: NurseryIndexRow[]; embeddedInProject: b
               className="rounded bg-theme-neutral-200"
             />
           </ChakraTableCell>
-          <ChakraTableCell {...context?.getCellProps("actions")} onClick={stopRowClick}>
+          <ChakraTableCell {...context?.getCellProps("actions")} onClick={stopInteractiveClick}>
             {isMobile ? (
               <DownloadActionCell
                 ariaLabel={t("Download {nursery}", { nursery: nursery.name ?? t("Nursery") })}
