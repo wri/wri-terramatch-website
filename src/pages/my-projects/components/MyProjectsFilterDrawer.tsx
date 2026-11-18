@@ -1,14 +1,12 @@
 import { useT } from "@transifex/react";
 import { union, without } from "lodash";
-import { type FC, useEffect, useMemo, useState } from "react";
+import { type FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import FilterCard from "@/redesignComponents/containers/FilterPanel/FilterPanelElements/FilterCards";
 import IndexFilterDrawer from "@/redesignComponents/containers/FilterPanel/IndexFilterDrawer";
 import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
 
 import { MyProjectsFilterOption } from "../myProjectsFilters";
-
-type CheckboxChange = { checked?: boolean | "indeterminate" };
 
 const STATUS_TAG_PREFIX = "status-";
 const PLANTING_TAG_PREFIX = "planting-";
@@ -35,9 +33,7 @@ const FilterCheckboxGroup: FC<FilterCheckboxGroupProps> = ({ label, name, option
         name={`${name}-${value}`}
         value={value}
         checked={values.includes(value)}
-        onCheckedChange={({ checked }: CheckboxChange) =>
-          onChange(checked === true ? union(values, [value]) : without(values, value))
-        }
+        onCheckedChange={({ checked }) => onChange(checked === true ? union(values, [value]) : without(values, value))}
       >
         {title}
       </Checkbox>
@@ -82,13 +78,23 @@ const MyProjectsFilterDrawer: FC<MyProjectsFilterDrawerProps> = ({
     [draftPlantingStatuses, draftStatuses, plantingStatusOptions, statusOptions]
   );
 
-  const removeFilterTag = (id: string) => {
+  const removeFilterTag = useCallback((id: string) => {
     if (id.startsWith(STATUS_TAG_PREFIX)) {
       setDraftStatuses(current => without(current, id.slice(STATUS_TAG_PREFIX.length)));
     } else {
       setDraftPlantingStatuses(current => without(current, id.slice(PLANTING_TAG_PREFIX.length)));
     }
-  };
+  }, []);
+
+  const clearDraftFilters = useCallback(() => {
+    setDraftStatuses([]);
+    setDraftPlantingStatuses([]);
+  }, []);
+
+  const applyDraftFilters = useCallback(
+    () => onApplyFilters(draftStatuses, draftPlantingStatuses),
+    [draftPlantingStatuses, draftStatuses, onApplyFilters]
+  );
 
   return (
     <IndexFilterDrawer
@@ -96,11 +102,8 @@ const MyProjectsFilterDrawer: FC<MyProjectsFilterDrawerProps> = ({
       onOpenChange={onOpenChange}
       tags={activeFilterTags}
       onRemoveTag={removeFilterTag}
-      onClear={() => {
-        setDraftStatuses([]);
-        setDraftPlantingStatuses([]);
-      }}
-      onApply={() => onApplyFilters(draftStatuses, draftPlantingStatuses)}
+      onClear={clearDraftFilters}
+      onApply={applyDraftFilters}
       drawerMaxW="22rem"
     >
       <FilterCheckboxGroup

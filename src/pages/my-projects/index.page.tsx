@@ -4,12 +4,13 @@ import classNames from "classnames";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
+import ProjectCard from "@/redesignComponents/content/ContentCard/ProjectCard/ProjectCard";
+import { mapPlantingStatusToProgressState } from "@/redesignComponents/content/headers/PageHeaders/ProjectHeader/projectHeader.utils";
 import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import { DEFAULT_PAGE_SIZE } from "@/redesignComponents/dataDisplay/Table/tableUtils";
 import PaginationTable from "@/redesignComponents/navigation/Pagination/PaginationTable";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 
-import MyProjectCard from "./components/MyProjectCard";
 import MyProjectsHeader from "./components/MyProjectsHeader";
 import { MOCK_MY_PROJECTS } from "./myProjects.mock";
 
@@ -31,9 +32,10 @@ const MyProjectsPage: FC = () => {
     const search = query.trim().toLowerCase();
     return projects.filter(
       project =>
-        (search === "" || project.name.toLowerCase().includes(search)) &&
+        (search === "" || (project.name ?? "").toLowerCase().includes(search)) &&
         (statuses.length === 0 || statuses.includes(project.status)) &&
-        (plantingStatuses.length === 0 || plantingStatuses.includes(project.plantingStatus))
+        (plantingStatuses.length === 0 ||
+          plantingStatuses.includes(mapPlantingStatusToProgressState(project.plantingStatus) ?? "not-available"))
     );
   }, [plantingStatuses, projects, query, statuses]);
 
@@ -76,11 +78,11 @@ const MyProjectsPage: FC = () => {
         ) : (
           <Box className="grid grid-cols-2 gap-6 mobile:grid-cols-1">
             {pageProjects.map(project => (
-              <MyProjectCard key={project.uuid} project={project} />
+              <ProjectCard key={project.uuid} project={project} />
             ))}
           </Box>
         )}
-        {showToolbar && filteredProjects.length > 0 && (
+        {filteredProjects.length > pageSize && (
           <PaginationTable
             pageSize={pageSize}
             currentPage={currentPage}

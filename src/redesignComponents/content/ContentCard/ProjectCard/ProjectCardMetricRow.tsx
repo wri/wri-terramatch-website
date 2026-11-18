@@ -5,6 +5,7 @@ import { ComponentType, FC, ReactNode } from "react";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import ProgressBar from "@/redesignComponents/dataDisplay/Metrics/ProgressBar";
 import { InfoIcon } from "@/redesignComponents/foundations/Icons";
+import { formatNumberLocaleString } from "@/utils/dashboardUtils";
 
 export interface ProjectCardMetric {
   key: string;
@@ -44,11 +45,11 @@ const ProjectCardMetricRow: FC<ProjectCardMetricRowProps> = ({
         {goal != null && <ProgressBar progress={goal > 0 ? (value / goal) * 100 : 0} width="3.75rem" color={color} />}
         <Flex alignItems="center" gap={0.5} whiteSpace="nowrap">
           <Text textStyle="300-bold" color="neutral.900">
-            {value.toLocaleString()}
+            {formatNumberLocaleString(value)}
           </Text>
           {goal != null && (
             <Text textStyle="300" color="neutral.800">
-              {t("of {goal}", { goal: goal.toLocaleString() })}
+              {t("of {goal}", { goal: formatNumberLocaleString(goal) })}
             </Text>
           )}
         </Flex>

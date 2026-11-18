@@ -1,47 +1,31 @@
 import { Box } from "@chakra-ui/react";
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { AreaHectaresIcon, JobsIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
+import ProjectCard, { ProjectCardProject } from "./ProjectCard";
 
-import ProjectCard from "./ProjectCard";
-import { ProjectCardMetric } from "./ProjectCardMetricRow";
-
-const buildMetrics = (
-  trees: number,
-  treesGoal: number,
-  area: number,
-  areaGoal: number,
-  jobs: number,
-  jobsGoal?: number
-): ProjectCardMetric[] => [
-  {
-    key: "trees",
-    Icon: TreeIcon,
-    label: "Trees Planted:",
-    color: "secondary.600",
-    value: trees,
-    goal: treesGoal,
-    tooltipContent: "This is the sum of trees planted in this project’s site reports."
-  },
-  {
-    key: "area",
-    Icon: AreaHectaresIcon,
-    label: "Area Restored (ha):",
-    color: "secondary.800",
-    value: area,
-    goal: areaGoal,
-    tooltipContent: "Number of hectares within approved polygons for this project."
-  },
-  {
-    key: "jobs",
-    Icon: JobsIcon,
-    label: jobsGoal == null ? "Workdays" : "Jobs Created:",
-    color: "primary.600",
-    value: jobs,
-    goal: jobsGoal,
-    tooltipContent: "This is the sum of jobs or workdays in all approved reports for this project."
-  }
-];
+const DEFAULT_PROJECT: ProjectCardProject = {
+  uuid: "story-project",
+  name: "Project Title",
+  frameworkKey: "terrafund-non-profits",
+  organisationName: "Organization Name",
+  status: "approved",
+  plantingStatus: "in-progress",
+  level0Project: ["KEN"],
+  treesPlantedCount: 120000,
+  seedsPlantedCount: 0,
+  regeneratedTreesCount: 0,
+  treesGrownGoal: 200000,
+  treesPlantedGoal: 0,
+  totalHectaresRestoredSum: 600,
+  totalHectaresRestoredGoal: 1000,
+  combinedWorkdayCount: 0,
+  totalJobsCreated: 300,
+  jobsCreatedGoal: 500,
+  fullTimeJobsGoal: 0,
+  totalSites: 12,
+  totalNurseries: 4,
+  totalProjectReports: 3
+};
 
 const meta: Meta<typeof ProjectCard> = {
   title: "Redesign Components/Content/Content Card/Project Card",
@@ -49,29 +33,6 @@ const meta: Meta<typeof ProjectCard> = {
   tags: ["autodocs"],
   parameters: {
     layout: "padded"
-  },
-  argTypes: {
-    status: {
-      control: "select",
-      options: ["draft", "pending-approval", "information-required", "approved"],
-      description: "Set up status of the project"
-    },
-    plantingStatus: {
-      control: "select",
-      options: [null, "not-started", "in-progress", "completed", "not-available"],
-      description: "Planting progress; `null` falls back to the Not Available tag"
-    },
-    nurseriesCount: {
-      description: "Omit for frameworks without nurseries to hide the nurseries link"
-    },
-    hasReports: {
-      control: "boolean",
-      description: "The reports link is disabled until the project has reports"
-    },
-    onSitesClick: { action: "sitesClick" },
-    onNurseriesClick: { action: "nurseriesClick" },
-    onReportsClick: { action: "reportsClick" },
-    onViewProjectClick: { action: "viewProjectClick" }
   },
   decorators: [
     Story => (
@@ -86,49 +47,48 @@ export default meta;
 type Story = StoryObj<typeof ProjectCard>;
 
 export const Default: Story = {
-  args: {
-    title: "Project Title",
-    organisationName: "Organization Name",
-    programmeName: "TerraFund Top 100",
-    country: "Kenya",
-    countryFlag: "🇰🇪",
-    imageUrl: "https://i.pravatar.cc/300?img=12",
-    status: "approved",
-    plantingStatus: "in-progress",
-    metrics: buildMetrics(120000, 200000, 600, 1000, 300, 500),
-    sitesCount: 12,
-    nurseriesCount: 4,
-    hasReports: true
-  }
+  args: { project: DEFAULT_PROJECT }
 };
 
-export const NoGoalMetricAndNoNurseries: Story = {
+export const PpcWorkdaysAndNoNurseries: Story = {
   args: {
-    ...Default.args,
-    programmeName: "PPC",
-    plantingStatus: "not-started",
-    metrics: buildMetrics(0, 200000, 0, 1000, 0),
-    nurseriesCount: undefined,
-    hasReports: false
+    project: {
+      ...DEFAULT_PROJECT,
+      frameworkKey: "ppc",
+      plantingStatus: "not-started",
+      treesPlantedCount: 0,
+      totalHectaresRestoredSum: 0,
+      combinedWorkdayCount: 0,
+      totalNurseries: 0,
+      totalProjectReports: 0
+    }
   }
 };
 
 export const LongTitle: Story = {
   args: {
-    ...Default.args,
-    title: "Ecosystem and livelihoods enhancement for People, Nature and Climate in the Kenyan Rift Valley"
+    project: {
+      ...DEFAULT_PROJECT,
+      name: "Ecosystem and livelihoods enhancement for People, Nature and Climate in the Kenyan Rift Valley"
+    }
   }
 };
 
 export const Draft: Story = {
   args: {
-    ...Default.args,
-    imageUrl: null,
-    status: "draft",
-    plantingStatus: null,
-    metrics: buildMetrics(0, 0, 0, 0, 0, 0),
-    sitesCount: 0,
-    nurseriesCount: 0,
-    hasReports: false
+    project: {
+      ...DEFAULT_PROJECT,
+      status: "draft",
+      plantingStatus: null,
+      treesPlantedCount: null,
+      treesGrownGoal: null,
+      totalHectaresRestoredSum: 0,
+      totalHectaresRestoredGoal: null,
+      totalJobsCreated: 0,
+      jobsCreatedGoal: null,
+      totalSites: 0,
+      totalNurseries: 0,
+      totalProjectReports: 0
+    }
   }
 };

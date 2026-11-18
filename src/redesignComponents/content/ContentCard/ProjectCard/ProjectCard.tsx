@@ -1,12 +1,21 @@
 import { Box, Flex, IconProps, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { ComponentType, FC, Fragment } from "react";
+import { useRouter } from "next/router";
+import { ComponentType, FC, Fragment, useCallback, useMemo } from "react";
 import Twemoji from "react-twemoji";
-import { twMerge } from "tailwind-merge";
 
+import { useMedia } from "@/connections/EntityAssociation";
+import { useGadmOptions } from "@/connections/Gadm";
+import { useReportingFramework } from "@/connections/ReportingFramework";
+import { shouldHideNurseries, useFramework } from "@/context/framework.provider";
+import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import ProgressTag, { ProgressState } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
-import TagSubmission, { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import ProgressTag from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
+import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import {
+  countryCodeToFlag,
+  mapPlantingStatusToProgressState
+} from "@/redesignComponents/content/headers/PageHeaders/ProjectHeader/projectHeader.utils";
 import {
   ChevronRightIcon,
   NurseryIcon,
@@ -18,9 +27,36 @@ import {
 import EllipsisDivider from "@/redesignComponents/miscellaneous/Dividers/EllipsisDivider";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 import { isNotNull } from "@/utils/array";
+import { formatOptionsList } from "@/utils/options";
 
 import ProjectCardImage from "./ProjectCardImage";
-import ProjectCardMetricRow, { ProjectCardMetric } from "./ProjectCardMetricRow";
+import ProjectCardMetricRow from "./ProjectCardMetricRow";
+import { getProjectCardMetrics } from "./projectCardMetrics";
+
+export type ProjectCardProject = Pick<
+  ProjectFullDto,
+  | "uuid"
+  | "name"
+  | "frameworkKey"
+  | "organisationName"
+  | "status"
+  | "plantingStatus"
+  | "level0Project"
+  | "treesPlantedCount"
+  | "seedsPlantedCount"
+  | "regeneratedTreesCount"
+  | "treesGrownGoal"
+  | "treesPlantedGoal"
+  | "totalHectaresRestoredSum"
+  | "totalHectaresRestoredGoal"
+  | "combinedWorkdayCount"
+  | "totalJobsCreated"
+  | "jobsCreatedGoal"
+  | "fullTimeJobsGoal"
+  | "totalSites"
+  | "totalNurseries"
+  | "totalProjectReports"
+>;
 
 type CardAction = {
   key: string;
@@ -31,65 +67,52 @@ type CardAction = {
 };
 
 export interface ProjectCardProps {
-  title: string;
-  organisationName: string;
-  programmeName: string;
-  country: string;
-  countryFlag?: string;
-  imageUrl?: string | null;
-  status: TagSubmissionState;
-  plantingStatus?: ProgressState | null;
-  metrics: ProjectCardMetric[];
-  sitesCount: number;
-  nurseriesCount?: number;
-  hasReports: boolean;
-  onSitesClick?: () => void;
-  onNurseriesClick?: () => void;
-  onReportsClick?: () => void;
-  onViewProjectClick?: () => void;
-  className?: string;
+  project: ProjectCardProject;
 }
 
-const ProjectCard: FC<ProjectCardProps> = ({
-  title,
-  organisationName,
-  programmeName,
-  country,
-  countryFlag,
-  imageUrl,
-  status,
-  plantingStatus,
-  metrics,
-  sitesCount,
-  nurseriesCount,
-  hasReports,
-  onSitesClick,
-  onNurseriesClick,
-  onReportsClick,
-  onViewProjectClick,
-  className
-}) => {
+const ProjectCard: FC<ProjectCardProps> = ({ project }) => {
   const t = useT();
+  const router = useRouter();
+  const framework = useFramework(project.frameworkKey);
+  const countryOptions = useGadmOptions({ level: 0 });
+  const [, { data: reportingFramework }] = useReportingFramework({ frameworkKey: project.frameworkKey ?? undefined });
+  const [, { data: coverImage }] = useMedia({ entity: "projects", uuid: project.uuid, filter: { isCover: true } });
 
-  const actions: CardAction[] = [
-    {
-      key: "sites",
-      Icon: SiteIcon,
-      label: t("{count} Sites", { count: sitesCount }),
-      disabled: sitesCount === 0,
-      onClick: onSitesClick
-    },
-    nurseriesCount == null
-      ? undefined
-      : {
-          key: "nurseries",
-          Icon: NurseryIcon,
-          label: t("{count} Nurseries", { count: nurseriesCount }),
-          disabled: nurseriesCount === 0,
-          onClick: onNurseriesClick
+  const title = project.name ?? "-";
+  const countryFlag = countryCodeToFlag(project.level0Project);
+  const projectPath = `/project/${project.uuid}`;
+  const metrics = useMemo(() => getProjectCardMetrics(t, framework, project), [framework, project, t]);
+  const handleViewProjectClick = useCallback(() => void router.push(projectPath), [projectPath, router]);
+
+  const actions = useMemo<CardAction[]>(
+    () =>
+      [
+        {
+          key: "sites",
+          Icon: SiteIcon,
+          label: t("{count} Sites", { count: project.totalSites }),
+          disabled: project.totalSites === 0,
+          onClick: () => void router.push(`${projectPath}?tab=sites`)
         },
-    { key: "reports", Icon: ReportsIcon, label: t("Reports"), disabled: !hasReports, onClick: onReportsClick }
-  ].filter(isNotNull);
+        shouldHideNurseries(framework)
+          ? undefined
+          : {
+              key: "nurseries",
+              Icon: NurseryIcon,
+              label: t("{count} Nurseries", { count: project.totalNurseries }),
+              disabled: project.totalNurseries === 0,
+              onClick: () => void router.push(`${projectPath}?tab=nurseries`)
+            },
+        {
+          key: "reports",
+          Icon: ReportsIcon,
+          label: t("Reports"),
+          disabled: project.totalProjectReports === 0,
+          onClick: () => void router.push(`${projectPath}?tab=reports`)
+        }
+      ].filter(isNotNull),
+    [framework, project.totalNurseries, project.totalProjectReports, project.totalSites, projectPath, router, t]
+  );
 
   return (
     <Flex
@@ -99,39 +122,39 @@ const ProjectCard: FC<ProjectCardProps> = ({
       bg="secondary.neutral"
       borderRadius="0.5rem"
       boxShadow="xs"
-      className={twMerge("overflow-hidden", className)}
+      overflow="hidden"
     >
       <Flex gap={3} paddingX={4} paddingTop={3} paddingBottom={4}>
-        <ProjectCardImage imageUrl={imageUrl} alt={title} />
+        <ProjectCardImage imageUrl={coverImage?.thumbUrl} alt={title} />
         <Flex direction="column" justifyContent="flex-end" gap={1} minWidth={0} flex={1}>
-          <Text textStyle="400-bold" color="primary.900" className="truncate" title={title}>
+          <Text textStyle="400-bold" color="primary.900" maxWidth="full" truncate title={title}>
             {title}
           </Text>
           <Flex alignItems="center" columnGap={2} paddingLeft={0.5} paddingBottom={1} flexWrap="wrap">
             <Flex alignItems="center" gap={1}>
               <OrganizationIcon boxSize="0.75rem" color="primary.900" />
               <Text textStyle="300" color="primary.900">
-                {organisationName}
+                {project.organisationName ?? "-"}
               </Text>
             </Flex>
             <EllipsisDivider color="primary.900" />
             <Flex alignItems="center" gap={1}>
               <ProgrammeIcon boxSize="0.75rem" color="primary.900" />
               <Text textStyle="300" color="primary.900">
-                {programmeName}
+                {reportingFramework?.name ?? "-"}
               </Text>
             </Flex>
             <EllipsisDivider color="primary.900" />
             <Flex alignItems="center" gap={1}>
-              {countryFlag != null && <Twemoji options={{ className: "h-3 w-3" }}>{countryFlag}</Twemoji>}
+              {countryFlag !== "" && <Twemoji options={{ className: "h-3 w-3" }}>{countryFlag}</Twemoji>}
               <Text textStyle="300" color="primary.900">
-                {country}
+                {formatOptionsList(countryOptions ?? [], project.level0Project ?? [])}
               </Text>
             </Flex>
           </Flex>
           <Flex gap={2} paddingTop={0.5} flexWrap="wrap">
-            <TagSubmission state={status} size="small" />
-            <ProgressTag state={plantingStatus ?? "not-available"} />
+            <TagSubmission state={project.status} size="small" />
+            <ProgressTag state={mapPlantingStatusToProgressState(project.plantingStatus) ?? "not-available"} />
           </Flex>
         </Flex>
       </Flex>
@@ -184,7 +207,7 @@ const ProjectCard: FC<ProjectCardProps> = ({
           variant="primary"
           size="small"
           rightIcon={<ChevronRightIcon boxSize="0.625rem" />}
-          onClick={onViewProjectClick}
+          onClick={handleViewProjectClick}
         >
           {t("View Project")}
         </Button>

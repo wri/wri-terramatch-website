@@ -1,10 +1,10 @@
 import { useT } from "@transifex/react";
 
 import { Framework } from "@/context/framework.provider";
-import { ProjectCardMetric } from "@/redesignComponents/content/ContentCard/ProjectCard/ProjectCardMetricRow";
 import { AreaHectaresIcon, JobsIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
 
-import { MyProject } from "./myProjects.mock";
+import type { ProjectCardProject } from "./ProjectCard";
+import { ProjectCardMetric } from "./ProjectCardMetricRow";
 
 const TREES_COLOR = "secondary.600";
 const AREA_COLOR = "secondary.800";
@@ -13,30 +13,36 @@ const JOBS_COLOR = "primary.600";
 export const getProjectCardMetrics = (
   t: ReturnType<typeof useT>,
   framework: Framework,
-  project: MyProject
+  project: ProjectCardProject
 ): ProjectCardMetric[] => {
+  // Fundo Flora tracks its tree and job goals in different fields (same as the project page).
+  const isFundoFlora = framework === Framework.FUNDO_FLORA;
+  const treesPlanted = project.treesPlantedCount ?? 0;
   const trees = {
     key: "trees",
     Icon: TreeIcon,
     color: TREES_COLOR,
-    value: project.treesCount,
-    goal: project.treesGoal
+    value: treesPlanted,
+    goal: isFundoFlora ? project.treesPlantedGoal : project.treesGrownGoal ?? 0
   };
+  const jobsGoal = isFundoFlora ? project.fullTimeJobsGoal : project.jobsCreatedGoal ?? 0;
+  const treesGrowing = treesPlanted + project.seedsPlantedCount + project.regeneratedTreesCount;
   const area: ProjectCardMetric = {
     key: "area",
     Icon: AreaHectaresIcon,
     color: AREA_COLOR,
-    value: project.hectaresRestored,
-    goal: project.hectaresGoal,
+    value: project.totalHectaresRestoredSum,
+    goal: project.totalHectaresRestoredGoal ?? 0,
     label: t("Area Restored (ha):"),
     tooltipContent: t("Number of hectares within approved polygons for this project.")
   };
-  const jobs = { key: "jobs", Icon: JobsIcon, color: JOBS_COLOR, value: project.jobsCount };
+  const jobs = { key: "jobs", Icon: JobsIcon, color: JOBS_COLOR, value: project.totalJobsCreated };
 
   if (framework === Framework.PPC) {
     return [
       {
         ...trees,
+        value: treesGrowing,
         label: t("Trees Growing:"),
         tooltipContent: t(
           "This is the sum of trees planted, seeds planted, and estimated trees regenerating, in all approved reports for this project."
@@ -45,6 +51,7 @@ export const getProjectCardMetrics = (
       area,
       {
         ...jobs,
+        value: project.combinedWorkdayCount ?? 0,
         label: t("Workdays"),
         tooltipContent: t(
           "This is the sum of project- and site-level workdays in all approved reports for this project."
@@ -57,6 +64,7 @@ export const getProjectCardMetrics = (
     return [
       {
         ...trees,
+        value: treesGrowing,
         label: t("Saplings Growing:"),
         tooltipContent: t(
           "This is the sum of trees planted, seeds planted, and trees regenerating, in all approved reports for this project."
@@ -65,7 +73,7 @@ export const getProjectCardMetrics = (
       area,
       {
         ...jobs,
-        goal: project.jobsGoal,
+        goal: jobsGoal,
         label: t("Jobs Created:"),
         tooltipContent: t("This is the sum of full-time and part-time jobs in all approved reports for this project.")
       }
@@ -81,7 +89,7 @@ export const getProjectCardMetrics = (
     area,
     {
       ...jobs,
-      goal: project.jobsGoal,
+      goal: jobsGoal,
       label: t("Jobs Created:"),
       tooltipContent: t(
         "This is the sum of full-time and part-time jobs in all approved project reports for this project."
