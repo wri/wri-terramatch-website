@@ -5,7 +5,7 @@ import { FC, useCallback, useMemo } from "react";
 
 import DownloadActionCell from "@/components/extensive/EntityIndex/DownloadActionCell";
 import EntityUpdateStatus from "@/components/extensive/EntityIndex/EntityUpdateStatus";
-import { stopRowClick } from "@/components/extensive/EntityIndex/stopRowClick";
+import { stopInteractiveClick, stopRowClick } from "@/components/extensive/EntityIndex/stopRowClick";
 import { useDate } from "@/hooks/useDate";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -157,7 +157,7 @@ const ReportsIndexTable: FC<{
               />
             )}
           </ChakraTableCell>
-          <ChakraTableCell {...context?.getCellProps("actions")} onClick={stopRowClick}>
+          <ChakraTableCell {...context?.getCellProps("actions")} onClick={stopInteractiveClick}>
             {isMobile ? (
               <DownloadActionCell onDownload={() => downloadReports([report], t)} />
             ) : (
