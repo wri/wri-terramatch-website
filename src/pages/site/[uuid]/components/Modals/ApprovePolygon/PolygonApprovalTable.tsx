@@ -1,4 +1,4 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useMemo } from "react";
 
@@ -37,37 +37,45 @@ const PolygonApprovalTable: FC<PolygonApprovalTableProps> = ({
     return showArea ? [...baseColumns, { key: "area", label: t("Total Area") }] : baseColumns;
   }, [showArea, t]);
 
+  // The shared Table always slices its data to one page, even with showPagination={false}.
+  // Size the page to the full list so every polygon is rendered and selectable (select-all included).
+  const pageSize = Math.max(polygons.length, 1);
+
   return (
-    <Table
-      css={POLYGON_APPROVAL_TABLE_CSS}
-      variant="full-width"
-      data={polygons}
-      showPagination={false}
-      showItemCount={false}
-      selectable={selectable}
-      {...(selectable ? { selectedRows, onRowSelected, onAllItemsSelected } : {})}
-      columns={columns}
-      renderDataCell={(row, columnKey) => {
-        if (columnKey === "validation") {
-          return row.validation != null ? <ValidationTag status={row.validation} /> : <Text>—</Text>;
-        }
-        if (columnKey === "area") {
+    <Box maxH="20rem" overflowY="auto" maxW="100%">
+      <Table
+        key={pageSize}
+        css={POLYGON_APPROVAL_TABLE_CSS}
+        variant="full-width"
+        data={polygons}
+        pageSize={pageSize}
+        showPagination={false}
+        showItemCount={false}
+        selectable={selectable}
+        {...(selectable ? { selectedRows, onRowSelected, onAllItemsSelected } : {})}
+        columns={columns}
+        renderDataCell={(row, columnKey) => {
+          if (columnKey === "validation") {
+            return row.validation != null ? <ValidationTag status={row.validation} /> : <Text>—</Text>;
+          }
+          if (columnKey === "area") {
+            return (
+              <Flex className="items-center gap-1.5">
+                <AreaHectaresCircleIcon boxSize={5} />
+                <Text textStyle="400" color="neutral.800">
+                  {formatNumberLocaleString(row.area) ?? "—"} ha
+                </Text>
+              </Flex>
+            );
+          }
           return (
-            <Flex className="items-center gap-1.5">
-              <AreaHectaresCircleIcon boxSize={5} />
-              <Text textStyle="400" color="neutral.800">
-                {formatNumberLocaleString(row.area) ?? "—"} ha
-              </Text>
-            </Flex>
+            <Text textStyle="400" color="neutral.800" maxW="12rem" truncate>
+              {row.polygonName ?? "—"}
+            </Text>
           );
-        }
-        return (
-          <Text textStyle="400" color="neutral.800" maxW="12rem" truncate>
-            {row.polygonName ?? "—"}
-          </Text>
-        );
-      }}
-    />
+        }}
+      />
+    </Box>
   );
 };
 

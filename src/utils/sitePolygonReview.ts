@@ -4,10 +4,11 @@ import {
   POLYGON_INFORMATION_REQUIRED,
   POLYGON_PENDING_APPROVAL
 } from "@/constants/polygonStatuses";
+import { normalizeSubmitValidationStatus } from "@/utils/sitePolygonSubmit";
 
 type Translate = (key: string, params?: Record<string, unknown>) => string;
 
-type ApproveBlockingReason = "approved" | "failed-validation" | "draft" | "information-required";
+type ApproveBlockingReason = "approved" | "failed-validation" | "not-validated" | "draft" | "information-required";
 
 export type ReviewAvailabilityPolygon = {
   status?: string | null;
@@ -20,7 +21,9 @@ export const getSitePolygonApproveBlockingReason = (
   if (polygon?.status === POLYGON_APPROVED) return "approved";
   if (polygon?.status === POLYGON_DRAFT) return "draft";
   if (polygon?.status === POLYGON_INFORMATION_REQUIRED) return "information-required";
-  if (polygon?.validationStatus === "failed") return "failed-validation";
+  const validationStatus = normalizeSubmitValidationStatus(polygon?.validationStatus);
+  if (validationStatus === "failed") return "failed-validation";
+  if (validationStatus === "not-started") return "not-validated";
   return null;
 };
 
@@ -40,6 +43,8 @@ export const getSingleSitePolygonApproveTooltip = (
       return t("Additional information was requested");
     case "failed-validation":
       return t("Polygons that failed System Validation can't be approved.");
+    case "not-validated":
+      return t("Polygons must pass System Validation before they can be approved.");
     default:
       return undefined;
   }
@@ -66,6 +71,8 @@ const getMultipleSitePolygonsApproveTooltip = (
       return t("Additional information was requested");
     case "failed-validation":
       return t("Polygons that failed System Validation can't be approved.");
+    case "not-validated":
+      return t("Polygons must pass System Validation before they can be approved.");
     default:
       return undefined;
   }

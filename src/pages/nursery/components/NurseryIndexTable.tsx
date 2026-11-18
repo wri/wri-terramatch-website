@@ -1,9 +1,11 @@
 import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { FC, useCallback, useMemo } from "react";
 
 import DownloadActionCell from "@/components/extensive/EntityIndex/DownloadActionCell";
 import EntityUpdateStatus from "@/components/extensive/EntityIndex/EntityUpdateStatus";
+import { stopRowClick } from "@/components/extensive/EntityIndex/stopRowClick";
 import { useDate } from "@/hooks/useDate";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
@@ -53,11 +55,12 @@ const NurseryIndexTable: FC<{ nurseries: NurseryIndexRow[]; embeddedInProject: b
 
       return (
         <TableRow
-          className={context?.className != null ? `group ${context.className}` : "group"}
+          className={classNames("group", context?.className, { "cursor-pointer": !isMobile })}
           aria-selected={isSelected}
+          onClick={isMobile ? undefined : () => handleRowSelected(nursery, !isSelected)}
         >
           {isMobile ? null : (
-            <ChakraTableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)}>
+            <ChakraTableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)} onClick={stopRowClick}>
               <Checkbox
                 name={`nursery-${nursery.id}`}
                 aria-label={t("Select {nursery}", { nursery: nursery.name ?? t("Nursery") })}
@@ -67,7 +70,13 @@ const NurseryIndexTable: FC<{ nurseries: NurseryIndexRow[]; embeddedInProject: b
             </ChakraTableCell>
           )}
           <ChakraTableCell {...context?.getCellProps("name")}>
-            <TitleCell label={nursery.name ?? t("Nursery")} link={nurseryHref} linkTarget="_self" showChevron={false} />
+            <TitleCell
+              label={nursery.name ?? t("Nursery")}
+              link={nurseryHref}
+              linkTarget="_self"
+              showChevron={false}
+              onClick={stopRowClick}
+            />
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("status")}>
             {nursery.status == null ? <Text>—</Text> : <TagSubmission state={nursery.status} size="small" />}
@@ -100,7 +109,7 @@ const NurseryIndexTable: FC<{ nurseries: NurseryIndexRow[]; embeddedInProject: b
               className="rounded bg-theme-neutral-200"
             />
           </ChakraTableCell>
-          <ChakraTableCell {...context?.getCellProps("actions")}>
+          <ChakraTableCell {...context?.getCellProps("actions")} onClick={stopRowClick}>
             {isMobile ? (
               <DownloadActionCell
                 ariaLabel={t("Download {nursery}", { nursery: nursery.name ?? t("Nursery") })}

@@ -12,7 +12,7 @@ import { DemographicCollections } from "@/generated/v3/entityService/entityServi
 import { ProjectFullDto, ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useProjectReportKeyIndicatorsContent } from "@/pages/reports/project-report/constants/projectReportKeyIndicatorsContent";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
-import { JobsIcon, RegenerationIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
+import { JobsIcon, RegenerationIcon, TreeIcon, TreePlantingIcon } from "@/redesignComponents/foundations/Icons";
 
 interface KeyIndicatorsInsightsProps {
   projectReport: ProjectReportFullDto;
@@ -80,7 +80,7 @@ const TerrafundKeyIndicators: FC<TerrafundKeyIndicatorsProps> = ({ projectReport
         progress={metrics.treesPlantedTotal}
         goal={metrics.treesGrownGoal}
         variant="large"
-        icon={<TreeIcon />}
+        icon={<TreePlantingIcon />}
         color="secondary.600"
         type="treesPlanted"
         className="flex-1"

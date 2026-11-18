@@ -4,6 +4,7 @@ import { FC, useEffect, useMemo } from "react";
 
 import { hasUnresolvedFeedbackInStep } from "@/components/extensive/WizardForm/feedbackUtils";
 import { EntityFullDto, SupportedEntity } from "@/connections/Entity";
+import { INFORMATION_REQUIRED } from "@/constants/statuses";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -12,6 +13,10 @@ import { ProgressSteps } from "@/redesignComponents/status/ProgressIndicator/Pro
 import { StepProps } from "@/redesignComponents/status/ProgressIndicator/types";
 
 const stepStatusToBadge = (valid: boolean): StepProps["status"] => (valid ? "completed" : "error");
+
+// Reviewer feedback is only actionable until the PD resubmits; afterwards the flagged fields stay on the entity.
+const isFeedbackActionable = (entity: EntityFullDto) =>
+  entity.status === INFORMATION_REQUIRED || entity.updateRequestStatus === INFORMATION_REQUIRED;
 
 interface EntitySetUpSectionProps {
   entity: EntityFullDto;
@@ -33,9 +38,17 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({
   disabled = false
 }) => {
   const t = useT();
-  const { defaultValues, steps, isReady, fieldsProvider, feedbackFields, feedbackBaselineValues } = useEntityFormSetup(
-    type,
-    entity.uuid
+  const {
+    defaultValues,
+    steps,
+    isReady,
+    fieldsProvider,
+    feedbackFields: allFeedbackFields,
+    feedbackBaselineValues
+  } = useEntityFormSetup(type, entity.uuid);
+  const feedbackFields = useMemo(
+    () => (isFeedbackActionable(entity) ? allFeedbackFields : []),
+    [entity, allFeedbackFields]
   );
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: type,

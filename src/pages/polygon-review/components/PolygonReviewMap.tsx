@@ -1,4 +1,5 @@
 import { Box } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import { ComponentProps, FC, useMemo, useState } from "react";
 
 import LoadingMap from "@/components/elements/Map-mapbox/components/LoadingMap";
@@ -17,6 +18,7 @@ import PolygonDrawUndoButton from "../../site/[uuid]/components/PolygonDrawUndoB
 import { getPolygonMapEditClassName } from "../../site/[uuid]/components/polygonMapEditLayout";
 import { SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS } from "../../site/[uuid]/constants/sitePolygonMapSizing";
 import { usePolygonDrawUndo } from "../../site/[uuid]/hooks/usePolygonDrawUndo";
+import { useProjectIssueMarkers } from "../hooks/useProjectIssueMarkers";
 import { useProjectMapMedia } from "../hooks/useProjectMapMedia";
 import { getProjectMarkersBbox, toProjectMarkerPoints } from "../utils/projectMarkers";
 
@@ -29,6 +31,8 @@ type PolygonReviewMapProps = {
   polygonFilter: SitePolygonMapIndexFilter;
   polygonTableHighlight: ComponentProps<typeof MapContainer>["polygonTableHighlight"];
   showDeleted?: boolean;
+  overlapPolygonUuids: string[];
+  disturbancePolygonUuids: string[];
   onViewProjectPolygons: (projectUuid: string) => void;
   onRefetchPolygons: () => Promise<void>;
 };
@@ -45,12 +49,16 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
   polygonFilter,
   polygonTableHighlight,
   showDeleted = false,
+  overlapPolygonUuids,
+  disturbancePolygonUuids,
   onViewProjectPolygons,
   onRefetchPolygons
 }) => {
+  const t = useT();
   const projectUuid = selectedProject?.uuid;
   const { isOpen: isEditPolygonOpen } = usePolygonEditDrawer();
   const { editPolygon, isUserDrawingEnabled } = useMapAreaContext();
+  const editingPolygonUuid = isEditPolygonOpen && editPolygon.uuid !== "" ? editPolygon.uuid : null;
   const { mapFunctions, polygonFromMap, setPolygonFromMap, sitePolygonData, autoEditPolygon, isRefetchingPolygonData } =
     usePolygonMapEditing(onRefetchPolygons);
 
@@ -108,6 +116,15 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
   );
   const bbox = (projectUuid != null ? polygonsBbox : undefined) ?? markersBbox;
 
+  const issueMarkers = useProjectIssueMarkers({
+    projectUuid: projectUuid ?? null,
+    overlapPolygonUuids,
+    disturbancePolygonUuids,
+    excludePolygonUuid: editingPolygonUuid,
+    enabled: !showDeleted,
+    t
+  });
+
   return (
     <ResizeBox
       initialHeight={SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS}
@@ -125,6 +142,7 @@ const PolygonReviewMap: FC<PolygonReviewMapProps> = ({
           projectMarkers={projectMarkers}
           onViewProjectPolygons={onViewProjectPolygons}
           mapIndexPolygons={mapIndexPolygons}
+          overlapPolygons={issueMarkers}
           mapPolygonsForcedStatus={showDeleted ? DELETED_AUDIT_POLYGONS : undefined}
           polygonTableHighlight={polygonTableHighlight}
           sitePolygonData={sitePolygonData}

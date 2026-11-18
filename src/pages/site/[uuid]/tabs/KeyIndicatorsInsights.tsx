@@ -14,7 +14,8 @@ import {
   RegenerationIcon,
   SeedlingsIcon,
   SurvivalRateIcon,
-  TreeIcon
+  TreeIcon,
+  TreePlantingIcon
 } from "@/redesignComponents/foundations/Icons";
 
 import { KEY_INDICATORS_TOOLTIP_CONTENT } from "./constants/keyIndicatorsTooltipContent";
@@ -54,7 +55,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
         progress={treesGrowingCardProgress}
         goal={0}
         variant={keyIndicatorsTooltipContentItem?.treesRestored.type as MetricCardVariant}
-        icon={<TreeIcon />}
+        icon={isCombinedTreesGrowingCard ? <TreeIcon /> : <TreePlantingIcon />}
         color="secondary.600"
         type="treesRestored"
         className="flex-[0_0_calc(50%_-_0.75rem)]"
@@ -160,7 +161,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
           progress={Math.round(site.treesRestoredPpc ?? 0)}
           goal={0}
           variant="large"
-          icon={<TreeIcon />}
+          icon={<RegenerationIcon />}
           color="secondary.600"
           type="estimatedTreesRestored"
           className="!h-auto flex-[0_0_calc(50%_-_0.75rem)]"

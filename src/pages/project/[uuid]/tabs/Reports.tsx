@@ -5,7 +5,7 @@ import { FC, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
-import { ReportsProvider, useReportsContext, useReportsTabFilters } from "@/context/reports.provider";
+import { ReportsProvider, useReportsContext, useReportsFilters } from "@/context/reports.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import AdditionalReportsContent from "@/pages/reports/components/AdditionalReportsContent";
 import ProjectReportsSection from "@/pages/reports/components/ProjectReportsSection";
@@ -50,7 +50,7 @@ interface ReportsTabProps {
 const ReportsTabContent: FC<ReportsTabProps> = ({ project }) => {
   const t = useT();
   const { searchTerm, setSearchTerm } = useReportsContext();
-  const filters = useReportsTabFilters("progress-reports");
+  const filters = useReportsFilters();
   const {
     sections: progressSections,
     loading: progressLoading,

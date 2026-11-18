@@ -7,9 +7,11 @@ import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
 import Combobox from "@/redesignComponents/Forms/Inputs/Combobox";
 
 import { FacetOption } from "../utils/projectContextFilter";
+import ProjectFacetChip from "./ProjectFacetChip";
 
 export type FacetSearch = {
   placeholder: string;
+  addPlaceholder: string;
   getCaption: (optionCount: number) => string;
 };
 
@@ -48,24 +50,34 @@ const ProjectFacetGroup: FC<ProjectFacetGroupProps> = ({
     <FilterCard
       label={label}
       labelSuffix={t("(optional)")}
-      caption={search != null ? search.getCaption(options.length) : undefined}
+      caption={search != null && selected.length === 0 ? search.getCaption(options.length) : undefined}
     >
       {options.length === 0 ? (
         <Text textStyle="300" color="neutral.700">
           {t("No options available")}
         </Text>
       ) : search != null ? (
-        <Combobox
-          placeholder={search.placeholder}
-          size="small"
-          noMarginBottom
-          multiple
-          showSelectedItems
-          disabled={disabled}
-          items={items}
-          value={selected}
-          onChange={onChange}
-        />
+        <>
+          {selected.map(value => (
+            <ProjectFacetChip
+              key={value}
+              label={getLabel(value)}
+              disabled={disabled}
+              onRemove={() => onChange(toggleValue(selected, value, false))}
+            />
+          ))}
+          {!disabled && (
+            <Combobox
+              placeholder={selected.length === 0 ? search.placeholder : search.addPlaceholder}
+              size="small"
+              noMarginBottom
+              multiple
+              items={items}
+              value={selected}
+              onChange={onChange}
+            />
+          )}
+        </>
       ) : (
         items.map(({ value, label }) => (
           <Checkbox

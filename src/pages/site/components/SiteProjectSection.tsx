@@ -1,13 +1,14 @@
 import { Box, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { type FC, type MouseEvent, memo, ReactNode, useCallback, useMemo, useState } from "react";
+import { type FC, memo, ReactNode, useCallback, useMemo, useState } from "react";
 
 import AttentionBadge from "@/components/extensive/EntityIndex/AttentionBadge";
 import DownloadActionCell from "@/components/extensive/EntityIndex/DownloadActionCell";
 import EntityUpdateStatus from "@/components/extensive/EntityIndex/EntityUpdateStatus";
 import IndexLoadingRow from "@/components/extensive/EntityIndex/IndexLoadingRow";
+import { stopRowClick } from "@/components/extensive/EntityIndex/stopRowClick";
 import { Framework, isTerrafund, toFramework } from "@/context/framework.provider";
 import type { ProjectSitesMetaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -56,10 +57,6 @@ const keyIndicatorTooltip = (title?: string, content?: string): ReactNode => {
       <Text textStyle="300">{content}</Text>
     </Box>
   );
-};
-
-const stopRowClick = (event: MouseEvent) => {
-  event.stopPropagation();
 };
 
 type SiteProjectMetricsProps = {
@@ -190,7 +187,6 @@ const SiteProjectRow: FC<SiteProjectRowProps> = ({
   onRowSelected
 }) => {
   const t = useT();
-  const router = useRouter();
   const { format } = useDate();
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "sites",
@@ -203,9 +199,9 @@ const SiteProjectRow: FC<SiteProjectRowProps> = ({
 
   return (
     <TableRow
-      className={`${context?.className ?? ""} group cursor-pointer`}
+      className={classNames(context?.className, "group", { "cursor-pointer": !isMobile })}
       aria-selected={isSelected}
-      onClick={() => void router.push(getSiteDetailUrl(site.id, !embeddedInProject))}
+      onClick={isMobile ? undefined : () => onRowSelected(site, !isSelected)}
     >
       {isMobile ? null : (
         <TableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)} onClick={stopRowClick}>
@@ -218,7 +214,11 @@ const SiteProjectRow: FC<SiteProjectRowProps> = ({
         </TableCell>
       )}
       <TableCell {...context?.getCellProps("name")}>
-        <Link href={getSiteDetailUrl(site.id, !embeddedInProject)} className="block max-w-full truncate">
+        <Link
+          href={getSiteDetailUrl(site.id, !embeddedInProject)}
+          className="inline-block max-w-full truncate align-top"
+          onClick={stopRowClick}
+        >
           <Text
             as="span"
             textStyle="400-bold"

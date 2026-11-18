@@ -2,12 +2,13 @@ import { Box, Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
-import { FC, Fragment, PropsWithChildren } from "react";
+import { FC, Fragment, PropsWithChildren, useEffect } from "react";
 
 import { useMyOrg } from "@/connections/Organisation";
 import { useMyUser } from "@/connections/User";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import LayoutChromeScale from "@/styles/LayoutChromeScale";
+import { toSideNavState, trackSideNavDisplayedOnce } from "@/utils/analytics/sideNavigationAnalytics";
 import { getSidebarCollapsed, setSidebarCollapsed } from "@/utils/sidebarCollapsedState";
 import { userHasNurseries } from "@/utils/userAccessUtils";
 
@@ -21,10 +22,13 @@ import { SiteIcon } from "../foundations/Icons/NavigationSections/SiteIcon";
 import Footer from "../navigation/Footer/Footer";
 import Navbar from "../navigation/NavBar/Navbar";
 import SideNavigation, { SideNavigationGroup } from "../navigation/NavBar/SideNavigation/SideNavigation";
+import { useSideNavUserRole } from "../navigation/NavBar/SideNavigation/useSideNavUserRole";
 import { useNavbarData } from "../navigation/NavBar/useNavbarData";
 import { useLayoutShell } from "./LayoutShell.provider";
 
 const FOOTER_CLASS_NAME = "mt-auto shrink-0 [zoom:var(--layout-chrome-zoom,1)]";
+
+const SIDE_NAVIGATION_MEDIA_QUERY = "(min-width: 48em)";
 
 const ROUTES_WITHOUT_SIDE_NAVIGATION = [
   "/organization/assign",
@@ -45,6 +49,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
   const [, { user: myUser }] = useMyUser();
   const data = useNavbarData();
   const isAdmin = useIsAdmin();
+  const userRole = useSideNavUserRole();
   const showNurseries = userHasNurseries(myUser);
   const showLoggedInFooter = router.pathname === "/home";
   const showSideNavigation = !ROUTES_WITHOUT_SIDE_NAVIGATION.includes(router.pathname);
@@ -54,6 +59,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
       id: "management",
       links: [
         {
+          navItem: "organization",
           href: isAdmin
             ? "/admin#/organisation"
             : myOrg?.organisationId != null
@@ -63,6 +69,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
           label: isAdmin ? "Organizations" : "My Organization"
         },
         {
+          navItem: "projects",
           href: "/my-projects",
           activePaths: [
             "/my-projects",
@@ -74,6 +81,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
           label: "Projects"
         },
         {
+          navItem: "sites",
           href: isAdmin ? "/admin#/site" : "/site",
           activePaths: profileOpenedFromProject ? [] : undefined,
           icon: <SiteIcon boxSize={4} />,
@@ -82,6 +90,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
         ...(isAdmin
           ? [
               {
+                navItem: "polygons" as const,
                 href: "/polygon-review",
                 icon: <PolygonsIcon boxSize={4} />,
                 label: "Polygons"
@@ -91,6 +100,7 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
         ...(showNurseries
           ? [
               {
+                navItem: "nurseries" as const,
                 href: isAdmin ? "/admin#/nursery" : "/nursery",
                 activePaths: nurseryOpenedFromProject ? [] : undefined,
                 icon: <NurseryIcon boxSize={4} />,
@@ -99,12 +109,14 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
             ]
           : []),
         {
+          navItem: "reports",
           href: isAdmin ? "/admin#/projectReport" : "/reports?view=all",
           activePaths: isAdmin ? undefined : ["/reports"],
           icon: <ReportsIcon boxSize={4} />,
           label: "Reports"
         },
         {
+          navItem: "opportunities",
           href: "/opportunities",
           icon: <OpportunitiesIcon boxSize={4} />,
           label: "Opportunities"
@@ -112,6 +124,21 @@ const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
       ]
     }
   ];
+
+  const isSideNavigationReady = data.isLoggedIn && showSideNavigation && myUser != null;
+
+  useEffect(() => {
+    // The side navigation is hidden below the Chakra `md` breakpoint (48em); only count it when it is rendered.
+    if (!isSideNavigationReady || !window.matchMedia(SIDE_NAVIGATION_MEDIA_QUERY).matches) return;
+
+    trackSideNavDisplayedOnce({
+      navState: toSideNavState(isSidebarCollapseDisabled || getSidebarCollapsed()),
+      visibleItems: sideNavigationGroups.flatMap(group => group.links.flatMap(link => link.navItem ?? [])),
+      userRole
+    });
+    // Fires once per full page load; the helper ignores later runs, so route changes never re-fire it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSideNavigationReady]);
 
   return (
     <Flex height="100vh" width="100%" flexDirection="column">

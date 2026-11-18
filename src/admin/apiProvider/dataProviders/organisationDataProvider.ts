@@ -1,18 +1,10 @@
-import lo from "lodash";
-import { DataProvider, GetListParams, GetManyParams, GetManyResult, GetOneParams, UpdateParams } from "react-admin";
+import { DataProvider, GetListParams, GetManyParams, GetManyResult, GetOneParams } from "react-admin";
 
-import {
-  createOrg,
-  deleteOrganisation,
-  loadOrganisation,
-  loadOrganisations,
-  updateOrganisation
-} from "@/connections/Organisation";
-import { OrganisationFullDto, OrganisationUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
+import { createOrg, deleteOrganisation, loadOrganisation, loadOrganisations } from "@/connections/Organisation";
+import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
 
 import { v3ErrorForRA } from "../utils/error";
 import { raConnectionProps } from "../utils/listing";
-import { handleUploads } from "../utils/upload";
 
 export interface OrganisationDataProvider extends Partial<DataProvider> {
   export: (resource: string) => Promise<void>;
@@ -97,22 +89,6 @@ export const organisationDataProvider: OrganisationDataProvider = {
       return { data: params.ids };
     } catch (err) {
       throw v3ErrorForRA("Organisation deleteMany failed", err);
-    }
-  },
-
-  async update<RecordType>(_: string, params: UpdateParams) {
-    const uuid = params.id as string;
-    const uploadKeys = ["logo", "cover", "legal_registration", "reference", "additional"];
-    const attributes = lo.omit(params.data, uploadKeys) as OrganisationUpdateAttributes;
-
-    try {
-      await handleUploads(params, uploadKeys, { uuid, entity: "organisations" });
-
-      const updatedOrg = await updateOrganisation(attributes, { id: uuid });
-
-      return { data: { ...updatedOrg, id: updatedOrg.uuid } as RecordType };
-    } catch (err) {
-      throw v3ErrorForRA("Organisation update failed", err);
     }
   }
 };

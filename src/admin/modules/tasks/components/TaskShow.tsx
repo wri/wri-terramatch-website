@@ -140,10 +140,8 @@ function ShowReports() {
   const selectableReports: SelectedItem[] = React.useMemo(() => {
     const reports: SelectedItem[] = [];
     siteReports.forEach((report: any) => {
-      if (
-        (report && report.status !== APPROVED && report.nothingToReport === true && !report.updateRequestStatus) ||
-        report.updateRequestStatus === "no-update"
-      ) {
+      if (report == null) return;
+      if (report.status !== APPROVED && report.nothingToReport === true && report.updateRequestStatus == null) {
         reports.push({
           id: report.uuid,
           name: report.siteName ?? report.reportTitle ?? "",
@@ -153,10 +151,8 @@ function ShowReports() {
       }
     });
     nurseryReports.forEach((report: any) => {
-      if (
-        (report && report.status !== APPROVED && report.nothingToReport === true && !report.updateRequestStatus) ||
-        report.updateRequestStatus === "no-update"
-      ) {
+      if (report == null) return;
+      if (report.status !== APPROVED && report.nothingToReport === true && report.updateRequestStatus == null) {
         reports.push({
           id: report.uuid,
           name: report.nurseryName ?? report.reportTitle ?? "",

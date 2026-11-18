@@ -150,7 +150,6 @@ const MapSidePanel: FC<MapSidePanelProps> = ({
         polygon_count: 1,
         polygon_id: selected?.polygonUuid,
         file_format: "geojson",
-        download_type: "standard",
         polygon_type: "standard"
       });
       setClickedButton("");

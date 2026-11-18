@@ -49,7 +49,7 @@ import { usePolygonTablePaging } from "../hooks/usePolygonTablePaging";
 import { usePolygonTableStickyStyles } from "../hooks/usePolygonTableStickyStyles";
 import { usePolygonUploadErrorModal } from "../hooks/usePolygonUploadErrorModal";
 import { useSelectedSitePolygons } from "../hooks/useSelectedSitePolygons";
-import { useSitePolygonBulkActions } from "../hooks/useSitePolygonBulkActions";
+import { PolygonDownloadFormat, useSitePolygonBulkActions } from "../hooks/useSitePolygonBulkActions";
 import { useSitePolygonDisturbanceMarkers } from "../hooks/useSitePolygonDisturbanceMarkers";
 import { useSitePolygonEditNavigation } from "../hooks/useSitePolygonEditNavigation";
 import { useSitePolygonFilters } from "../hooks/useSitePolygonFilters";
@@ -148,7 +148,8 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     mapPolygonUuids,
     disturbancePolygonUuids,
     totalTreesPlanted,
-    totalRestorationAreaHa
+    totalRestorationAreaHa,
+    wholeEntityTotal
   } = useSitePolygonWorkspaceData({
     entityName: "sites",
     entityUuid: site.uuid,
@@ -373,12 +374,14 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   }, [clearTableSelection, closeMapPopups]);
 
   const handleSelectOverlapPolygons = useCallback(() => {
+    setPolygonFilters(current => ({ ...current, hasOverlap: true }));
     setSelectedRowIds(new Set(overlapPolygonUuids));
-  }, [overlapPolygonUuids, setSelectedRowIds]);
+  }, [overlapPolygonUuids, setPolygonFilters, setSelectedRowIds]);
 
   const handleSelectDisturbancePolygons = useCallback(() => {
+    setPolygonFilters(current => ({ ...current, hasDisturbance: true }));
     setSelectedRowIds(new Set(disturbancePolygonUuids));
-  }, [disturbancePolygonUuids, setSelectedRowIds]);
+  }, [disturbancePolygonUuids, setPolygonFilters, setSelectedRowIds]);
 
   const {
     bulkEditPayload,
@@ -518,14 +521,37 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     startDrawing();
   }, [startDrawing]);
 
-  const { downloadAll, isDownloading: isDownloadingAllPolygons } = useDownloadSitePolygons({
+  const {
+    downloadWholeEntity,
+    downloadCurrentView,
+    isDownloading: isDownloadingAllPolygons
+  } = useDownloadSitePolygons({
     siteUuid: site.uuid,
     siteName: site.name
   });
 
-  const handleDownloadAll = useCallback(() => {
-    void downloadAll();
-  }, [downloadAll]);
+  const currentPageUuids = useMemo(
+    () =>
+      (tablePolygonsPageData ?? []).flatMap(polygon => {
+        const uuid = polygon.polygonUuid ?? polygon.uuid;
+        return uuid != null ? [uuid] : [];
+      }),
+    [tablePolygonsPageData]
+  );
+
+  const handleDownloadWholeEntity = useCallback(
+    (format: PolygonDownloadFormat) => {
+      void downloadWholeEntity(format, sitePolygonFilter, wholeEntityTotal);
+    },
+    [downloadWholeEntity, sitePolygonFilter, wholeEntityTotal]
+  );
+
+  const handleDownloadCurrentView = useCallback(
+    (format: PolygonDownloadFormat) => {
+      void downloadCurrentView(format, currentPageUuids);
+    },
+    [currentPageUuids, downloadCurrentView]
+  );
 
   const handleOpenUploadModal = useCallback(() => {
     setShowUploadModal(true);
@@ -671,7 +697,10 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           isDeletedAuditView={isDeletedAuditView}
           isDownloadingAll={isDownloadingAllPolygons}
           isDownloadAllDisabled={site.uuid === ""}
-          onDownloadAll={handleDownloadAll}
+          currentViewCount={tablePolygonsPageData?.length ?? 0}
+          wholeEntityCount={wholeEntityTotal}
+          onDownloadCurrentView={handleDownloadCurrentView}
+          onDownloadWholeEntity={handleDownloadWholeEntity}
           onDrawPolygon={startNewPolygonFlow}
           onUpload={handleOpenUploadModal}
         >

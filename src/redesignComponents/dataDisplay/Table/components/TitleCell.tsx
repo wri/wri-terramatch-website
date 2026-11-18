@@ -1,5 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import classNames from "classnames";
+import type { MouseEvent } from "react";
 
 import { ChevronDownAltIcon } from "@/redesignComponents/foundations/Icons";
 import Avatar, { AvatarProps } from "@/redesignComponents/navigation/Avatar/Avatar";
@@ -14,7 +15,7 @@ export interface TitleCellProps {
   link?: string;
   linkTarget?: "_blank" | "_self";
   showChevron?: boolean;
-  onClick?: () => void;
+  onClick?: (event: MouseEvent<HTMLElement>) => void;
 }
 
 const TitleCell: React.FC<TitleCellProps> = ({
@@ -46,7 +47,7 @@ const TitleCell: React.FC<TitleCellProps> = ({
               as={link ? "a" : "p"}
               {...(link == null ? {} : { href: link, target: linkTarget, onClick })}
               textStyle="400-bold"
-              className="block w-full truncate text-theme-neutral-800 underline decoration-theme-primary-700 decoration-dotted underline-offset-4"
+              className="inline-block max-w-full truncate align-top text-theme-neutral-800 underline decoration-theme-primary-700 decoration-dotted underline-offset-4"
             >
               {label}
             </Text>

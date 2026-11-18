@@ -1,7 +1,7 @@
 import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { getExcludedCriteriaIds, isValidCriteriaData } from "@/helpers/polygonValidation";
 
-import { getPolygonAnalyticsContext, trackPolygonEvent } from "./ga4";
+import { getPolygonAnalyticsContext, trackPolygonEvent, trackPolygonIssueEvent } from "./ga4";
 
 export type PolygonType = "monitoring_plot" | "standard";
 
@@ -13,9 +13,14 @@ export type BulkActionType =
   | "submit"
   | "download"
   | "approve"
-  | "request_information";
+  | "request_information"
+  | "delete";
 
-export type PolygonUploadErrorType = "file_format" | "geometry" | "size_limit";
+export type PolygonUploadErrorType = "file_format" | "geometry" | "size_limit" | "duplicate";
+
+export type ProjectSelectionMethod = "list" | "search" | "map";
+
+export type PolygonDownloadScope = "project" | "site";
 
 export type PolygonValidationErrorType =
   | "overlap"
@@ -143,6 +148,26 @@ export const trackPolygonFilterCleared = ({ siteUuid }: { siteUuid: string }): v
   });
 };
 
+export type PolygonIssueType = "overlap" | "disturbance";
+
+export type PolygonIssueSource = "banner" | "issues_panel";
+
+export const trackPolygonIssueClicked = ({
+  issueType,
+  issueCount,
+  source
+}: {
+  issueType: PolygonIssueType;
+  issueCount: number;
+  source: PolygonIssueSource;
+}): void => {
+  trackPolygonIssueEvent("polygon_issue_clicked", {
+    issue_type: issueType,
+    issue_count: issueCount,
+    source
+  });
+};
+
 export const trackBulkActionCompleted = ({
   entityUuid,
   entityType = "sites",
@@ -177,6 +202,7 @@ export const trackPolygonDownloaded = ({
   trackPolygonEvent("polygon_downloaded", {
     ...getPolygonAnalyticsContext({ entityType, entityId: entityUuid }),
     polygon_type: polygonType,
+    download_scope: entityType === "projects" ? "project" : "site",
     ...(polygonId != null && polygonId !== "" ? { polygon_id: polygonId } : {}),
     ...(polygonCount != null ? { polygon_count: polygonCount } : {})
   });
@@ -355,4 +381,54 @@ export const resolveActivePolygonFilterTypes = ({
   if (hasOverlap) filterTypes.push("overlap");
   if (hasDisturbance) filterTypes.push("disturbance");
   return filterTypes;
+};
+
+export const trackPolygonProjectSelected = ({
+  projectUuid,
+  selectionMethod,
+  frameworkFacetUsed,
+  countryFacetUsed
+}: {
+  projectUuid: string;
+  selectionMethod: ProjectSelectionMethod;
+  frameworkFacetUsed: boolean;
+  countryFacetUsed: boolean;
+}): void => {
+  trackPolygonEvent("polygon_project_selected", {
+    entity_type: "project",
+    entity_id: projectUuid,
+    selection_method: selectionMethod,
+    framework_facet_used: frameworkFacetUsed,
+    country_facet_used: countryFacetUsed
+  });
+};
+
+export const trackPolygonDeleted = ({
+  siteUuid,
+  polygonIds,
+  polygonCount
+}: {
+  siteUuid?: string;
+  polygonIds: string[];
+  polygonCount: number;
+}): void => {
+  trackPolygonEvent("polygon_deleted", {
+    ...(siteUuid != null ? getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }) : {}),
+    polygon_id: formatPolygonTargetId(polygonIds),
+    polygon_count: polygonCount
+  });
+};
+
+export const trackPolygonApprovalWarningResolved = ({
+  polygonId,
+  outcome
+}: {
+  polygonId: string;
+  outcome: "proceeded" | "cancelled";
+}): void => {
+  trackPolygonEvent("polygon_approval_warning_resolved", {
+    polygon_id: polygonId,
+    warning_type: "area_over_125",
+    outcome
+  });
 };

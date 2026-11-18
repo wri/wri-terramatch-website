@@ -117,9 +117,38 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
     </Box>
   ) : null;
 
+  const toolbar = (
+    <ToolbarTable
+      className={classNames(
+        "!px-6 !pb-6 !pt-5",
+        embeddedInProject
+          ? "sticky top-[5.5625rem] z-10 border-b border-theme-neutral-300 !bg-theme-neutral-100 mobile:top-[7.8125rem]"
+          : "!bg-theme-neutral-200"
+      )}
+      classNameContentLeft={embeddedInProject ? "min-w-0 flex-1 !shrink" : "w-full"}
+      classNameContentSearch="w-[19rem] max-w-full mobile:w-auto mobile:min-w-0 mobile:flex-1"
+      search={{
+        label: siteCount === 1 ? t("Site") : t("Sites"),
+        placeholder: t("Search"),
+        options: [],
+        displayResults: "none",
+        onQueryChange,
+        isLoading: filtering,
+        count: siteCount
+      }}
+      selectedFilters={selectedFilters}
+      onClickFilterButton={() => setIsFilterDrawerOpen(true)}
+      onClearFilters={() => onApplyFilters([], [])}
+      showClearFilters={selectedFilters.length > 0}
+      button={embeddedInProject ? addSiteButton : undefined}
+    />
+  );
+
   return (
     <>
-      {embeddedInProject ? null : (
+      {embeddedInProject ? (
+        toolbar
+      ) : (
         <>
           <ToolbarObject
             className="sticky top-0 z-20 !px-6"
@@ -134,45 +163,26 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
               ]
             }}
           />
-          <PageHeader
-            title={t("Sites")}
-            className=" !bg-theme-neutral-100 !pb-0 !pt-1"
-            actions={
-              isMobile ? (
-                addSitePageButton
-              ) : (
-                <Flex gap="0.5rem" alignItems="center">
-                  {viewSelector}
-                  {addSitePageButton}
-                </Flex>
-              )
-            }
-          />
-          {isMobile && viewSelector != null && <Box className="bg-theme-neutral-100 px-6 pt-4">{viewSelector}</Box>}
+          <Box className="sticky top-11 z-10">
+            <PageHeader
+              title={t("Sites")}
+              className=" !bg-theme-neutral-100 !pb-0 !pt-1"
+              actions={
+                isMobile ? (
+                  addSitePageButton
+                ) : (
+                  <Flex gap="0.5rem" alignItems="center">
+                    {viewSelector}
+                    {addSitePageButton}
+                  </Flex>
+                )
+              }
+            />
+            {isMobile && viewSelector != null && <Box className="bg-theme-neutral-100 px-6 pt-4">{viewSelector}</Box>}
+            {toolbar}
+          </Box>
         </>
       )}
-      <ToolbarTable
-        className={classNames(
-          "!px-6 !pb-6 !pt-5",
-          embeddedInProject ? "border-b border-theme-neutral-300 !bg-theme-neutral-100" : "!bg-theme-neutral-200 "
-        )}
-        classNameContentLeft={embeddedInProject ? "min-w-0 flex-1 !shrink" : "w-full"}
-        classNameContentSearch="w-[19rem] max-w-full mobile:w-auto mobile:min-w-0 mobile:flex-1"
-        search={{
-          label: siteCount === 1 ? t("Site") : t("Sites"),
-          placeholder: t("Search"),
-          options: [],
-          displayResults: "none",
-          onQueryChange,
-          isLoading: filtering,
-          count: siteCount
-        }}
-        selectedFilters={selectedFilters}
-        onClickFilterButton={() => setIsFilterDrawerOpen(true)}
-        onClearFilters={() => onApplyFilters([], [])}
-        showClearFilters={selectedFilters.length > 0}
-        button={embeddedInProject ? addSiteButton : undefined}
-      />
       <SiteIndexFilterDrawer
         open={isFilterDrawerOpen}
         filters={statusFilters}

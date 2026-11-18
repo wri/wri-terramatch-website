@@ -11,6 +11,7 @@ import { WarningIcon } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import { formatNumberLocaleString } from "@/utils/dashboardUtils";
+import { formatPolygonTargetId, trackPolygonApprovalWarningResolved } from "@/utils/polygonAnalytics";
 
 import type { PolygonTableRow } from "../../PolygonTableRow";
 import { calculateApprovedProjectAreaStats } from "./approvePolygonAreaStats";
@@ -74,12 +75,32 @@ const ApprovePolygonConfirmation: FC<ApprovePolygonConfirmationProps> = ({
   }, [isProjectLoaded, project, projectUuid, selectedRows]);
 
   const isSinglePolygon = polygons.length === 1;
+  const exceedsApprovedAreaLimit = areaStats?.exceedsApprovedAreaLimit === true;
+
+  const trackWarningResolved = useCallback(
+    (outcome: "proceeded" | "cancelled") =>
+      trackPolygonApprovalWarningResolved({
+        polygonId: formatPolygonTargetId(selectedRows.map(({ id }) => String(id))),
+        outcome
+      }),
+    [selectedRows]
+  );
+
+  const handleModalOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      if (!nextOpen && exceedsApprovedAreaLimit && !isSaving) trackWarningResolved("cancelled");
+      onOpenChange(nextOpen);
+    },
+    [exceedsApprovedAreaLimit, isSaving, onOpenChange, trackWarningResolved]
+  );
 
   const handleApprove = useCallback(async () => {
     if (onApprove == null || selectedRows.length === 0) {
       onOpenChange(false);
       return;
     }
+
+    if (exceedsApprovedAreaLimit) trackWarningResolved("proceeded");
 
     try {
       setIsSaving(true);
@@ -88,13 +109,13 @@ const ApprovePolygonConfirmation: FC<ApprovePolygonConfirmationProps> = ({
     } finally {
       setIsSaving(false);
     }
-  }, [comment, onApprove, onOpenChange, selectedRows]);
+  }, [comment, exceedsApprovedAreaLimit, onApprove, onOpenChange, selectedRows, trackWarningResolved]);
 
   return (
     <ModalConfirmation
       modal={false}
       open={open}
-      onOpenChange={onOpenChange}
+      onOpenChange={handleModalOpenChange}
       size="large"
       contentPadding={false}
       title={polygons.length === 1 ? t("Approve polygon?") : t("Approve polygons?")}
@@ -102,7 +123,7 @@ const ApprovePolygonConfirmation: FC<ApprovePolygonConfirmationProps> = ({
       content={
         <Flex className="flex-col gap-4">
           <Box px={4} pt={4}>
-            {areaStats?.exceedsApprovedAreaLimit === true && (
+            {exceedsApprovedAreaLimit && (
               <InlineMessage
                 className="mb-4"
                 variant="warning"

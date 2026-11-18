@@ -163,7 +163,6 @@ const AttributeInformation: FC<AttributeInformationProps> = ({
         polygon_count: 1,
         polygon_id: editPolygon.uuid,
         file_format: "geojson",
-        download_type: "monitoring_plot",
         polygon_type: "monitoring_plot"
       });
     } catch (error) {

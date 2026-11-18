@@ -6,6 +6,7 @@ import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActio
 import { getProfileDeleteDisabledTooltip, getProfileSubmitDisabledTooltip } from "@/utils/profileActionTooltips";
 
 import type { SiteIndexSite } from "./siteIndex.types";
+import { isSiteDeletable } from "./siteIndexSubmit";
 
 interface SiteIndexBulkActionToolbarProps {
   selectedSites: SiteIndexSite[];
@@ -47,6 +48,7 @@ const SiteIndexBulkActionToolbar: FC<SiteIndexBulkActionToolbarProps> = ({
     () => (canDelete ? undefined : getProfileDeleteDisabledTooltip(selectedStatuses, t)),
     [canDelete, selectedStatuses, t]
   );
+  const showDelete = useMemo(() => selectedSites.some(isSiteDeletable), [selectedSites]);
 
   useEffect(() => {
     setSidebarCollapseDisabled(visible);
@@ -63,14 +65,18 @@ const SiteIndexBulkActionToolbar: FC<SiteIndexBulkActionToolbarProps> = ({
         onClick: onCancel,
         disabled: isUpdating
       }}
-      deleteAction={{
-        id: "delete",
-        tone: "danger",
-        children: t("Delete"),
-        onClick: onDelete,
-        disabled: !canDelete || isUpdating,
-        tooltip: deleteTooltip
-      }}
+      deleteAction={
+        showDelete
+          ? {
+              id: "delete",
+              tone: "danger",
+              children: t("Delete"),
+              onClick: onDelete,
+              disabled: !canDelete || isUpdating,
+              tooltip: deleteTooltip
+            }
+          : undefined
+      }
       actions={[
         {
           id: "download",

@@ -25,11 +25,19 @@ export type BulkToolbarAction = IButtonProps & {
   tooltip?: ReactNode;
 };
 
+/** An action rendered as a dropdown split button (e.g. Download with several formats). */
+export type BulkToolbarMultiAction = {
+  id: string;
+  multiAction: IMultiActionButtonProps;
+};
+
+export type BulkToolbarItem = BulkToolbarAction | BulkToolbarMultiAction;
+
 export interface BulkActionToolbarProps {
   selectedCount: number;
   cancelAction: IButtonProps;
   deleteAction?: BulkToolbarAction;
-  actions?: BulkToolbarAction[];
+  actions?: BulkToolbarItem[];
   primaryAction?: IButtonProps | IMultiActionButtonProps;
   infoTooltip?: ReactNode;
 }

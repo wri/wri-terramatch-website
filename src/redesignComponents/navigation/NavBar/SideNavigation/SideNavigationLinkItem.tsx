@@ -3,7 +3,7 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import type { FC, KeyboardEvent, MouseEvent, ReactNode } from "react";
+import { FC, FocusEvent, KeyboardEvent, MouseEvent, ReactNode, useCallback, useEffect, useRef } from "react";
 
 import MenuCustom from "@/redesignComponents/actions/Buttons/Menu/MenuCustom";
 import { MenuItemOption } from "@/redesignComponents/actions/Buttons/Menu/MenuCustom.types";
@@ -12,10 +12,22 @@ import { MoreVertIcon, PlusIcon } from "@/redesignComponents/foundations/Icons";
 import { useLayoutShell } from "@/redesignComponents/Layout/LayoutShell.provider";
 import Badge from "@/redesignComponents/status/Badge/Badge";
 import NumberBadge from "@/redesignComponents/status/Badge/NumberBadge";
+import {
+  getSideNavInputMethod,
+  getSideNavOpenMode,
+  SIDE_NAV_TOOLTIP_DWELL_MS,
+  SideNavItem,
+  SideNavTooltipTrigger,
+  toSideNavState,
+  trackSideNavItemClicked,
+  trackSideNavTooltipViewed
+} from "@/utils/analytics/sideNavigationAnalytics";
 
 import { useIsRouteActive } from "./useIsRouteActive";
+import { useSideNavUserRole } from "./useSideNavUserRole";
 
 export interface SideNavigationLinkItemProps {
+  navItem?: SideNavItem;
   icon: ReactNode;
   label: string;
   href: string;
@@ -34,6 +46,7 @@ export const SIDE_NAVIGATION_ROW_CLASS_NAME = classNames(
 );
 
 const SideNavigationLinkItem: FC<SideNavigationLinkItemProps> = ({
+  navItem,
   icon,
   label,
   href,
@@ -47,8 +60,54 @@ const SideNavigationLinkItem: FC<SideNavigationLinkItemProps> = ({
   const isActive = useIsRouteActive(href, activePaths);
   const router = useRouter();
   const { resetPage } = useLayoutShell();
+  const userRole = useSideNavUserRole();
+  const tooltipTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  const clearTooltipTimer = useCallback(() => {
+    clearTimeout(tooltipTimer.current);
+    tooltipTimer.current = undefined;
+  }, []);
+
+  // The tooltip only counts as viewed once it has stayed visible for the dwell time.
+  const startTooltipTimer = (tooltipTrigger: SideNavTooltipTrigger) => {
+    if (navItem == null || !isCollapsed || tooltipTimer.current != null) return;
+
+    tooltipTimer.current = setTimeout(
+      () => trackSideNavTooltipViewed({ navItem, tooltipTrigger, userRole }),
+      SIDE_NAV_TOOLTIP_DWELL_MS
+    );
+  };
+
+  useEffect(() => clearTooltipTimer, [clearTooltipTimer]);
+
+  useEffect(() => {
+    if (!isCollapsed) clearTooltipTimer();
+  }, [isCollapsed, clearTooltipTimer]);
+
+  const handleFocus = (event: FocusEvent<HTMLAnchorElement>) => {
+    if (event.currentTarget.matches(":focus-visible")) startTooltipTimer("focus");
+  };
+
+  const trackItemClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (navItem == null) return;
+
+    trackSideNavItemClicked({
+      navItem,
+      navState: toSideNavState(isCollapsed),
+      inputMethod: getSideNavInputMethod(event),
+      isActiveItem: isActive,
+      openMode: getSideNavOpenMode(event),
+      userRole
+    });
+  };
+
+  // Middle-click never fires onClick, only auxclick.
+  const handleLinkAuxClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (event.button === 1) trackItemClick(event);
+  };
 
   const handleLinkClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    trackItemClick(event);
     if (router.pathname !== href.split("?")[0]) return;
     event.preventDefault();
     resetPage();
@@ -90,6 +149,11 @@ const SideNavigationLinkItem: FC<SideNavigationLinkItemProps> = ({
           aria-label={t(label)}
           className="min-w-0 flex-1 after:absolute after:-inset-0.5 after:rounded-md focus:outline-none"
           onClick={handleLinkClick}
+          onAuxClick={handleLinkAuxClick}
+          onMouseEnter={() => startTooltipTimer("hover")}
+          onMouseLeave={clearTooltipTimer}
+          onFocus={handleFocus}
+          onBlur={clearTooltipTimer}
           onKeyDown={handleLinkKeyDown}
         >
           <Flex alignItems="center" gap={2}>

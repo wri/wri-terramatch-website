@@ -78,6 +78,26 @@ export const clearReportPeriodFilters = (filters: ReportFilterState): ReportFilt
   dueYear: ""
 });
 
+const PROGRESS_REPORT_TYPES: ReportTypeOption[] = ["project-report", "site-report", "nursery-report"];
+const ADDITIONAL_REPORT_TYPES: ReportTypeOption[] = ["srp-report", "disturbance-report", "financial-report"];
+
+/**
+ * The filters that apply on an index tab. The filters are shared across tabs, so this drops the report
+ * types and period fields that the tab does not offer, so nothing filters a list on a control that is not on screen.
+ */
+export const getFiltersForReportsTab = (filters: ReportFilterState, tab: string): ReportFilterState => {
+  const allowed = tab === "additional-reports" ? ADDITIONAL_REPORT_TYPES : PROGRESS_REPORT_TYPES;
+  const next = { ...filters, reportTypes: filters.reportTypes.filter(type => allowed.includes(type)) };
+  switch (getReportPeriodControl(tab, next.reportTypes)) {
+    case "date-range":
+      return { ...next, dueMonth: "", dueYear: "" };
+    case "year":
+      return { ...next, dueMonth: "", dueDateFrom: "", dueDateTo: "" };
+    default:
+      return { ...next, dueDateFrom: "", dueDateTo: "" };
+  }
+};
+
 type DateFormatter = (date?: string | number | Date | null, pattern?: string) => string;
 
 export const formatMonthLabel = (month: string, format: DateFormatter) =>

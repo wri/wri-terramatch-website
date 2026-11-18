@@ -213,6 +213,7 @@ export const useUploadPolygons = ({
           onUploadSuccess(buildUploadSuccessResult(files, nonDuplicateResponses));
         } else if (firstDuplicate != null && onDuplicateDetected != null) {
           closePolygonProgressToast(toastId);
+          trackPolygonUploadFailed({ siteUuid, errorType: "duplicate" });
           onDuplicateDetected(firstDuplicate);
         } else {
           completePolygonProgressToast(toastId, labels.complete);

@@ -1,10 +1,12 @@
 import { Box, Flex, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { startCase } from "lodash";
 import { FC, useCallback, useMemo } from "react";
 
 import DownloadActionCell from "@/components/extensive/EntityIndex/DownloadActionCell";
 import EntityUpdateStatus from "@/components/extensive/EntityIndex/EntityUpdateStatus";
+import { stopRowClick } from "@/components/extensive/EntityIndex/stopRowClick";
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import { useDate } from "@/hooks/useDate";
@@ -143,13 +145,14 @@ const AdditionalReportsTable: FC<AdditionalReportsTableProps> = ({
 
       return (
         <TableRow
-          className={context?.className != null ? `group ${context.className}` : "group"}
+          className={classNames("group", context?.className, { "cursor-pointer": !isMobile })}
           aria-selected={isSelected}
+          onClick={isMobile ? undefined : () => handleRowSelected(report, !isSelected)}
           data-report-id={report.id}
           style={{ scrollMarginTop: "7rem" }}
         >
           {isMobile ? null : (
-            <ChakraTableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)}>
+            <ChakraTableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)} onClick={stopRowClick}>
               <Checkbox
                 name={`additional-report-${report.id}`}
                 aria-label={t("Select {report}", { report: reportName })}
@@ -164,7 +167,10 @@ const AdditionalReportsTable: FC<AdditionalReportsTableProps> = ({
               link={getReportViewHref(report, indexHref, profileOrigin)}
               linkTarget="_self"
               showChevron={false}
-              onClick={() => rememberReportsIndexPosition(indexHref, report.id)}
+              onClick={event => {
+                stopRowClick(event);
+                rememberReportsIndexPosition(indexHref, report.id);
+              }}
             />
           </ChakraTableCell>
 
@@ -223,7 +229,7 @@ const AdditionalReportsTable: FC<AdditionalReportsTableProps> = ({
           <ChakraTableCell {...context?.getCellProps("updatedAt")}>
             {renderDateTag(report.updatedAt, false)}
           </ChakraTableCell>
-          <ChakraTableCell {...context?.getCellProps("actions")}>
+          <ChakraTableCell {...context?.getCellProps("actions")} onClick={stopRowClick}>
             {isMobile ? (
               <DownloadActionCell onDownload={() => downloadReports([report], t)} />
             ) : (
