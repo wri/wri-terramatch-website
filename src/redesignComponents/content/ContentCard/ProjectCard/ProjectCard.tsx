@@ -14,7 +14,7 @@ import ProgressTag from "@/redesignComponents/actions/Tags/ProgressTag/ProgressT
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import {
   countryCodeToFlag,
-  mapPlantingStatusToProgressState
+  getPlantingProgressState
 } from "@/redesignComponents/content/headers/PageHeaders/ProjectHeader/projectHeader.utils";
 import {
   ChevronRightIcon,
@@ -154,7 +154,7 @@ const ProjectCard: FC<ProjectCardProps> = ({ project }) => {
           </Flex>
           <Flex gap={2} paddingTop={0.5} flexWrap="wrap">
             <TagSubmission state={project.status} size="small" />
-            <ProgressTag state={mapPlantingStatusToProgressState(project.plantingStatus) ?? "not-available"} />
+            <ProgressTag state={getPlantingProgressState(project.plantingStatus)} />
           </Flex>
         </Flex>
       </Flex>

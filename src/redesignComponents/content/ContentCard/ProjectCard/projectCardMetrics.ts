@@ -18,14 +18,9 @@ export const getProjectCardMetrics = (
   // Fundo Flora tracks its tree and job goals in different fields (same as the project page).
   const isFundoFlora = framework === Framework.FUNDO_FLORA;
   const treesPlanted = project.treesPlantedCount ?? 0;
-  const trees = {
-    key: "trees",
-    Icon: TreeIcon,
-    color: TREES_COLOR,
-    value: treesPlanted,
-    goal: isFundoFlora ? project.treesPlantedGoal : project.treesGrownGoal ?? 0
-  };
-  const jobsGoal = isFundoFlora ? project.fullTimeJobsGoal : project.jobsCreatedGoal ?? 0;
+  const treesGoal = (isFundoFlora ? project.treesPlantedGoal : project.treesGrownGoal) ?? 0;
+  const trees = { key: "trees", Icon: TreeIcon, color: TREES_COLOR, value: treesPlanted, goal: treesGoal };
+  const jobsGoal = (isFundoFlora ? project.fullTimeJobsGoal : project.jobsCreatedGoal) ?? 0;
   const treesGrowing = treesPlanted + project.seedsPlantedCount + project.regeneratedTreesCount;
   const area: ProjectCardMetric = {
     key: "area",
@@ -52,7 +47,7 @@ export const getProjectCardMetrics = (
       {
         ...jobs,
         value: project.combinedWorkdayCount ?? 0,
-        label: t("Workdays"),
+        label: t("Workdays:"),
         tooltipContent: t(
           "This is the sum of project- and site-level workdays in all approved reports for this project."
         )

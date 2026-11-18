@@ -20,6 +20,7 @@ const toTitles = (values: string[], options: MyProjectsFilterOption[]) =>
 type MyProjectsHeaderProps = {
   projectCount: number;
   showToolbar: boolean;
+  showAddProject: boolean;
   statuses: string[];
   plantingStatuses: string[];
   onApplyFilters: (statuses: string[], plantingStatuses: string[]) => void;
@@ -29,6 +30,7 @@ type MyProjectsHeaderProps = {
 const MyProjectsHeader: FC<MyProjectsHeaderProps> = ({
   projectCount,
   showToolbar,
+  showAddProject,
   statuses,
   plantingStatuses,
   onApplyFilters,
@@ -81,20 +83,22 @@ const MyProjectsHeader: FC<MyProjectsHeaderProps> = ({
         className="!bg-theme-neutral-100 !py-3"
         title={t("My Projects")}
         actions={
-          <Button
-            size="small"
-            leftIcon={<PlusIcon boxSize="0.625rem" />}
-            className="shrink-0 whitespace-nowrap"
-            onClick={handleAddProject}
-          >
-            {t("Add New Project")}
-          </Button>
+          showAddProject ? (
+            <Button
+              size="small"
+              leftIcon={<PlusIcon boxSize="0.625rem" />}
+              className="shrink-0 whitespace-nowrap"
+              onClick={handleAddProject}
+            >
+              {t("Add New Project")}
+            </Button>
+          ) : undefined
         }
       />
       {showToolbar && (
         <>
           <ToolbarTable
-            className="sticky top-11 z-10 !bg-theme-neutral-200 !px-6 !pb-6 !pt-5"
+            className="!bg-theme-neutral-200 sticky top-11 z-10 !px-6 !pb-6 !pt-5"
             classNameContentLeft="w-full"
             classNameContentSearch="w-[15.25rem] max-w-full mobile:w-auto mobile:min-w-0 mobile:flex-1"
             search={{
