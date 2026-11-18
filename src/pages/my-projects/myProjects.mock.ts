@@ -1,4 +1,4 @@
-import { ProjectCardProject } from "@/redesignComponents/containers/Cards/ProjectCard/ProjectCard";
+import { ProjectCardProject } from "@/redesignComponents/containers/ProjectCard/ProjectCard";
 
 // TODO: design-only mock. Replace with the project index connection when this page is wired to the API.
 const MOCK_PROJECT_TEMPLATES: ProjectCardProject[] = [

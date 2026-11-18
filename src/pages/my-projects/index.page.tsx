@@ -5,7 +5,7 @@ import { FC, useCallback, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { useMyOrg } from "@/connections/Organisation";
-import ProjectCard from "@/redesignComponents/containers/Cards/ProjectCard/ProjectCard";
+import ProjectCard from "@/redesignComponents/containers/ProjectCard/ProjectCard";
 import { getPlantingProgressState } from "@/redesignComponents/content/headers/PageHeaders/ProjectHeader/projectHeader.utils";
 import { DEFAULT_PAGE_SIZE } from "@/redesignComponents/dataDisplay/Table/tableUtils";
 import PaginationTable from "@/redesignComponents/navigation/Pagination/PaginationTable";
