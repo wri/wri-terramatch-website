@@ -11,6 +11,7 @@ import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { deleteOrganisation, updateOrganisation, useMyOrg, useOrganisation } from "@/connections/Organisation";
+import { useMyUser } from "@/connections/User";
 import { helpCenterLink } from "@/constants/links";
 import { Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
@@ -18,11 +19,13 @@ import { logout } from "@/generated/v3/utils";
 import { normalizedFormData } from "@/helpers/customForms";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
 import { useOrganisationForm } from "@/hooks/useOrganisationForm";
+import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 const CreateOrganisationForm = () => {
   const t = useT();
   const router = useRouter();
+  const [, { user }] = useMyUser();
   const [, { organisationId }] = useMyOrg();
   const { openModal, closeModal } = useModalContext();
 
@@ -46,12 +49,15 @@ const CreateOrganisationForm = () => {
     if (uuid == null) return;
     try {
       await deleteOrganisation(uuid);
-      router.push("/assign");
+      // users/me still relates the user to the deleted organisation; reload it so that useMyOrg
+      // reports that the user no longer has one.
+      if (user != null) ApiSlice.pruneCache("users", [user.uuid]);
+      router.push("/organization/assign");
       closeModal(ModalId.WARNING);
     } catch (error) {
       Log.error("Failed to delete draft organization:", error);
     }
-  }, [uuid, router, closeModal]);
+  }, [uuid, user, router, closeModal]);
 
   const onBackFirstStep = (shouldHideWarning?: boolean) => {
     if (shouldHideWarning) {
