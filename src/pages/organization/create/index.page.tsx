@@ -122,6 +122,10 @@ const CreateOrganisationForm = () => {
           onBackFirstStep={onBackFirstStep}
           title={t("Create Organization")}
           saveAndCloseModal={saveAndCloseModal}
+          summaryOptions={{
+            title: t("Review Details"),
+            downloadButtonText: t("Download")
+          }}
           roundedCorners
           entity={orgData ?? undefined}
         />
