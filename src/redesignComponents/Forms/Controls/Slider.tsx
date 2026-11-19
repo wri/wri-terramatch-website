@@ -13,12 +13,19 @@ const centeredSliderMarkerStyles = {
   }
 };
 
+const hiddenValuePreviewStyles = {
+  "& .ds-slider-value-preview": {
+    display: "none !important"
+  }
+};
+
 interface SliderProps extends ComponentProps<typeof WriSlider> {
   css?: SystemStyleObject;
   className?: string;
+  hideValuePreview?: boolean;
 }
 
-const Slider: FC<SliderProps> = ({ css, className, ...rest }) => {
+const Slider: FC<SliderProps> = ({ css, className, hideValuePreview = false, ...rest }) => {
   const isCenteredVariant = rest.isCentred === true;
 
   const styles = {
@@ -27,6 +34,7 @@ const Slider: FC<SliderProps> = ({ css, className, ...rest }) => {
       height: "fit-content"
     },
     ...(isCenteredVariant ? centeredSliderMarkerStyles : {}),
+    ...(hideValuePreview ? hiddenValuePreviewStyles : {}),
     ...css
   };
   return (

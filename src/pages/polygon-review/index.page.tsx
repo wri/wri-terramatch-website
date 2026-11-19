@@ -383,6 +383,7 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
             projectUuid={selectedProject?.uuid}
             matchingPolygonCount={selectedProject != null ? indexTotal : undefined}
             projectPolygonCount={hasLevel2Filters ? metrics.project?.polygonCount : undefined}
+            calcAreaBounds={metrics.calcAreaBounds}
             polygonFilters={polygonFilters}
             activeFilterLabels={activeFilterLabels}
             searchResetKey={searchResetKey}

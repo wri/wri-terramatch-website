@@ -272,6 +272,14 @@ export type SitePolygonSummaryDto = {
    */
   sumCalcArea: number;
   /**
+   * Smallest calcArea (ha) across polygons in scope; null when none have calcArea. Request without calcAreaMin / calcAreaMax to get the full range for a range filter.
+   */
+  minCalcArea: number | null;
+  /**
+   * Largest calcArea (ha) across polygons in scope; null when none have calcArea. Request without calcAreaMin / calcAreaMax to get the full range for a range filter.
+   */
+  maxCalcArea: number | null;
+  /**
    * Count of polygons in scope.
    */
   totalPolygons: number;

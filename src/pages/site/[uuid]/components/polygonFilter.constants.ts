@@ -1,6 +1,8 @@
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
 import { type PolygonStatus } from "@/constants/polygonStatuses";
 
+type Translate = (key: string, params?: Record<string, unknown>) => string;
+
 export type SubmissionCycleOption = "1" | "2" | "3" | "4" | "5";
 
 export const SUBMISSION_CYCLE_OPTIONS: SubmissionCycleOption[] = ["1", "2", "3", "4", "5"];
@@ -38,6 +40,8 @@ export type PolygonFilterState = {
   validationStatus: PolygonValidationStatus[];
   plantStartFrom: string;
   plantStartTo: string;
+  calcAreaMin: number | null;
+  calcAreaMax: number | null;
   practice: restorationStrategyType[];
   targetSys: targetLandUseType[];
   submissionCycle: SubmissionCycleOption[];
@@ -52,12 +56,29 @@ export const EMPTY_POLYGON_FILTERS: PolygonFilterState = {
   validationStatus: [],
   plantStartFrom: "",
   plantStartTo: "",
+  calcAreaMin: null,
+  calcAreaMax: null,
   practice: [],
   targetSys: [],
   submissionCycle: [],
   hasOverlap: false,
   hasDisturbance: false,
   showDeleted: false
+};
+
+export type CalcAreaRange = Pick<PolygonFilterState, "calcAreaMin" | "calcAreaMax">;
+
+export type CalcAreaBounds = { min: number; max: number };
+
+export const formatHectares = (value: number): string => value.toLocaleString("en-US", { maximumFractionDigits: 2 });
+
+export const formatCalcAreaRange = (t: Translate, { calcAreaMin, calcAreaMax }: CalcAreaRange): string | undefined => {
+  if (calcAreaMin != null && calcAreaMax != null) {
+    return t("{min}–{max} ha", { min: formatHectares(calcAreaMin), max: formatHectares(calcAreaMax) });
+  }
+  if (calcAreaMin != null) return t("At least {value} ha", { value: formatHectares(calcAreaMin) });
+  if (calcAreaMax != null) return t("Up to {value} ha", { value: formatHectares(calcAreaMax) });
+  return undefined;
 };
 
 export const TARGET_LAND_USE_VALUES: targetLandUseType[] = [

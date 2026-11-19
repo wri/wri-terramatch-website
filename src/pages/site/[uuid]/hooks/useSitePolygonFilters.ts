@@ -9,6 +9,7 @@ import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.
 
 import {
   EMPTY_POLYGON_FILTERS,
+  formatCalcAreaRange,
   PolygonFilterState,
   SUBMISSION_CYCLE_LABELS
 } from "../components/polygonFilter.constants";
@@ -49,6 +50,8 @@ export const useSitePolygonFilters = ({ t }: UseSitePolygonFiltersParams) => {
     if (polygonFilters.validationStatus.length > 0) filter.validationStatus = polygonFilters.validationStatus;
     if (polygonFilters.plantStartFrom !== "") filter.plantStartFrom = `${polygonFilters.plantStartFrom}T00:00:00.000Z`;
     if (polygonFilters.plantStartTo !== "") filter.plantStartTo = `${polygonFilters.plantStartTo}T00:00:00.000Z`;
+    if (polygonFilters.calcAreaMin != null) filter.calcAreaMin = polygonFilters.calcAreaMin;
+    if (polygonFilters.calcAreaMax != null) filter.calcAreaMax = polygonFilters.calcAreaMax;
     if (polygonFilters.practice.length > 0) filter.practice = polygonFilters.practice;
     if (polygonFilters.targetSys.length > 0) filter.targetSys = polygonFilters.targetSys;
     if (polygonFilters.submissionCycle.length > 0) filter.submissionCycle = polygonFilters.submissionCycle;
@@ -107,6 +110,15 @@ export const useSitePolygonFilters = ({ t }: UseSitePolygonFiltersParams) => {
         label: `${fromLabel} - ${toLabel}`,
         onRemove: () => {
           setPolygonFilters(current => ({ ...current, plantStartFrom: "", plantStartTo: "" }));
+        }
+      });
+    }
+    const calcAreaLabel = formatCalcAreaRange(t, polygonFilters);
+    if (calcAreaLabel != null) {
+      labels.push({
+        label: calcAreaLabel,
+        onRemove: () => {
+          setPolygonFilters(current => ({ ...current, calcAreaMin: null, calcAreaMax: null }));
         }
       });
     }

@@ -145,6 +145,18 @@ export type SitePolygonsIndexQueryParams = {
    */
   plantingStatus?: "no-restoration-expected" | "not-started" | "in-progress" | "replacement-planting" | "completed";
   /**
+   * Inclusive lower bound for calculated area in hectares (calcArea). Polygons without calcArea are excluded.
+   *
+   * @minimum 0
+   */
+  calcAreaMin?: number;
+  /**
+   * Inclusive upper bound for calculated area in hectares (calcArea). Polygons without calcArea are excluded.
+   *
+   * @minimum 0
+   */
+  calcAreaMax?: number;
+  /**
    * Filter results by polygon status
    */
   ["polygonStatus[]"]?: ("draft" | "pending-approval" | "information-required" | "approved")[];
@@ -811,6 +823,18 @@ export type SitePolygonsMapIndexQueryParams = {
    */
   plantingStatus?: "no-restoration-expected" | "not-started" | "in-progress" | "replacement-planting" | "completed";
   /**
+   * Inclusive lower bound for calculated area in hectares (calcArea). Polygons without calcArea are excluded.
+   *
+   * @minimum 0
+   */
+  calcAreaMin?: number;
+  /**
+   * Inclusive upper bound for calculated area in hectares (calcArea). Polygons without calcArea are excluded.
+   *
+   * @minimum 0
+   */
+  calcAreaMax?: number;
+  /**
    * Scope results to site UUID(s). mapIndex requires siteId[] and / or projectId[].
    */
   ["siteId[]"]?: string[];
@@ -1032,6 +1056,18 @@ export type SitePolygonsSummaryQueryParams = {
    * Filter results by the planting status of the project's latest approved project report
    */
   plantingStatus?: "no-restoration-expected" | "not-started" | "in-progress" | "replacement-planting" | "completed";
+  /**
+   * Inclusive lower bound for calculated area in hectares (calcArea). Polygons without calcArea are excluded.
+   *
+   * @minimum 0
+   */
+  calcAreaMin?: number;
+  /**
+   * Inclusive upper bound for calculated area in hectares (calcArea). Polygons without calcArea are excluded.
+   *
+   * @minimum 0
+   */
+  calcAreaMax?: number;
   /**
    * Scope results to site UUID(s). mapIndex requires siteId[] and / or projectId[].
    */
