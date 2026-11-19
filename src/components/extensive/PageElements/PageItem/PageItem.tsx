@@ -14,6 +14,8 @@ export interface PageItemProps {
   title: string;
   buttonProps?: IButtonProps;
   downloadButtonProps?: IButtonProps;
+  /** Custom node rendered in place of the download button (e.g. a grouped download menu). */
+  downloadSlot?: ReactNode;
   children?: ReactNode;
   flexProps?: FlexProps;
   tag?: ReactNode;
@@ -27,6 +29,7 @@ const PageItem: FC<PageItemProps> = ({
   title,
   buttonProps = null,
   downloadButtonProps = null,
+  downloadSlot = null,
   children,
   flexProps,
   tag,
@@ -51,10 +54,13 @@ const PageItem: FC<PageItemProps> = ({
           {tag !== null && <div className="shrink-0">{tag}</div>}
         </div>
         <Flex gap={4} className={classNames("mobile:justify-end", classNameRightSectionHeader)}>
+          {downloadSlot !== null && downloadSlot}
           {downloadButtonProps !== null && <Button {...downloadButtonProps} />}
           {buttonProps !== null && (
             <>
-              {downloadButtonProps !== null && <SimpleDivider className="!h-7 !w-[0.063rem]" />}
+              {(downloadButtonProps !== null || downloadSlot !== null) && (
+                <SimpleDivider className="!h-7 !w-[0.063rem]" />
+              )}
               <Button {...buttonProps} />
             </>
           )}

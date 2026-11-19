@@ -4,7 +4,7 @@ import { memo, useEffect, useMemo } from "react";
 import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { useLayoutShell } from "@/redesignComponents/Layout/LayoutShell.provider";
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
-import type { BulkToolbarAction } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
+import type { BulkToolbarAction, BulkToolbarItem } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarInfoTooltipContent from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
 import {
   getSitePolygonsApproveTooltipIfNoneEligible,
@@ -13,6 +13,7 @@ import {
 } from "@/utils/sitePolygonReview";
 import { getSitePolygonsSubmitTooltipIfNoneEligible } from "@/utils/sitePolygonSubmit";
 
+import type { PolygonDownloadFormat } from "../hooks/useSitePolygonBulkActions";
 import { PolygonTableRow } from "./PolygonTableRow";
 
 export type PolygonBulkActionToolbarProps = {
@@ -26,7 +27,7 @@ export type PolygonBulkActionToolbarProps = {
   onCancel: () => void;
   onClearSelection?: () => void;
   onDelete: () => void;
-  onDownload: () => void;
+  onDownload: (format: PolygonDownloadFormat) => void;
   onEdit: () => void;
   onSubmit: () => void;
   onOpenApproveModal: () => void;
@@ -37,6 +38,14 @@ export type PolygonBulkActionToolbarProps = {
   isSubmitDisabled?: boolean;
   polygons: PolygonTableRow[];
 };
+
+// Download option label: the option name, with a lighter subtext on the line below.
+const downloadOptionLabel = (title: string, subtext: string) => (
+  <span className="flex flex-col whitespace-normal text-left">
+    <span>{title}</span>
+    <span className="text-theme-neutral-500">{subtext}</span>
+  </span>
+);
 
 const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   visible,
@@ -83,14 +92,30 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
     [isAdminReview, reviewPolygons, t]
   );
 
-  const toolbarActions = useMemo<BulkToolbarAction[]>(
+  const toolbarActions = useMemo<BulkToolbarItem[]>(
     () => [
       {
         id: "download",
-        children: t("Download"),
-        loading: isDownloading,
-        disabled: isDownloading,
-        onClick: onDownload
+        multiAction: {
+          mainActionLabel: t("Download"),
+          mainActionOnClick: () => {},
+          disabled: isDownloading,
+          otherActions: [
+            {
+              label: downloadOptionLabel(
+                t("Attributes (.csv)"),
+                t("{count} selected with totals", { count: itemCount })
+              ),
+              value: "csv",
+              onClick: () => onDownload("csv")
+            },
+            {
+              label: downloadOptionLabel(t("Polygons (.geojson)"), t("Shapes and attributes")),
+              value: "geojson",
+              onClick: () => onDownload("geojson")
+            }
+          ]
+        }
       },
       {
         id: "validate",

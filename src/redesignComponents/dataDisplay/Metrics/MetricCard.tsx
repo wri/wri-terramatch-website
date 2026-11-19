@@ -114,7 +114,7 @@ const MetricTooltipTrigger: FC<MetricTooltipTriggerProps> = ({
 
   return (
     <Flex className="leading-none">
-      <Tooltip content={tooltipContent} position="top">
+      <Tooltip content={tooltipContent} position="top" preserveFocusOnChild>
         <button
           type="button"
           className="inline-flex items-center"

@@ -6,7 +6,7 @@ import { FC, useCallback, useMemo } from "react";
 
 import DownloadActionCell from "@/components/extensive/EntityIndex/DownloadActionCell";
 import EntityUpdateStatus from "@/components/extensive/EntityIndex/EntityUpdateStatus";
-import { stopRowClick } from "@/components/extensive/EntityIndex/stopRowClick";
+import { stopInteractiveClick, stopRowClick } from "@/components/extensive/EntityIndex/stopRowClick";
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import { useDate } from "@/hooks/useDate";
@@ -229,7 +229,7 @@ const AdditionalReportsTable: FC<AdditionalReportsTableProps> = ({
           <ChakraTableCell {...context?.getCellProps("updatedAt")}>
             {renderDateTag(report.updatedAt, false)}
           </ChakraTableCell>
-          <ChakraTableCell {...context?.getCellProps("actions")} onClick={stopRowClick}>
+          <ChakraTableCell {...context?.getCellProps("actions")} onClick={stopInteractiveClick}>
             {isMobile ? (
               <DownloadActionCell onDownload={() => downloadReports([report], t)} />
             ) : (

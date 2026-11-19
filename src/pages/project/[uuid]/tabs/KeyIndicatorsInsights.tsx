@@ -9,10 +9,10 @@ import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import {
   AreaHectaresIcon,
   JobsIcon,
-  ProjectIcon,
   RegenerationIcon,
   SeedlingsIcon,
-  TreeIcon
+  TreeIcon,
+  TreePlantingIcon
 } from "@/redesignComponents/foundations/Icons";
 
 import MetricCardsRow, {
@@ -64,7 +64,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         progress={firstCardTreesProgress}
         goal={treesGrownGoal}
         variant="donutChart"
-        icon={<ProjectIcon />}
+        icon={isCombinedTreesGrowingCard ? <TreeIcon /> : <TreePlantingIcon />}
         color="secondary.600"
         type="treesRestored"
         className={METRIC_CARD_CLASS_NAME(maxCardsInRow)}
@@ -197,7 +197,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           progress={Math.round(project.treesRestoredPpc ?? 0)}
           goal={0}
           variant="large"
-          icon={<TreeIcon />}
+          icon={<RegenerationIcon />}
           color="secondary.600"
           type="estimatedTreesRestored"
           className={`${METRIC_CARD_CLASS_NAME(maxCardsInRow)} !h-auto`}

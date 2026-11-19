@@ -4,7 +4,13 @@ import { ProgressTag as Component } from "./ProgressTag";
 
 const meta: Meta<typeof Component> = {
   title: "Redesign Components/Actions/Tags/Progress Tag",
-  component: Component
+  component: Component,
+  argTypes: {
+    state: {
+      control: "select",
+      options: ["not-started", "in-progress", "completed", "not-available"]
+    }
+  }
 };
 
 export default meta;
@@ -28,12 +34,19 @@ export const Completed: Story = {
   }
 };
 
+export const NotAvailable: Story = {
+  args: {
+    state: "not-available"
+  }
+};
+
 export const AllStates: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
       <Component state="not-started" />
       <Component state="in-progress" />
       <Component state="completed" />
+      <Component state="not-available" />
     </div>
   )
 };

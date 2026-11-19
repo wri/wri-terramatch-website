@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState } from "react";
 
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
-import { GalleryImageType } from "@/redesignComponents/content/ContentCard/ImageGalleryCard/ImageGalleryCard";
+import { GalleryImageType } from "@/redesignComponents/containers/Cards/ImageGalleryCard/ImageGalleryCard";
 
 import { getThemedColor } from "../../../lib/theme";
 import Button from "../../actions/Buttons/Button/Button";

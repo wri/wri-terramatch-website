@@ -15,6 +15,7 @@ type PolygonReviewToolbarProps = {
   polygonFilters: PolygonFilterState;
   activeFilterLabels: SelectedFilter[];
   searchResetKey: number;
+  isLocked: boolean;
   onSearchChange: (search: string) => void;
   onApplyFilters: (filters: PolygonFilterState) => void;
   onClearFilters: () => void;
@@ -28,6 +29,7 @@ const PolygonReviewToolbar: FC<PolygonReviewToolbarProps> = ({
   polygonFilters,
   activeFilterLabels,
   searchResetKey,
+  isLocked,
   onSearchChange,
   onApplyFilters,
   onClearFilters
@@ -55,7 +57,13 @@ const PolygonReviewToolbar: FC<PolygonReviewToolbarProps> = ({
               : t("of {total} polygons", { total: projectPolygonCount.toLocaleString("en-US") })
         }}
         selectedFilters={activeFilterLabels}
-        lockedMessage={projectUuid != null ? undefined : t("Select a project to search and filter polygons")}
+        lockedMessage={
+          projectUuid == null
+            ? t("Select a project to search and filter polygons")
+            : isLocked
+            ? t("Search and filters are unavailable while polygons are processing")
+            : undefined
+        }
         showClearFilters={activeFilterLabels.length > 0}
         onClearFilters={onClearFilters}
         onClickFilterButton={openFilterDrawer}

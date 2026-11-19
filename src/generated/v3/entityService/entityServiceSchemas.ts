@@ -3142,7 +3142,8 @@ export type FormDataDto = {
     | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
-    | "srpReports";
+    | "srpReports"
+    | "organisations";
   /**
    * Entity UUID for this form data
    */
@@ -3653,6 +3654,7 @@ export type Forms = {
    * @example application
    * @example disturbance-report
    * @example financial-report
+   * @example organisation
    * @example project
    * @example project-report
    * @example site
@@ -3684,6 +3686,7 @@ export type FormLightDto = {
     | "application"
     | "disturbance-report"
     | "financial-report"
+    | "organisation"
     | "project"
     | "project-report"
     | "site"
@@ -3827,6 +3830,7 @@ export type FormFullDto = {
     | "application"
     | "disturbance-report"
     | "financial-report"
+    | "organisation"
     | "project"
     | "project-report"
     | "site"
@@ -3963,6 +3967,7 @@ export type StoreFormAttributes = {
     | "application"
     | "disturbance-report"
     | "financial-report"
+    | "organisation"
     | "project"
     | "project-report"
     | "site"

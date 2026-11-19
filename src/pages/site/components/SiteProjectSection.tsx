@@ -8,7 +8,7 @@ import AttentionBadge from "@/components/extensive/EntityIndex/AttentionBadge";
 import DownloadActionCell from "@/components/extensive/EntityIndex/DownloadActionCell";
 import EntityUpdateStatus from "@/components/extensive/EntityIndex/EntityUpdateStatus";
 import IndexLoadingRow from "@/components/extensive/EntityIndex/IndexLoadingRow";
-import { stopRowClick } from "@/components/extensive/EntityIndex/stopRowClick";
+import { stopInteractiveClick, stopRowClick } from "@/components/extensive/EntityIndex/stopRowClick";
 import { Framework, isTerrafund, toFramework } from "@/context/framework.provider";
 import type { ProjectSitesMetaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -266,7 +266,7 @@ const SiteProjectRow: FC<SiteProjectRowProps> = ({
           </Text>
         )}
       </TableCell>
-      <TableCell {...context?.getCellProps("actions")} onClick={stopRowClick}>
+      <TableCell {...context?.getCellProps("actions")} onClick={stopInteractiveClick}>
         {isMobile ? (
           <DownloadActionCell
             ariaLabel={t("Download {siteName}", { siteName: site.name })}

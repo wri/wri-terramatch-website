@@ -4,8 +4,8 @@ import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 import { twMerge } from "tailwind-merge";
 
 import { type SizeValue, resolveRemSizeValue } from "@/lib/sizing";
+import GalleryImage from "@/redesignComponents/content/Images/GalleryImage/GalleryImage";
 
-import GalleryImage from "../../Images/GalleryImage/GalleryImage";
 import { MIN_ITEMS, MIN_ROWS } from "./constants";
 
 export interface GalleryImageType {

@@ -9,7 +9,7 @@ const meta: Meta<typeof MultiActionButton> = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["primary", "secondary", "borderless", "outline", "negative"]
+      options: ["primary", "secondary", "borderless"]
     },
     size: {
       control: "select",
@@ -223,118 +223,6 @@ export const Borderless: Story = {
     )
 };
 
-// Outline Variant
-export const Outline: Story = {
-  render: () =>
-    groupWrapper(
-      <>
-        {stateBlock(
-          "Default",
-          <MultiActionButton
-            variant="outline"
-            mainActionLabel="Actions"
-            mainActionOnClick={() => alert("Actions clicked!")}
-            otherActions={[
-              { label: "Action A", value: "a", onClick: () => alert("Action A clicked!") },
-              { label: "Action B", value: "b", onClick: () => alert("Action B clicked!") }
-            ]}
-          />
-        )}
-        {stateBlock(
-          "Disabled",
-          <MultiActionButton
-            variant="outline"
-            mainActionLabel="Actions"
-            mainActionOnClick={() => {}}
-            disabled
-            otherActions={[{ label: "Action A", value: "a", onClick: () => {} }]}
-          />
-        )}
-        {stateBlock(
-          "Small",
-          <MultiActionButton
-            variant="outline"
-            size="small"
-            mainActionLabel="Actions"
-            mainActionOnClick={() => alert("Actions clicked!")}
-            otherActions={[
-              { label: "Action A", value: "a", onClick: () => alert("Action A clicked!") },
-              { label: "Action B", value: "b", onClick: () => alert("Action B clicked!") }
-            ]}
-          />
-        )}
-        {stateBlock(
-          "Item Disabled",
-          <MultiActionButton
-            variant="outline"
-            mainActionLabel="Actions"
-            mainActionOnClick={() => alert("Actions clicked!")}
-            otherActions={[
-              { label: "Action A", value: "a", onClick: () => alert("Action A clicked!") },
-              { label: "Action B", value: "b", onClick: () => {}, disabled: true }
-            ]}
-          />
-        )}
-      </>
-    )
-};
-
-// Negative Variant
-export const Negative: Story = {
-  render: () =>
-    groupWrapper(
-      <>
-        {stateBlock(
-          "Default",
-          <MultiActionButton
-            variant="negative"
-            mainActionLabel="Delete"
-            mainActionOnClick={() => alert("Delete clicked!")}
-            otherActions={[
-              { label: "Delete Permanently", value: "permanent", onClick: () => alert("Delete Permanently clicked!") },
-              { label: "Archive Instead", value: "archive", onClick: () => alert("Archive Instead clicked!") }
-            ]}
-          />
-        )}
-        {stateBlock(
-          "Disabled",
-          <MultiActionButton
-            variant="negative"
-            mainActionLabel="Delete"
-            mainActionOnClick={() => {}}
-            disabled
-            otherActions={[{ label: "Delete Permanently", value: "permanent", onClick: () => {} }]}
-          />
-        )}
-        {stateBlock(
-          "Small",
-          <MultiActionButton
-            variant="negative"
-            size="small"
-            mainActionLabel="Delete"
-            mainActionOnClick={() => alert("Delete clicked!")}
-            otherActions={[
-              { label: "Delete Permanently", value: "permanent", onClick: () => alert("Delete Permanently clicked!") },
-              { label: "Archive Instead", value: "archive", onClick: () => alert("Archive Instead clicked!") }
-            ]}
-          />
-        )}
-        {stateBlock(
-          "Item Disabled",
-          <MultiActionButton
-            variant="negative"
-            mainActionLabel="Delete"
-            mainActionOnClick={() => alert("Delete clicked!")}
-            otherActions={[
-              { label: "Delete Permanently", value: "permanent", onClick: () => alert("Delete Permanently clicked!") },
-              { label: "Archive Instead", value: "archive", onClick: () => {}, disabled: true }
-            ]}
-          />
-        )}
-      </>
-    )
-};
-
 export const ManyActions: Story = {
   args: {
     variant: "primary",
@@ -382,7 +270,7 @@ export const FullWidth: Story = {
 export const AllVariants: Story = {
   render: () => (
     <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap", alignItems: "flex-start" }}>
-      {(["primary", "secondary", "borderless", "outline", "negative"] as const).map(variant =>
+      {(["primary", "secondary", "borderless"] as const).map(variant =>
         stateBlock(
           variant,
           <MultiActionButton

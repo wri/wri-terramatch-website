@@ -6,9 +6,9 @@ import { useGadmOptions } from "@/connections/Gadm";
 import { useReportingFrameworks } from "@/connections/ReportingFramework";
 import { getProjectCohortOptions } from "@/constants/options/cohort";
 
-import { ProjectContextFacet } from "../utils/projectContextFilter";
+import { ProjectContextEntry, ProjectContextFacet } from "../utils/projectContextFilter";
 
-export const useProjectFacetLabels = () => {
+export const useProjectFacetLabels = (projects: ProjectContextEntry[]) => {
   const t = useT();
   const [, { data: frameworks }] = useReportingFrameworks({});
   const countryOptions = useGadmOptions({ level: 0 });
@@ -19,9 +19,14 @@ export const useProjectFacetLabels = () => {
         (frameworks ?? []).flatMap(({ slug, name }) => (slug == null ? [] : [[slug, name] as const]))
       ),
       country: new Map((countryOptions ?? []).map(({ value, title }) => [String(value), title])),
+      organisation: new Map(
+        projects.flatMap(({ organisationUuid, organisationName }) =>
+          organisationUuid == null || organisationName == null ? [] : [[organisationUuid, organisationName] as const]
+        )
+      ),
       cohort: new Map(getProjectCohortOptions(t).map(({ value, title }) => [String(value), title]))
     }),
-    [countryOptions, frameworks, t]
+    [countryOptions, frameworks, projects, t]
   );
 
   return useCallback(

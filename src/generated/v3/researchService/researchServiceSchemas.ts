@@ -582,7 +582,43 @@ export type DelayedJobDto = {
   entityType?: string | null;
 };
 
+export type GeoJsonExportSort = {
+  /**
+   * Field to sort by. practice/distr use joined-code sort keys.
+   */
+  field?:
+    | "name"
+    | "status"
+    | "createdAt"
+    | "validationStatus"
+    | "plantStart"
+    | "numTrees"
+    | "calcArea"
+    | "targetSys"
+    | "submissionCycle"
+    | "source"
+    | "practice"
+    | "distr"
+    | "disturbance"
+    | "siteName"
+    | "projectName";
+  /**
+   * @default ASC
+   */
+  direction?: "ASC" | "DESC";
+};
+
 export type GeoJsonExportAttributes = {
+  /**
+   * Sort the rows the way the table is sorted.
+   */
+  sort?: GeoJsonExportSort;
+  /**
+   * File format of the export. Defaults to GeoJSON.
+   *
+   * @default geojson
+   */
+  format?: "geojson" | "csv";
   /**
    * Export all active polygons in these projects.
    */
@@ -595,6 +631,81 @@ export type GeoJsonExportAttributes = {
    * Export these active polygons (polygon geometry UUIDs, as used by geojson?uuid=).
    */
   polygonUuids?: string[];
+  /**
+   * Filter results by polygon status
+   */
+  polygonStatus?: ("draft" | "pending-approval" | "information-required" | "approved")[];
+  /**
+   * Filter results by validation status
+   */
+  validationStatus?: string[];
+  /**
+   * Inclusive lower bound for plant start date (plantStart)
+   *
+   * @format date
+   */
+  plantStartFrom?: string;
+  /**
+   * Inclusive upper bound for plant start date (plantStart)
+   *
+   * @format date
+   */
+  plantStartTo?: string;
+  /**
+   * Filter by restoration practice (any selected value matches)
+   */
+  practice?: ("tree-planting" | "direct-seeding" | "assisted-natural-regeneration")[];
+  /**
+   * Filter by target land use / target system (any selected value matches)
+   */
+  targetSys?: (
+    | "agroforest"
+    | "agricultural-land"
+    | "grassland"
+    | "open-natural-ecosystem"
+    | "natural-forest"
+    | "mangrove"
+    | "peatland"
+    | "riparian-area-or-wetland"
+    | "silvopasture"
+    | "woodlot-or-plantation"
+    | "urban-forest"
+  )[];
+  /**
+   * Filter by submission cycle (any selected value matches)
+   */
+  submissionCycle?: ("1" | "2" | "3" | "4" | "5")[];
+  /**
+   * Filter by tree distribution (any selected value matches)
+   */
+  distr?: ("single-line" | "partial" | "full")[];
+  /**
+   * Filter by polygon source (any selected value matches)
+   */
+  source?: ("terramatch" | "greenhouse" | "research")[];
+  /**
+   * Filter to polygons with a failed overlap validation.
+   *
+   * @default false
+   */
+  hasOverlap?: boolean;
+  /**
+   * Filter to polygons linked to a disturbance (disturbance_id IS NOT NULL).
+   *
+   * @default false
+   */
+  hasDisturbance?: boolean;
+  /**
+   * Soft-deleted polygons for the scope. Only applies to site or project scopes.
+   *
+   * @default false
+   */
+  deletedOnly?: boolean;
+  search?: string;
+  /**
+   * Select the fields used by search.
+   */
+  searchFields?: ("siteName" | "polyName" | "polygonUuid")[];
 };
 
 export type GeoJsonExportData = {

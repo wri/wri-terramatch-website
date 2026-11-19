@@ -387,6 +387,7 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
             polygonFilters={polygonFilters}
             activeFilterLabels={activeFilterLabels}
             searchResetKey={searchResetKey}
+            isLocked={polygonBulkActions.isTableLocked}
             onSearchChange={setPolygonSearch}
             onApplyFilters={setPolygonFilters}
             onClearFilters={clearPolygonFilters}

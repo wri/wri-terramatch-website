@@ -784,8 +784,9 @@ export type CreateSitePolygonsGeoJsonExportVariables = {
 };
 
 /**
- * Provide exactly one of projectUuids, siteUuids or polygonUuids. The file is written to S3
- *     in the background; the completed delayed job payload holds a fileDownloads resource with a signed URL.
+ * Provide exactly one of projectUuids, siteUuids or polygonUuids and an optional format (geojson by
+ *     default, or csv). The file is written to S3 in the background; the completed delayed job payload holds a
+ *     fileDownloads resource with a signed URL.
  */
 export const createSitePolygonsGeoJsonExport = new V3ApiEndpoint<
   CreateSitePolygonsGeoJsonExportResponse,

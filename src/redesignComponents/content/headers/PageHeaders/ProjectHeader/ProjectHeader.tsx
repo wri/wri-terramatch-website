@@ -7,9 +7,9 @@ import { deleteMedia, fileUploadOptions, prepareFileForUpload, updateMedia, useU
 import { useUserAssociations } from "@/connections/UserAssociation";
 import type { MediaDto, ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useFiles } from "@/hooks/useFiles";
+import { GalleryImageType } from "@/redesignComponents/containers/Cards/ImageGalleryCard/ImageGalleryCard";
 import ModalSelectGalleryImages from "@/redesignComponents/containers/Modal/ModalSelectGalleryImages";
 import ModalUploadImage from "@/redesignComponents/containers/Modal/ModalUploadImage";
-import { GalleryImageType } from "@/redesignComponents/content/ContentCard/ImageGalleryCard/ImageGalleryCard";
 import {
   countryCodeToFlag,
   formatMonthYear,

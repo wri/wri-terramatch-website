@@ -4,7 +4,7 @@ import React, { FC, UIEvent, useCallback } from "react";
 
 import ImageGalleryCard, {
   GalleryImageType
-} from "@/redesignComponents/content/ContentCard/ImageGalleryCard/ImageGalleryCard";
+} from "@/redesignComponents/containers/Cards/ImageGalleryCard/ImageGalleryCard";
 
 import Modal from "./Modal";
 
