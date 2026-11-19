@@ -111,6 +111,8 @@ export interface WizardFormProps {
   hideSaveAndCloseButton?: boolean;
 
   saveAndCloseModal?: Omit<SaveAndCloseModalProps, "shouldHideWarning" | "models">;
+  /** If provided, Save and Exit calls this with the current values instead of showing the Save and Exit modal. */
+  onSaveAndExit?: (values: Dictionary<unknown>) => void;
 
   disableAutoProgress?: boolean;
   disableInitialAutoProgress?: boolean;
@@ -287,6 +289,11 @@ function WizardForm(props: WizardFormProps) {
 
     props.onChange?.(values, true);
     formHook.reset(values);
+    if (props.onSaveAndExit != null) {
+      props.onSaveAndExit(values);
+      return;
+    }
+
     modal.openModal(
       ModalId.SAVE_AND_CLOSE_MODAL,
       <SaveAndCloseModal
