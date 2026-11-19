@@ -6,3 +6,9 @@ export const secondaryTextColorClass = "!text-theme-neutral-800";
 export const fullWidthGroupCss: SystemStyleObject = {
   "& > [role='group']": { flex: "1 1 auto" }
 };
+
+// Download buttons use the brand blue for both the main action and the dropdown trigger.
+export const downloadButtonGroupCss: SystemStyleObject = {
+  "& button": { backgroundColor: "rgb(8, 68, 94)", borderColor: "rgb(8, 68, 94)", color: "white" },
+  "& button svg": { color: "white" }
+};
