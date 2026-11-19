@@ -245,22 +245,29 @@ function WizardForm(props: WizardFormProps) {
     1000
   );
 
+  const goToNextStep = useCallback(
+    (data: Dictionary<unknown>) => {
+      if (!props.disableAutoProgress) {
+        // Disable auto step progress if disableAutoProgress was passed
+        setSelectedStepIndex(n => n + 1);
+      }
+      let values = formHook.getValues();
+      values = { ...values };
+      props.onChange?.(values, true);
+      props.onStepChange?.(data);
+      formHook.reset(values);
+      formHook.clearErrors();
+    },
+    [formHook, props, setSelectedStepIndex]
+  );
+
   const onSubmitStep = useCallback(
     (data: any) => {
       trackSectionCompleted(selectedStepIndex);
 
       if (selectedStepIndex < lastIndex) {
         // Step changes through 0 - last step
-        if (!props.disableAutoProgress) {
-          // Disable auto step progress if disableAutoProgress was passed
-          setSelectedStepIndex(n => n + 1);
-        }
-        let values = formHook.getValues();
-        values = { ...values };
-        props.onChange?.(values, true);
-        props.onStepChange?.(data);
-        formHook.reset(values);
-        formHook.clearErrors();
+        goToNextStep(data);
       } else {
         // Step changes on last step
         if (props.onSubmit == null) return props.onStepChange?.(data);
@@ -268,15 +275,18 @@ function WizardForm(props: WizardFormProps) {
         props.onSubmit(data);
       }
     },
-    [formHook, lastIndex, props, reportAnalytics, selectedStepIndex, setSelectedStepIndex, trackSectionCompleted]
+    [goToNextStep, lastIndex, props, reportAnalytics, selectedStepIndex, trackSectionCompleted]
   );
 
   const onSubmitStepError = useCallback(
     (errors: FieldErrors) => {
       setShowValidationErrors(true);
       trackSectionError(selectedStepIndex, errors);
+      // An incomplete step doesn't block moving forward (the step tabs don't either); only the
+      // final submission requires every step to be complete.
+      if (selectedStepIndex < lastIndex) goToNextStep(formHook.getValues());
     },
-    [selectedStepIndex, trackSectionError]
+    [formHook, goToNextStep, lastIndex, selectedStepIndex, trackSectionError]
   );
 
   const onClickSaveAndClose = useCallback(() => {
