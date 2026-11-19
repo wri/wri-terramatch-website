@@ -58,7 +58,7 @@ const SitePolygonsHeader: FC<PropsWithChildren<SitePolygonsHeaderProps>> = ({
     {
       label: (
         <span className="polygon-download-section-title font-bold text-theme-neutral-900">
-          {t("Whole project {count} polygons", { count: wholeEntityCount })}
+          {t("Whole site {count} polygons", { count: wholeEntityCount })}
         </span>
       ),
       value: "whole-header",
