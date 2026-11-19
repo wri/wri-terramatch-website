@@ -43,7 +43,6 @@ const HectaresFilterCard: FC<HectaresFilterCardProps> = ({
     [calcAreaMin, calcAreaMax, toPosition]
   );
 
-  // A thumb resting on the end of the track means "no bound", so polygons without a calculated area stay included.
   const handleValueChange = useCallback(
     ({ value: [start, end] }: { value: number[] }) =>
       onChange({

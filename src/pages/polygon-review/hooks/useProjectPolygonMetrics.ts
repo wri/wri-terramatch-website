@@ -58,7 +58,6 @@ export const useProjectPolygonMetrics = ({
     filter: polygonFilter,
     enabled: isProjectSelected && hasPolygonFilter
   });
-  // The unfiltered project summary gives the hectares filter a range that stays put while other filters change.
   const calcAreaBounds = useMemo(() => toCalcAreaBounds(projectSummary), [projectSummary]);
   const selectionFilter = useMemo(() => ({ "polygonUuid[]": selectedPolygonUuids }), [selectedPolygonUuids]);
   const [, { data: selectedSummary }] = useSitePolygonSummary({
