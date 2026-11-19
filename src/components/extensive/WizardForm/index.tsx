@@ -21,8 +21,7 @@ import WizardFormProvider, {
   FormFieldsProvider,
   FormModelsDefinition,
   OrgFormDetails,
-  ProjectFormDetails,
-  useFieldsProvider
+  ProjectFormDetails
 } from "@/context/wizardForm.provider";
 import { DisturbanceReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { entityLinkHeaderMap, mapEntityTitle, mapStatusToTagState } from "@/helpers/entityFormLinkHeader";
@@ -143,7 +142,6 @@ function WizardForm(props: WizardFormProps) {
   const router = useRouter();
   const reportingWindow = useReportingWindow(toFramework(entity?.frameworkKey), entity?.dueAt!);
   const taskTitle = t("Reporting Task {window}", { window: reportingWindow });
-  const fieldsProvider = useFieldsProvider();
 
   const [showValidationErrors, setShowValidationErrors] = useState(!(props.deferValidation ?? false));
 
@@ -331,7 +329,7 @@ function WizardForm(props: WizardFormProps) {
   }, [onClickSaveAndClose, isAdmin, formHook, onSubmitStep, reportAnalytics]);
 
   const handleDownloadAnswers = useDownloadFormAnswers({
-    fieldsProvider,
+    fieldsProvider: props.fieldsProvider,
     formHook
   });
 
