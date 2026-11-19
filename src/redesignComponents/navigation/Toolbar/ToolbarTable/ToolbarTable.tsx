@@ -2,7 +2,7 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { isEmpty } from "lodash";
-import { FC, useCallback, useRef, useState } from "react";
+import { ComponentProps, FC, useCallback, useRef, useState } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
@@ -93,6 +93,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
                         onQueryChange: handleQueryChange,
                         size: "default"
                       } as SearchProps)}
+                      onSelect={search.onSelect as ComponentProps<typeof Search>["onSelect"]}
                     />
                   </Box>
                 ))}
