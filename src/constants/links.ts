@@ -1,4 +1,5 @@
 export const zendeskSupportLink = "https://terramatchsupport.zendesk.com/";
+export const helpCenterLink = "https://terramatchsupport.zendesk.com/hc/en-us";
 export const polygonSubmissionTutorialsLink =
   "https://terramatchsupport.zendesk.com/hc/en-us/articles/27065988566811-How-to-Manage-Polygons-in-your-Site-Profiles";
 export const termsAndConditionsLink =

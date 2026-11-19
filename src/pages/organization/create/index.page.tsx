@@ -1,7 +1,9 @@
+import { Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { Dictionary } from "lodash";
+import Link from "next/link";
 import { useRouter } from "next/router";
-import { useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
@@ -9,8 +11,10 @@ import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { deleteOrganisation, updateOrganisation, useMyOrg, useOrganisation } from "@/connections/Organisation";
+import { helpCenterLink } from "@/constants/links";
 import { Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { logout } from "@/generated/v3/utils";
 import { normalizedFormData } from "@/helpers/customForms";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
 import { useOrganisationForm } from "@/hooks/useOrganisationForm";
@@ -71,6 +75,33 @@ const CreateOrganisationForm = () => {
     );
   };
 
+  // Save and Exit logs the user out; wait for any in-flight save to finish first so it isn't cut off.
+  const [exitRequested, setExitRequested] = useState(false);
+  useEffect(() => {
+    if (exitRequested && !entityAnswersUpdating) logout(router);
+  }, [entityAnswersUpdating, exitRequested, router]);
+
+  const saveAndCloseModal = useMemo(
+    () => ({
+      content: (
+        <Text as="span" textStyle="400">
+          {t(
+            "TerraMatch will save the information you’ve entered, and you’ll be logged out. Next time you log in, you’ll be prompted to complete this form. You must submit your organization profile, and have a reviewer approve it, before you can access any funding opportunities. For additional guidance, you can access the {helpCenter}.",
+            {
+              helpCenter: (
+                <Link href={helpCenterLink} target="_blank" rel="noopener noreferrer" className="underline">
+                  {t("TerraMatch Help Center")}
+                </Link>
+              )
+            }
+          )}
+        </Text>
+      ),
+      onConfirm: () => setExitRequested(true)
+    }),
+    [t]
+  );
+
   const onChange = useCallback(
     (data: Dictionary<unknown>) => updateEntityAnswers({ answers: normalizedFormData(data, fieldsProvider) }),
     [fieldsProvider, updateEntityAnswers]
@@ -90,8 +121,7 @@ const CreateOrganisationForm = () => {
           submitButtonDisable={entityAnswersUpdating}
           onBackFirstStep={onBackFirstStep}
           title={t("Create Organization")}
-          hideSaveAndCloseButton
-          stepNavigationFooter
+          saveAndCloseModal={saveAndCloseModal}
           roundedCorners
           entity={orgData ?? undefined}
         />
