@@ -1,4 +1,4 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { type SystemStyleObject, Box, Flex } from "@chakra-ui/react";
 import { type ReactElement, Fragment, memo } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -6,7 +6,6 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton, {
   IMultiActionButtonProps
 } from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
-import { downloadButtonGroupCss } from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton.styles";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import { InfoIcon } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
@@ -18,15 +17,29 @@ const ACTION_DIVIDER_CLASS = "!h-3.5 !w-[0.0625rem]";
 const BORDERLESS_NEUTRAL_CLASS = "!px-1.5 !text-theme-neutral-100";
 const BORDERLESS_DANGER_CLASS = "!px-1.5 !text-theme-error-300";
 const BORDERLESS_DISABLED_CLASS = "disabled:!text-theme-neutral-400 disabled:!opacity-100";
+
+const MULTI_ACTION_MAIN_CLASS = "!pl-1.5 !pr-1.5 disabled:!opacity-100";
+
+const MULTI_ACTION_TRIGGER_CSS: SystemStyleObject = {
+  "& [data-part='trigger']": {
+    paddingInlineStart: "0.25rem !important",
+    paddingInlineEnd: "0.375rem !important"
+  }
+};
+
 type BulkActionToolbarActionsProps = {
   deleteAction?: BulkToolbarAction;
   actions: BulkToolbarItem[];
 };
 
-// Multi-actions use the primary (blue) style, matching the page-level "Download All" MultiActionButton.
 const renderMultiAction = ({ className, ...multiActionProps }: IMultiActionButtonProps): ReactElement => (
-  <Box css={downloadButtonGroupCss}>
-    <MultiActionButton variant="primary" {...multiActionProps} className={className} />
+  <Box css={MULTI_ACTION_TRIGGER_CSS}>
+    <MultiActionButton
+      variant="borderless"
+      typeVariant="dark"
+      {...multiActionProps}
+      className={twMerge(MULTI_ACTION_MAIN_CLASS, className)}
+    />
   </Box>
 );
 

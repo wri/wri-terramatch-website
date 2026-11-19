@@ -1,4 +1,4 @@
-import { Flex } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import {
   MultiActionButton as WriMultiActionButton,
   MultiActionButtonProps as WriMultiActionButtonProps
@@ -6,11 +6,12 @@ import {
 import clsx from "clsx";
 import { FC } from "react";
 
-import { fullWidthGroupCss, secondaryTextColorClass } from "./MultiActionButton.styles";
+import { darkTypeVariantCss, fullWidthGroupCss, secondaryTextColorClass } from "./MultiActionButton.styles";
 
 export interface IMultiActionButtonProps extends WriMultiActionButtonProps {
   className?: string;
   isFullWidth?: boolean;
+  typeVariant?: "light" | "dark";
 }
 
 const MultiActionButton: FC<IMultiActionButtonProps> = ({
@@ -22,11 +23,13 @@ const MultiActionButton: FC<IMultiActionButtonProps> = ({
   disabled,
   className,
   isFullWidth = false,
+  typeVariant = "light",
   ...props
 }) => {
+  const isDark = typeVariant === "dark";
   const buttonClassName = clsx(
     className,
-    variant === "secondary" && !disabled && secondaryTextColorClass,
+    variant === "secondary" && !disabled && !isDark && secondaryTextColorClass,
     isFullWidth && "flex-auto"
   );
   const button = (
@@ -42,13 +45,15 @@ const MultiActionButton: FC<IMultiActionButtonProps> = ({
     />
   );
 
-  return isFullWidth ? (
-    <Flex flex="1 1 auto" css={fullWidthGroupCss}>
-      {button}
-    </Flex>
-  ) : (
-    button
-  );
+  if (isFullWidth) {
+    return (
+      <Flex flex="1 1 auto" css={isDark ? { ...fullWidthGroupCss, ...darkTypeVariantCss } : fullWidthGroupCss}>
+        {button}
+      </Flex>
+    );
+  }
+
+  return isDark ? <Box css={darkTypeVariantCss}>{button}</Box> : button;
 };
 
 export default MultiActionButton;
