@@ -6,6 +6,7 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton, {
   IMultiActionButtonProps
 } from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
+import { downloadButtonGroupCss } from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton.styles";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import { InfoIcon } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
@@ -17,19 +18,15 @@ const ACTION_DIVIDER_CLASS = "!h-3.5 !w-[0.0625rem]";
 const BORDERLESS_NEUTRAL_CLASS = "!px-1.5 !text-theme-neutral-100";
 const BORDERLESS_DANGER_CLASS = "!px-1.5 !text-theme-error-300";
 const BORDERLESS_DISABLED_CLASS = "disabled:!text-theme-neutral-400 disabled:!opacity-100";
-// Scoped to the group wrapper so these win over the design system's secondary text color.
-// The label is white and borderless; the arrow trigger is a white icon on the primary background.
-const MULTI_ACTION_GROUP_CLASS =
-  "[&_button]:!border-transparent [&_button]:!bg-transparent [&_button]:!text-white [&_button]:disabled:!opacity-100 [&_[data-part='trigger']]:!bg-theme-primary-500 [&_[data-part='trigger']]:!text-white [&_[data-part='trigger']_svg]:!text-white";
-
 type BulkActionToolbarActionsProps = {
   deleteAction?: BulkToolbarAction;
   actions: BulkToolbarItem[];
 };
 
+// Multi-actions use the primary (blue) style, matching the page-level "Download All" MultiActionButton.
 const renderMultiAction = ({ className, ...multiActionProps }: IMultiActionButtonProps): ReactElement => (
-  <Box className={MULTI_ACTION_GROUP_CLASS}>
-    <MultiActionButton variant="secondary" {...multiActionProps} className={className} />
+  <Box css={downloadButtonGroupCss}>
+    <MultiActionButton variant="primary" {...multiActionProps} className={className} />
   </Box>
 );
 
