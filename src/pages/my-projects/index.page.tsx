@@ -5,6 +5,7 @@ import { FC, useCallback, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { useMyOrg } from "@/connections/Organisation";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import ProjectCard from "@/redesignComponents/containers/Cards/ProjectCard/ProjectCard";
 import { getPlantingProgressState } from "@/redesignComponents/content/headers/PageHeaders/ProjectHeader/projectHeader.utils";
 import { DEFAULT_PAGE_SIZE } from "@/redesignComponents/dataDisplay/Table/tableUtils";
@@ -20,6 +21,7 @@ const FIRST_PAGE = 1;
 
 const MyProjectsPage: FC = () => {
   const t = useT();
+  const isMobile = useIsMobile();
   const [isOrgLoaded, { organisation }] = useMyOrg();
   const [query, setQuery] = useState("");
   const [statuses, setStatuses] = useState<string[]>([]);
@@ -96,7 +98,7 @@ const MyProjectsPage: FC = () => {
                 totalItems={filteredProjects.length}
                 onPageSizeChange={handlePageSizeChange}
                 onPageChange={setCurrentPage}
-                showItemCountText
+                showItemCountText={!isMobile}
                 variant="compact"
               />
             )}

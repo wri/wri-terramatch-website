@@ -129,22 +129,26 @@ const ProjectCard: FC<ProjectCardProps> = ({ project }) => {
             {title}
           </Text>
           <Flex alignItems="center" columnGap={2} paddingLeft={0.5} paddingBottom={1} flexWrap="wrap">
-            <Flex alignItems="center" gap={1}>
-              <OrganizationIcon boxSize="0.75rem" color="primary.900" />
+            <Flex alignItems="flex-start" gap={1}>
+              <OrganizationIcon boxSize="0.75rem" flexShrink={0} marginTop={1} color="primary.900" />
               <Text textStyle="300" color="primary.900">
                 {project.organisationName ?? "-"}
               </Text>
             </Flex>
             <EllipsisDivider color="primary.900" />
-            <Flex alignItems="center" gap={1}>
-              <ProgrammeIcon boxSize="0.75rem" color="primary.900" />
+            <Flex alignItems="flex-start" gap={1}>
+              <ProgrammeIcon boxSize="0.75rem" flexShrink={0} marginTop={1} color="primary.900" />
               <Text textStyle="300" color="primary.900">
                 {reportingFramework?.name ?? "-"}
               </Text>
             </Flex>
             <EllipsisDivider color="primary.900" />
-            <Flex alignItems="center" gap={1}>
-              {countryFlag !== "" && <Twemoji options={{ className: "h-3 w-3" }}>{countryFlag}</Twemoji>}
+            <Flex alignItems="flex-start" gap={1}>
+              {countryFlag !== "" && (
+                <Box flexShrink={0} marginTop={1}>
+                  <Twemoji options={{ className: "h-3 w-3" }}>{countryFlag}</Twemoji>
+                </Box>
+              )}
               <Text textStyle="300" color="primary.900">
                 {formatOptionsList(countryOptions ?? [], project.level0Project ?? [])}
               </Text>
@@ -174,7 +178,9 @@ const ProjectCard: FC<ProjectCardProps> = ({ project }) => {
       <Flex
         alignItems="center"
         justifyContent="space-between"
-        gap={4}
+        flexWrap="wrap"
+        columnGap={4}
+        rowGap={2}
         paddingLeft={2}
         paddingRight={4}
         paddingY={2}
@@ -204,6 +210,7 @@ const ProjectCard: FC<ProjectCardProps> = ({ project }) => {
         <Button
           variant="primary"
           size="small"
+          className="ml-auto"
           rightIcon={<ChevronRightIcon boxSize="0.625rem" />}
           onClick={handleViewProjectClick}
         >
