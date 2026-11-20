@@ -8,6 +8,7 @@ import FrameworkField from "@/admin/components/Fields/FrameworkField";
 import ReadablePlantingStatusField from "@/admin/components/Fields/ReadablePlantingStatusField";
 import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
 import PolygonHandoffSummary from "@/admin/components/ResourceTabs/AuditLogTab/components/PolygonHandoffSummary";
+import { hasActiveChangeRequest } from "@/admin/utils/changeRequest";
 
 const ProjectOverview: FC = () => {
   const [statusModal, setStatusModal] = useState<"approved" | "information-required" | undefined>();
@@ -59,7 +60,11 @@ const ProjectOverview: FC = () => {
             <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
               <Button
                 variant="outlined"
-                disabled={record?.status === "information-required" || record?.status === "draft"}
+                disabled={
+                  record?.status === "information-required" ||
+                  record?.status === "draft" ||
+                  hasActiveChangeRequest(record?.updateRequestStatus)
+                }
                 onClick={() => setStatusModal("information-required")}
               >
                 Request More Info
@@ -69,9 +74,9 @@ const ProjectOverview: FC = () => {
                 startIcon={<Check />}
                 disabled={
                   record?.status === "approved" ||
-                  record?.updateRequestStatus === "pending-approval" ||
-                  record?.updateRequestStatus === "draft" ||
-                  record?.status === "draft"
+                  record?.status === "draft" ||
+                  record?.status === "information-required" ||
+                  hasActiveChangeRequest(record?.updateRequestStatus)
                 }
                 onClick={() => setStatusModal("approved")}
               >
