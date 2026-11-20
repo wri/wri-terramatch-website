@@ -6,6 +6,7 @@ import { DateField, Labeled, TextField, useShowContext } from "react-admin";
 import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import FrameworkField from "@/admin/components/Fields/FrameworkField";
 import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
+import { hasActiveChangeRequest } from "@/admin/utils/changeRequest";
 import { DECLARED_ENV } from "@/constants/environment";
 
 const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ parent }) => {
@@ -14,7 +15,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
   >();
 
   const { record } = useShowContext();
-  const reportActionDisabled = record?.updateRequestStatus === "information-required";
+  const reportActionDisabled = hasActiveChangeRequest(record?.updateRequestStatus);
 
   return (
     <>
@@ -91,7 +92,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
                 reportActionDisabled ||
                 record?.status === "approved" ||
                 record?.status === "draft" ||
-                record?.updateRequestStatus === "draft" ||
+                record?.status === "information-required" ||
                 record?.status === "due"
               }
               onClick={() => setStatusModal("approved")}
@@ -99,7 +100,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
               Approve
             </Button>
             {DECLARED_ENV !== "prod" && parent?.label !== "Disturbance Report" && (
-              <Button variant="outlined" onClick={() => setStatusModal("due")}>
+              <Button variant="outlined" disabled={reportActionDisabled} onClick={() => setStatusModal("due")}>
                 Reset Report
               </Button>
             )}

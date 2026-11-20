@@ -6,6 +6,7 @@ import { Labeled, TextField, useShowContext } from "react-admin";
 
 import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
+import { hasActiveChangeRequest } from "@/admin/utils/changeRequest";
 
 const NurseryOverview: FC = () => {
   const t = useT();
@@ -41,7 +42,11 @@ const NurseryOverview: FC = () => {
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
             <Button
               variant="outlined"
-              disabled={record?.status === "information-required" || record?.status === "draft"}
+              disabled={
+                record?.status === "information-required" ||
+                record?.status === "draft" ||
+                hasActiveChangeRequest(record?.updateRequestStatus)
+              }
               onClick={() => setStatusModal("information-required")}
             >
               Request More Info
@@ -52,8 +57,8 @@ const NurseryOverview: FC = () => {
               disabled={
                 record?.status === "approved" ||
                 record?.status === "draft" ||
-                record?.updateRequestStatus === "pending-approval" ||
-                record?.updateRequestStatus === "draft"
+                record?.status === "information-required" ||
+                hasActiveChangeRequest(record?.updateRequestStatus)
               }
               onClick={() => setStatusModal("approved")}
             >
