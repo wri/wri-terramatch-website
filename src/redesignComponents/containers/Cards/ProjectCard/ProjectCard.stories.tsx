@@ -8,7 +8,7 @@ import ProjectCard, { ProjectCardProject } from "./ProjectCard";
 const DEFAULT_PROJECT: ProjectCardProject = {
   uuid: "story-project",
   name: "Project Title",
-  frameworkKey: "ppc",
+  frameworkKey: "terrafund-non-profits",
   organisationName: "Organization Name",
   status: "approved",
   plantingStatus: "in-progress",
@@ -31,6 +31,10 @@ const STORY_REPORTING_FRAMEWORKS: Record<string, string> = {
   ppc: "PPC",
   hbf: "Harit Bharat Fund",
   "terrafund-non-profits": "TerraFund Non-Profits"
+};
+
+const STORY_COUNTRIES: Record<string, string> = {
+  KEN: "Kenya"
 };
 
 const addReportingFramework = (builder: ReturnType<typeof buildStore>, slug: string, name: string) => {
@@ -61,7 +65,7 @@ const meta: Meta<typeof ProjectCard> = {
     layout: "padded",
     storeBuilder: Object.entries(STORY_REPORTING_FRAMEWORKS).reduce(
       (builder, [slug, name]) => addReportingFramework(builder, slug, name),
-      buildStore()
+      buildStore().addGadmCodes("level0", STORY_COUNTRIES)
     )
   },
   decorators: [
@@ -78,6 +82,10 @@ type Story = StoryObj<typeof ProjectCard>;
 
 export const Default: Story = {
   args: { project: DEFAULT_PROJECT }
+};
+
+export const WithoutNurseries: Story = {
+  args: { project: { ...DEFAULT_PROJECT, frameworkKey: "ppc" } }
 };
 
 export const LongTitle: Story = {
