@@ -1,4 +1,4 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { type SystemStyleObject, Box, Flex } from "@chakra-ui/react";
 import { type ReactElement, Fragment, memo } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -17,10 +17,15 @@ const ACTION_DIVIDER_CLASS = "!h-3.5 !w-[0.0625rem]";
 const BORDERLESS_NEUTRAL_CLASS = "!px-1.5 !text-theme-neutral-100";
 const BORDERLESS_DANGER_CLASS = "!px-1.5 !text-theme-error-300";
 const BORDERLESS_DISABLED_CLASS = "disabled:!text-theme-neutral-400 disabled:!opacity-100";
-// Scoped to the group wrapper so these win over the design system's secondary text color.
-// The label is white and borderless; the arrow trigger is a white icon on the primary background.
-const MULTI_ACTION_GROUP_CLASS =
-  "[&_button]:!border-transparent [&_button]:!bg-transparent [&_button]:!text-white [&_button]:disabled:!opacity-100 [&_[data-part='trigger']]:!bg-theme-primary-500 [&_[data-part='trigger']]:!text-white [&_[data-part='trigger']_svg]:!text-white";
+
+const MULTI_ACTION_MAIN_CLASS = "!pl-1.5 !pr-1.5 disabled:!opacity-100";
+
+const MULTI_ACTION_TRIGGER_CSS: SystemStyleObject = {
+  "& [data-part='trigger']": {
+    paddingInlineStart: "0.25rem !important",
+    paddingInlineEnd: "0.375rem !important"
+  }
+};
 
 type BulkActionToolbarActionsProps = {
   deleteAction?: BulkToolbarAction;
@@ -28,8 +33,13 @@ type BulkActionToolbarActionsProps = {
 };
 
 const renderMultiAction = ({ className, ...multiActionProps }: IMultiActionButtonProps): ReactElement => (
-  <Box className={MULTI_ACTION_GROUP_CLASS}>
-    <MultiActionButton variant="secondary" {...multiActionProps} className={className} />
+  <Box css={MULTI_ACTION_TRIGGER_CSS}>
+    <MultiActionButton
+      variant="borderless"
+      typeVariant="dark"
+      {...multiActionProps}
+      className={twMerge(MULTI_ACTION_MAIN_CLASS, className)}
+    />
   </Box>
 );
 

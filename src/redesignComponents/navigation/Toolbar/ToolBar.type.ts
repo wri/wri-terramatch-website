@@ -89,6 +89,9 @@ export interface SearchProps {
   cacheKey?: string;
   onQueryChange?: (query: string) => void;
   onSearchSubmit?: (query: string) => void;
+  onSelect?: (option: ListItemProps) => void;
+  value?: string;
+  onChange?: (value: string) => void;
   count?: number;
 }
 

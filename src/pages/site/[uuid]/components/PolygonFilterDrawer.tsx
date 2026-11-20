@@ -24,9 +24,13 @@ import Switch from "@/redesignComponents/Forms/Actions/Switch/Switch";
 import DateRangeInput from "@/redesignComponents/Forms/Inputs/DateInputs/DateRangeInputs/DateRangeInput";
 import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 
+import HectaresFilterCard from "./HectaresFilterCard";
 import {
   type SubmissionCycleOption,
+  CalcAreaBounds,
+  CalcAreaRange,
   EMPTY_POLYGON_FILTERS,
+  formatCalcAreaRange,
   PolygonFilterState,
   PolygonSubmissionStatus,
   PolygonValidationStatus,
@@ -64,6 +68,7 @@ interface PolygonFilterDrawerProps {
   filters: PolygonFilterState;
   isAdminReview?: boolean;
   siteFilterProjectUuid?: string;
+  calcAreaBounds?: CalcAreaBounds;
   onApplyFilters: (filters: PolygonFilterState) => void;
   onClearFilters: () => void;
   onOpenChange?: (open: boolean) => void;
@@ -75,6 +80,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
   filters,
   isAdminReview = false,
   siteFilterProjectUuid,
+  calcAreaBounds,
   onApplyFilters,
   onClearFilters,
   onOpenChange
@@ -110,6 +116,10 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
     }
     if (draftFilters.plantStartTo !== "") {
       tags.push({ id: "plantStartTo", label: `To: ${draftFilters.plantStartTo}` });
+    }
+    const calcAreaLabel = formatCalcAreaRange(t, draftFilters);
+    if (calcAreaLabel != null) {
+      tags.push({ id: "calcArea", label: calcAreaLabel });
     }
     for (const practice of draftFilters.practice) {
       tags.push({ id: `practice:${practice}`, label: restorationPracticeLabels[practice] });
@@ -151,6 +161,8 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
           return { ...current, plantStartFrom: "" };
         case "plantStartTo":
           return { ...current, plantStartTo: "" };
+        case "calcArea":
+          return { ...current, calcAreaMin: null, calcAreaMax: null };
         case "hasOverlap":
           return { ...current, hasOverlap: false };
         case "hasDisturbance":
@@ -165,6 +177,10 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
 
   const handleSiteChange = useCallback((sites: SiteFilterOption[]) => {
     setDraftFilters(current => ({ ...current, sites }));
+  }, []);
+
+  const handleCalcAreaChange = useCallback((range: CalcAreaRange) => {
+    setDraftFilters(current => ({ ...current, ...range }));
   }, []);
 
   const handleSubmissionStatusChange = (value: PolygonSubmissionStatus, { checked }: CheckboxChange) => {
@@ -268,6 +284,14 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                     onChange={handleSiteChange}
                   />
                 </FilterCard>
+              )}
+              {calcAreaBounds != null && (
+                <HectaresFilterCard
+                  bounds={calcAreaBounds}
+                  value={draftFilters}
+                  disabled={draftFilters.showDeleted}
+                  onChange={handleCalcAreaChange}
+                />
               )}
               <FilterCard label={t("Submission Status")}>
                 {submissionStatusOptions.map(option => (

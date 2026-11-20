@@ -6,6 +6,7 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { useFullSite } from "@/connections/Entity";
+import { useProjectFilterOptions } from "@/connections/ProjectFilterOptions";
 import { useProjectMapIndex } from "@/connections/ProjectMapIndex";
 import { pruneSitePolygonsCache, useSitePolygons } from "@/connections/SitePolygons";
 import { useMyUser } from "@/connections/User";
@@ -60,9 +61,10 @@ import { toPolygonReviewTableRow } from "./utils/polygonReviewTableRow";
 import { POLYGON_REVIEW_PATH } from "./utils/polygonReviewUrl";
 import {
   EMPTY_PROJECT_CONTEXT_FILTERS,
-  filterProjects,
+  getProjectFacetFilters,
   ProjectContextFilters,
-  sortProjectsByName
+  sortProjectsByName,
+  toProjectFilterQuery
 } from "./utils/projectContextFilter";
 
 const NO_POLYGONS: SitePolygonLightDto[] = [];
@@ -82,10 +84,14 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
   const t = useT();
   const router = useRouter();
   const [isUserLoaded, { isAdmin }] = useMyUser();
-  const [, { data: mapIndex }] = useProjectMapIndex({ enabled: isAdmin });
-
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [filters, setFilters] = useState<ProjectContextFilters>(EMPTY_PROJECT_CONTEXT_FILTERS);
+  const projectQuery = useMemo(
+    () => toProjectFilterQuery(selectedProject != null ? getProjectFacetFilters(selectedProject) : filters),
+    [filters, selectedProject]
+  );
+  const [, { data: mapIndex }] = useProjectMapIndex({ enabled: isAdmin, filter: projectQuery });
+  const [, { data: filterOptions }] = useProjectFilterOptions({ enabled: isAdmin, filter: projectQuery });
   const selectedProjectUuid = selectedProject?.uuid ?? null;
 
   const columns = useMemo(() => buildPolygonTableColumns(t, { showEntityColumns: true }), [t]);
@@ -266,7 +272,6 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
   );
 
   const projects = useMemo(() => sortProjectsByName(mapIndex?.projects ?? []), [mapIndex]);
-  const filteredProjects = useMemo(() => filterProjects(projects, filters), [filters, projects]);
 
   const { initialState, clearInitialStateQuery } = useInitialPolygonReviewState(isAdmin);
   // Not a ref: it must change in the same render as the scope, or the effect below clears the query params at once.
@@ -367,6 +372,7 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
           <ProjectContextPicker
             open={isPickerOpen}
             projects={projects}
+            filterOptions={filterOptions}
             filters={filters}
             selectedProject={selectedProject}
             onOpenChange={setIsPickerOpen}
@@ -383,6 +389,7 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
             projectUuid={selectedProject?.uuid}
             matchingPolygonCount={selectedProject != null ? indexTotal : undefined}
             projectPolygonCount={hasLevel2Filters ? metrics.project?.polygonCount : undefined}
+            calcAreaBounds={metrics.calcAreaBounds}
             polygonFilters={polygonFilters}
             activeFilterLabels={activeFilterLabels}
             searchResetKey={searchResetKey}
@@ -392,7 +399,7 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
             onClearFilters={clearPolygonFilters}
           />
           <PolygonReviewMap
-            projects={filteredProjects}
+            projects={projects}
             selectedProject={selectedProject}
             siteUuids={siteUuids}
             polygonFilter={sitePolygonFilter}

@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { Dictionary } from "lodash";
 
 import IconButton from "@/components/elements/IconButton/IconButton";
 import Text from "@/components/elements/Text/Text";
@@ -17,6 +18,7 @@ export type WizardEditFormProps = {
   framework: Framework;
   onStepSave: (data: any) => void;
   onSubmit: (data: any) => void;
+  onSaveAndExit?: (data: Dictionary<unknown>) => void;
   defaultValues?: any;
 };
 
@@ -27,6 +29,7 @@ const WizardEditForm = ({
   framework,
   onStepSave,
   onSubmit,
+  onSaveAndExit,
   defaultValues
 }: WizardEditFormProps) => {
   const { closeModal } = useModalContext();
@@ -56,7 +59,13 @@ const WizardEditForm = ({
         defaultValues={defaultValues || {}}
         onStepChange={onStepSave}
         onSubmit={onSubmit}
+        onSaveAndExit={onSaveAndExit}
         onBackFirstStep={() => null}
+        summaryOptions={{
+          title: t("Review Details"),
+          downloadButtonText: t("Download"),
+          hideSubmitButton: true
+        }}
         hideSaveAndCloseButton
         className="max-w-none p-0"
       />

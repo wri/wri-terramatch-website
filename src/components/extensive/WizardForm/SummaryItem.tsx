@@ -23,6 +23,7 @@ type SummaryItemProps = {
   onSubmitStep: (data: any) => void;
   onSaveAndExit: () => void;
   submitButtonDisable?: boolean;
+  hideSubmitButton?: boolean;
   enableSaveChangesButton?: boolean;
   saveChanges: () => void;
   feedback?: string | null;
@@ -41,6 +42,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
   onSubmitStep,
   onSaveAndExit,
   submitButtonDisable,
+  hideSubmitButton,
   enableSaveChangesButton,
   saveChanges,
   feedback,
@@ -95,13 +97,19 @@ const SummaryItem: FC<SummaryItemProps> = ({
           "absolute right-0 left-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]",
           user ? "bottom-0" : "bottom-[0px]"
         )}
-        primaryButtonProps={{
-          children: t("Submit"),
-          onClick: handleSubmitClick,
-          disabled: submitButtonDisable
-        }}
+        primaryButtonProps={
+          hideSubmitButton
+            ? undefined
+            : {
+                children: t("Submit"),
+                onClick: handleSubmitClick,
+                disabled: submitButtonDisable
+              }
+        }
         secondaryButtonProps={
-          entity?.model != "organisations"
+          hideSubmitButton
+            ? { children: t("Save and Exit"), onClick: onSaveAndExit }
+            : entity?.model != "organisations"
             ? {
                 children: t("Save and Exit"),
                 onClick: saveChanges

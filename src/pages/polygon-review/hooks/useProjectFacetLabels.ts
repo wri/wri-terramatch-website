@@ -5,10 +5,11 @@ import { useCallback, useMemo } from "react";
 import { useGadmOptions } from "@/connections/Gadm";
 import { useReportingFrameworks } from "@/connections/ReportingFramework";
 import { getProjectCohortOptions } from "@/constants/options/cohort";
+import type { ProjectFilterOrganisationOptionDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
-import { ProjectContextEntry, ProjectContextFacet } from "../utils/projectContextFilter";
+import { ProjectContextFacet } from "../utils/projectContextFilter";
 
-export const useProjectFacetLabels = (projects: ProjectContextEntry[]) => {
+export const useProjectFacetLabels = (organisations: ProjectFilterOrganisationOptionDto[]) => {
   const t = useT();
   const [, { data: frameworks }] = useReportingFrameworks({});
   const countryOptions = useGadmOptions({ level: 0 });
@@ -19,14 +20,10 @@ export const useProjectFacetLabels = (projects: ProjectContextEntry[]) => {
         (frameworks ?? []).flatMap(({ slug, name }) => (slug == null ? [] : [[slug, name] as const]))
       ),
       country: new Map((countryOptions ?? []).map(({ value, title }) => [String(value), title])),
-      organisation: new Map(
-        projects.flatMap(({ organisationUuid, organisationName }) =>
-          organisationUuid == null || organisationName == null ? [] : [[organisationUuid, organisationName] as const]
-        )
-      ),
+      organisation: new Map(organisations.flatMap(({ uuid, name }) => (name == null ? [] : [[uuid, name] as const]))),
       cohort: new Map(getProjectCohortOptions(t).map(({ value, title }) => [String(value), title]))
     }),
-    [countryOptions, frameworks, projects, t]
+    [countryOptions, frameworks, organisations, t]
   );
 
   return useCallback(

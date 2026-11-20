@@ -3,6 +3,7 @@ import { useMemo } from "react";
 
 import { SitePolygonMapIndexFilter, useSitePolygonSummary } from "@/connections/SitePolygons";
 import type { SitePolygonSummaryDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import type { CalcAreaBounds } from "@/pages/site/[uuid]/components/polygonFilter.constants";
 
 type UseProjectPolygonMetricsParams = {
   projectUuid: string | null;
@@ -25,6 +26,13 @@ const toTotals = (summary: SitePolygonSummaryDto | null | undefined): PolygonMet
         treesPlanted: summary.sumNumTrees,
         restorationAreaHa: Math.round(summary.sumCalcArea * 100) / 100
       };
+
+const toCalcAreaBounds = (summary: SitePolygonSummaryDto | null | undefined): CalcAreaBounds | undefined => {
+  if (summary?.minCalcArea == null || summary.maxCalcArea == null) return undefined;
+  const { minCalcArea, maxCalcArea } = summary;
+  if (Math.round(maxCalcArea * 100) <= Math.round(minCalcArea * 100)) return undefined;
+  return { min: Math.floor(minCalcArea * 100) / 100, max: Math.ceil(maxCalcArea * 100) / 100 };
+};
 
 export const useProjectPolygonMetrics = ({
   projectUuid,
@@ -50,6 +58,7 @@ export const useProjectPolygonMetrics = ({
     filter: polygonFilter,
     enabled: isProjectSelected && hasPolygonFilter
   });
+  const calcAreaBounds = useMemo(() => toCalcAreaBounds(projectSummary), [projectSummary]);
   const selectionFilter = useMemo(() => ({ "polygonUuid[]": selectedPolygonUuids }), [selectedPolygonUuids]);
   const [, { data: selectedSummary }] = useSitePolygonSummary({
     ...scope,
@@ -59,6 +68,7 @@ export const useProjectPolygonMetrics = ({
 
   return {
     project: toTotals(projectSummary),
+    calcAreaBounds,
     sites: hasSiteFilter ? toTotals(sitesSummary) : undefined,
     // With only a site filter active, the filtered totals are the selected sites' totals.
     filtered: hasPolygonFilter ? toTotals(filteredSummary) : hasSiteFilter ? toTotals(sitesSummary) : undefined,

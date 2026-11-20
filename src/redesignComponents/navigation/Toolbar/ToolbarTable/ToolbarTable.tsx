@@ -1,8 +1,8 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { isEmpty } from "lodash";
-import { FC, useCallback, useRef, useState } from "react";
+import { isEmpty, isEqual } from "lodash";
+import { ComponentProps, FC, useCallback, useRef, useState } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
@@ -14,6 +14,16 @@ import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDiv
 import Toolbar from "../Toolbar";
 import { SearchProps, ToolbarTableProps } from "../ToolBar.type";
 import FilterTag from "./FilterTag";
+
+/**
+ * Keeps the previous reference while the content is equal. The Search re-runs its filter whenever its options
+ * change identity, so callers that build a new array on every render would otherwise loop.
+ */
+const useStableValue = <T,>(value: T): T => {
+  const ref = useRef(value);
+  if (!isEqual(ref.current, value)) ref.current = value;
+  return ref.current;
+};
 
 const ToolbarTable: FC<ToolbarTableProps> = ({
   search,
@@ -33,6 +43,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
 }) => {
   const t = useT();
   const queryRef = useRef("");
+  const stableOptions = useStableValue(search?.options);
   const isLocked = lockedMessage != null;
 
   const cacheKey = search?.cacheKey;
@@ -86,13 +97,16 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
                       {...({
                         placeholder: search.placeholder,
                         disabled: search.disabled === true || isLocked,
-                        options: search.options,
+                        options: stableOptions,
                         resultsMaxHeight: search.resultsMaxHeight,
                         isLoading: search.isLoading,
                         displayResults: search.displayResults ?? "none",
                         onQueryChange: handleQueryChange,
+                        value: search.value,
+                        onChange: search.onChange,
                         size: "default"
                       } as SearchProps)}
+                      onSelect={search.onSelect as ComponentProps<typeof Search>["onSelect"]}
                     />
                   </Box>
                 ))}

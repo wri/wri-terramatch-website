@@ -18,10 +18,10 @@ export const isPolygonReviewPath = (path: string) => POLYGON_REVIEW_PATH_PATTERN
 const useRedirect = () => {
   const router = useRouter();
   const [loaded, { user, isAdmin, isFunderOrGovernment }] = useMyUser();
-  const [, { organisation, organisationId, userStatus }] = useMyOrg();
+  const [orgLoaded, { organisation, organisationId, userStatus }] = useMyOrg();
 
   return useMemo(() => {
-    if (!loaded) return;
+    if (!loaded || !orgLoaded) return;
 
     Log.info("Calculating potential redirect", { from: router.asPath });
     const matcher = new PathMatcher(router.asPath);
@@ -59,17 +59,17 @@ const useRedirect = () => {
       matcher.when(isAdmin)?.ensure("/admin");
 
       matcher.if(
-        organisation == null,
+        organisationId == null,
         () => matcher.ensure("/organization/assign"),
         () => matcher.exact("/organization")?.redirect(`/organization/${organisationId}`)
       );
       matcher.when(userStatus === "pending")?.ensure("/organization/status/pending");
       matcher.if(
-        organisation!.status === "draft",
+        organisation?.status === "draft",
         () => matcher.ensure("/organization/create"),
         () => {
           matcher.if(
-            organisation!.status === "rejected",
+            organisation?.status === "rejected",
             () => matcher.ensure("/organization/status/rejected"),
             () => matcher.startsWith("/organization/create")?.ensure("/organization/create/confirm")
           );
@@ -91,7 +91,7 @@ const useRedirect = () => {
     // important about the current user changes. Where the user can navigate to from there is
     // determined by the navigational items available to them on the page.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loaded, organisation, organisationId, user, userStatus]);
+  }, [loaded, orgLoaded, organisation, organisationId, user, userStatus]);
 };
 
 const useLanguageTransition = () => {

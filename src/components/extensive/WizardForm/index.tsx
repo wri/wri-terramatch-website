@@ -21,8 +21,7 @@ import WizardFormProvider, {
   FormFieldsProvider,
   FormModelsDefinition,
   OrgFormDetails,
-  ProjectFormDetails,
-  useFieldsProvider
+  ProjectFormDetails
 } from "@/context/wizardForm.provider";
 import { DisturbanceReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { entityLinkHeaderMap, mapEntityTitle, mapStatusToTagState } from "@/helpers/entityFormLinkHeader";
@@ -96,6 +95,8 @@ export interface WizardFormProps {
   subtitle?: string;
   summaryOptions?: FormSummaryOptions & {
     downloadButtonText?: string;
+    /** Replaces the review step's Submit button with Save and Exit. */
+    hideSubmitButton?: boolean;
   };
 
   header?: {
@@ -109,13 +110,10 @@ export interface WizardFormProps {
   backButtonText?: string;
   hideBackButton?: boolean;
   hideSaveAndCloseButton?: boolean;
-  /**
-   * Replaces the standard footer with Back and Save and continue / Submit only. There is no Save and Exit
-   * or Download, and Back on the first step calls onBackFirstStep.
-   */
-  stepNavigationFooter?: boolean;
 
   saveAndCloseModal?: Omit<SaveAndCloseModalProps, "shouldHideWarning" | "models">;
+  /** If provided, Save and Exit calls this with the current values instead of showing the Save and Exit modal. */
+  onSaveAndExit?: (values: Dictionary<unknown>) => void;
 
   disableAutoProgress?: boolean;
   disableInitialAutoProgress?: boolean;
@@ -146,7 +144,6 @@ function WizardForm(props: WizardFormProps) {
   const router = useRouter();
   const reportingWindow = useReportingWindow(toFramework(entity?.frameworkKey), entity?.dueAt!);
   const taskTitle = t("Reporting Task {window}", { window: reportingWindow });
-  const fieldsProvider = useFieldsProvider();
 
   const [showValidationErrors, setShowValidationErrors] = useState(!(props.deferValidation ?? false));
 
@@ -250,22 +247,29 @@ function WizardForm(props: WizardFormProps) {
     1000
   );
 
+  const goToNextStep = useCallback(
+    (data: Dictionary<unknown>) => {
+      if (!props.disableAutoProgress) {
+        // Disable auto step progress if disableAutoProgress was passed
+        setSelectedStepIndex(n => n + 1);
+      }
+      let values = formHook.getValues();
+      values = { ...values };
+      props.onChange?.(values, true);
+      props.onStepChange?.(data);
+      formHook.reset(values);
+      formHook.clearErrors();
+    },
+    [formHook, props, setSelectedStepIndex]
+  );
+
   const onSubmitStep = useCallback(
     (data: any) => {
       trackSectionCompleted(selectedStepIndex);
 
       if (selectedStepIndex < lastIndex) {
         // Step changes through 0 - last step
-        if (!props.disableAutoProgress) {
-          // Disable auto step progress if disableAutoProgress was passed
-          setSelectedStepIndex(n => n + 1);
-        }
-        let values = formHook.getValues();
-        values = { ...values };
-        props.onChange?.(values, true);
-        props.onStepChange?.(data);
-        formHook.reset(values);
-        formHook.clearErrors();
+        goToNextStep(data);
       } else {
         // Step changes on last step
         if (props.onSubmit == null) return props.onStepChange?.(data);
@@ -273,15 +277,18 @@ function WizardForm(props: WizardFormProps) {
         props.onSubmit(data);
       }
     },
-    [formHook, lastIndex, props, reportAnalytics, selectedStepIndex, setSelectedStepIndex, trackSectionCompleted]
+    [goToNextStep, lastIndex, props, reportAnalytics, selectedStepIndex, trackSectionCompleted]
   );
 
   const onSubmitStepError = useCallback(
     (errors: FieldErrors) => {
       setShowValidationErrors(true);
       trackSectionError(selectedStepIndex, errors);
+      // An incomplete step doesn't block moving forward (the step tabs don't either); only the
+      // final submission requires every step to be complete.
+      if (selectedStepIndex < lastIndex) goToNextStep(formHook.getValues());
     },
-    [selectedStepIndex, trackSectionError]
+    [formHook, goToNextStep, lastIndex, selectedStepIndex, trackSectionError]
   );
 
   const onClickSaveAndClose = useCallback(() => {
@@ -292,6 +299,11 @@ function WizardForm(props: WizardFormProps) {
 
     props.onChange?.(values, true);
     formHook.reset(values);
+    if (props.onSaveAndExit != null) {
+      props.onSaveAndExit(values);
+      return;
+    }
+
     modal.openModal(
       ModalId.SAVE_AND_CLOSE_MODAL,
       <SaveAndCloseModal
@@ -329,7 +341,7 @@ function WizardForm(props: WizardFormProps) {
   }, [onClickSaveAndClose, isAdmin, formHook, onSubmitStep, reportAnalytics]);
 
   const handleDownloadAnswers = useDownloadFormAnswers({
-    fieldsProvider,
+    fieldsProvider: props.fieldsProvider,
     formHook
   });
 
@@ -386,36 +398,13 @@ function WizardForm(props: WizardFormProps) {
             "absolute right-0 left-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]",
             isAdmin ? "bottom-0" : "bottom-[0px]"
           )}
-          cancelButtonProps={
-            props.stepNavigationFooter
-              ? {
-                  children: t("Back"),
-                  onClick: () => {
-                    if (selectedStepIndex > 0) setSelectedStepIndex(n => n - 1);
-                    else props.onBackFirstStep();
-                  }
-                }
-              : undefined
-          }
-          primaryButtonProps={
-            props.stepNavigationFooter
-              ? {
-                  children: selectedStepIndex === lastIndex ? t("Submit") : t("Save and continue"),
-                  disabled:
-                    selectedStepIndex === lastIndex &&
-                    (hasValidationErrorInAnyStep || props.submitButtonDisable === true),
-                  onClick: formHook.handleSubmit(onSubmitStep, onSubmitStepError)
-                }
-              : {
-                  children: t(`${selectedStepIndex === lastIndex ? "Submit" : "Next"}`),
-                  disabled: hasValidationErrorInAnyStep && selectedStepIndex === lastIndex,
-                  onClick: formHook.handleSubmit(onSubmitStep, onSubmitStepError)
-                }
-          }
+          primaryButtonProps={{
+            children: t(`${selectedStepIndex === lastIndex ? "Submit" : "Next"}`),
+            disabled: hasValidationErrorInAnyStep && selectedStepIndex === lastIndex,
+            onClick: formHook.handleSubmit(onSubmitStep, onSubmitStepError)
+          }}
           secondaryButtonProps={
-            props.stepNavigationFooter
-              ? undefined
-              : !isSubmissionModel
+            !isSubmissionModel
               ? {
                   children: t("Save and Exit"),
                   onClick: () => {
@@ -433,14 +422,10 @@ function WizardForm(props: WizardFormProps) {
                   onClick: onClickSaveAndClose
                 }
           }
-          tertiaryButtonProps={
-            props.stepNavigationFooter
-              ? undefined
-              : {
-                  children: t("Download"),
-                  onClick: handleDownloadAnswers
-                }
-          }
+          tertiaryButtonProps={{
+            children: t("Download"),
+            onClick: handleDownloadAnswers
+          }}
         />
       </div>
     ),
@@ -459,8 +444,7 @@ function WizardForm(props: WizardFormProps) {
       isSubmissionModel,
       handleDownloadAnswers,
       props,
-      onClickSaveAndClose,
-      setSelectedStepIndex
+      onClickSaveAndClose
     ]
   );
 
@@ -498,6 +482,7 @@ function WizardForm(props: WizardFormProps) {
             setSelectedStepIndex={setSelectedStepIndex}
             onSubmitStep={onSubmitStep}
             submitButtonDisable={submitButtonDisable}
+            hideSubmitButton={props.summaryOptions?.hideSubmitButton}
             models={models}
             enableSaveChangesButton={isEntityApproved}
             saveChanges={() => onClickSaveChanges()}
@@ -523,6 +508,7 @@ function WizardForm(props: WizardFormProps) {
       props.summaryOptions?.title,
       props.summaryOptions?.subtitle,
       props.summaryOptions?.downloadButtonText,
+      props.summaryOptions?.hideSubmitButton,
       props.submitButtonDisable,
       models,
       steps,

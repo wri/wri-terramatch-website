@@ -145,6 +145,18 @@ export type SitePolygonsIndexQueryParams = {
    */
   plantingStatus?: "no-restoration-expected" | "not-started" | "in-progress" | "replacement-planting" | "completed";
   /**
+   * Inclusive lower bound for calculated area in hectares (calcArea). Polygons without calcArea are excluded.
+   *
+   * @minimum 0
+   */
+  calcAreaMin?: number;
+  /**
+   * Inclusive upper bound for calculated area in hectares (calcArea). Polygons without calcArea are excluded.
+   *
+   * @minimum 0
+   */
+  calcAreaMax?: number;
+  /**
    * Filter results by polygon status
    */
   ["polygonStatus[]"]?: ("draft" | "pending-approval" | "information-required" | "approved")[];
@@ -811,6 +823,18 @@ export type SitePolygonsMapIndexQueryParams = {
    */
   plantingStatus?: "no-restoration-expected" | "not-started" | "in-progress" | "replacement-planting" | "completed";
   /**
+   * Inclusive lower bound for calculated area in hectares (calcArea). Polygons without calcArea are excluded.
+   *
+   * @minimum 0
+   */
+  calcAreaMin?: number;
+  /**
+   * Inclusive upper bound for calculated area in hectares (calcArea). Polygons without calcArea are excluded.
+   *
+   * @minimum 0
+   */
+  calcAreaMax?: number;
+  /**
    * Scope results to site UUID(s). mapIndex requires siteId[] and / or projectId[].
    */
   ["siteId[]"]?: string[];
@@ -1032,6 +1056,18 @@ export type SitePolygonsSummaryQueryParams = {
    * Filter results by the planting status of the project's latest approved project report
    */
   plantingStatus?: "no-restoration-expected" | "not-started" | "in-progress" | "replacement-planting" | "completed";
+  /**
+   * Inclusive lower bound for calculated area in hectares (calcArea). Polygons without calcArea are excluded.
+   *
+   * @minimum 0
+   */
+  calcAreaMin?: number;
+  /**
+   * Inclusive upper bound for calculated area in hectares (calcArea). Polygons without calcArea are excluded.
+   *
+   * @minimum 0
+   */
+  calcAreaMax?: number;
   /**
    * Scope results to site UUID(s). mapIndex requires siteId[] and / or projectId[].
    */
@@ -4632,6 +4668,114 @@ export const projectsMapIndex = new V3ApiEndpoint<
   {}
 >("/research/v3/projects/mapIndex", "GET");
 
+export type ProjectsFilterOptionsQueryParams = {
+  /**
+   * Filter results by project framework key(s)
+   */
+  ["frameworkKey[]"]?: (
+    | "terrafund-non-profits"
+    | "terrafund-enterprises"
+    | "epa-ghana-pilot"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | "wcb"
+    | "barka-fund"
+    | "polygon-monitoring"
+  )[];
+  /**
+   * Filter results by project country code(s)
+   */
+  ["country[]"]?: string[];
+  /**
+   * Filter results by project organisation UUID(s)
+   */
+  ["organisationUuid[]"]?: string[];
+  /**
+   * Filter results by the planting status of the project's latest approved project report
+   */
+  plantingStatus?: "no-restoration-expected" | "not-started" | "in-progress" | "replacement-planting" | "completed";
+  /**
+   * Filter results by selected project UUID(s)
+   */
+  ["projectUuid[]"]?: string[];
+  /**
+   * Case-insensitive partial match on organisation name. Narrows only the organisation options.
+   */
+  organisationSearch?: string;
+  /**
+   * Case-insensitive partial match on project name. Narrows only the project options.
+   */
+  projectSearch?: string;
+};
+
+export type ProjectsFilterOptionsError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ProjectsFilterOptionsResponse = {
+  meta?: {
+    /**
+     * @example projectFilterOptions
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example projectFilterOptions
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ProjectFilterOptionsDto;
+  };
+};
+
+export type ProjectsFilterOptionsVariables = {
+  queryParams?: ProjectsFilterOptionsQueryParams;
+};
+
+/**
+ * Returns one resource with `organisations`, `frameworkKeys`, `countries` and `projects` option
+ *     lists. Each list counts accessible projects and is narrowed by every selected filter except its own, so selecting
+ *     a framework, country, organisation or project narrows the other lists. Organisations appear only when they own at
+ *     least one matching accessible project. `organisationSearch` and `projectSearch` are case-insensitive partial
+ *     matches that narrow only their own list.
+ */
+export const projectsFilterOptions = new V3ApiEndpoint<
+  ProjectsFilterOptionsResponse,
+  ProjectsFilterOptionsError,
+  ProjectsFilterOptionsVariables,
+  {}
+>("/research/v3/projects/filterOptions", "GET");
+
 export const operationsByTag = {
   sitePolygons: {
     createSitePolygons,
@@ -4686,5 +4830,5 @@ export const operationsByTag = {
     researchTreeCountUpdate,
     researchTreeCountDelete
   },
-  projects: { projectsMapIndex }
+  projects: { projectsMapIndex, projectsFilterOptions }
 };

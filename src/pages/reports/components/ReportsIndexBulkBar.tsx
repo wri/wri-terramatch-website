@@ -60,7 +60,7 @@ const ReportsIndexBulkBar: FC<{ indexHref?: string }> = ({ indexHref }) => {
   const singleReport = {
     title: nothingToReportTitle,
     description: t(
-      "You’re confirming there were no activities at the selected site(s)/nursery(ies) during this reporting period. Your report(s) will be submitted for review and closed for editing."
+      "You’re confirming there were no activities at the selected site / nursery during this reporting period. Your report will be submitted for review and closed for editing."
     )
   };
 

@@ -1,18 +1,26 @@
-import { cloneDeep } from "lodash";
+import { cloneDeep, Dictionary } from "lodash";
 import { ReactNode, useMemo } from "react";
 import { Provider as ReduxProvider } from "react-redux";
 
 import { authLogin } from "@/generated/v3/userService/userServiceComponents";
 import { resolveUrl } from "@/generated/v3/utils";
 import { INITIAL_STATE } from "@/store/apiSlice";
+import { dataApiSlice, GadmData, GadmLevel } from "@/store/dataApiSlice";
 import { __TEST_HYDRATE__, makeStore } from "@/store/store";
 
 class StoreBuilder {
   store = cloneDeep(INITIAL_STATE);
 
+  gadmData: GadmData[] = [];
+
   addLogin(token: string) {
     this.store.logins[1] = { attributes: { token } };
     this.store.meta.pending["POST"][resolveUrl(authLogin.url)] = { resourceIds: ["1"] };
+    return this;
+  }
+
+  addGadmCodes(gadmLevel: GadmLevel, data: Dictionary<string>, parentCode?: string) {
+    this.gadmData.push({ gadmLevel, data, parentCode });
     return this;
   }
 }
@@ -27,9 +35,14 @@ export const StoreProvider = ({ storeBuilder, children }: { storeBuilder?: Store
   const store = useMemo(
     () => {
       const store = makeStore();
-      const initialState = storeBuilder == null ? undefined : { api: storeBuilder.store };
-      if (initialState != null) {
-        store.dispatch({ type: __TEST_HYDRATE__, payload: initialState });
+      if (storeBuilder != null) {
+        store.dispatch({ type: __TEST_HYDRATE__, payload: { api: storeBuilder.store } });
+        for (const gadmData of storeBuilder.gadmData) {
+          const { gadmLevel, parentCode } = gadmData;
+          store.dispatch(
+            dataApiSlice.actions.dataSetFetchSucceeded({ url: `${gadmLevel}/${parentCode ?? "global"}`, ...gadmData })
+          );
+        }
       }
 
       return store;

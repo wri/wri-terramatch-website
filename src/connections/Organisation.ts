@@ -160,13 +160,20 @@ const orgUserAssociationUpdateConnection = v3Resource("associatedUsers", updateU
   )
   .buildConnection();
 
+// Used by useMyOrg to fetch the user's organisation if it isn't in the store (for instance, after it
+// has been pruned from the cache). The light DTO sideloaded with users/me is sufficient.
+const myOrganisationLoadConnection = v3Resource("organisations", organisationShow)
+  .singleResource<OrganisationLightDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
+  .buildConnection();
+
 // The "myOrganisationConnection" is only valid once the users/me response has been loaded, so
 // this hook depends on the myUserConnection to fetch users/me and then loads the data it needs
-// from the store.
+// from the store, fetching the organisation if it isn't already cached.
 export const useMyOrg = (): Connected<MyOrganisationConnection> => {
-  const [loaded] = useMyUser();
+  const [userLoaded] = useMyUser();
   const [, orgShape] = useConnection(myOrganisationConnection);
-  return loaded ? [true, orgShape] : [false, {}];
+  const [orgLoaded] = useConnection(myOrganisationLoadConnection, { id: orgShape.organisationId });
+  return userLoaded && orgLoaded ? [true, orgShape] : [false, {}];
 };
 
 // Organization names are only links for the organization the user belongs to.

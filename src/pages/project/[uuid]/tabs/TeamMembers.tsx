@@ -122,9 +122,9 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
   }, [associatedUsers, selectedRole, searchQuery]);
 
   return (
-    <Box paddingX={8} paddingTop={2} paddingBottom={6} minHeight="525px" width="100%">
+    <Box paddingTop={2} paddingBottom={6} minHeight="525px" width="100%">
       <ToolbarTable
-        className="sticky top-[5.5625rem] z-10 -mx-8 mb-3 !px-8 !py-4 mobile:top-[7.8125rem]"
+        className="sticky top-[5.5625rem] z-10 mb-3 !px-8 !py-4 mobile:top-[7.8125rem]"
         onClearFilters={() => {
           setSelectedRole(null);
           setSearchQuery("");
@@ -178,7 +178,7 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
         )}
         showClearFilters={selectedRole !== null}
       />
-      <Box className="mobile:!w-full mobile:overflow-auto">
+      <Box className="px-8 mobile:!w-full mobile:overflow-auto">
         <Table
           data={teamMembers ?? []}
           renderRow={useCallback(

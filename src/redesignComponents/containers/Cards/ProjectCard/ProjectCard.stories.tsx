@@ -1,6 +1,8 @@
 import { Box } from "@chakra-ui/react";
 import type { Meta, StoryObj } from "@storybook/react";
 
+import { buildStore } from "@/utils/testStore";
+
 import ProjectCard, { ProjectCardProject } from "./ProjectCard";
 
 const DEFAULT_PROJECT: ProjectCardProject = {
@@ -25,12 +27,46 @@ const DEFAULT_PROJECT: ProjectCardProject = {
   totalProjectReports: 3
 };
 
+const STORY_REPORTING_FRAMEWORKS: Record<string, string> = {
+  ppc: "PPC",
+  hbf: "Harit Bharat Fund",
+  "terrafund-non-profits": "TerraFund Non-Profits"
+};
+
+const STORY_COUNTRIES: Record<string, string> = {
+  KEN: "Kenya"
+};
+
+const addReportingFramework = (builder: ReturnType<typeof buildStore>, slug: string, name: string) => {
+  builder.store.reportingFrameworks[slug] = {
+    attributes: {
+      uuid: slug,
+      name,
+      slug,
+      projectFormUuid: null,
+      projectReportFormUuid: null,
+      siteFormUuid: null,
+      siteReportFormUuid: null,
+      nurseryFormUuid: null,
+      nurseryReportFormUuid: null,
+      financialReportFormUuid: null,
+      disturbanceReportFormUuid: null,
+      totalProjectsCount: 0
+    }
+  };
+  return builder;
+};
+
 const meta: Meta<typeof ProjectCard> = {
   title: "Redesign Components/Containers/Cards/Project Card",
   component: ProjectCard,
   tags: ["autodocs"],
   parameters: {
-    layout: "padded"
+    layout: "padded",
+    storeBuilder: Object.entries(STORY_REPORTING_FRAMEWORKS).reduce(
+      (builder, [slug, name]) => addReportingFramework(builder, slug, name),
+      buildStore().addGadmCodes("level0", STORY_COUNTRIES)
+    )
   },
   decorators: [
     Story => (
@@ -48,19 +84,8 @@ export const Default: Story = {
   args: { project: DEFAULT_PROJECT }
 };
 
-export const PpcWorkdaysAndNoNurseries: Story = {
-  args: {
-    project: {
-      ...DEFAULT_PROJECT,
-      frameworkKey: "ppc",
-      plantingStatus: "not-started",
-      treesPlantedCount: 0,
-      totalHectaresRestoredSum: 0,
-      combinedWorkdayCount: 0,
-      totalNurseries: 0,
-      totalProjectReports: 0
-    }
-  }
+export const WithoutNurseries: Story = {
+  args: { project: { ...DEFAULT_PROJECT, frameworkKey: "ppc" } }
 };
 
 export const LongTitle: Story = {

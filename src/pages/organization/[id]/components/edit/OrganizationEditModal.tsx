@@ -26,28 +26,41 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
   const { closeModal, openModal } = useModalContext();
   const { models, fieldsProvider, defaultValues, isReady } = useOrganisationForm(uuid);
 
+  /** Returns true if the save succeeded. */
   const saveOrganisation = useCallback(
-    async (data: Dictionary<unknown>, showSuccessModal: boolean) => {
-      if (uuid == null) return;
+    async (data: Dictionary<unknown>) => {
+      if (uuid == null) return false;
 
       try {
         await updateEntityFormData(
           { answers: normalizedFormData(data, fieldsProvider) },
           { entity: "organisations", uuid }
         );
-        if (!showSuccessModal) return;
-        closeModal(ModalId.ORGANIZATION_EDIT_MODAL);
-        openModal(ModalId.CONFIRMATION_MODAL, <ConfirmationModal />);
+        return true;
       } catch (error) {
         Log.error("Failed to save organisation form data", error);
         openModal(ModalId.ERROR_MODAL, <ErrorModal />);
+        return false;
       }
     },
-    [closeModal, fieldsProvider, openModal, uuid]
+    [fieldsProvider, openModal, uuid]
   );
 
-  const handleStepSave = useCallback((data: Dictionary<unknown>) => saveOrganisation(data, false), [saveOrganisation]);
-  const handleSubmit = useCallback((data: Dictionary<unknown>) => saveOrganisation(data, true), [saveOrganisation]);
+  const handleSubmit = useCallback(
+    async (data: Dictionary<unknown>) => {
+      if (!(await saveOrganisation(data))) return;
+      closeModal(ModalId.ORGANIZATION_EDIT_MODAL);
+      openModal(ModalId.CONFIRMATION_MODAL, <ConfirmationModal />);
+    },
+    [closeModal, openModal, saveOrganisation]
+  );
+
+  const handleSaveAndExit = useCallback(
+    async (data: Dictionary<unknown>) => {
+      if (await saveOrganisation(data)) closeModal(ModalId.ORGANIZATION_EDIT_MODAL);
+    },
+    [closeModal, saveOrganisation]
+  );
 
   return (
     <EditModalBase>
@@ -57,8 +70,9 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
           framework={Framework.UNDEFINED}
           models={models}
           fieldsProvider={fieldsProvider}
-          onStepSave={handleStepSave}
+          onStepSave={saveOrganisation}
           onSubmit={handleSubmit}
+          onSaveAndExit={handleSaveAndExit}
           defaultValues={defaultValues}
         />
       </LoadingContainer>
