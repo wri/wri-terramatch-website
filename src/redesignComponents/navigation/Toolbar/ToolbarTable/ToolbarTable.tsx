@@ -91,6 +91,8 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
                         isLoading: search.isLoading,
                         displayResults: search.displayResults ?? "none",
                         onQueryChange: handleQueryChange,
+                        value: search.value,
+                        onChange: search.onChange,
                         size: "default"
                       } as SearchProps)}
                       onSelect={search.onSelect as ComponentProps<typeof Search>["onSelect"]}
