@@ -63,7 +63,8 @@ const WizardEditForm = ({
         onBackFirstStep={() => null}
         summaryOptions={{
           title: t("Review Details"),
-          downloadButtonText: t("Download")
+          downloadButtonText: t("Download"),
+          hideSubmitButton: true
         }}
         hideSaveAndCloseButton
         className="max-w-none p-0"

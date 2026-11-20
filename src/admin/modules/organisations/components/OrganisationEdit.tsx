@@ -51,7 +51,8 @@ const OrganisationEditDisplay = () => {
         title={form?.title}
         summaryOptions={{
           title: "Review Details",
-          downloadButtonText: "Download"
+          downloadButtonText: "Download",
+          hideSubmitButton: true
         }}
         roundedCorners
         hideSaveAndCloseButton

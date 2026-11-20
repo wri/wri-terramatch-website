@@ -95,6 +95,8 @@ export interface WizardFormProps {
   subtitle?: string;
   summaryOptions?: FormSummaryOptions & {
     downloadButtonText?: string;
+    /** Replaces the review step's Submit button with Save and Exit. */
+    hideSubmitButton?: boolean;
   };
 
   header?: {
@@ -480,6 +482,7 @@ function WizardForm(props: WizardFormProps) {
             setSelectedStepIndex={setSelectedStepIndex}
             onSubmitStep={onSubmitStep}
             submitButtonDisable={submitButtonDisable}
+            hideSubmitButton={props.summaryOptions?.hideSubmitButton}
             models={models}
             enableSaveChangesButton={isEntityApproved}
             saveChanges={() => onClickSaveChanges()}
@@ -505,6 +508,7 @@ function WizardForm(props: WizardFormProps) {
       props.summaryOptions?.title,
       props.summaryOptions?.subtitle,
       props.summaryOptions?.downloadButtonText,
+      props.summaryOptions?.hideSubmitButton,
       props.submitButtonDisable,
       models,
       steps,
