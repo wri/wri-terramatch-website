@@ -32,7 +32,7 @@ type Story = StoryObj<OrganisationHeaderProps>;
 
 const defaultArgs: Partial<OrganisationHeaderProps> = {
   name: "Organisation Name",
-  logoSrc: "https://i.pravatar.cc/300?img=12",
+  logoSrc: "images/logos/harit-bharat-fund.png",
   organisationType: "For-profit",
   country: "Madagascar",
   countryCode: "MDG",
