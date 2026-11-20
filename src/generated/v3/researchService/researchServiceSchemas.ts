@@ -1565,10 +1565,10 @@ export type ResearchTreeCountDto = {
    */
   projectUuid: string;
   verificationMethod: "field" | "remote";
-  reportedCount: number;
+  reportedCount: number | null;
   treeCountAdj: number | null;
-  upperBounds: number;
-  lowerBounds: number;
+  upperBounds: number | null;
+  lowerBounds: number | null;
   /**
    * @format date-time
    */
@@ -1587,10 +1587,10 @@ export type CreateResearchTreeCountAttributes = {
    */
   projectUuid: string;
   verificationMethod: "field" | "remote";
-  reportedCount: number;
+  reportedCount?: number;
   treeCountAdj?: number;
-  upperBounds: number;
-  lowerBounds: number;
+  upperBounds?: number;
+  lowerBounds?: number;
 };
 
 export type CreateResearchTreeCountData = {
@@ -1604,13 +1604,22 @@ export type CreateResearchTreeCountBody = {
 
 export type UpdateResearchTreeCountAttributes = {
   verificationMethod?: "field" | "remote";
-  reportedCount?: number;
+  /**
+   * Send null to clear the value
+   */
+  reportedCount?: number | null;
   /**
    * Send null to clear the value
    */
   treeCountAdj?: number | null;
-  upperBounds?: number;
-  lowerBounds?: number;
+  /**
+   * Send null to clear the value
+   */
+  upperBounds?: number | null;
+  /**
+   * Send null to clear the value
+   */
+  lowerBounds?: number | null;
 };
 
 export type UpdateResearchTreeCountData = {
@@ -1696,4 +1705,80 @@ export type ProjectMapIndexDto = {
    * Number of projects in the projects array.
    */
   total: number;
+};
+
+export type ProjectFilterOrganisationOptionDto = {
+  /**
+   * UUID of the organisation.
+   */
+  uuid: string;
+  /**
+   * Name of the organisation.
+   */
+  name: string | null;
+  /**
+   * Number of matching accessible projects owned by the organisation.
+   */
+  count: number;
+};
+
+export type ProjectFilterFrameworkOptionDto = {
+  /**
+   * Framework key.
+   */
+  value:
+    | "terrafund-non-profits"
+    | "terrafund-enterprises"
+    | "epa-ghana-pilot"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | "wcb"
+    | "barka-fund"
+    | "polygon-monitoring";
+  /**
+   * Number of matching accessible projects in the framework.
+   */
+  count: number;
+};
+
+export type ProjectFilterCountryOptionDto = {
+  /**
+   * Country code (GADM level 0) of the project.
+   */
+  value: string;
+  /**
+   * Number of matching accessible projects in the country.
+   */
+  count: number;
+};
+
+export type ProjectFilterProjectOptionDto = {
+  /**
+   * UUID of the project.
+   */
+  uuid: string;
+  /**
+   * Project name.
+   */
+  name: string | null;
+};
+
+export type ProjectFilterOptionsDto = {
+  /**
+   * Organisations that own at least one accessible project matching the other selected filters.
+   */
+  organisations: ProjectFilterOrganisationOptionDto[];
+  /**
+   * Frameworks of accessible projects matching the other selected filters.
+   */
+  frameworkKeys: ProjectFilterFrameworkOptionDto[];
+  /**
+   * Countries of accessible projects matching the other selected filters.
+   */
+  countries: ProjectFilterCountryOptionDto[];
+  /**
+   * Accessible projects matching the other selected filters and the project search.
+   */
+  projects: ProjectFilterProjectOptionDto[];
 };

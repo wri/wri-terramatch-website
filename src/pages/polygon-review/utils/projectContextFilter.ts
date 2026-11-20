@@ -13,6 +13,23 @@ export type ProjectContextFilters = Record<ProjectContextFacet, string[]>;
 
 export type FacetOption = { value: string; count: number };
 
+type ProjectFrameworkKey = NonNullable<ProjectMapEntryDto["frameworkKey"]>;
+
+const PROJECT_FRAMEWORK_KEYS: readonly ProjectFrameworkKey[] = [
+  "terrafund-non-profits",
+  "terrafund-enterprises",
+  "epa-ghana-pilot",
+  "ppc",
+  "hbf",
+  "fundo-flora",
+  "wcb",
+  "barka-fund",
+  "polygon-monitoring"
+];
+
+const isProjectFrameworkKey = (value: string): value is ProjectFrameworkKey =>
+  (PROJECT_FRAMEWORK_KEYS as readonly string[]).includes(value);
+
 export const EMPTY_PROJECT_CONTEXT_FILTERS: ProjectContextFilters = {
   frameworkKey: [],
   country: [],
@@ -26,42 +43,30 @@ export const getFacetValue = (project: ProjectContextEntry, facet: ProjectContex
   return project[facet];
 };
 
-const matchesFacet = (project: ProjectContextEntry, filters: ProjectContextFilters, facet: ProjectContextFacet) => {
-  const selected = filters[facet];
-  if (selected.length === 0) return true;
-
-  const value = getFacetValue(project, facet);
-  return value != null && selected.includes(value);
-};
-
-const matchesFilters = (
-  project: ProjectContextEntry,
-  filters: ProjectContextFilters,
-  ignoredFacet?: ProjectContextFacet
-) => PROJECT_CONTEXT_FACETS.every(facet => facet === ignoredFacet || matchesFacet(project, filters, facet));
-
 export const sortProjectsByName = (projects: ProjectMapEntryDto[]) =>
   [...projects].sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""));
 
-export const filterProjects = (projects: ProjectMapEntryDto[], filters: ProjectContextFilters) =>
-  projects.filter(project => matchesFilters(project, filters));
+/**
+ * Query params shared by `projectsMapIndex` and `projectsFilterOptions`. The server narrows both, and the filter
+ * options exclude their own facet, so facet counts stay correct when a facet is selected.
+ */
+export const toProjectFilterQuery = (filters: ProjectContextFilters) => {
+  const frameworkKeys = filters.frameworkKey.filter(isProjectFrameworkKey);
+  return {
+    "frameworkKey[]": frameworkKeys.length === 0 ? undefined : frameworkKeys,
+    "country[]": filters.country.length === 0 ? undefined : filters.country,
+    "organisationUuid[]": filters.organisation.length === 0 ? undefined : filters.organisation
+  };
+};
 
-export const getFacetOptions = (
-  projects: ProjectContextEntry[],
-  filters: ProjectContextFilters,
-  facet: ProjectContextFacet
-): FacetOption[] => {
-  const counts = new Map<string, number>(filters[facet].map(value => [value, 0]));
-  for (const project of projects) {
-    const value = getFacetValue(project, facet);
-    if (value != null && matchesFilters(project, filters, facet)) {
-      counts.set(value, (counts.get(value) ?? 0) + 1);
-    }
-  }
-
-  return Array.from(counts, ([value, count]) => ({ value, count })).sort(
-    (a, b) => b.count - a.count || a.value.localeCompare(b.value)
-  );
+/**
+ * Selected values stay visible as checked options even when the server no longer lists them (for example an
+ * organisation that has no project under the other filters), with a count of 0.
+ */
+export const getFacetOptions = (options: FacetOption[], selected: string[]): FacetOption[] => {
+  const present = new Set(options.map(({ value }) => value));
+  const missing = selected.filter(value => !present.has(value)).map(value => ({ value, count: 0 }));
+  return [...options, ...missing];
 };
 
 const toFilterValues = (value: string | null) => (value == null ? [] : [value]);

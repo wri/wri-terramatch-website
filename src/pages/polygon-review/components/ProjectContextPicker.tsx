@@ -2,7 +2,11 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback, useMemo } from "react";
 
-import { ProjectMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import type {
+  ProjectFilterOptionsDto,
+  ProjectFilterOrganisationOptionDto,
+  ProjectMapEntryDto
+} from "@/generated/v3/researchService/researchServiceSchemas";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { HighLevelPopoverSelector, SELECTOR_BORDER_WIDTH } from "@/redesignComponents/Forms/Inputs/HighLevelSelector";
 import { isNotNull } from "@/utils/array";
@@ -10,7 +14,7 @@ import type { ProjectSelectionMethod } from "@/utils/polygonAnalytics";
 
 import { useProjectFacetLabels } from "../hooks/useProjectFacetLabels";
 import {
-  filterProjects,
+  FacetOption,
   getFacetOptions,
   getFacetValue,
   getProjectFacetFilters,
@@ -22,8 +26,11 @@ import {
 import ProjectFacetGroup, { FacetSearch } from "./ProjectFacetGroup";
 import ProjectPickerList from "./ProjectPickerList";
 
+const NO_ORGANISATIONS: ProjectFilterOrganisationOptionDto[] = [];
+
 type ProjectContextPickerContentProps = {
   projects: ProjectMapEntryDto[];
+  filterOptions: ProjectFilterOptionsDto | undefined;
   filters: ProjectContextFilters;
   selectedProject: ProjectMapEntryDto | null;
   onFiltersChange: (filters: ProjectContextFilters) => void;
@@ -71,7 +78,17 @@ const getFiltersSummary = (filters: ProjectContextFilters, getLabel: FacetLabelG
  */
 const ProjectContextPickerContent: FC<
   ProjectContextPickerContentProps & { filtersSummary: string; getLabel: FacetLabelGetter }
-> = ({ projects, filters, filtersSummary, selectedProject, getLabel, onFiltersChange, onSelectProject, onClear }) => {
+> = ({
+  projects,
+  filterOptions,
+  filters,
+  filtersSummary,
+  selectedProject,
+  getLabel,
+  onFiltersChange,
+  onSelectProject,
+  onClear
+}) => {
   const t = useT();
   const isLocked = selectedProject != null;
   const canClear = isLocked || filtersSummary.length > 0;
@@ -81,15 +98,19 @@ const ProjectContextPickerContent: FC<
     [filters, selectedProject]
   );
 
-  const listFilters = useMemo(() => ({ ...facetFilters, cohort: [] }), [facetFilters]);
-  const listProjects = useMemo(() => filterProjects(projects, listFilters), [listFilters, projects]);
-  const listFiltersSummary = useMemo(() => getFiltersSummary(listFilters, getLabel, t), [listFilters, getLabel, t]);
+  const listFiltersSummary = useMemo(() => getFiltersSummary(facetFilters, getLabel, t), [facetFilters, getLabel, t]);
   const getRowSubtitle = useCallback(
     (project: ProjectContextEntry) => getProjectSubtitle(project, ROW_SUBTITLE_FACETS, getLabel),
     [getLabel]
   );
 
   const facetGroups = useMemo(() => {
+    const serverOptions: Record<"frameworkKey" | "country" | "organisation", FacetOption[]> = {
+      frameworkKey: filterOptions?.frameworkKeys ?? [],
+      country: filterOptions?.countries ?? [],
+      organisation: (filterOptions?.organisations ?? []).map(({ uuid, count }) => ({ value: uuid, count }))
+    };
+
     const countrySearch: FacetSearch = {
       placeholder: t("Type to search countries"),
       addPlaceholder: t("Add another country"),
@@ -108,11 +129,11 @@ const ProjectContextPickerContent: FC<
         { facet: "organisation", label: t("Organization"), search: organisationSearch }
       ] as const
     ).map(({ facet, label, ...group }) => {
-      const options = getFacetOptions(projects, facetFilters, facet);
+      const options = getFacetOptions(serverOptions[facet], facetFilters[facet]);
       const search = "search" in group && options.length > MAX_CHECKBOX_OPTIONS ? group.search : undefined;
       return { facet, label, options, search };
     });
-  }, [facetFilters, projects, t]);
+  }, [facetFilters, filterOptions, t]);
 
   const setFacetValues = useCallback(
     (facet: ProjectContextFacet, values: string[]) => onFiltersChange({ ...filters, [facet]: values }),
@@ -138,7 +159,7 @@ const ProjectContextPickerContent: FC<
         </Flex>
         <Flex flex={1} minWidth={0} padding={4} overflowY="auto">
           <ProjectPickerList
-            projects={listProjects}
+            projects={projects}
             filtersSummary={listFiltersSummary}
             selectedProject={selectedProject}
             getSubtitle={getRowSubtitle}
@@ -171,8 +192,8 @@ const ProjectContextPickerContent: FC<
 
 const ProjectContextPicker: FC<ProjectContextPickerProps> = ({ open, onOpenChange, ...contentProps }) => {
   const t = useT();
-  const { projects, filters, selectedProject } = contentProps;
-  const getLabel = useProjectFacetLabels(projects);
+  const { filters, filterOptions, selectedProject } = contentProps;
+  const getLabel = useProjectFacetLabels(filterOptions?.organisations ?? NO_ORGANISATIONS);
   const filtersSummary = useMemo(() => getFiltersSummary(filters, getLabel, t), [filters, getLabel, t]);
 
   const subtitle = useMemo(() => {
