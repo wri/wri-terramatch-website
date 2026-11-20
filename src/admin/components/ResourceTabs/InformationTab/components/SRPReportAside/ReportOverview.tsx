@@ -6,12 +6,13 @@ import { DateField, Labeled, TextField, useShowContext } from "react-admin";
 import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import FrameworkField from "@/admin/components/Fields/FrameworkField";
 import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
+import { hasActiveChangeRequest } from "@/admin/utils/changeRequest";
 
 const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ parent }) => {
   const [statusModal, setStatusModal] = useState<"approved" | "information-required" | "reminder" | undefined>();
 
   const { record } = useShowContext();
-  const reportActionDisabled = record?.updateRequestStatus === "information-required";
+  const reportActionDisabled = hasActiveChangeRequest(record?.updateRequestStatus);
 
   return (
     <>
@@ -86,7 +87,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
                 reportActionDisabled ||
                 record?.status === "approved" ||
                 record?.status === "draft" ||
-                record?.updateRequestStatus === "draft" ||
+                record?.status === "information-required" ||
                 record?.status === "due"
               }
               onClick={() => setStatusModal("approved")}
