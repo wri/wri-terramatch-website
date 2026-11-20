@@ -74,6 +74,7 @@ import {
   type PolygonEditFormValues,
   type SavePolygonFlowOptions,
   hasUnsavedFormChanges,
+  hasUnsavedValidatedFormChanges,
   isValidPlantStartDate,
   isValidPolygonName,
   prunePolygonValidationCache,
@@ -476,7 +477,9 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     [geometryChanged, getFormValues]
   );
 
-  const hasUnsavedChangesInvalidatingValidation = checkHasUnsavedChanges();
+  const hasUnsavedChangesInvalidatingValidation = isAdmin
+    ? hasUnsavedValidatedFormChanges(formBaselineRef.current, getFormValues(), geometryChanged, dateValueToIsoString)
+    : checkHasUnsavedChanges();
 
   useEffect(() => {
     onUnsavedChangesInvalidatingValidationChange?.(hasUnsavedChangesInvalidatingValidation);

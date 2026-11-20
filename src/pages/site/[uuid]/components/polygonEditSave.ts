@@ -132,6 +132,21 @@ export const hasUnsavedFormChanges = (
   return !arePolygonEditFormValuesEqual(baseline, current, dateValueToIso);
 };
 
+export const hasUnsavedValidatedFormChanges = (
+  baseline: PolygonEditFormValues | null | undefined,
+  current: PolygonEditFormValues,
+  geometryChanged: boolean,
+  dateValueToIso: DateValueToIsoString
+): boolean =>
+  hasUnsavedFormChanges(
+    baseline,
+    baseline == null
+      ? current
+      : { ...current, submissionCycle: baseline.submissionCycle, customAttributes: baseline.customAttributes },
+    geometryChanged,
+    dateValueToIso
+  );
+
 export const hasUnsavedPolygonChanges = (
   polygon: SitePolygonLightDto | undefined,
   form: PolygonEditFormValues,
