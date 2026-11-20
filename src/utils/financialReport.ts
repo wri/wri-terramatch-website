@@ -297,10 +297,10 @@ const FINANCIAL_SUMMARY_KEYS: Record<string, keyof Omit<FinancialYearSummary, "y
 const USD = "USD";
 
 /**
- * Builds the multiplier that converts a year's local-currency amounts to USD
- * (local amount × that year's exchange rate). Years without a usable rate cannot be converted.
+ * Builds the divisor that converts a year's local-currency amounts to USD
+ * (local amount ÷ that year's exchange rate). Years without a usable rate cannot be converted.
  */
-const getUsdConversion = (collection: FinancialIndicatorDto[], currency: string | null) => {
+const getUsdDivisor = (collection: FinancialIndicatorDto[], currency: string | null) => {
   if (currency == null || currency === USD) return () => 1;
 
   const rates = new Map(
@@ -322,14 +322,14 @@ export const getFinancialYearSummaries = (
   collection: FinancialIndicatorDto[],
   currency: string | null
 ): FinancialYearSummary[] => {
-  const usdMultiplier = getUsdConversion(collection, currency);
+  const usdDivisor = getUsdDivisor(collection, currency);
   const byYear = new Map<number, FinancialYearSummary>();
   for (const { year, collection: collectionName, amount: rawAmount } of collection) {
     const key = FINANCIAL_SUMMARY_KEYS[collectionName];
     if (key == null) continue;
 
-    const multiplier = key === "currentRatio" ? 1 : usdMultiplier(year);
-    const amount = rawAmount == null || multiplier == null ? null : rawAmount * multiplier;
+    const divisor = key === "currentRatio" ? 1 : usdDivisor(year);
+    const amount = rawAmount == null || divisor == null ? null : rawAmount / divisor;
 
     const summary = byYear.get(year) ?? {
       year,
