@@ -9,21 +9,24 @@ import type { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/Too
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
 
-import { getPlantingStatusOptions, getProjectStatusOptions, MyProjectsFilterOption } from "../myProjectsFilters";
+import {
+  EMPTY_MY_PROJECTS_FILTERS,
+  getFilterCategoryLabels,
+  MY_PROJECTS_FILTER_KEYS,
+  MyProjectsFilterOptions,
+  MyProjectsFilters
+} from "../myProjectsFilters";
 import MyProjectsFilterDrawer from "./MyProjectsFilterDrawer";
 
 const CREATE_PROJECT_PATH = "/project/reporting-framework-select";
-
-const toTitles = (values: string[], options: MyProjectsFilterOption[]) =>
-  values.map(value => options.find(option => option.value === value)?.title ?? value);
 
 type MyProjectsHeaderProps = {
   projectCount: number;
   showToolbar: boolean;
   showAddProject: boolean;
-  statuses: string[];
-  plantingStatuses: string[];
-  onApplyFilters: (statuses: string[], plantingStatuses: string[]) => void;
+  filters: MyProjectsFilters;
+  filterOptions: MyProjectsFilterOptions;
+  onApplyFilters: (filters: MyProjectsFilters) => void;
   onQueryChange: (query: string) => void;
 };
 
@@ -31,43 +34,26 @@ const MyProjectsHeader: FC<MyProjectsHeaderProps> = ({
   projectCount,
   showToolbar,
   showAddProject,
-  statuses,
-  plantingStatuses,
+  filters,
+  filterOptions,
   onApplyFilters,
   onQueryChange
 }) => {
   const t = useT();
   const router = useRouter();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
-  const statusOptions = useMemo(() => getProjectStatusOptions(t), [t]);
-  const plantingStatusOptions = useMemo(() => getPlantingStatusOptions(t), [t]);
 
-  const selectedFilters = useMemo<SelectedFilter[]>(
-    () => [
-      ...(statuses.length === 0
-        ? []
-        : [
-            {
-              category: t("Set Up Status"),
-              label: toTitles(statuses, statusOptions),
-              onRemove: () => onApplyFilters([], plantingStatuses)
-            }
-          ]),
-      ...(plantingStatuses.length === 0
-        ? []
-        : [
-            {
-              category: t("Planting Status"),
-              label: toTitles(plantingStatuses, plantingStatusOptions),
-              onRemove: () => onApplyFilters(statuses, [])
-            }
-          ])
-    ],
-    [onApplyFilters, plantingStatusOptions, plantingStatuses, statusOptions, statuses, t]
-  );
+  const selectedFilters = useMemo<SelectedFilter[]>(() => {
+    const labels = getFilterCategoryLabels(t);
+    return MY_PROJECTS_FILTER_KEYS.filter(key => filters[key].length > 0).map(key => ({
+      category: labels[key],
+      label: filters[key].map(value => filterOptions[key].find(option => option.value === value)?.title ?? value),
+      onRemove: () => onApplyFilters({ ...filters, [key]: [] })
+    }));
+  }, [filterOptions, filters, onApplyFilters, t]);
 
   const openFilterDrawer = useCallback(() => setIsFilterDrawerOpen(true), []);
-  const clearFilters = useCallback(() => onApplyFilters([], []), [onApplyFilters]);
+  const clearFilters = useCallback(() => onApplyFilters(EMPTY_MY_PROJECTS_FILTERS), [onApplyFilters]);
   const handleAddProject = useCallback(() => void router.push(CREATE_PROJECT_PATH), [router]);
 
   return (
@@ -98,7 +84,7 @@ const MyProjectsHeader: FC<MyProjectsHeaderProps> = ({
       {showToolbar && (
         <>
           <ToolbarTable
-            className="!bg-theme-neutral-200 sticky top-11 z-10 !px-6 !pb-6 !pt-5"
+            className="sticky top-11 z-10 !bg-theme-neutral-200 !px-6 !pb-6 !pt-5"
             classNameContentLeft="w-full"
             classNameContentSearch="w-[15.25rem] max-w-full mobile:w-auto mobile:min-w-0 mobile:flex-1"
             search={{
@@ -116,10 +102,8 @@ const MyProjectsHeader: FC<MyProjectsHeaderProps> = ({
           />
           <MyProjectsFilterDrawer
             open={isFilterDrawerOpen}
-            statuses={statuses}
-            plantingStatuses={plantingStatuses}
-            statusOptions={statusOptions}
-            plantingStatusOptions={plantingStatusOptions}
+            filters={filters}
+            options={filterOptions}
             onApplyFilters={onApplyFilters}
             onOpenChange={setIsFilterDrawerOpen}
           />

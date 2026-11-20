@@ -5,17 +5,19 @@ import { type FC, useCallback, useEffect, useMemo, useState } from "react";
 import FilterCard from "@/redesignComponents/containers/FilterPanel/FilterPanelElements/FilterCards";
 import IndexFilterDrawer from "@/redesignComponents/containers/FilterPanel/IndexFilterDrawer";
 import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
+import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 
-import { MyProjectsFilterOption } from "../myProjectsFilters";
+import {
+  EMPTY_MY_PROJECTS_FILTERS,
+  getFilterCategoryLabels,
+  MY_PROJECTS_FILTER_KEYS,
+  MyProjectsFilterKey,
+  MyProjectsFilterOption,
+  MyProjectsFilterOptions,
+  MyProjectsFilters
+} from "../myProjectsFilters";
 
-const STATUS_TAG_PREFIX = "status-";
-const PLANTING_TAG_PREFIX = "planting-";
-
-const toTags = (prefix: string, values: string[], options: MyProjectsFilterOption[]) =>
-  values.map(value => ({
-    id: `${prefix}${value}`,
-    label: options.find(option => option.value === value)?.title ?? value
-  }));
+const TAG_SEPARATOR = ":";
 
 type FilterCheckboxGroupProps = {
   label: string;
@@ -41,60 +43,72 @@ const FilterCheckboxGroup: FC<FilterCheckboxGroupProps> = ({ label, name, option
   </FilterCard>
 );
 
+type FilterSelectProps = {
+  label: string;
+  placeholder: string;
+  options: MyProjectsFilterOption[];
+  values: string[];
+  onChange: (values: string[]) => void;
+};
+
+const FilterSelect: FC<FilterSelectProps> = ({ label, placeholder, options, values, onChange }) => {
+  const items = useMemo(() => options.map(({ value, title }) => ({ value, label: title })), [options]);
+
+  return (
+    <FilterCard label={label}>
+      <SelectInput placeholder={placeholder} size="small" value={values} items={items} onChange={onChange} />
+    </FilterCard>
+  );
+};
+
 type MyProjectsFilterDrawerProps = {
   open: boolean;
-  statuses: string[];
-  plantingStatuses: string[];
-  statusOptions: MyProjectsFilterOption[];
-  plantingStatusOptions: MyProjectsFilterOption[];
-  onApplyFilters: (statuses: string[], plantingStatuses: string[]) => void;
+  filters: MyProjectsFilters;
+  options: MyProjectsFilterOptions;
+  onApplyFilters: (filters: MyProjectsFilters) => void;
   onOpenChange: (open: boolean) => void;
 };
 
 const MyProjectsFilterDrawer: FC<MyProjectsFilterDrawerProps> = ({
   open,
-  statuses,
-  plantingStatuses,
-  statusOptions,
-  plantingStatusOptions,
+  filters,
+  options,
   onApplyFilters,
   onOpenChange
 }) => {
   const t = useT();
-  const [draftStatuses, setDraftStatuses] = useState(statuses);
-  const [draftPlantingStatuses, setDraftPlantingStatuses] = useState(plantingStatuses);
+  const labels = useMemo(() => getFilterCategoryLabels(t), [t]);
+  const [draft, setDraft] = useState(filters);
 
   useEffect(() => {
-    if (!open) return;
-    setDraftStatuses(statuses);
-    setDraftPlantingStatuses(plantingStatuses);
-  }, [open, plantingStatuses, statuses]);
+    if (open) setDraft(filters);
+  }, [filters, open]);
+
+  const setDraftValues = useCallback(
+    (key: MyProjectsFilterKey) => (values: string[]) => setDraft(current => ({ ...current, [key]: values })),
+    []
+  );
 
   const activeFilterTags = useMemo(
-    () => [
-      ...toTags(STATUS_TAG_PREFIX, draftStatuses, statusOptions),
-      ...toTags(PLANTING_TAG_PREFIX, draftPlantingStatuses, plantingStatusOptions)
-    ],
-    [draftPlantingStatuses, draftStatuses, plantingStatusOptions, statusOptions]
+    () =>
+      MY_PROJECTS_FILTER_KEYS.flatMap(key =>
+        draft[key].map(value => ({
+          id: `${key}${TAG_SEPARATOR}${value}`,
+          label: options[key].find(option => option.value === value)?.title ?? value
+        }))
+      ),
+    [draft, options]
   );
 
   const removeFilterTag = useCallback((id: string) => {
-    if (id.startsWith(STATUS_TAG_PREFIX)) {
-      setDraftStatuses(current => without(current, id.slice(STATUS_TAG_PREFIX.length)));
-    } else {
-      setDraftPlantingStatuses(current => without(current, id.slice(PLANTING_TAG_PREFIX.length)));
-    }
+    const key = MY_PROJECTS_FILTER_KEYS.find(filterKey => id.startsWith(`${filterKey}${TAG_SEPARATOR}`));
+    if (key == null) return;
+    const value = id.slice(key.length + TAG_SEPARATOR.length);
+    setDraft(current => ({ ...current, [key]: without(current[key], value) }));
   }, []);
 
-  const clearDraftFilters = useCallback(() => {
-    setDraftStatuses([]);
-    setDraftPlantingStatuses([]);
-  }, []);
-
-  const applyDraftFilters = useCallback(
-    () => onApplyFilters(draftStatuses, draftPlantingStatuses),
-    [draftPlantingStatuses, draftStatuses, onApplyFilters]
-  );
+  const clearDraftFilters = useCallback(() => setDraft(EMPTY_MY_PROJECTS_FILTERS), []);
+  const applyDraftFilters = useCallback(() => onApplyFilters(draft), [draft, onApplyFilters]);
 
   return (
     <IndexFilterDrawer
@@ -107,19 +121,37 @@ const MyProjectsFilterDrawer: FC<MyProjectsFilterDrawerProps> = ({
       drawerMaxW="22rem"
     >
       <FilterCheckboxGroup
-        label={t("Set Up Status")}
+        label={labels.statuses}
         name="project-status"
-        options={statusOptions}
-        values={draftStatuses}
-        onChange={setDraftStatuses}
+        options={options.statuses}
+        values={draft.statuses}
+        onChange={setDraftValues("statuses")}
       />
       <FilterCheckboxGroup
-        label={t("Planting Status")}
+        label={labels.plantingStatuses}
         name="project-planting-status"
-        options={plantingStatusOptions}
-        values={draftPlantingStatuses}
-        onChange={setDraftPlantingStatuses}
+        options={options.plantingStatuses}
+        values={draft.plantingStatuses}
+        onChange={setDraftValues("plantingStatuses")}
       />
+      {options.programmes.length > 1 && (
+        <FilterSelect
+          label={labels.programmes}
+          placeholder={t("Select Programme")}
+          options={options.programmes}
+          values={draft.programmes}
+          onChange={setDraftValues("programmes")}
+        />
+      )}
+      {options.countries.length > 1 && (
+        <FilterSelect
+          label={labels.countries}
+          placeholder={t("Select Country")}
+          options={options.countries}
+          values={draft.countries}
+          onChange={setDraftValues("countries")}
+        />
+      )}
     </IndexFilterDrawer>
   );
 };

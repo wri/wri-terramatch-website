@@ -4,9 +4,9 @@ import classNames from "classnames";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
+import { useGadmOptions } from "@/connections/Gadm";
 import { useMyOrg } from "@/connections/Organisation";
 import ProjectCard from "@/redesignComponents/containers/Cards/ProjectCard/ProjectCard";
-import { getPlantingProgressState } from "@/redesignComponents/content/headers/PageHeaders/ProjectHeader/projectHeader.utils";
 import { DEFAULT_PAGE_SIZE } from "@/redesignComponents/dataDisplay/Table/tableUtils";
 import PaginationTable from "@/redesignComponents/navigation/Pagination/PaginationTable";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
@@ -14,6 +14,16 @@ import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import MyProjectsEmptyState from "./components/MyProjectsEmptyState";
 import MyProjectsHeader from "./components/MyProjectsHeader";
 import { MOCK_MY_PROJECTS } from "./myProjects.mock";
+import {
+  EMPTY_MY_PROJECTS_FILTERS,
+  filterProjects,
+  getCountryOptions,
+  getPlantingStatusOptions,
+  getProgrammeOptions,
+  getProjectStatusOptions,
+  MyProjectsFilterOptions,
+  MyProjectsFilters
+} from "./myProjectsFilters";
 
 const MIN_PROJECTS_FOR_TOOLBAR = 3;
 const FIRST_PAGE = 1;
@@ -22,24 +32,26 @@ const MyProjectsPage: FC = () => {
   const t = useT();
   const [isOrgLoaded, { organisation }] = useMyOrg();
   const [query, setQuery] = useState("");
-  const [statuses, setStatuses] = useState<string[]>([]);
-  const [plantingStatuses, setPlantingStatuses] = useState<string[]>([]);
+  const [filters, setFilters] = useState(EMPTY_MY_PROJECTS_FILTERS);
   const [currentPage, setCurrentPage] = useState(FIRST_PAGE);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+  const countryNames = useGadmOptions({ level: 0 });
 
   const projects = MOCK_MY_PROJECTS;
   const isOrgPending = isOrgLoaded && organisation?.status !== "approved";
   const showToolbar = !isOrgPending && projects.length >= MIN_PROJECTS_FOR_TOOLBAR;
 
-  const filteredProjects = useMemo(() => {
-    const search = query.trim().toLowerCase();
-    return projects.filter(
-      project =>
-        (search === "" || (project.name ?? "").toLowerCase().includes(search)) &&
-        (statuses.length === 0 || statuses.includes(project.status)) &&
-        (plantingStatuses.length === 0 || plantingStatuses.includes(getPlantingProgressState(project.plantingStatus)))
-    );
-  }, [plantingStatuses, projects, query, statuses]);
+  const filterOptions = useMemo<MyProjectsFilterOptions>(
+    () => ({
+      statuses: getProjectStatusOptions(t),
+      plantingStatuses: getPlantingStatusOptions(t),
+      programmes: getProgrammeOptions(projects),
+      countries: getCountryOptions(projects, countryNames ?? [])
+    }),
+    [countryNames, projects, t]
+  );
+
+  const filteredProjects = useMemo(() => filterProjects(projects, query, filters), [filters, projects, query]);
 
   const pageProjects = useMemo(
     () => filteredProjects.slice((currentPage - 1) * pageSize, currentPage * pageSize),
@@ -51,9 +63,8 @@ const MyProjectsPage: FC = () => {
     setCurrentPage(FIRST_PAGE);
   }, []);
 
-  const handleApplyFilters = useCallback((nextStatuses: string[], nextPlantingStatuses: string[]) => {
-    setStatuses(nextStatuses);
-    setPlantingStatuses(nextPlantingStatuses);
+  const handleApplyFilters = useCallback((nextFilters: MyProjectsFilters) => {
+    setFilters(nextFilters);
     setCurrentPage(FIRST_PAGE);
   }, []);
 
@@ -70,8 +81,8 @@ const MyProjectsPage: FC = () => {
         projectCount={filteredProjects.length}
         showToolbar={showToolbar}
         showAddProject={!isOrgPending}
-        statuses={statuses}
-        plantingStatuses={plantingStatuses}
+        filters={filters}
+        filterOptions={filterOptions}
         onApplyFilters={handleApplyFilters}
         onQueryChange={handleQueryChange}
       />
