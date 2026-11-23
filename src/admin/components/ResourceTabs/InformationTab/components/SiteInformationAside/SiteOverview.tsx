@@ -7,6 +7,7 @@ import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import FrameworkField from "@/admin/components/Fields/FrameworkField";
 import ReadablePlantingStatusField from "@/admin/components/Fields/ReadablePlantingStatusField";
 import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
+import { hasActiveChangeRequest } from "@/admin/utils/changeRequest";
 import Text from "@/components/elements/Text/Text";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
@@ -79,7 +80,11 @@ const SiteOverview: FC = () => {
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
             <Button
               className="button-aside-page-admin"
-              disabled={record?.status === "information-required" || record?.status === "draft"}
+              disabled={
+                record?.status === "information-required" ||
+                record?.status === "draft" ||
+                hasActiveChangeRequest(record?.updateRequestStatus)
+              }
               onClick={() => setStatusModal("information-required")}
             >
               Request More Info
@@ -90,8 +95,8 @@ const SiteOverview: FC = () => {
               disabled={
                 record?.status === "approved" ||
                 record?.status === "draft" ||
-                record?.updateRequestStatus === "pending-approval" ||
-                record?.updateRequestStatus === "draft"
+                record?.status === "information-required" ||
+                hasActiveChangeRequest(record?.updateRequestStatus)
               }
               onClick={() => setStatusModal("approved")}
             >
