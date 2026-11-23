@@ -3,12 +3,14 @@ import { useT } from "@transifex/react";
 import { FC } from "react";
 
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import MappedTag from "@/redesignComponents/actions/Tags/MappedTag/MappedTag";
 import ValidationTag from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
 import {
   mapSitePolygonStatusToMappedTagState,
   mapSiteValidationStatusToTagState
 } from "@/utils/mapStatusToTagStateEntity";
+import { previewSubmissionStatusAfterEdit } from "@/utils/polygonStatusPreview";
 
 export type SubmissionValidationTagsProps = {
   polygon?: SitePolygonLightDto;
@@ -20,6 +22,12 @@ const SubmissionValidationTags: FC<SubmissionValidationTagsProps> = ({
   treatValidationAsNotStarted = false
 }) => {
   const t = useT();
+  const isAdmin = useIsAdmin();
+  const submissionStatus = previewSubmissionStatusAfterEdit(
+    polygon?.status ?? null,
+    treatValidationAsNotStarted,
+    isAdmin
+  );
   const validationTagStatus = treatValidationAsNotStarted
     ? ("not-started" as const)
     : mapSiteValidationStatusToTagState(polygon?.validationStatus ?? null);
@@ -30,7 +38,7 @@ const SubmissionValidationTags: FC<SubmissionValidationTagsProps> = ({
         <Text textStyle="200" color="neutral.800">
           {t("Submission:")}
         </Text>
-        <MappedTag state={mapSitePolygonStatusToMappedTagState(polygon?.status ?? "draft")} />
+        <MappedTag state={mapSitePolygonStatusToMappedTagState(submissionStatus ?? "draft")} />
       </Flex>
       <Flex className="items-center gap-1">
         <Text textStyle="200" color="neutral.800">
