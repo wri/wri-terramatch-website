@@ -4,12 +4,11 @@ import { ReactElement, useCallback, useMemo } from "react";
 
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useOrganisation } from "@/connections/Organisation";
-import Banner from "@/redesignComponents/content/Banner/Banner";
 import { OrganizationIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 
 import FinancialTabContent from "./components/financial/FinancialTabContent";
-import OrganizationHeader from "./components/OrganizationHeader";
+import OrganizationBanner from "./components/OrganizationBanner";
 import OverviewTabContent from "./components/overview/OverviewTabContent";
 import ProjectsTabContent from "./components/projects/ProjectsTabContent";
 import TeamTabContent from "./components/team/TeamTabContent";
@@ -48,6 +47,8 @@ const OrganizationPage = () => {
     [organizationId, router]
   );
 
+  const gotoTeamMembers = useCallback(() => navigateToTab("team"), [navigateToTab]);
+
   const tabItems = useMemo<TabItem[]>(
     () => [
       {
@@ -82,7 +83,9 @@ const OrganizationPage = () => {
       <title>{pageTitle}</title>
 
       <div className="contents [&>div:last-child]:!top-[2.5625rem] mobile:[&>div:last-child]:!top-[4.0625rem]">
-        <Banner
+        <OrganizationBanner
+          organization={organisation ?? undefined}
+          gotoTeamMembers={gotoTeamMembers}
           breadcrumbs={[
             {
               label: t("Organization"),
@@ -98,9 +101,7 @@ const OrganizationPage = () => {
               onTabClick: navigateToTab
             }
           }}
-        >
-          <OrganizationHeader organization={organisation ?? undefined} />
-        </Banner>
+        />
       </div>
 
       <div className="flex flex-1">{tabItems.find(tab => tab.key === activeTab)?.body}</div>

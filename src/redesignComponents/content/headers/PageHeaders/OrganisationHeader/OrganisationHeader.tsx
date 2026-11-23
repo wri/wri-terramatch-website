@@ -1,14 +1,16 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { FC, useCallback } from "react";
+import { ChangeEvent, FC, useCallback, useRef, useState } from "react";
 import Twemoji from "react-twemoji";
 
 import { resolveRemSizeValue } from "@/lib/sizing";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import ModalUploadImage from "@/redesignComponents/containers/Modal/ModalUploadImage";
 import { ProfileImage } from "@/redesignComponents/content/Images/ProfileImage/ProfileImage";
 import { DownloadIcon, EditIcon, LinkIcon } from "@/redesignComponents/foundations/Icons";
 import EllipsisDivider from "@/redesignComponents/miscellaneous/Dividers/EllipsisDivider";
+import { FileType } from "@/types/common";
 
 import TeamSection, { TeamMember } from "../components/TeamSection";
 import { countryCodeToFlag } from "../ProjectHeader/projectHeader.utils";
@@ -26,7 +28,6 @@ export interface OrganisationHeaderProps {
   websiteUrl?: string;
   team?: TeamMember[];
   isDownloadDisabled?: boolean;
-  onLogoClick: () => void;
   onEditClick: () => void;
   onDownloadClick: () => void;
   onAddTeamClick: () => void;
@@ -43,13 +44,31 @@ const OrganisationHeader: FC<OrganisationHeaderProps> = ({
   websiteUrl,
   team,
   isDownloadDisabled = false,
-  onLogoClick,
   onEditClick,
   onDownloadClick,
   onAddTeamClick,
   gotoTeamMembers
 }) => {
   const t = useT();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [pendingLogoFile, setPendingLogoFile] = useState<File | undefined>(undefined);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+
+  const openFilePicker = useCallback(() => fileInputRef.current?.click(), []);
+
+  const handleLogoFileChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file == null) return;
+
+    setPendingLogoFile(file);
+    setIsUploadModalOpen(true);
+    event.target.value = "";
+  }, []);
+
+  const closeUploadModal = useCallback(() => {
+    setIsUploadModalOpen(false);
+    setPendingLogoFile(undefined);
+  }, []);
 
   const handleWebsiteClick = useCallback(() => {
     if (websiteUrl != null) window.open(websiteUrl, "_blank", "noopener,noreferrer");
@@ -77,7 +96,7 @@ const OrganisationHeader: FC<OrganisationHeaderProps> = ({
             borderColor="neutral.300"
             background="neutral.200"
           >
-            <Button variant="borderless" size="small" onClick={onLogoClick}>
+            <Button variant="borderless" size="small" onClick={openFilePicker}>
               {t("Add logo")}
             </Button>
           </Flex>
@@ -86,10 +105,24 @@ const OrganisationHeader: FC<OrganisationHeaderProps> = ({
             size={LOGO_SIZE}
             src={logoSrc}
             alt={name}
-            onClickEdit={onLogoClick}
+            onClickEdit={openFilePicker}
             className="!border-0 bg-theme-neutral-100"
           />
         )}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept={FileType.Image}
+          className="hidden"
+          onChange={handleLogoFileChange}
+        />
+        <ModalUploadImage
+          open={isUploadModalOpen}
+          onClose={closeUploadModal}
+          title={t("Organization Profile Image")}
+          imgSrc={logoSrc}
+          initialFile={pendingLogoFile}
+        />
 
         <Flex flexDirection="column" gap={2}>
           <Text as="h1" textStyle="800-bold" color="primary.900">
@@ -99,7 +132,7 @@ const OrganisationHeader: FC<OrganisationHeaderProps> = ({
           <Flex flexDirection="column" gap={1}>
             <Flex gap={2} alignItems="center" flexWrap="wrap" paddingBottom="0.125rem">
               <Text textStyle="300" color={organisationType == null ? "neutral.700" : "primary.900"}>
-                {organisationType ?? t("Organisation Type")}
+                {organisationType ?? t("Organization Type")}
               </Text>
               <EllipsisDivider />
               <Flex gap={1} alignItems="center">
