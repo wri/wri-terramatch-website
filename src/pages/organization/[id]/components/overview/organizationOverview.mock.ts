@@ -3,6 +3,7 @@
 import { FinancialIndicatorDto, FundingTypeDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
 
+import { MOCK_ORGANISATION_FORM_SECTIONS } from "../details/organizationDetails.mock";
 import type { OrganisationLatestFinancialReport } from "./FinancialCharts";
 import type { OrganisationProjectTotals } from "./KeyIndicatorsInsights";
 import type { OrganisationSetUpStep } from "./OrganizationSetUpSection";
@@ -20,15 +21,9 @@ export const MOCK_ORGANISATION: Pick<OrganisationFullDto, "description" | "type"
     "from the restored land, and we monitor survival rates with the communities every season."
 };
 
-export const MOCK_SET_UP_STEPS: OrganisationSetUpStep[] = [
-  { title: "Organization Details", completed: true },
-  { title: "Organizational Governance", completed: true },
-  { title: "Social Media Presence", completed: true },
-  { title: "Organization Profile", completed: true },
-  { title: "Financial History", completed: false },
-  { title: "Past Community Engagement Experience", completed: false },
-  { title: "Past Restoration Experience", completed: false }
-];
+export const MOCK_SET_UP_STEPS: OrganisationSetUpStep[] = MOCK_ORGANISATION_FORM_SECTIONS.map(
+  ({ title, completed }) => ({ title, completed })
+);
 
 export const MOCK_ORGANISATION_PROJECTS: OrganisationProjectTotals[] = [
   {

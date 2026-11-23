@@ -7,6 +7,7 @@ import { useOrganisation } from "@/connections/Organisation";
 import { OrganizationIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 
+import OrganizationDetailsTabContent from "./components/details/OrganizationDetailsTabContent";
 import FinancialTabContent from "./components/financial/FinancialTabContent";
 import OrganizationBanner from "./components/OrganizationBanner";
 import OverviewTabContent from "./components/overview/OverviewTabContent";
@@ -55,6 +56,11 @@ const OrganizationPage = () => {
         key: "overview",
         title: t("Overview"),
         body: <OverviewTabContent organization={organisation ?? undefined} />
+      },
+      {
+        key: "organization_details",
+        title: t("Organization Details"),
+        body: <OrganizationDetailsTabContent organization={organisation ?? undefined} />
       },
       {
         key: "financial_information",
