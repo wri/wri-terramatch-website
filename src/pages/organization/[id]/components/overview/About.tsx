@@ -1,36 +1,30 @@
+import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { FC } from "react";
 
-import Text from "@/components/elements/Text/Text";
-import TextRow from "@/components/extensive/TextRow/TextRow";
-import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 
 type AboutProps = {
-  organization?: OrganisationFullDto;
+  description: string | null;
+  onAddInformation: () => void;
 };
 
-const About = ({ organization }: AboutProps) => {
+const About: FC<AboutProps> = ({ description, onAddInformation }) => {
   const t = useT();
 
   return (
-    <section className="my-15 rounded-lg bg-neutral-150 p-8">
-      <div className="flex flex-col gap-4">
-        <Text variant="text-heading-300">{t("About")}</Text>
-        <Text variant="text-body-800">{organization?.description}</Text>
-      </div>
-      <div className="mt-10 flex flex-col gap-4">
-        <TextRow name={t("Website:")} value={organization?.webUrl ?? undefined} nameClassName="w-1/3" />
-        <TextRow
-          name={t("Headquarters:")}
-          value={`${organization?.hqCity ?? ""}, ${organization?.hqCountry ?? ""}`}
-          nameClassName="w-1/3"
-        />
-        <TextRow
-          name={t("Organization phone number:")}
-          value={organization?.phone ?? undefined}
-          nameClassName="w-1/3"
-        />
-      </div>
-    </section>
+    <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
+      {description != null ? (
+        <Text textStyle="400" color="neutral.900" lineClamp={4} className="whitespace-pre-line">
+          {description}
+        </Text>
+      ) : (
+        <Button type="button" variant="borderless" rightIcon={<ChevronRightIcon />} onClick={onAddInformation}>
+          {t("Add Information")}
+        </Button>
+      )}
+    </Box>
   );
 };
 
