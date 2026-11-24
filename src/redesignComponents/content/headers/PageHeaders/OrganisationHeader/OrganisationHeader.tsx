@@ -92,8 +92,8 @@ const OrganisationHeader: FC<OrganisationHeaderProps> = ({
                 variant="borderless"
                 typeVariant="dark"
                 size="small"
-                tabIndex={-1}
-                leftIcon={<EditIcon className="h-4 w-4" />}
+                // tabIndex={-1}
+                leftIcon={<EditIcon className="-mr-1 h-4 w-4" />}
               >
                 {t("Edit")}
               </Button>
