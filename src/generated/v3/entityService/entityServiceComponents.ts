@@ -4405,111 +4405,6 @@ export const entitySitesMetaIndex = new V3ApiEndpoint<
   {}
 >("/entities/v3/{entity}/sitesMeta", "GET");
 
-export type EntityFuzzySearchPathParams = {
-  /**
-   * Entity type to search
-   */
-  entity: "sites";
-};
-
-export type EntityFuzzySearchQueryParams = {
-  /**
-   * Matched against the start of each word in the entity name
-   */
-  search: string;
-};
-
-export type EntityFuzzySearchError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
-         */
-        message: string;
-      };
-    }
->;
-
-export type EntityFuzzySearchResponse = {
-  meta?: {
-    /**
-     * @example entitySearchResults
-     */
-    resourceType?: string;
-    indices?: {
-      /**
-       * The resource type for this included index
-       */
-      resource?: string;
-      /**
-       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
-       */
-      requestPath?: string;
-      /**
-       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
-       */
-      ids?: string[];
-      /**
-       * The total number of records available.
-       *
-       * @example 42
-       */
-      total?: number;
-    }[];
-    deleted?: {
-      /**
-       * The resource type for this deleted resource
-       */
-      resource?: string;
-      /**
-       * The ID of the deleted resource
-       */
-      id?: string;
-    }[];
-  };
-  data?: {
-    /**
-     * @example entitySearchResults
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.EntitySearchResultDto;
-  }[];
-};
-
-export type EntityFuzzySearchVariables = {
-  pathParams: EntityFuzzySearchPathParams;
-  queryParams: EntityFuzzySearchQueryParams;
-};
-
-export const entityFuzzySearch = new V3ApiEndpoint<
-  EntityFuzzySearchResponse,
-  EntityFuzzySearchError,
-  EntityFuzzySearchVariables,
-  {}
->("/entities/v3/{entity}/fuzzySearch", "GET");
-
 export type EntityExportAllPathParams = {
   /**
    * Entity type to retrieve
@@ -8364,7 +8259,6 @@ export const operationsByTag = {
     entityReportsMetaIndex,
     entityNurseriesMetaIndex,
     entitySitesMetaIndex,
-    entityFuzzySearch,
     entityExportAll,
     entityPushTranslations,
     entityPullTranslations,
