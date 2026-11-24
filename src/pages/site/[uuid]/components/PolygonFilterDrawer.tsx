@@ -4,7 +4,6 @@ import { CalendarDate } from "@internationalized/date";
 import { useT } from "@transifex/react";
 import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 
-import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
 import { useRestorationPracticeLabels } from "@/hooks/translation/useRestorationPracticeLabels";
 import { useRestorationPracticeOptions } from "@/hooks/translation/useRestorationPracticeOptions";
 import { useSubmissionStatusLabels } from "@/hooks/translation/useSubmissionStatusLabels";
@@ -19,21 +18,17 @@ import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackT
 import Drawer from "@/redesignComponents/containers/Drawer/Drawer";
 import FilterPanel from "@/redesignComponents/containers/FilterPanel/FilterPanel";
 import FilterCard from "@/redesignComponents/containers/FilterPanel/FilterPanelElements/FilterCards";
-import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
 import Switch from "@/redesignComponents/Forms/Actions/Switch/Switch";
 import DateRangeInput from "@/redesignComponents/Forms/Inputs/DateInputs/DateRangeInputs/DateRangeInput";
 import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 
 import HectaresFilterCard from "./HectaresFilterCard";
 import {
-  type SubmissionCycleOption,
   CalcAreaBounds,
   CalcAreaRange,
   EMPTY_POLYGON_FILTERS,
   formatCalcAreaRange,
   PolygonFilterState,
-  PolygonSubmissionStatus,
-  PolygonValidationStatus,
   SiteFilterOption,
   SUBMISSION_CYCLE_LABELS,
   SUBMISSION_CYCLE_OPTIONS
@@ -41,12 +36,13 @@ import {
 
 type CheckboxChange = { checked?: boolean | "indeterminate" };
 
-const setArrayValue = <T extends string>(values: T[], value: T, checked: boolean): T[] => {
-  if (checked) {
-    return values.includes(value) ? values : [...values, value];
-  }
-  return values.filter(item => item !== value);
-};
+const SUBMISSION_CYCLE_SELECT_OPTIONS = SUBMISSION_CYCLE_OPTIONS.map(value => ({
+  value,
+  label: SUBMISSION_CYCLE_LABELS[value]
+}));
+
+const selectedOptionValues = <T extends string>(options: { value: T }[], selected: string[]): T[] =>
+  options.filter(({ value }) => selected.includes(value)).map(({ value }) => value);
 
 const isoStringToDateValue = (value: string): DateValue | undefined => {
   if (value === "") return undefined;
@@ -183,36 +179,29 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
     setDraftFilters(current => ({ ...current, ...range }));
   }, []);
 
-  const handleSubmissionStatusChange = (value: PolygonSubmissionStatus, { checked }: CheckboxChange) => {
-    setDraftFilters(current => ({
-      ...current,
-      polygonStatus: setArrayValue(current.polygonStatus, value, checked === true)
-    }));
+  const handleSubmissionStatusChange = (value: string[]) => {
+    setDraftFilters(current => ({ ...current, polygonStatus: selectedOptionValues(submissionStatusOptions, value) }));
   };
 
-  const handleValidationStatusChange = (value: PolygonValidationStatus, { checked }: CheckboxChange) => {
+  const handleValidationStatusChange = (value: string[]) => {
     setDraftFilters(current => ({
       ...current,
-      validationStatus: setArrayValue(current.validationStatus, value, checked === true)
+      validationStatus: selectedOptionValues(validationStatusOptions, value)
     }));
   };
 
   const handlePracticeChange = (value: string[]) => {
-    const selected = value[0] as restorationStrategyType | undefined;
-    setDraftFilters(current => ({ ...current, practice: selected ? [selected] : [] }));
+    setDraftFilters(current => ({ ...current, practice: selectedOptionValues(restorationPracticeOptions, value) }));
   };
 
   const handleTargetLandUseChange = (value: string[]) => {
-    const selected = value[0] as targetLandUseType | undefined;
-    setDraftFilters(current => ({ ...current, targetSys: selected ? [selected] : [] }));
+    setDraftFilters(current => ({ ...current, targetSys: selectedOptionValues(targetLandUseOptions, value) }));
   };
 
   const handleSubmissionCycleChange = (value: string[]) => {
     setDraftFilters(current => ({
       ...current,
-      submissionCycle: value.filter((item): item is SubmissionCycleOption =>
-        SUBMISSION_CYCLE_OPTIONS.includes(item as SubmissionCycleOption)
-      )
+      submissionCycle: selectedOptionValues(SUBMISSION_CYCLE_SELECT_OPTIONS, value)
     }));
   };
 
@@ -249,11 +238,6 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
     if (to != null) dates.push(to);
     return dates;
   }, [draftFilters.plantStartFrom, draftFilters.plantStartTo]);
-
-  const submissionCycleOptions = useMemo(
-    () => SUBMISSION_CYCLE_OPTIONS.map(value => ({ value, label: SUBMISSION_CYCLE_LABELS[value] })),
-    []
-  );
 
   return (
     <Drawer trapFocus={false} trigger={trigger} open={open} onOpenChange={onOpenChange} maxW="22rem">
@@ -294,32 +278,26 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                 />
               )}
               <FilterCard label={t("Submission Status")}>
-                {submissionStatusOptions.map(option => (
-                  <Checkbox
-                    key={option.value}
-                    name={`submission-status-${option.value}`}
-                    value={option.value}
-                    checked={draftFilters.polygonStatus.includes(option.value)}
-                    disabled={draftFilters.showDeleted}
-                    onCheckedChange={(change: CheckboxChange) => handleSubmissionStatusChange(option.value, change)}
-                  >
-                    {option.label}
-                  </Checkbox>
-                ))}
+                <SelectInput
+                  placeholder={t("Please Select")}
+                  size="small"
+                  disabled={draftFilters.showDeleted}
+                  value={draftFilters.polygonStatus}
+                  items={submissionStatusOptions}
+                  onChange={handleSubmissionStatusChange}
+                  multiple
+                />
               </FilterCard>
               <FilterCard label={t("System Validation")}>
-                {validationStatusOptions.map(option => (
-                  <Checkbox
-                    key={option.value}
-                    name={`system-validation-${option.value}`}
-                    value={option.value}
-                    checked={draftFilters.validationStatus.includes(option.value)}
-                    disabled={draftFilters.showDeleted}
-                    onCheckedChange={(change: CheckboxChange) => handleValidationStatusChange(option.value, change)}
-                  >
-                    {option.label}
-                  </Checkbox>
-                ))}
+                <SelectInput
+                  placeholder={t("Please Select")}
+                  size="small"
+                  disabled={draftFilters.showDeleted}
+                  value={draftFilters.validationStatus}
+                  items={validationStatusOptions}
+                  onChange={handleValidationStatusChange}
+                  multiple
+                />
               </FilterCard>
               <FilterCard label={t("Plant Start Date")}>
                 <DateRangeInput
@@ -338,6 +316,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                   value={draftFilters.practice}
                   items={restorationPracticeOptions}
                   onChange={handlePracticeChange}
+                  multiple
                 />
               </FilterCard>
               <FilterCard label={t("Target Land Use")}>
@@ -348,6 +327,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                   value={draftFilters.targetSys}
                   items={targetLandUseOptions}
                   onChange={handleTargetLandUseChange}
+                  multiple
                 />
               </FilterCard>
               <FilterCard label={t("Submission Cycle")}>
@@ -356,7 +336,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                   size="small"
                   disabled={draftFilters.showDeleted}
                   value={draftFilters.submissionCycle}
-                  items={submissionCycleOptions}
+                  items={SUBMISSION_CYCLE_SELECT_OPTIONS}
                   onChange={handleSubmissionCycleChange}
                   multiple
                 />
