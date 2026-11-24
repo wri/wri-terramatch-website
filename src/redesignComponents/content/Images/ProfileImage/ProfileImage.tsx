@@ -20,6 +20,7 @@ export interface ProfileImageProps extends DetailedHTMLProps<HTMLAttributes<HTML
     onClick?: () => void;
   }[];
   menuLabel?: string;
+  hoverContent?: React.ReactNode;
   onClickEdit?: () => void;
 }
 

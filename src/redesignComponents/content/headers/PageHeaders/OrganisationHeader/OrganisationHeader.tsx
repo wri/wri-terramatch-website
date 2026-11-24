@@ -87,6 +87,17 @@ const OrganisationHeader: FC<OrganisationHeaderProps> = ({
             src={logoSrc}
             alt={name}
             onClickEdit={onLogoClick}
+            hoverContent={
+              <Button
+                variant="borderless"
+                typeVariant="dark"
+                size="small"
+                tabIndex={-1}
+                leftIcon={<EditIcon className="h-4 w-4" />}
+              >
+                {t("Edit")}
+              </Button>
+            }
             className="!border-0 bg-theme-neutral-100"
           />
         )}
