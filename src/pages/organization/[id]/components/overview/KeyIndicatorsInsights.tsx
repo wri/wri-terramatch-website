@@ -1,28 +1,14 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { sumBy } from "lodash";
+import { sumBy, uniq } from "lodash";
 import { FC, ReactNode, useMemo } from "react";
 
 import MetricCardsRow from "@/components/extensive/PageElements/MetricCardsRow/MetricCardsRow";
 import { Framework } from "@/context/framework.provider";
-import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { AreaHectaresIcon, JobsIcon, TreeIcon, TreePlantingIcon } from "@/redesignComponents/foundations/Icons";
 
-export type OrganisationProjectTotals = Pick<
-  ProjectFullDto,
-  | "uuid"
-  | "frameworkKey"
-  | "treesPlantedCount"
-  | "seedsPlantedCount"
-  | "regeneratedTreesCount"
-  | "treesGrownGoal"
-  | "totalHectaresRestoredSum"
-  | "totalHectaresRestoredGoal"
-  | "totalJobsCreated"
-  | "jobsCreatedGoal"
-  | "combinedWorkdayCount"
->;
+import { OrganisationProjectTotals } from "./types";
 
 const CARD_CLASS_NAME = "min-w-0 flex-1 mobile:min-w-full";
 
@@ -41,11 +27,21 @@ const getTreesPlanted = (project: OrganisationProjectTotals) => project.treesPla
 const getTreesGrowing = (project: OrganisationProjectTotals) =>
   getTreesPlanted(project) + (project.seedsPlantedCount ?? 0) + project.regeneratedTreesCount;
 
+/**
+ * The framework shared by every project, or `undefined` when the projects span several frameworks (or there are
+ * none). Framework-specific labels only apply when all the aggregated projects follow the same rules.
+ * TODO TM-4219: confirm with product which labels a multi-framework organization should show.
+ */
+const getSharedFramework = (projects: OrganisationProjectTotals[]) => {
+  const frameworks = uniq(projects.map(({ frameworkKey }) => frameworkKey));
+  return frameworks.length === 1 ? frameworks[0] : undefined;
+};
+
 const useKeyIndicators = (projects: OrganisationProjectTotals[]): KeyIndicator[] => {
   const t = useT();
 
   return useMemo(() => {
-    const framework = projects[0]?.frameworkKey;
+    const framework = getSharedFramework(projects);
     const isPpc = framework === Framework.PPC;
     const isHbf = framework === Framework.HBF;
 
@@ -53,7 +49,7 @@ const useKeyIndicators = (projects: OrganisationProjectTotals[]): KeyIndicator[]
       ? {
           title: t("Trees Growing"),
           tooltip: t(
-            "This is the sum of trees planted, seeds planted, and estimated trees regenerating, in all approved reports for this project."
+            "This is the sum of trees planted, seeds planted, and estimated trees regenerating, in all approved reports across this organization’s projects."
           ),
           icon: <TreeIcon />,
           progress: sumBy(projects, getTreesGrowing)
@@ -62,14 +58,14 @@ const useKeyIndicators = (projects: OrganisationProjectTotals[]): KeyIndicator[]
       ? {
           title: t("Saplings Growing"),
           tooltip: t(
-            "This is the sum of trees planted, seeds planted, and trees regenerating, in all approved reports for this project."
+            "This is the sum of trees planted, seeds planted, and trees regenerating, in all approved reports across this organization’s projects."
           ),
           icon: <TreeIcon />,
           progress: sumBy(projects, getTreesGrowing)
         }
       : {
           title: t("Trees Planted"),
-          tooltip: t("This is the sum of trees planted in this project’s site reports."),
+          tooltip: t("This is the sum of trees planted in the site reports of this organization’s projects."),
           icon: <TreePlantingIcon />,
           progress: sumBy(projects, getTreesPlanted)
         };
@@ -78,7 +74,9 @@ const useKeyIndicators = (projects: OrganisationProjectTotals[]): KeyIndicator[]
       ? {
           type: "workdays",
           title: t("Workdays"),
-          tooltip: t("This is the sum of project- and site-level workdays in all approved reports for this project."),
+          tooltip: t(
+            "This is the sum of project- and site-level workdays in all approved reports across this organization’s projects."
+          ),
           icon: <JobsIcon />,
           progress: sumBy(projects, "combinedWorkdayCount"),
           goal: 0
@@ -87,8 +85,12 @@ const useKeyIndicators = (projects: OrganisationProjectTotals[]): KeyIndicator[]
           type: "jobsCreated",
           title: t("Jobs Created"),
           tooltip: isHbf
-            ? t("This is the sum of full-time and part-time jobs in all approved reports for this project.")
-            : t("This is the sum of full-time and part-time jobs in all approved project reports for this project."),
+            ? t(
+                "This is the sum of full-time and part-time jobs in all approved reports across this organization’s projects."
+              )
+            : t(
+                "This is the sum of full-time and part-time jobs in all approved project reports across this organization’s projects."
+              ),
           icon: <JobsIcon />,
           progress: sumBy(projects, "totalJobsCreated"),
           goal: sumBy(projects, ({ jobsCreatedGoal }) => jobsCreatedGoal ?? 0)
@@ -104,7 +106,7 @@ const useKeyIndicators = (projects: OrganisationProjectTotals[]): KeyIndicator[]
       {
         type: "hectaresRestored",
         title: t("Area Restored (ha)"),
-        tooltip: t("Number of hectares within approved polygons for this project."),
+        tooltip: t("Number of hectares within approved polygons across this organization’s projects."),
         icon: <AreaHectaresIcon />,
         color: "secondary.700",
         progress: sumBy(projects, ({ totalHectaresRestoredSum }) => totalHectaresRestoredSum ?? 0),
@@ -120,7 +122,18 @@ type KeyIndicatorsInsightsProps = {
 };
 
 const KeyIndicatorsInsights: FC<KeyIndicatorsInsightsProps> = ({ projects }) => {
+  const t = useT();
   const indicators = useKeyIndicators(projects);
+
+  if (projects.length === 0) {
+    return (
+      <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
+        <Text textStyle="400" color="neutral.900">
+          {t("Key indicators will appear once this organization has projects.")}
+        </Text>
+      </Box>
+    );
+  }
 
   return (
     <MetricCardsRow>
@@ -138,10 +151,9 @@ const KeyIndicatorsInsights: FC<KeyIndicatorsInsightsProps> = ({ projects }) => 
             color={color}
             className={showProgress ? CARD_CLASS_NAME : `${CARD_CLASS_NAME} !h-auto`}
             tooltipContent={
-              <Box textStyle="300">
-                <b>{title}</b>
-                <br />
-                {tooltip}
+              <Box>
+                <Text textStyle="300-bold">{title}</Text>
+                <Text textStyle="300">{tooltip}</Text>
               </Box>
             }
           />

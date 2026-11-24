@@ -1,29 +1,10 @@
 // TODO TM-4219: temporary mock data for the Organization Overview, typed as the API data it stands in
-// for. Replace with the real connections before merging.
+// for. Replace with the real connections (see `useOrganisationOverview`).
 import { FinancialIndicatorDto, FundingTypeDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
 
-import { MOCK_ORGANISATION_FORM_SECTIONS } from "../details/organizationDetails.mock";
-import type { OrganisationLatestFinancialReport } from "./FinancialCharts";
-import type { OrganisationProjectTotals } from "./KeyIndicatorsInsights";
-import type { OrganisationSetUpStep } from "./OrganizationSetUpSection";
+import type { OrganisationLatestFinancialReport, OrganisationProjectTotals } from "./types";
 
 const MOCK_REPORT_UUID = "mock-financial-report-uuid";
-
-/** Use "for-profit-organization" to see the Net Profit and Current Ratio charts. */
-export const MOCK_ORGANISATION: Pick<OrganisationFullDto, "description" | "type"> = {
-  type: "non-profit-organization",
-  description:
-    "We are a community-led restoration organization working with smallholder farmers to restore degraded land " +
-    "through agroforestry and assisted natural regeneration. Since 2015 we have trained more than 3,000 farmers, " +
-    "set up 12 community nurseries and planted native species across three districts. Our work combines " +
-    "restoration with livelihoods: every site is managed by local cooperatives that sell fruit, honey and timber " +
-    "from the restored land, and we monitor survival rates with the communities every season."
-};
-
-export const MOCK_SET_UP_STEPS: OrganisationSetUpStep[] = MOCK_ORGANISATION_FORM_SECTIONS.map(
-  ({ title, completed }) => ({ title, completed })
-);
 
 export const MOCK_ORGANISATION_PROJECTS: OrganisationProjectTotals[] = [
   {

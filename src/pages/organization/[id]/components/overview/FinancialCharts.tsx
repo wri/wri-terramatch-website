@@ -1,7 +1,6 @@
 import { Box, Grid } from "@chakra-ui/react";
 import { FC, useMemo } from "react";
 
-import { FinancialReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import CurrentRatioChart from "@/pages/reports/financial-report/[uuid]/components/overview/CurrentRatioChart";
 import ExternalFinanceChart from "@/pages/reports/financial-report/[uuid]/components/overview/ExternalFinanceChart";
 import NetProfitChart from "@/pages/reports/financial-report/[uuid]/components/overview/NetProfitChart";
@@ -12,10 +11,7 @@ import {
   NON_PROFIT_ORGANISATION_TYPE
 } from "@/utils/financialReport";
 
-export type OrganisationLatestFinancialReport = Pick<
-  FinancialReportFullDto,
-  "uuid" | "currency" | "financialCollection" | "fundingTypes"
->;
+import { OrganisationLatestFinancialReport } from "./types";
 
 type FinancialChartsProps = {
   report: OrganisationLatestFinancialReport;

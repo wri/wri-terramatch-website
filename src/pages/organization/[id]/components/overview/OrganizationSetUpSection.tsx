@@ -6,10 +6,7 @@ import { EditIcon } from "@/redesignComponents/foundations/Icons";
 import { ProgressSteps } from "@/redesignComponents/status/ProgressIndicator/ProgressSteps";
 import { StepProps } from "@/redesignComponents/status/ProgressIndicator/types";
 
-export type OrganisationSetUpStep = {
-  title: string;
-  completed: boolean;
-};
+import { OrganisationSetUpStep } from "./types";
 
 type OrganizationSetUpSectionProps = {
   steps: OrganisationSetUpStep[];

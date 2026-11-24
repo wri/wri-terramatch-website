@@ -3,52 +3,40 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { FC, useCallback } from "react";
 
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
-import { useModalContext } from "@/context/modal.provider";
 import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import ChartEmptyState from "@/redesignComponents/dataDisplay/Charts/ChartEmptyState";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 
-import OrganizationEditModal from "../edit/OrganizationEditModal";
+import { useOrganizationEditModal } from "../edit/useOrganizationEditModal";
 import About from "./About";
 import FinancialCharts from "./FinancialCharts";
 import KeyIndicatorsInsights from "./KeyIndicatorsInsights";
-import {
-  MOCK_LATEST_FINANCIAL_REPORT,
-  MOCK_ORGANISATION,
-  MOCK_ORGANISATION_PROJECTS,
-  MOCK_SET_UP_STEPS
-} from "./organizationOverview.mock";
 import OrganizationSetUpSection from "./OrganizationSetUpSection";
+import { useOrganisationOverview } from "./useOrganisationOverview";
 
 type OverviewTabContentProps = {
   organization?: OrganisationFullDto;
+  navigateToTab: (tab: string) => void;
 };
 
-const OverviewTabContent: FC<OverviewTabContentProps> = ({ organization }) => {
+const OverviewTabContent: FC<OverviewTabContentProps> = ({ organization, navigateToTab }) => {
   const t = useT();
   const router = useRouter();
-  const { openModal } = useModalContext();
+  const handleEdit = useOrganizationEditModal(organization);
 
-  // TODO TM-4219: replace the mock data with the organization's real data.
-  const { description, type } = MOCK_ORGANISATION;
+  const { description, type, projects, latestFinancialReport, setUpSteps } = useOrganisationOverview(organization);
   const hasDescription = description != null && description.trim() !== "";
-  const projects = MOCK_ORGANISATION_PROJECTS;
-  const latestFinancialReport = MOCK_LATEST_FINANCIAL_REPORT;
-  const setUpSteps = MOCK_SET_UP_STEPS;
   const isSetUpComplete = setUpSteps.every(({ completed }) => completed);
+  const latestReportUuid = latestFinancialReport?.uuid;
 
-  const goToTab = useCallback(
-    (tab: string) => router.push(`/organization/${router.query.id}?tab=${tab}`, undefined, { shallow: true }),
-    [router]
-  );
-
-  const handleEdit = useCallback(
-    () => openModal(ModalId.ORGANIZATION_EDIT_MODAL, <OrganizationEditModal organization={organization} />),
-    [openModal, organization]
-  );
+  const goToDetails = useCallback(() => navigateToTab("organization_details"), [navigateToTab]);
+  const goToProjects = useCallback(() => navigateToTab("projects"), [navigateToTab]);
+  const goToLatestReport = useCallback(() => {
+    if (latestReportUuid != null) router.push(`/reports/financial-report/${latestReportUuid}`);
+  }, [latestReportUuid, router]);
 
   return (
     <PageContent>
@@ -63,7 +51,7 @@ const OverviewTabContent: FC<OverviewTabContentProps> = ({ organization }) => {
                     size: "small",
                     children: t("Read More"),
                     rightIcon: <ChevronRightIcon />,
-                    onClick: () => goToTab("organization_details")
+                    onClick: goToDetails
                   }
                 : undefined
             }
@@ -71,31 +59,41 @@ const OverviewTabContent: FC<OverviewTabContentProps> = ({ organization }) => {
             <About description={hasDescription ? description : null} onAddInformation={handleEdit} />
           </PageItem>
           <PageItem title={t("Key Indicators & Insights")} flexProps={{ gap: 2 }}>
-            <Flex alignItems="center" gap={1}>
-              <Text textStyle="200" color="neutral.700">
-                {t("Across")}
-              </Text>
-              <Button type="button" variant="borderless" size="small" onClick={() => goToTab("projects")}>
-                {t("{count} Projects", { count: projects.length })}
-              </Button>
-            </Flex>
+            {projects.length > 0 && (
+              <Flex alignItems="center" gap={1}>
+                <Text textStyle="200" color="neutral.700">
+                  {t("Across")}
+                </Text>
+                <Button type="button" variant="borderless" size="small" onClick={goToProjects}>
+                  {projects.length === 1 ? t("1 Project") : t("{count} Projects", { count: projects.length })}
+                </Button>
+              </Flex>
+            )}
             <KeyIndicatorsInsights projects={projects} />
           </PageItem>
           <PageItem
             title={t("Organization Financials")}
             flexProps={{ gap: 2 }}
-            buttonProps={{
-              variant: "secondary",
-              size: "small",
-              children: t("View Latest Report"),
-              rightIcon: <ChevronRightIcon />,
-              onClick: () => router.push(`/reports/financial-report/${latestFinancialReport.uuid}`)
-            }}
+            buttonProps={
+              latestFinancialReport != null
+                ? {
+                    variant: "secondary",
+                    size: "small",
+                    children: t("View Latest Report"),
+                    rightIcon: <ChevronRightIcon />,
+                    onClick: goToLatestReport
+                  }
+                : undefined
+            }
           >
             <Text textStyle="200" color="neutral.700">
               {t("Annual figures for the whole organization, from its financial history")}
             </Text>
-            <FinancialCharts report={latestFinancialReport} organisationType={type} />
+            {latestFinancialReport != null ? (
+              <FinancialCharts report={latestFinancialReport} organisationType={type} />
+            ) : (
+              <ChartEmptyState message={t("Charts will appear once this organization submits a financial report.")} />
+            )}
           </PageItem>
         </Flex>
         <PageItem
