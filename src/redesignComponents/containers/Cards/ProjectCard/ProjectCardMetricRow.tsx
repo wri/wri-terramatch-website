@@ -1,4 +1,4 @@
-import { Flex, IconProps, Text } from "@chakra-ui/react";
+import { Box, Flex, IconProps, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { ComponentType, FC, ReactNode } from "react";
 
@@ -42,7 +42,11 @@ const ProjectCardMetricRow: FC<ProjectCardMetricRowProps> = ({
         )}
       </Flex>
       <Flex alignItems="center" gap={2}>
-        {goal != null && <ProgressBar progress={goal > 0 ? (value / goal) * 100 : 0} width="3.75rem" color={color} />}
+        {goal != null && (
+          <Box width={{ base: "2.5rem", sm: "3.75rem" }} flexShrink={0}>
+            <ProgressBar progress={goal > 0 ? (value / goal) * 100 : 0} color={color} />
+          </Box>
+        )}
         <Flex alignItems="center" gap={0.5} whiteSpace="nowrap">
           <Text textStyle="300-bold" color="neutral.900">
             {formatNumberLocaleString(value)}
