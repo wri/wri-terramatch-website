@@ -29,7 +29,7 @@ const ProjectCardMetricRow: FC<ProjectCardMetricRowProps> = ({
   const t = useT();
 
   return (
-    <Flex alignItems="center" gap={4}>
+    <Flex alignItems="center" flexWrap="wrap" columnGap={{ base: 2, sm: 4 }} rowGap={1}>
       <Flex alignItems="center" gap={1}>
         <Icon boxSize="0.875rem" color={value > 0 ? color : EMPTY_ICON_COLOR} />
         <Text textStyle="200" color="neutral.800" whiteSpace="nowrap">

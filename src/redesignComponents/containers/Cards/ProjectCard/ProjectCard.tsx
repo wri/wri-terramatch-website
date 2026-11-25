@@ -142,6 +142,7 @@ const ProjectCard: FC<ProjectCardProps> = ({ project }) => {
 
       <Flex
         direction="column"
+        flex={1}
         gap={3}
         paddingX={4}
         paddingY={3}
