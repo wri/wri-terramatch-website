@@ -40,6 +40,7 @@ import {
   ProjectReportMetaDto,
   ProjectNurseriesMetaDto,
   ProjectSitesMetaDto,
+  ProjectMetaDto,
   EntitySearchResultDto,
   FileDownloadDto,
   DelayedJobDto,
@@ -92,6 +93,7 @@ export const ENTITY_SERVICE_RESOURCES = [
   "projectReportsMetas",
   "projectNurseriesMetas",
   "projectSitesMetas",
+  "projectMetas",
   "entitySearchResults",
   "fileDownloads",
   "delayedJobs",
@@ -143,6 +145,7 @@ export type EntityServiceApiResources = {
   projectReportsMetas: StoreResourceMap<ProjectReportMetaDto>;
   projectNurseriesMetas: StoreResourceMap<ProjectNurseriesMetaDto>;
   projectSitesMetas: StoreResourceMap<ProjectSitesMetaDto>;
+  projectMetas: StoreResourceMap<ProjectMetaDto>;
   entitySearchResults: StoreResourceMap<EntitySearchResultDto>;
   fileDownloads: StoreResourceMap<FileDownloadDto>;
   delayedJobs: StoreResourceMap<DelayedJobDto>;

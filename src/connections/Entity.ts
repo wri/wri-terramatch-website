@@ -14,6 +14,8 @@ import {
   EntityIndexVariables,
   entityNurseriesMetaIndex,
   EntityNurseriesMetaIndexQueryParams,
+  entityProjectsMetaIndex,
+  EntityProjectsMetaIndexQueryParams,
   entityReportsMetaIndex,
   EntityReportsMetaIndexQueryParams,
   entitySitesMetaIndex,
@@ -47,6 +49,7 @@ import {
   ProjectCreateData,
   ProjectFullDto,
   ProjectLightDto,
+  ProjectMetaDto,
   ProjectNurseriesMetaDto,
   ProjectReportFullDto,
   ProjectReportLightDto,
@@ -177,6 +180,15 @@ export const useLightProject = connectionHook(lightProjectConnection);
 export const indexProjectConnection = createEntityIndexConnection<ProjectLightDto>("projects");
 export const loadProjectIndex = connectionLoader(indexProjectConnection);
 export const useProjectIndex = connectionHook(indexProjectConnection);
+
+/** Projects matching the filters, with only what the My Projects cards show. */
+const projectMetaIndexConnection = v3Resource("projectMetas", entityProjectsMetaIndex)
+  .index<ProjectMetaDto>(() => ({ pathParams: { entity: "projects" } }))
+  .pagination()
+  .filter<Filter<EntityProjectsMetaIndexQueryParams>>()
+  .enabledProp()
+  .buildConnection();
+export const useProjectMetaIndex = connectionHook(projectMetaIndexConnection);
 export const useCreateProject = creationHook(
   createEntityCreateConnection<ProjectFullDto, ProjectCreateData>("projects")
 );

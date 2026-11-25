@@ -1759,6 +1759,67 @@ export type ProjectSitesMetaDto = {
   aNatRegenerationGoalTotal: number;
 };
 
+export type ProjectMetaDto = {
+  uuid: string;
+  name: string | null;
+  organisationName: string | null;
+  frameworkKey: string | null;
+  status: "draft" | "pending-approval" | "approved" | "information-required";
+  /**
+   * The planting status on the latest approved project report that has one
+   */
+  plantingStatus:
+    | "no-restoration-expected"
+    | "not-started"
+    | "in-progress"
+    | "replacement-planting"
+    | "completed"
+    | null;
+  /**
+   * Level 0 country codes
+   */
+  level0Project: string[] | null;
+  /**
+   * Number of approved sites
+   */
+  totalSites: number;
+  /**
+   * Number of approved nurseries
+   */
+  totalNurseries: number;
+  /**
+   * Number of project reports in any status
+   */
+  totalProjectReports: number;
+  /**
+   * Trees planted on the approved reports of the approved sites
+   */
+  treesPlantedCount: number;
+  /**
+   * Seeds planted on the approved reports of the approved sites
+   */
+  seedsPlantedCount: number;
+  /**
+   * Trees regenerating on the approved reports of the approved sites
+   */
+  regeneratedTreesCount: number;
+  treesGrownGoal: number;
+  /**
+   * Hectares within the approved polygons of the approved sites
+   */
+  totalHectaresRestoredSum: number;
+  totalHectaresRestoredGoal: number;
+  /**
+   * Workdays on the approved project and site reports
+   */
+  combinedWorkdayCount: number;
+  /**
+   * Jobs on the approved project reports
+   */
+  totalJobsCreated: number;
+  jobsCreatedGoal: number | null;
+};
+
 export type EntitySearchResultDto = {
   uuid: string;
   name: string | null;

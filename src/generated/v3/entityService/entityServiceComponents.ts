@@ -4405,6 +4405,144 @@ export const entitySitesMetaIndex = new V3ApiEndpoint<
   {}
 >("/entities/v3/{entity}/sitesMeta", "GET");
 
+export type EntityProjectsMetaIndexPathParams = {
+  /**
+   * Entity type to retrieve projects meta for
+   */
+  entity: "projects";
+};
+
+export type EntityProjectsMetaIndexQueryParams = {
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  /**
+   * Matches project names
+   */
+  search?: string;
+  status?: ("draft" | "pending-approval" | "approved" | "information-required")[];
+  /**
+   * Matches the planting status on the latest approved project report
+   */
+  plantingStatus?: (
+    | "no-restoration-expected"
+    | "not-started"
+    | "in-progress"
+    | "replacement-planting"
+    | "completed"
+    | "not-available"
+  )[];
+  frameworkKey?: string[];
+  /**
+   * Matches level 0 country codes
+   */
+  country?: string[];
+};
+
+export type EntityProjectsMetaIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type EntityProjectsMetaIndexResponse = {
+  meta?: {
+    /**
+     * @example projectMetas
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The current page number.
+       */
+      pageNumber?: number;
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
+  };
+  data?: {
+    /**
+     * @example projectMetas
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ProjectMetaDto;
+  }[];
+};
+
+export type EntityProjectsMetaIndexVariables = {
+  pathParams: EntityProjectsMetaIndexPathParams;
+  queryParams?: EntityProjectsMetaIndexQueryParams;
+};
+
+export const entityProjectsMetaIndex = new V3ApiEndpoint<
+  EntityProjectsMetaIndexResponse,
+  EntityProjectsMetaIndexError,
+  EntityProjectsMetaIndexVariables,
+  {}
+>("/entities/v3/{entity}/projectsMeta", "GET");
+
 export type EntityFuzzySearchPathParams = {
   /**
    * Entity type to search
@@ -8364,6 +8502,7 @@ export const operationsByTag = {
     entityReportsMetaIndex,
     entityNurseriesMetaIndex,
     entitySitesMetaIndex,
+    entityProjectsMetaIndex,
     entityFuzzySearch,
     entityExportAll,
     entityPushTranslations,

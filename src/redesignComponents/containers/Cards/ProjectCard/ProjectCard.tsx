@@ -8,7 +8,7 @@ import { useMedia } from "@/connections/EntityAssociation";
 import { useGadmOptions } from "@/connections/Gadm";
 import { useReportingFramework } from "@/connections/ReportingFramework";
 import { shouldHideNurseries, useFramework } from "@/context/framework.provider";
-import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { ProjectMetaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ProgressTag from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
@@ -33,28 +33,7 @@ import ProjectCardImage from "./ProjectCardImage";
 import ProjectCardMetricRow from "./ProjectCardMetricRow";
 import { getProjectCardMetrics } from "./projectCardMetrics";
 
-export type ProjectCardProject = Pick<
-  ProjectFullDto,
-  | "uuid"
-  | "name"
-  | "frameworkKey"
-  | "organisationName"
-  | "status"
-  | "plantingStatus"
-  | "level0Project"
-  | "treesPlantedCount"
-  | "seedsPlantedCount"
-  | "regeneratedTreesCount"
-  | "treesGrownGoal"
-  | "totalHectaresRestoredSum"
-  | "totalHectaresRestoredGoal"
-  | "combinedWorkdayCount"
-  | "totalJobsCreated"
-  | "jobsCreatedGoal"
-  | "totalSites"
-  | "totalNurseries"
-  | "totalProjectReports"
->;
+export type ProjectCardProject = ProjectMetaDto;
 
 type CardAction = {
   key: string;

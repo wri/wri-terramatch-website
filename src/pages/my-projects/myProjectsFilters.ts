@@ -1,10 +1,9 @@
 import { useT } from "@transifex/react";
-import { sortBy, uniq } from "lodash";
+import { sortBy } from "lodash";
 
-import { Frameworks } from "@/generated/v3/userService/userServiceConstants";
-import { ProjectCardProject } from "@/redesignComponents/containers/Cards/ProjectCard/ProjectCard";
-import { getPlantingProgressState } from "@/redesignComponents/content/headers/PageHeaders/ProjectHeader/projectHeader.utils";
-import { isNotNull } from "@/utils/array";
+import { EntityProjectsMetaIndexQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
+import { UserFramework } from "@/generated/v3/userService/userServiceSchemas";
+import { Filter } from "@/types/connection";
 
 export type MyProjectsFilterOption = { value: string; title: string };
 
@@ -23,9 +22,11 @@ export const EMPTY_MY_PROJECTS_FILTERS: MyProjectsFilters = {
   countries: []
 };
 
-type Translate = ReturnType<typeof useT>;
+type PlantingStatusFilter = NonNullable<EntityProjectsMetaIndexQueryParams["plantingStatus"]>[number];
 
-const FRAMEWORK_NAMES: Record<string, string> = Frameworks.FRAMEWORK_NAMES;
+type ProjectStatusFilter = NonNullable<EntityProjectsMetaIndexQueryParams["status"]>[number];
+
+type Translate = ReturnType<typeof useT>;
 
 export const getFilterCategoryLabels = (t: Translate): Record<MyProjectsFilterKey, string> => ({
   statuses: t("Set Up Status"),
@@ -48,38 +49,30 @@ export const getPlantingStatusOptions = (t: Translate): MyProjectsFilterOption[]
   { value: "not-available", title: t("Not Available") }
 ];
 
-export const getProgrammeOptions = (projects: ProjectCardProject[]): MyProjectsFilterOption[] =>
+export const getProgrammeOptions = (frameworks: UserFramework[]): MyProjectsFilterOption[] =>
   sortBy(
-    uniq(projects.map(({ frameworkKey }) => frameworkKey).filter(isNotNull)).map(key => ({
-      value: key,
-      title: FRAMEWORK_NAMES[key] ?? key
-    })),
+    frameworks.map(({ slug, name }) => ({ value: slug, title: name })),
     "title"
   );
 
-export const getCountryOptions = (
-  projects: ProjectCardProject[],
-  countryNames: MyProjectsFilterOption[]
-): MyProjectsFilterOption[] =>
-  sortBy(
-    uniq(projects.flatMap(({ level0Project }) => level0Project ?? [])).map(code => ({
-      value: code,
-      title: countryNames.find(({ value }) => value === code)?.title ?? code
-    })),
-    "title"
-  );
+const NOT_AVAILABLE_STATUSES: PlantingStatusFilter[] = [
+  "not-available",
+  "no-restoration-expected",
+  "replacement-planting"
+];
 
-const matches = (selected: string[], values: string[]) =>
-  selected.length === 0 || values.some(value => selected.includes(value));
+const toPlantingStatusFilter = (statuses: string[]) =>
+  statuses.flatMap(status => (status === "not-available" ? NOT_AVAILABLE_STATUSES : [status as PlantingStatusFilter]));
 
-export const filterProjects = (projects: ProjectCardProject[], query: string, filters: MyProjectsFilters) => {
-  const search = query.trim().toLowerCase();
-  return projects.filter(
-    project =>
-      (search === "" || (project.name ?? "").toLowerCase().includes(search)) &&
-      matches(filters.statuses, [project.status]) &&
-      matches(filters.plantingStatuses, [getPlantingProgressState(project.plantingStatus)]) &&
-      matches(filters.programmes, project.frameworkKey == null ? [] : [project.frameworkKey]) &&
-      matches(filters.countries, project.level0Project ?? [])
-  );
-};
+const valuesOrUndefined = <T>(values: T[]) => (values.length === 0 ? undefined : values);
+
+export const toProjectMetaFilter = (
+  query: string,
+  { statuses, plantingStatuses, programmes, countries }: MyProjectsFilters
+): Filter<EntityProjectsMetaIndexQueryParams> => ({
+  search: query === "" ? undefined : query,
+  status: valuesOrUndefined(statuses as ProjectStatusFilter[]),
+  plantingStatus: valuesOrUndefined(toPlantingStatusFilter(plantingStatuses)),
+  frameworkKey: valuesOrUndefined(programmes),
+  country: valuesOrUndefined(countries)
+});
