@@ -4,6 +4,7 @@ import { CalendarDate } from "@internationalized/date";
 import { useT } from "@transifex/react";
 import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 
+import { PolygonEntityScopeProps } from "@/connections/SitePolygons";
 import { useRestorationPracticeLabels } from "@/hooks/translation/useRestorationPracticeLabels";
 import { useRestorationPracticeOptions } from "@/hooks/translation/useRestorationPracticeOptions";
 import { useSubmissionStatusLabels } from "@/hooks/translation/useSubmissionStatusLabels";
@@ -22,6 +23,7 @@ import Switch from "@/redesignComponents/Forms/Actions/Switch/Switch";
 import DateRangeInput from "@/redesignComponents/Forms/Inputs/DateInputs/DateRangeInputs/DateRangeInput";
 import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 
+import { usePolygonFilterFacetCounts } from "../hooks/usePolygonFilterFacetCounts";
 import HectaresFilterCard from "./HectaresFilterCard";
 import {
   CalcAreaBounds,
@@ -44,6 +46,21 @@ const SUBMISSION_CYCLE_SELECT_OPTIONS = SUBMISSION_CYCLE_OPTIONS.map(value => ({
 const selectedOptionValues = <T extends string>(options: { value: T }[], selected: string[]): T[] =>
   options.filter(({ value }) => selected.includes(value)).map(({ value }) => value);
 
+type SelectOption<T extends string> = { value: T; label: string };
+
+/** Appends each option's polygon count to its label; options are left as-is until counts have loaded. */
+const withOptionCounts = <T extends string>(
+  t: ReturnType<typeof useT>,
+  options: SelectOption<T>[],
+  counts: Record<string, number> | undefined
+): SelectOption<T>[] =>
+  counts == null
+    ? options
+    : options.map(option => ({
+        ...option,
+        label: t("{label} ({count})", { label: option.label, count: (counts[option.value] ?? 0).toLocaleString() })
+      }));
+
 const isoStringToDateValue = (value: string): DateValue | undefined => {
   if (value === "") return undefined;
   const [year, month, day] = value.split("-").map(Number);
@@ -65,6 +82,10 @@ interface PolygonFilterDrawerProps {
   isAdminReview?: boolean;
   siteFilterProjectUuid?: string;
   calcAreaBounds?: CalcAreaBounds;
+  /** Project or site the option counts are scoped to; counts are hidden when omitted. */
+  facetCountScope?: PolygonEntityScopeProps;
+  /** The applied search term, so option counts match what the table will show. */
+  search?: string;
   onApplyFilters: (filters: PolygonFilterState) => void;
   onClearFilters: () => void;
   onOpenChange?: (open: boolean) => void;
@@ -77,6 +98,8 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
   isAdminReview = false,
   siteFilterProjectUuid,
   calcAreaBounds,
+  facetCountScope,
+  search = "",
   onApplyFilters,
   onClearFilters,
   onOpenChange
@@ -97,6 +120,23 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
       setDraftFilters(filters);
     }
   }, [filters, open]);
+
+  const facetCounts = usePolygonFilterFacetCounts({
+    scope: facetCountScope,
+    filters: draftFilters,
+    search,
+    enabled: open === true
+  });
+  const optionItems = useMemo(
+    () => ({
+      polygonStatus: withOptionCounts(t, submissionStatusOptions, facetCounts?.polygonStatus),
+      validationStatus: withOptionCounts(t, validationStatusOptions, facetCounts?.validationStatus),
+      practice: withOptionCounts(t, restorationPracticeOptions, facetCounts?.practice),
+      targetSys: withOptionCounts(t, targetLandUseOptions, facetCounts?.targetSys),
+      submissionCycle: withOptionCounts(t, SUBMISSION_CYCLE_SELECT_OPTIONS, facetCounts?.submissionCycle)
+    }),
+    [facetCounts, restorationPracticeOptions, submissionStatusOptions, t, targetLandUseOptions, validationStatusOptions]
+  );
 
   const activeFilters = useMemo(() => {
     const tags: { id: string; label: string }[] = [];
@@ -283,7 +323,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                   size="small"
                   disabled={draftFilters.showDeleted}
                   value={draftFilters.polygonStatus}
-                  items={submissionStatusOptions}
+                  items={optionItems.polygonStatus}
                   onChange={handleSubmissionStatusChange}
                   multiple
                 />
@@ -294,7 +334,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                   size="small"
                   disabled={draftFilters.showDeleted}
                   value={draftFilters.validationStatus}
-                  items={validationStatusOptions}
+                  items={optionItems.validationStatus}
                   onChange={handleValidationStatusChange}
                   multiple
                 />
@@ -314,7 +354,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                   size="small"
                   disabled={draftFilters.showDeleted}
                   value={draftFilters.practice}
-                  items={restorationPracticeOptions}
+                  items={optionItems.practice}
                   onChange={handlePracticeChange}
                   multiple
                 />
@@ -325,7 +365,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                   size="small"
                   disabled={draftFilters.showDeleted}
                   value={draftFilters.targetSys}
-                  items={targetLandUseOptions}
+                  items={optionItems.targetSys}
                   onChange={handleTargetLandUseChange}
                   multiple
                 />
@@ -336,7 +376,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                   size="small"
                   disabled={draftFilters.showDeleted}
                   value={draftFilters.submissionCycle}
-                  items={SUBMISSION_CYCLE_SELECT_OPTIONS}
+                  items={optionItems.submissionCycle}
                   onChange={handleSubmissionCycleChange}
                   multiple
                 />

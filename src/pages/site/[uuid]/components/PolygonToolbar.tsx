@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 
+import { PolygonEntityScopeProps } from "@/connections/SitePolygons";
 import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
 import {
@@ -39,6 +40,10 @@ const PolygonToolbar: FC<PolygonToolbarProps> = ({
   const t = useT();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [searchResetKey, setSearchResetKey] = useState(0);
+  const facetCountScope = useMemo<PolygonEntityScopeProps>(
+    () => ({ entityName: "sites", entityUuid: siteUuid }),
+    [siteUuid]
+  );
 
   const handleOnClickFilterButton = () => {
     setIsFilterDrawerOpen(true);
@@ -90,6 +95,8 @@ const PolygonToolbar: FC<PolygonToolbarProps> = ({
         open={isFilterDrawerOpen}
         filters={polygonFilters}
         isAdminReview={isAdminReview}
+        facetCountScope={facetCountScope}
+        search={polygonSearch.trim()}
         onApplyFilters={handleApplyFilters}
         onClearFilters={handleOnClearFilters}
         onOpenChange={setIsFilterDrawerOpen}

@@ -1201,6 +1201,10 @@ export type SitePolygonsSummaryQueryParams = {
     | "restorationByStrategy"
     | "restorationByLandUse"
   )[];
+  /**
+   * Optional per-option polygon counts for these filters, returned in facetCounts. Each facet is counted with every other filter in the request applied, but not its own, so its options keep their counts while that filter is active.
+   */
+  ["facet[]"]?: ("polygonStatus" | "practice" | "submissionCycle" | "targetSys" | "validationStatus")[];
 };
 
 export type SitePolygonsSummaryError = Fetcher.ErrorWrapper<
