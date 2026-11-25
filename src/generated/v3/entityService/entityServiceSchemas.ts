@@ -1759,11 +1759,6 @@ export type ProjectSitesMetaDto = {
   aNatRegenerationGoalTotal: number;
 };
 
-export type EntitySearchResultDto = {
-  uuid: string;
-  name: string | null;
-};
-
 export type FileDownloadDto = {
   url: string;
 };

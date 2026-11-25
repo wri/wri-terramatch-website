@@ -74,16 +74,12 @@ const BaseImage: FC<BaseImageProps> = ({
       onClick={onClickEdit}
     >
       <Box className={classNamesHover} />
-      <Text textStyle="400-bold" color="neutral.100" className="flex items-center gap-1" onClick={onClickEdit}>
-        {hoverContent != null ? (
-          hoverContent
-        ) : (
-          <>
-            <EditIcon className="h-4 w-4" />
-            {t("Edit")}
-          </>
-        )}
-      </Text>
+      {hoverContent ?? (
+        <Text textStyle="400-bold" color="neutral.100" className="flex items-center gap-1" onClick={onClickEdit}>
+          <EditIcon className="h-4 w-4" />
+          {t("Edit")}
+        </Text>
+      )}
     </Flex>
   );
 

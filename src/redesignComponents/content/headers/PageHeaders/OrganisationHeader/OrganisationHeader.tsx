@@ -1,22 +1,16 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { ChangeEvent, FC, useCallback, useRef, useState } from "react";
+import { FC, useCallback } from "react";
 import Twemoji from "react-twemoji";
 
-import { resolveRemSizeValue } from "@/lib/sizing";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import ModalUploadImage from "@/redesignComponents/containers/Modal/ModalUploadImage";
-import { ProfileImage } from "@/redesignComponents/content/Images/ProfileImage/ProfileImage";
+import OrganisationLogo from "@/redesignComponents/content/Images/OrganisationLogo/OrganisationLogo";
 import { DownloadIcon, EditIcon, LinkIcon } from "@/redesignComponents/foundations/Icons";
 import EllipsisDivider from "@/redesignComponents/miscellaneous/Dividers/EllipsisDivider";
-import { FileType } from "@/types/common";
 
 import TeamSection, { TeamMember } from "../components/TeamSection";
 import { countryCodeToFlag } from "../ProjectHeader/projectHeader.utils";
-
-const LOGO_SIZE = 20;
-const LOGO_SIZE_REM = resolveRemSizeValue(LOGO_SIZE);
 
 export interface OrganisationHeaderProps {
   name: string;
@@ -28,6 +22,7 @@ export interface OrganisationHeaderProps {
   websiteUrl?: string;
   team?: TeamMember[];
   isDownloadDisabled?: boolean;
+  onLogoClick: () => void;
   onEditClick: () => void;
   onDownloadClick: () => void;
   onAddTeamClick: () => void;
@@ -44,32 +39,13 @@ const OrganisationHeader: FC<OrganisationHeaderProps> = ({
   websiteUrl,
   team,
   isDownloadDisabled = false,
+  onLogoClick,
   onEditClick,
   onDownloadClick,
   onAddTeamClick,
   gotoTeamMembers
 }) => {
   const t = useT();
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [pendingLogoFile, setPendingLogoFile] = useState<File | undefined>(undefined);
-  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-
-  const openFilePicker = useCallback(() => fileInputRef.current?.click(), []);
-
-  const handleLogoFileChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file == null) return;
-
-    setPendingLogoFile(file);
-    setIsUploadModalOpen(true);
-    event.target.value = "";
-  }, []);
-
-  const closeUploadModal = useCallback(() => {
-    setIsUploadModalOpen(false);
-    setPendingLogoFile(undefined);
-  }, []);
-
   const handleWebsiteClick = useCallback(() => {
     if (websiteUrl != null) window.open(websiteUrl, "_blank", "noopener,noreferrer");
   }, [websiteUrl]);
@@ -84,45 +60,7 @@ const OrganisationHeader: FC<OrganisationHeaderProps> = ({
       className="items-center mobile:flex-col mobile:items-start"
     >
       <Flex gap={6} alignItems="flex-start">
-        {logoSrc == null ? (
-          <Flex
-            width={LOGO_SIZE_REM}
-            height={LOGO_SIZE_REM}
-            flexShrink={0}
-            alignItems="center"
-            justifyContent="center"
-            borderRadius="full"
-            borderWidth="0.0625rem"
-            borderColor="neutral.300"
-            background="neutral.200"
-          >
-            <Button variant="borderless" size="small" onClick={openFilePicker}>
-              {t("Add logo")}
-            </Button>
-          </Flex>
-        ) : (
-          <ProfileImage
-            size={LOGO_SIZE}
-            src={logoSrc}
-            alt={name}
-            onClickEdit={openFilePicker}
-            className="!border-0 bg-theme-neutral-100"
-          />
-        )}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept={FileType.Image}
-          className="hidden"
-          onChange={handleLogoFileChange}
-        />
-        <ModalUploadImage
-          open={isUploadModalOpen}
-          onClose={closeUploadModal}
-          title={t("Organization Profile Image")}
-          imgSrc={logoSrc}
-          initialFile={pendingLogoFile}
-        />
+        <OrganisationLogo src={logoSrc} alt={name} onEditClick={onLogoClick} />
 
         <Flex flexDirection="column" gap={2}>
           <Text as="h1" textStyle="800-bold" color="primary.900">

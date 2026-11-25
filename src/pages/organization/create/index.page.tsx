@@ -39,11 +39,13 @@ const CreateOrganisationForm = () => {
     if (uuid == null) return;
     try {
       await updateOrganisation({ status: "pending-approval" }, { id: uuid });
+      // users/me may predate the creation of this org; reload it so that useMyOrg reports the new org.
+      if (user != null) ApiSlice.pruneCache("users", [user.uuid]);
       router.push("/organization/create/confirm");
     } catch (error) {
       Log.error("Failed to submit organization:", error);
     }
-  }, [uuid, router]);
+  }, [uuid, user, router]);
 
   const handleDeleteDraft = useCallback(async () => {
     if (uuid == null) return;

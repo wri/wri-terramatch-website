@@ -134,7 +134,8 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
                       variant="contained"
                       startIcon={<Check />}
                       disabled={
-                        !entityAllowsChangeRequest || ["approved", "draft"].includes(updateRequest.status ?? "")
+                        !entityAllowsChangeRequest ||
+                        ["approved", "draft", "information-required"].includes(updateRequest.status ?? "")
                       }
                       onClick={() => handleStatusUpdate("approved")}
                     >

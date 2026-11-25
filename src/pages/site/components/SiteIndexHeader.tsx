@@ -2,16 +2,14 @@ import { Box, Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
-import { FC, useCallback, useMemo, useRef, useState } from "react";
+import { FC, useMemo, useState } from "react";
 
-import { useEntityFuzzySearch } from "@/connections/EntityFuzzySearch";
-import { useDebounce } from "@/hooks/useDebounce";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import HighLevelSelector from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector";
 import { PlusIcon, SiteIcon } from "@/redesignComponents/foundations/Icons";
-import type { ListItemProps, SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
+import type { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
 
@@ -59,43 +57,6 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
   const router = useRouter();
   const isMobile = useIsMobile();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
-  const suggestionsEnabled = !embeddedInProject && selectedProject === ALL_PROJECTS_VIEW;
-  const [suggestionQuery, setSuggestionQuery] = useState("");
-  const debouncedSetSuggestionQuery = useDebounce(setSuggestionQuery);
-  const [, { data: suggestionResults }] = useEntityFuzzySearch({
-    entity: "sites",
-    search: suggestionQuery,
-    enabled: suggestionsEnabled
-  });
-
-  const suggestionOptions = useMemo<ListItemProps[]>(
-    () => (suggestionResults ?? []).flatMap(({ uuid, name }) => (name == null ? [] : [{ id: uuid, label: name }])),
-    [suggestionResults]
-  );
-
-  const ignoreClearAfterPickRef = useRef(false);
-
-  const handleSearchQueryChange = useCallback(
-    (query: string) => {
-      if (query === "" && ignoreClearAfterPickRef.current) {
-        ignoreClearAfterPickRef.current = false;
-        return;
-      }
-      ignoreClearAfterPickRef.current = false;
-      if (!suggestionsEnabled || query.trim() === "") onQueryChange(query);
-      if (suggestionsEnabled) debouncedSetSuggestionQuery(query);
-    },
-    [onQueryChange, debouncedSetSuggestionQuery, suggestionsEnabled]
-  );
-
-  const handleSuggestionSelect = useCallback(
-    (option: ListItemProps) => {
-      ignoreClearAfterPickRef.current = true;
-      onQueryChange(option.label);
-    },
-    [onQueryChange]
-  );
-
   const selectedFilters = useMemo<SelectedFilter[]>(
     () => [
       ...(statusFilters.length === 0
@@ -169,11 +130,10 @@ const SiteIndexHeader: FC<SiteIndexHeaderProps> = ({
       search={{
         label: siteCount === 1 ? t("Site") : t("Sites"),
         placeholder: t("Search"),
-        options: suggestionsEnabled ? suggestionOptions : [],
-        displayResults: suggestionsEnabled ? "text" : "none",
-        onSelect: handleSuggestionSelect,
-        onQueryChange: handleSearchQueryChange,
-        isLoading: suggestionsEnabled ? false : filtering,
+        options: [],
+        displayResults: "none",
+        onQueryChange,
+        isLoading: filtering,
         count: siteCount
       }}
       selectedFilters={selectedFilters}
