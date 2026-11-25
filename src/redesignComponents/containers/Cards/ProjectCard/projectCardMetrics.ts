@@ -15,9 +15,8 @@ export const getProjectCardMetrics = (
   framework: Framework,
   project: ProjectCardProject
 ): ProjectCardMetric[] => {
-  const treesPlanted = project.treesPlantedCount ?? 0;
-  const treesGoal = project.treesGrownGoal ?? 0;
-  const trees = { key: "trees", Icon: TreeIcon, color: TREES_COLOR, value: treesPlanted, goal: treesGoal };
+  const treesPlanted = project.treesPlantedCount;
+  const trees = { key: "trees", Icon: TreeIcon, color: TREES_COLOR, value: treesPlanted, goal: project.treesGrownGoal };
   const jobsGoal = project.jobsCreatedGoal ?? 0;
   const treesGrowing = treesPlanted + project.seedsPlantedCount + project.regeneratedTreesCount;
   const area: ProjectCardMetric = {
@@ -25,7 +24,7 @@ export const getProjectCardMetrics = (
     Icon: AreaHectaresIcon,
     color: AREA_COLOR,
     value: project.totalHectaresRestoredSum,
-    goal: project.totalHectaresRestoredGoal ?? 0,
+    goal: project.totalHectaresRestoredGoal,
     label: t("Area Restored (ha):"),
     tooltipContent: t("Number of hectares within approved polygons for this project.")
   };
@@ -44,7 +43,7 @@ export const getProjectCardMetrics = (
       area,
       {
         ...jobs,
-        value: project.combinedWorkdayCount ?? 0,
+        value: project.combinedWorkdayCount,
         label: t("Workdays:"),
         tooltipContent: t(
           "This is the sum of project- and site-level workdays in all approved reports for this project."

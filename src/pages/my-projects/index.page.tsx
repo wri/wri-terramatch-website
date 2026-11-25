@@ -110,7 +110,7 @@ const MyProjectsPage: FC = () => {
       />
       <PageContent className={classNames("h-auto flex-1 gap-6", { "pt-0": showToolbar })}>
         {isOrgPending ? (
-          <MyProjectsEmptyState isOrgPending hasProjects={false} hasActiveSearch={false} />
+          <MyProjectsEmptyState isOrgPending isFiltered={false} hasActiveSearch={false} />
         ) : loadFailure != null ? (
           <NoResults
             className="!px-0"
@@ -120,7 +120,7 @@ const MyProjectsPage: FC = () => {
         ) : !isOrgLoaded || !isLoaded || projects == null ? (
           <IndexLoadingRow label={t("Loading projects...")} minHeight="15rem" />
         ) : projects.length === 0 ? (
-          <MyProjectsEmptyState isOrgPending={false} hasProjects={isFiltered} hasActiveSearch={query !== ""} />
+          <MyProjectsEmptyState isOrgPending={false} isFiltered={isFiltered} hasActiveSearch={query !== ""} />
         ) : (
           <Box className="grid grid-cols-2 gap-6 mobile:grid-cols-1">
             {projects.map(project => (

@@ -55,14 +55,26 @@ export const getProgrammeOptions = (frameworks: UserFramework[]): MyProjectsFilt
     "title"
   );
 
+const PROJECT_STATUS_FILTERS: ProjectStatusFilter[] = ["draft", "pending-approval", "information-required", "approved"];
+
+const PLANTING_STATUS_FILTERS: PlantingStatusFilter[] = ["not-started", "in-progress", "completed", "not-available"];
+
 const NOT_AVAILABLE_STATUSES: PlantingStatusFilter[] = [
   "not-available",
   "no-restoration-expected",
   "replacement-planting"
 ];
 
+const isProjectStatusFilter = (value: string): value is ProjectStatusFilter =>
+  PROJECT_STATUS_FILTERS.some(status => status === value);
+
+const isPlantingStatusFilter = (value: string): value is PlantingStatusFilter =>
+  PLANTING_STATUS_FILTERS.some(status => status === value);
+
 const toPlantingStatusFilter = (statuses: string[]) =>
-  statuses.flatMap(status => (status === "not-available" ? NOT_AVAILABLE_STATUSES : [status as PlantingStatusFilter]));
+  statuses
+    .filter(isPlantingStatusFilter)
+    .flatMap(status => (status === "not-available" ? NOT_AVAILABLE_STATUSES : [status]));
 
 const valuesOrUndefined = <T>(values: T[]) => (values.length === 0 ? undefined : values);
 
@@ -71,7 +83,7 @@ export const toProjectMetaFilter = (
   { statuses, plantingStatuses, programmes, countries }: MyProjectsFilters
 ): Filter<EntityProjectsMetaIndexQueryParams> => ({
   search: query === "" ? undefined : query,
-  status: valuesOrUndefined(statuses as ProjectStatusFilter[]),
+  status: valuesOrUndefined(statuses.filter(isProjectStatusFilter)),
   plantingStatus: valuesOrUndefined(toPlantingStatusFilter(plantingStatuses)),
   frameworkKey: valuesOrUndefined(programmes),
   country: valuesOrUndefined(countries)

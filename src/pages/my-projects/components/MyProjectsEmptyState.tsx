@@ -5,11 +5,11 @@ import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 
 type MyProjectsEmptyStateProps = {
   isOrgPending: boolean;
-  hasProjects: boolean;
+  isFiltered: boolean;
   hasActiveSearch: boolean;
 };
 
-const MyProjectsEmptyState: FC<MyProjectsEmptyStateProps> = ({ isOrgPending, hasProjects, hasActiveSearch }) => {
+const MyProjectsEmptyState: FC<MyProjectsEmptyStateProps> = ({ isOrgPending, isFiltered, hasActiveSearch }) => {
   const t = useT();
 
   if (isOrgPending) {
@@ -24,7 +24,7 @@ const MyProjectsEmptyState: FC<MyProjectsEmptyStateProps> = ({ isOrgPending, has
     );
   }
 
-  if (!hasProjects) {
+  if (!isFiltered) {
     return (
       <NoResults
         className="!px-0"
