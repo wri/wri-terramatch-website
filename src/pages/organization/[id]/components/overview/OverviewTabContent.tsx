@@ -1,176 +1,120 @@
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import _ from "lodash";
-import { FC, useMemo } from "react";
+import { useRouter } from "next/router";
+import { FC, useCallback } from "react";
 
-import Text from "@/components/elements/Text/Text";
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import Container from "@/components/generic/Layout/Container";
-import { useOrganisationMedia } from "@/connections/Organisation";
-import { useModalContext } from "@/context/modal.provider";
+import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
+import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
-import PastCommunityExperience from "@/pages/organization/[id]/components/overview/PastCommunityExperience";
-import TeamAndResources from "@/pages/organization/[id]/components/overview/TeamAndResources";
-import { UploadedFile } from "@/types/common";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import ChartEmptyState from "@/redesignComponents/dataDisplay/Charts/ChartEmptyState";
+import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 
-import BuildStrongerProfile from "../BuildStrongerProfile";
-import OrganizationEditModal from "../edit/OrganizationEditModal";
-import Files from "../Files";
+import { useOrganizationEditModal } from "../edit/useOrganizationEditModal";
 import About from "./About";
-import PastRestorationExperience from "./PastRestorationExperience";
+import FinancialCharts from "./FinancialCharts";
+import KeyIndicatorsInsights from "./KeyIndicatorsInsights";
+import OrganizationSetUpSection from "./OrganizationSetUpSection";
+import { useOrganisationOverview } from "./useOrganisationOverview";
 
 type OverviewTabContentProps = {
   organization?: OrganisationFullDto;
+  navigateToTab: (tab: string) => void;
 };
 
-const OverviewTabContent: FC<OverviewTabContentProps> = ({ organization }) => {
+const OverviewTabContent: FC<OverviewTabContentProps> = ({ organization, navigateToTab }) => {
   const t = useT();
-  const { openModal } = useModalContext();
+  const router = useRouter();
+  const handleEdit = useOrganizationEditModal(organization);
 
-  const [, { media: allMediaFiles }] = useOrganisationMedia({
-    organisationUuid: organization?.uuid ?? ""
-  });
+  const { description, type, projects, latestFinancialReport, setUpSteps } = useOrganisationOverview(organization);
+  const hasDescription = description != null && description.trim() !== "";
+  const isSetUpComplete = setUpSteps.every(({ completed }) => completed);
+  const latestReportUuid = latestFinancialReport?.uuid;
 
-  const mediaFiles = useMemo(() => {
-    return allMediaFiles.filter(media =>
-      ["reference", "additional", "op_budget_2year", "legal_registration", "previous_annual_reports"].includes(
-        media.collectionName ?? ""
-      )
-    );
-  }, [allMediaFiles]);
-
-  const files: UploadedFile[] = useMemo(() => {
-    return mediaFiles
-      .filter(
-        media =>
-          media.url != null &&
-          media.uuid != null &&
-          media.fileName != null &&
-          media.size != null &&
-          ["reference", "additional", "op_budget_2year", "legal_registration"].includes(media.collectionName)
-      )
-      .map(media => {
-        const uploadedFile: UploadedFile = {
-          uuid: media.uuid,
-          url: media.url ?? "",
-          thumbUrl: media.thumbUrl ?? undefined,
-          size: media.size,
-          fileName: media.fileName,
-          mimeType: media.mimeType ?? "",
-          createdAt: media.createdAt,
-          collectionName: media.collectionName,
-          isPublic: media.isPublic ?? undefined,
-          isCover: media.isCover ?? undefined,
-          lat: media.lat ?? undefined,
-          lng: media.lng ?? undefined
-        };
-        return uploadedFile;
-      });
-  }, [mediaFiles]);
-
-  const previousAnnualReportsFiles: UploadedFile[] = useMemo(() => {
-    return mediaFiles
-      .filter(
-        media =>
-          media.url != null &&
-          media.uuid != null &&
-          media.fileName != null &&
-          media.size != null &&
-          media.collectionName === "previous_annual_reports"
-      )
-      .map(media => {
-        const uploadedFile: UploadedFile = {
-          uuid: media.uuid,
-          url: media.url ?? "",
-          thumbUrl: media.thumbUrl ?? undefined,
-          size: media.size,
-          fileName: media.fileName,
-          mimeType: media.mimeType ?? "",
-          createdAt: media.createdAt,
-          collectionName: media.collectionName,
-          isPublic: media.isPublic ?? undefined,
-          isCover: media.isCover ?? undefined,
-          lat: media.lat ?? undefined,
-          lng: media.lng ?? undefined
-        };
-        return uploadedFile;
-      });
-  }, [mediaFiles]);
-
-  /**
-   * Checks if there are incomplete steps (Build a Stronger Profile section).
-   * @returns boolean
-   */
-  const incompleteSteps = useMemo(() => {
-    if (organization == null) {
-      return {
-        pastRestorationExperience: true,
-        legitimacy: true
-      };
-    }
-
-    const pastRestorationExperience = {
-      haRestoredTotal: organization.haRestoredTotal,
-      haRestored3Year: organization.haRestored3Year,
-      treesGrownTotal: organization.treesGrownTotal,
-      treesGrown3Year: organization.treesGrown3Year
-    };
-
-    const hasLegitimacyFiles = mediaFiles.some(
-      media => media.collectionName === "reference" || media.collectionName === "legal_registration"
-    );
-    return {
-      pastRestorationExperience: !_.every(pastRestorationExperience, _.isFinite),
-      legitimacy: !hasLegitimacyFiles
-    };
-  }, [organization, mediaFiles]);
-
-  const showIncompleteStepsSection = _.values(incompleteSteps).includes(true);
+  const goToDetails = useCallback(() => navigateToTab("organization_details"), [navigateToTab]);
+  const goToProjects = useCallback(() => navigateToTab("projects"), [navigateToTab]);
+  const goToLatestReport = useCallback(() => {
+    if (latestReportUuid != null) router.push(`/reports/financial-report/${latestReportUuid}`);
+  }, [latestReportUuid, router]);
 
   return (
-    <Container className="py-15">
-      <div className="flex items-center gap-5">
-        <Text variant="text-heading-2000">{t("Overview")}</Text>
-        <Icon name={IconNames.INFO_CIRCLE} width={24} height={24} className="fill-neutral-800" />
-      </div>
-      {/* About */}
-      <About organization={organization} />
-      {/* Past Restoration Experience */}
-      {!incompleteSteps.pastRestorationExperience && <PastRestorationExperience organization={organization} />}
-      {/* Previous Annual Reports */}
-      {previousAnnualReportsFiles.length > 0 && (
-        <Files title={t("Monitoring reports from past projects:")} files={previousAnnualReportsFiles} />
-      )}
-      <PastCommunityExperience organization={organization} />
-      <TeamAndResources organization={organization} />
-      {/* Files */}
-      {!incompleteSteps.legitimacy && (
-        <Files title={t("Proof of legally registered, letter of references and additional documents.")} files={files} />
-      )}
-      {/* Build a Stronger Profile */}
-      {showIncompleteStepsSection && (
-        <BuildStrongerProfile
-          steps={[
-            {
-              showWhen: incompleteSteps.pastRestorationExperience,
-              title: t("Past Restoration Experience"),
-              subtitle: t("Including information about total hectares restored and previous restoration work.")
-            },
-            {
-              showWhen: incompleteSteps.legitimacy,
-              title: t("Organization legitimacy"),
-              subtitle: t("Include a copy of your proof of legally incorporated an letters of reference.")
+    <PageContent>
+      <Flex gap={7} className="flex-col sm:flex-row">
+        <Flex className="flex-[2] flex-col gap-7 mobile:flex-[1]">
+          <PageItem
+            title={t("About")}
+            buttonProps={
+              hasDescription
+                ? {
+                    variant: "secondary",
+                    size: "small",
+                    children: t("Read More"),
+                    rightIcon: <ChevronRightIcon />,
+                    onClick: goToDetails
+                  }
+                : undefined
             }
-          ]}
-          subtitle={t(
-            "Organizational Profiles with overview information are more likely to be successful in Funding Applications."
-          )}
-          onEdit={() =>
-            openModal(ModalId.ORGANIZATION_EDIT_MODAL, <OrganizationEditModal organization={organization} />)
-          }
-        />
-      )}
-    </Container>
+          >
+            <About description={hasDescription ? description : null} onAddInformation={handleEdit} />
+          </PageItem>
+          <PageItem title={t("Key Indicators & Insights")} flexProps={{ gap: 2 }}>
+            {projects.length > 0 && (
+              <Flex alignItems="center" gap={1}>
+                <Text textStyle="200" color="neutral.700">
+                  {t("Across")}
+                </Text>
+                <Button type="button" variant="borderless" size="small" onClick={goToProjects}>
+                  {projects.length === 1 ? t("1 Project") : t("{count} Projects", { count: projects.length })}
+                </Button>
+              </Flex>
+            )}
+            <KeyIndicatorsInsights projects={projects} />
+          </PageItem>
+          <PageItem
+            title={t("Organization Financials")}
+            flexProps={{ gap: 2 }}
+            buttonProps={
+              latestFinancialReport != null
+                ? {
+                    variant: "secondary",
+                    size: "small",
+                    children: t("View Latest Report"),
+                    rightIcon: <ChevronRightIcon />,
+                    onClick: goToLatestReport
+                  }
+                : undefined
+            }
+          >
+            <Text textStyle="200" color="neutral.700">
+              {t("Annual figures for the whole organization, from its financial history")}
+            </Text>
+            {latestFinancialReport != null ? (
+              <FinancialCharts report={latestFinancialReport} organisationType={type} />
+            ) : (
+              <ChartEmptyState message={t("Charts will appear once this organization submits a financial report.")} />
+            )}
+          </PageItem>
+        </Flex>
+        <PageItem
+          flexProps={{ width: "fit-content", overflow: "hidden" }}
+          className="!w-full !max-w-full flex-[1] sm:!w-[30%] sm:!max-w-[30%]"
+          title={t("Organization Set Up")}
+          classNameRightSectionHeader="mobile:!w-fit"
+          buttonProps={{
+            variant: "primary",
+            size: "small",
+            children: isSetUpComplete ? t("Edit") : t("Continue"),
+            rightIcon: <ChevronRightIcon boxSize={4} />,
+            onClick: handleEdit
+          }}
+        >
+          <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
+            <OrganizationSetUpSection steps={setUpSteps} onEditStep={handleEdit} />
+          </Box>
+        </PageItem>
+      </Flex>
+    </PageContent>
   );
 };
 
