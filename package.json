@@ -25,14 +25,14 @@
     "tx:pull": "eval $(grep '^NEXT_PUBLIC_TRANSIFEX_TOKEN' .env) && eval $(grep '^TRANSIFEX_SECRET' .env) && txjs-cli pull --token=$NEXT_PUBLIC_TRANSIFEX_TOKEN  --secret=$TRANSIFEX_SECRET"
   },
   "dependencies": {
-    "@chakra-ui/react": "^3.34.0",
+    "@chakra-ui/react": "^3.38.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@faker-js/faker": "^8.0.2",
     "@headlessui/react": "^2.2.10",
     "@headlessui/tailwindcss": "^0.1.2",
     "@hookform/resolvers": "^2.9.10",
-    "@internationalized/date": "^3.10.0",
+    "@internationalized/date": "^3.12.4",
     "@mapbox/geojson-normalize": "^0.0.1",
     "@mapbox/mapbox-gl-draw": "^1.5.1",
     "@mapbox/mapbox-gl-draw-static-mode": "^1.0.1",
