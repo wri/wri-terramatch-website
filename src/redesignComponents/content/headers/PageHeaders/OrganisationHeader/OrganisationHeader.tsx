@@ -4,17 +4,13 @@ import classNames from "classnames";
 import { FC, useCallback } from "react";
 import Twemoji from "react-twemoji";
 
-import { resolveRemSizeValue } from "@/lib/sizing";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import { ProfileImage } from "@/redesignComponents/content/Images/ProfileImage/ProfileImage";
+import OrganisationLogo from "@/redesignComponents/content/Images/OrganisationLogo/OrganisationLogo";
 import { DownloadIcon, EditIcon, LinkIcon } from "@/redesignComponents/foundations/Icons";
 import EllipsisDivider from "@/redesignComponents/miscellaneous/Dividers/EllipsisDivider";
 
 import TeamSection, { TeamMember } from "../components/TeamSection";
 import { countryCodeToFlag } from "../ProjectHeader/projectHeader.utils";
-
-const LOGO_SIZE = 20;
-const LOGO_SIZE_REM = resolveRemSizeValue(LOGO_SIZE);
 
 export interface OrganisationHeaderProps {
   name: string;
@@ -50,7 +46,6 @@ const OrganisationHeader: FC<OrganisationHeaderProps> = ({
   gotoTeamMembers
 }) => {
   const t = useT();
-
   const handleWebsiteClick = useCallback(() => {
     if (websiteUrl != null) window.open(websiteUrl, "_blank", "noopener,noreferrer");
   }, [websiteUrl]);
@@ -65,41 +60,7 @@ const OrganisationHeader: FC<OrganisationHeaderProps> = ({
       className="items-center mobile:flex-col mobile:items-start"
     >
       <Flex gap={6} alignItems="flex-start">
-        {logoSrc == null ? (
-          <Flex
-            width={LOGO_SIZE_REM}
-            height={LOGO_SIZE_REM}
-            flexShrink={0}
-            alignItems="center"
-            justifyContent="center"
-            borderRadius="full"
-            borderWidth="0.0625rem"
-            borderColor="neutral.300"
-            background="neutral.200"
-          >
-            <Button variant="borderless" size="small" onClick={onLogoClick}>
-              {t("Add logo")}
-            </Button>
-          </Flex>
-        ) : (
-          <ProfileImage
-            size={LOGO_SIZE}
-            src={logoSrc}
-            alt={name}
-            onClickEdit={onLogoClick}
-            hoverContent={
-              <Button
-                variant="borderless"
-                typeVariant="dark"
-                size="small"
-                leftIcon={<EditIcon className="-mr-1 h-4 w-4" />}
-              >
-                {t("Edit")}
-              </Button>
-            }
-            className="!border-0 bg-theme-neutral-100"
-          />
-        )}
+        <OrganisationLogo src={logoSrc} alt={name} onEditClick={onLogoClick} />
 
         <Flex flexDirection="column" gap={2}>
           <Text as="h1" textStyle="800-bold" color="primary.900">
@@ -109,7 +70,7 @@ const OrganisationHeader: FC<OrganisationHeaderProps> = ({
           <Flex flexDirection="column" gap={1}>
             <Flex gap={2} alignItems="center" flexWrap="wrap" paddingBottom="0.125rem">
               <Text textStyle="300" color={organisationType == null ? "neutral.700" : "primary.900"}>
-                {organisationType ?? t("Organisation Type")}
+                {organisationType ?? t("Organization Type")}
               </Text>
               <EllipsisDivider />
               <Flex gap={1} alignItems="center">

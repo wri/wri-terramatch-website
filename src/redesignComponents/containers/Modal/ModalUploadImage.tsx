@@ -23,6 +23,7 @@ import Modal from "./Modal";
 interface ModalUploadImageProps {
   open: boolean;
   onClose: () => void;
+  title?: string;
   imgSrc?: string;
   mediaUuid?: string;
   scale?: number;
@@ -46,6 +47,7 @@ const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
 const ModalUploadImage: FC<ModalUploadImageProps> = ({
   open,
   onClose,
+  title,
   imgSrc,
   mediaUuid,
   scale,
@@ -247,7 +249,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
       onClose={onClose}
       header={
         <Text textStyle="400-bold" color="neutral.800">
-          Project Profile Image
+          {title ?? t("Project Profile Image")}
         </Text>
       }
       content={
@@ -342,14 +344,16 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
             >
               {t("Remove Image")}
             </Button>
-            <Button
-              variant="secondary"
-              size="small"
-              leftIcon={<PhotoLibraryIcon />}
-              onClick={() => onOpenModalImageGallery?.(true)}
-            >
-              {t("Select from Gallery")}
-            </Button>
+            {onOpenModalImageGallery != null && (
+              <Button
+                variant="secondary"
+                size="small"
+                leftIcon={<PhotoLibraryIcon />}
+                onClick={() => onOpenModalImageGallery(true)}
+              >
+                {t("Select from Gallery")}
+              </Button>
+            )}
             <Button
               variant="secondary"
               size="small"

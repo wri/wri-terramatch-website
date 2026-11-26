@@ -18,7 +18,6 @@ const meta: Meta<typeof OrganisationHeader> = {
     isDownloadDisabled: { control: "boolean", description: "Disables the Download button" }
   },
   args: {
-    onLogoClick: fn(),
     onEditClick: fn(),
     onDownloadClick: fn(),
     onAddTeamClick: fn(),
