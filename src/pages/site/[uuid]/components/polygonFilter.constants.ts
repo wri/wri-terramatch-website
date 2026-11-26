@@ -1,5 +1,6 @@
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
 import { type PolygonStatus } from "@/constants/polygonStatuses";
+import { SitePolygonsIndexQueryParams } from "@/generated/v3/researchService/researchServiceComponents";
 
 type Translate = (key: string, params?: Record<string, unknown>) => string;
 
@@ -64,6 +65,32 @@ export const EMPTY_POLYGON_FILTERS: PolygonFilterState = {
   hasOverlap: false,
   hasDisturbance: false,
   showDeleted: false
+};
+
+/** Converts drawer filter state (applied or draft) plus a search term into the v3 site polygon query filter. */
+export const toSitePolygonFilter = (filters: PolygonFilterState, search: string) => {
+  const filter: Record<string, unknown> = {};
+  if (search !== "") {
+    filter.search = search;
+    filter.searchFields = ["polyName", "polygonUuid"];
+  }
+  if (filters.showDeleted) {
+    filter.deletedOnly = true;
+    return filter as Partial<SitePolygonsIndexQueryParams>;
+  }
+
+  if (filters.polygonStatus.length > 0) filter.polygonStatus = filters.polygonStatus;
+  if (filters.validationStatus.length > 0) filter.validationStatus = filters.validationStatus;
+  if (filters.plantStartFrom !== "") filter.plantStartFrom = `${filters.plantStartFrom}T00:00:00.000Z`;
+  if (filters.plantStartTo !== "") filter.plantStartTo = `${filters.plantStartTo}T00:00:00.000Z`;
+  if (filters.calcAreaMin != null) filter.calcAreaMin = filters.calcAreaMin;
+  if (filters.calcAreaMax != null) filter.calcAreaMax = filters.calcAreaMax;
+  if (filters.practice.length > 0) filter.practice = filters.practice;
+  if (filters.targetSys.length > 0) filter.targetSys = filters.targetSys;
+  if (filters.submissionCycle.length > 0) filter.submissionCycle = filters.submissionCycle;
+  if (filters.hasOverlap) filter.hasOverlap = true;
+  if (filters.hasDisturbance) filter.hasDisturbance = true;
+  return filter as Partial<SitePolygonsIndexQueryParams>;
 };
 
 export type CalcAreaRange = Pick<PolygonFilterState, "calcAreaMin" | "calcAreaMax">;

@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
+import { PolygonEntityScopeProps } from "@/connections/SitePolygons";
 import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
 
@@ -14,6 +15,7 @@ type PolygonReviewToolbarProps = {
   calcAreaBounds?: CalcAreaBounds;
   polygonFilters: PolygonFilterState;
   activeFilterLabels: SelectedFilter[];
+  search?: string;
   searchResetKey: number;
   isLocked: boolean;
   onSearchChange: (search: string) => void;
@@ -28,6 +30,7 @@ const PolygonReviewToolbar: FC<PolygonReviewToolbarProps> = ({
   calcAreaBounds,
   polygonFilters,
   activeFilterLabels,
+  search,
   searchResetKey,
   isLocked,
   onSearchChange,
@@ -37,6 +40,10 @@ const PolygonReviewToolbar: FC<PolygonReviewToolbarProps> = ({
   const t = useT();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const openFilterDrawer = useCallback(() => setIsFilterDrawerOpen(true), []);
+  const facetCountScope = useMemo<PolygonEntityScopeProps>(
+    () => ({ entityName: "projects", entityUuid: projectUuid }),
+    [projectUuid]
+  );
 
   return (
     <>
@@ -74,6 +81,8 @@ const PolygonReviewToolbar: FC<PolygonReviewToolbarProps> = ({
         isAdminReview
         siteFilterProjectUuid={projectUuid}
         calcAreaBounds={calcAreaBounds}
+        facetCountScope={facetCountScope}
+        search={search}
         onApplyFilters={onApplyFilters}
         onClearFilters={onClearFilters}
         onOpenChange={setIsFilterDrawerOpen}

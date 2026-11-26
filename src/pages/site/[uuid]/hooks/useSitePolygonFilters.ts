@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { SitePolygonsIndexQueryParams } from "@/generated/v3/researchService/researchServiceComponents";
 import { useRestorationPracticeLabels } from "@/hooks/translation/useRestorationPracticeLabels";
 import { useSubmissionStatusLabels } from "@/hooks/translation/useSubmissionStatusLabels";
 import { useTargetLandUseLabels } from "@/hooks/translation/useTargetLandUseLabels";
@@ -11,7 +10,8 @@ import {
   EMPTY_POLYGON_FILTERS,
   formatCalcAreaRange,
   PolygonFilterState,
-  SUBMISSION_CYCLE_LABELS
+  SUBMISSION_CYCLE_LABELS,
+  toSitePolygonFilter
 } from "../components/polygonFilter.constants";
 
 type UseSitePolygonFiltersParams = {
@@ -35,30 +35,10 @@ export const useSitePolygonFilters = ({ t }: UseSitePolygonFiltersParams) => {
     return () => window.clearTimeout(timeout);
   }, [polygonSearch]);
 
-  const sitePolygonFilter = useMemo(() => {
-    const filter: Record<string, unknown> = {};
-    if (debouncedPolygonSearch !== "") {
-      filter.search = debouncedPolygonSearch;
-      filter.searchFields = ["polyName", "polygonUuid"];
-    }
-    if (polygonFilters.showDeleted) {
-      filter.deletedOnly = true;
-      return filter as Partial<SitePolygonsIndexQueryParams>;
-    }
-
-    if (polygonFilters.polygonStatus.length > 0) filter.polygonStatus = polygonFilters.polygonStatus;
-    if (polygonFilters.validationStatus.length > 0) filter.validationStatus = polygonFilters.validationStatus;
-    if (polygonFilters.plantStartFrom !== "") filter.plantStartFrom = `${polygonFilters.plantStartFrom}T00:00:00.000Z`;
-    if (polygonFilters.plantStartTo !== "") filter.plantStartTo = `${polygonFilters.plantStartTo}T00:00:00.000Z`;
-    if (polygonFilters.calcAreaMin != null) filter.calcAreaMin = polygonFilters.calcAreaMin;
-    if (polygonFilters.calcAreaMax != null) filter.calcAreaMax = polygonFilters.calcAreaMax;
-    if (polygonFilters.practice.length > 0) filter.practice = polygonFilters.practice;
-    if (polygonFilters.targetSys.length > 0) filter.targetSys = polygonFilters.targetSys;
-    if (polygonFilters.submissionCycle.length > 0) filter.submissionCycle = polygonFilters.submissionCycle;
-    if (polygonFilters.hasOverlap) filter.hasOverlap = true;
-    if (polygonFilters.hasDisturbance) filter.hasDisturbance = true;
-    return filter as Partial<SitePolygonsIndexQueryParams>;
-  }, [debouncedPolygonSearch, polygonFilters]);
+  const sitePolygonFilter = useMemo(
+    () => toSitePolygonFilter(polygonFilters, debouncedPolygonSearch),
+    [debouncedPolygonSearch, polygonFilters]
+  );
 
   const handleClearPolygonFilters = useCallback(() => {
     setPolygonFilters(EMPTY_POLYGON_FILTERS);

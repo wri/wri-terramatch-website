@@ -295,6 +295,16 @@ export type SitePolygonSummaryDto = {
    * Optional indicator aggregates keyed by requested indicatorSlug.
    */
   indicators?: Record<string, any>;
+  /**
+   * Per-option polygon counts keyed by requested facet[], then by option value. Every known option is present (0 when no polygons match). Each facet ignores its own filter but applies all others.
+   *
+   * @example {"practice":{"tree-planting":12,"direct-seeding":3,"assisted-natural-regeneration":0}}
+   */
+  facetCounts?: {
+    [key: string]: {
+      [key: string]: number;
+    };
+  };
 };
 
 export type SitePolygonLightDto = {

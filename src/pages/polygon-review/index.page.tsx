@@ -392,6 +392,7 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
             calcAreaBounds={metrics.calcAreaBounds}
             polygonFilters={polygonFilters}
             activeFilterLabels={activeFilterLabels}
+            search={sitePolygonFilter.search}
             searchResetKey={searchResetKey}
             isLocked={polygonBulkActions.isTableLocked}
             onSearchChange={setPolygonSearch}
