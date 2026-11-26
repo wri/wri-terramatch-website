@@ -38,6 +38,7 @@ const refetchPolygons = async () => {
 
 type UseProjectPolygonBulkActionsParams = {
   projectUuid: string | null;
+  pagePolygons: SitePolygonLightDto[];
   polygons: SitePolygonLightDto[];
   selectedRows: PolygonTableRow[];
   selectedRowIds: Set<string | number>;
@@ -46,6 +47,7 @@ type UseProjectPolygonBulkActionsParams = {
 
 export const useProjectPolygonBulkActions = ({
   projectUuid,
+  pagePolygons,
   polygons,
   selectedRows,
   selectedRowIds,
@@ -77,8 +79,9 @@ export const useProjectPolygonBulkActions = ({
   const validationState = useSitePolygonValidationState();
 
   const pagePolygonUuids = useMemo(
-    () => polygons.map(polygon => polygon.polygonUuid).filter((uuid): uuid is string => uuid != null && uuid !== ""),
-    [polygons]
+    () =>
+      pagePolygons.map(polygon => polygon.polygonUuid).filter((uuid): uuid is string => uuid != null && uuid !== ""),
+    [pagePolygons]
   );
   const { validations: pageValidations, fetchValidations: fetchPageValidations } =
     usePolygonValidations(pagePolygonUuids);
@@ -193,6 +196,8 @@ export const useProjectPolygonBulkActions = ({
 
   return {
     refetchPolygons,
+    selectedTreesPlanted: selection.selectedTreesPlanted,
+    selectedRestorationAreaRounded: selection.selectedRestorationAreaRounded,
     bulkActions,
     reviewActions,
     polygonValidations,

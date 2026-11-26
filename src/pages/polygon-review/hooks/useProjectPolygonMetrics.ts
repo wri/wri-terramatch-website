@@ -9,7 +9,6 @@ type UseProjectPolygonMetricsParams = {
   projectUuid: string | null;
   siteUuids: string[];
   polygonFilter: SitePolygonMapIndexFilter;
-  selectedPolygonUuids: string[];
 };
 
 export type PolygonMetricTotals = {
@@ -34,12 +33,7 @@ const toCalcAreaBounds = (summary: SitePolygonSummaryDto | null | undefined): Ca
   return { min: Math.floor(minCalcArea * 100) / 100, max: Math.ceil(maxCalcArea * 100) / 100 };
 };
 
-export const useProjectPolygonMetrics = ({
-  projectUuid,
-  siteUuids,
-  polygonFilter,
-  selectedPolygonUuids
-}: UseProjectPolygonMetricsParams) => {
+export const useProjectPolygonMetrics = ({ projectUuid, siteUuids, polygonFilter }: UseProjectPolygonMetricsParams) => {
   const isProjectSelected = projectUuid != null;
   const scope = { entityName: "projects" as const, entityUuid: projectUuid ?? undefined };
 
@@ -59,19 +53,12 @@ export const useProjectPolygonMetrics = ({
     enabled: isProjectSelected && hasPolygonFilter
   });
   const calcAreaBounds = useMemo(() => toCalcAreaBounds(projectSummary), [projectSummary]);
-  const selectionFilter = useMemo(() => ({ "polygonUuid[]": selectedPolygonUuids }), [selectedPolygonUuids]);
-  const [, { data: selectedSummary }] = useSitePolygonSummary({
-    ...scope,
-    filter: selectionFilter,
-    enabled: isProjectSelected && selectedPolygonUuids.length > 0
-  });
 
   return {
     project: toTotals(projectSummary),
     calcAreaBounds,
     sites: hasSiteFilter ? toTotals(sitesSummary) : undefined,
     // With only a site filter active, the filtered totals are the selected sites' totals.
-    filtered: hasPolygonFilter ? toTotals(filteredSummary) : hasSiteFilter ? toTotals(sitesSummary) : undefined,
-    selected: selectedPolygonUuids.length > 0 ? toTotals(selectedSummary) : undefined
+    filtered: hasPolygonFilter ? toTotals(filteredSummary) : hasSiteFilter ? toTotals(sitesSummary) : undefined
   };
 };

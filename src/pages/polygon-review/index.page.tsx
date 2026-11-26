@@ -55,7 +55,7 @@ import { useInitialPolygonReviewState } from "./hooks/useInitialPolygonReviewSta
 import { usePolygonReviewAnalytics } from "./hooks/usePolygonReviewAnalytics";
 import { useProjectPolygonBulkActions } from "./hooks/useProjectPolygonBulkActions";
 import { useProjectPolygonIssues } from "./hooks/useProjectPolygonIssues";
-import { useProjectPolygonMetrics } from "./hooks/useProjectPolygonMetrics";
+import { PolygonMetricTotals, useProjectPolygonMetrics } from "./hooks/useProjectPolygonMetrics";
 import { useSelectedProjectPolygons } from "./hooks/useSelectedProjectPolygons";
 import { toPolygonReviewTableRow } from "./utils/polygonReviewTableRow";
 import { POLYGON_REVIEW_PATH } from "./utils/polygonReviewUrl";
@@ -189,8 +189,7 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
   const metrics = useProjectPolygonMetrics({
     projectUuid: selectedProjectUuid,
     siteUuids,
-    polygonFilter: sitePolygonFilter,
-    selectedPolygonUuids
+    polygonFilter: sitePolygonFilter
   });
   const { overlapPolygonUuids, disturbancePolygonUuids } = useProjectPolygonIssues({
     projectUuid: selectedProjectUuid,
@@ -330,12 +329,33 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
 
   const polygonBulkActions = useProjectPolygonBulkActions({
     projectUuid: selectedProjectUuid,
+    pagePolygons,
     polygons: selectionPolygons,
     selectedRows,
     selectedRowIds,
     setSelectedRowIds
   });
-  const { validationZoomPolygonUuids, handleValidationZoomConsumed } = polygonBulkActions;
+  const {
+    validationZoomPolygonUuids,
+    handleValidationZoomConsumed,
+    selectedTreesPlanted,
+    selectedRestorationAreaRounded
+  } = polygonBulkActions;
+  const selectedMetrics = useMemo<PolygonMetricTotals | null | undefined>(() => {
+    if (selectedRowIds.size === 0) return undefined;
+    if (isSelectionLoading) return null;
+    return {
+      polygonCount: selectedRows.length,
+      treesPlanted: selectedTreesPlanted,
+      restorationAreaHa: selectedRestorationAreaRounded
+    };
+  }, [
+    isSelectionLoading,
+    selectedRestorationAreaRounded,
+    selectedRowIds.size,
+    selectedRows.length,
+    selectedTreesPlanted
+  ]);
   const polygonTableHighlight = useMemo(
     () => ({
       selectedPolygonUuids,
@@ -424,7 +444,7 @@ const PolygonReviewIndexContent: FC<PolygonReviewIndexContentProps> = ({ selecte
                 <PolygonReviewMetrics
                   project={metrics.project}
                   filtered={metrics.filtered}
-                  selected={metrics.selected}
+                  selected={selectedMetrics}
                 />
                 <SitePolygonIssuesPanel
                   overlapCount={overlapPolygonUuids.length}
