@@ -1,15 +1,20 @@
-import { FC, ReactNode } from "react";
+import { Flex, Link, Text } from "@chakra-ui/react";
+import DOMPurify from "isomorphic-dompurify";
+import { FC, useCallback, useMemo } from "react";
 
-import Button from "@/components/elements/Button/Button";
-import Text from "@/components/elements/Text/Text";
+import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
+import { NewTabIcon } from "@/redesignComponents/foundations/Icons";
 
-import { ModalBase } from "../Modal/ModalsBases";
+const BODY_LINK_CSS = {
+  "& a": { fontWeight: "bold", textDecoration: "underline" }
+};
 
 export interface AnnouncementModalProps {
   title: string;
-  body: ReactNode;
-  bannerImage?: string;
+  /** Translated HTML string; it is sanitized before rendering. */
+  body: string;
   primaryCtaLabel: string;
+  primaryCtaHref: string;
   secondaryCtaLabel: string;
   dontShowAgainLabel: string;
   onSkip: () => void;
@@ -20,46 +25,66 @@ export interface AnnouncementModalProps {
 const AnnouncementModal: FC<AnnouncementModalProps> = ({
   title,
   body,
-  bannerImage,
   primaryCtaLabel,
+  primaryCtaHref,
   secondaryCtaLabel,
   dontShowAgainLabel,
   onSkip,
   onPrimaryAction,
   onDontShowAgain
-}) => (
-  <ModalBase className="pb-10">
-    {bannerImage != null ? (
-      <img
-        src={bannerImage}
-        alt=""
-        role="presentation"
-        className="h-screen max-h-[280px] min-h-[180px] rounded-lg object-cover"
-      />
-    ) : null}
-    <Text
-      variant="text-bold-headline-1000"
-      className={`${bannerImage != null ? "mt-10" : ""} mb-4 text-center uppercase`}
-    >
-      {title}
-    </Text>
-    {typeof body === "string" ? (
-      <Text variant="text-light-body-300" className="text-center" containHtml>
-        {body}
-      </Text>
-    ) : (
-      <Text variant="text-light-body-300">{body}</Text>
-    )}
-    <div className="mt-10 flex justify-center gap-8">
-      <Button variant="secondary" onClick={onSkip}>
-        {secondaryCtaLabel}
-      </Button>
-      <Button onClick={onPrimaryAction}>{primaryCtaLabel}</Button>
-    </div>
-    <Button variant="text" className="mt-[105px] underline screen-height-sm:mt-8" onClick={onDontShowAgain}>
-      {dontShowAgainLabel}
-    </Button>
-  </ModalBase>
-);
+}) => {
+  const sanitizedBody = useMemo(() => DOMPurify.sanitize(body, { ADD_ATTR: ["target"] }), [body]);
+
+  const handleOpenChange = useCallback(
+    (open: boolean) => {
+      if (!open) onSkip();
+    },
+    [onSkip]
+  );
+
+  return (
+    <ModalConfirmation
+      open
+      onOpenChange={handleOpenChange}
+      title={title}
+      // contentLayout="custom"
+      content={
+        <Flex direction="column" gap={5}>
+          <Text
+            textStyle="400"
+            color="neutral.900"
+            css={BODY_LINK_CSS}
+            dangerouslySetInnerHTML={{ __html: sanitizedBody }}
+          />
+          <Link
+            href={primaryCtaHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            alignSelf="flex-start"
+            color="primary.700"
+            textDecoration="underline"
+            gap={1}
+            onClick={onPrimaryAction}
+          >
+            <Text as="span" textStyle="500-bold">
+              {primaryCtaLabel}
+            </Text>
+            <NewTabIcon boxSize={4} />
+          </Link>
+        </Flex>
+      }
+      buttonsSecondary={[
+        {
+          id: "dont-show-again",
+          variant: "borderless",
+          className: "flex-1",
+          children: dontShowAgainLabel,
+          onClick: onDontShowAgain
+        },
+        { id: "skip", variant: "secondary", className: "flex-1", children: secondaryCtaLabel, onClick: onSkip }
+      ]}
+    />
+  );
+};
 
 export default AnnouncementModal;
