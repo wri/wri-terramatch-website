@@ -17,6 +17,7 @@ interface PolygonApprovalTableProps {
   onAllItemsSelected?: (checked: boolean, visibleRows: PolygonTableRow[]) => void;
   selectable?: boolean;
   showArea?: boolean;
+  showSite?: boolean;
 }
 
 const PolygonApprovalTable: FC<PolygonApprovalTableProps> = ({
@@ -25,17 +26,20 @@ const PolygonApprovalTable: FC<PolygonApprovalTableProps> = ({
   onRowSelected,
   onAllItemsSelected,
   selectable = true,
-  showArea = true
+  showArea = true,
+  showSite = false
 }) => {
   const t = useT();
 
   const columns = useMemo<TableColumn[]>(() => {
-    const baseColumns: TableColumn[] = [
+    const columns: TableColumn[] = [
       { key: "polygonName", label: t("Polygon Name") },
       { key: "validation", label: t("Validation") }
     ];
-    return showArea ? [...baseColumns, { key: "area", label: t("Total Area") }] : baseColumns;
-  }, [showArea, t]);
+    if (showSite) columns.push({ key: "siteName", label: t("Site Name") });
+    if (showArea) columns.push({ key: "area", label: t("Total Area") });
+    return columns;
+  }, [showArea, showSite, t]);
 
   // The shared Table always slices its data to one page, even with showPagination={false}.
   // Size the page to the full list so every polygon is rendered and selectable (select-all included).
@@ -57,6 +61,13 @@ const PolygonApprovalTable: FC<PolygonApprovalTableProps> = ({
         renderDataCell={(row, columnKey) => {
           if (columnKey === "validation") {
             return row.validation != null ? <ValidationTag status={row.validation} /> : <Text>—</Text>;
+          }
+          if (columnKey === "siteName") {
+            return (
+              <Text textStyle="400" color="neutral.800" maxW="12rem" truncate>
+                {row.entity?.siteName ?? "—"}
+              </Text>
+            );
           }
           if (columnKey === "area") {
             return (

@@ -71,7 +71,12 @@ const RequestInformationConfirmation: FC<RequestInformationConfirmationProps> = 
               )}
             </Text>
             <Box maxW="100%">
-              <PolygonApprovalTable polygons={polygons} selectable={false} showArea={false} />
+              <PolygonApprovalTable
+                polygons={polygons}
+                selectable={false}
+                showArea={false}
+                showSite={polygons.some(({ entity }) => entity != null)}
+              />
             </Box>
           </Box>
           <Box bg="warning.100">
