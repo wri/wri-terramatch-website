@@ -2,9 +2,11 @@ import { Flex, TableCell, TableRow } from "@chakra-ui/react";
 import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import { Checkbox } from "@worldresources/wri-design-systems";
+import classNames from "classnames";
 import { useRouter } from "next/router";
 import { FC, useCallback, useMemo, useRef, useState } from "react";
 
+import { stopInteractiveClick, stopRowClick } from "@/components/extensive/EntityIndex/stopRowClick";
 import {
   bulkDeleteUserAssociations,
   updateOrganisationUserStatuses,
@@ -323,10 +325,11 @@ const TeamTabContent: FC = () => {
 
       return (
         <TableRow
-          className={context?.className != null ? `group ${context.className}` : "group"}
+          className={classNames("group cursor-pointer", context?.className)}
           aria-selected={isSelected}
+          onClick={() => handleRowSelected(member, !isSelected)}
         >
-          <TableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)}>
+          <TableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)} onClick={stopRowClick}>
             <Checkbox
               name={`team-member-${member.id}`}
               aria-label={t("Select {name}", { name: member.fullName })}
@@ -335,7 +338,11 @@ const TeamTabContent: FC = () => {
             />
           </TableCell>
           {columns.map(column => (
-            <TableCell key={column.key} {...context?.getCellProps(column.key)}>
+            <TableCell
+              key={column.key}
+              {...context?.getCellProps(column.key)}
+              onClick={column.key === "actions" ? stopInteractiveClick : undefined}
+            >
               {column.cell != null
                 ? column.cell(member)
                 : (member as unknown as Record<string, React.ReactNode>)[column.key] ?? "—"}
