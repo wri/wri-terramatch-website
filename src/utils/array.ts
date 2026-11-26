@@ -1,3 +1,5 @@
+import { chunk } from "lodash";
+
 /**
  * to clone an array and update an element in it, use-case to update an state array
  * @param array original array
@@ -50,3 +52,15 @@ export function objectArrayHasDuplication(arr: any[], keys: string[]) {
 export const isNotNull = <T>(value: T | null | undefined): value is T => value != null;
 
 export const first = <T>(array: T | T[] | undefined): T | undefined => (Array.isArray(array) ? array[0] : array);
+
+/**
+ * Runs `fn` over `items`, at most `groupSize` at a time, and resolves with the results in input order.
+ * Use it to send many requests in parallel without flooding the backend.
+ */
+export const mapInGroups = async <T, R>(items: T[], groupSize: number, fn: (item: T) => Promise<R>): Promise<R[]> => {
+  const results: R[] = [];
+  for (const group of chunk(items, groupSize)) {
+    results.push(...(await Promise.all(group.map(item => fn(item)))));
+  }
+  return results;
+};

@@ -1,4 +1,5 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
+import { chunk } from "lodash";
 import type { DataDrivenPropertyValueSpecification, MapMouseEvent } from "mapbox-gl";
 import { Map as MapboxMap } from "mapbox-gl";
 import { MutableRefObject, useCallback, useEffect, useRef } from "react";
@@ -11,6 +12,7 @@ import {
 import { loadBoundingBox, normalizeBoundingBoxDto } from "@/connections/BoundingBox";
 import { setPolygonTableHoveredUuid, usePolygonTableHoveredUuid } from "@/context/polygonTableInteraction.store";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { isNotNull, mapInGroups } from "@/utils/array";
 import Log from "@/utils/log";
 
 import { BBox } from "../GeoJSON";
@@ -26,6 +28,8 @@ const EMPTY_SELECTION: string[] = [];
 const HOVER_FILL_OPACITY = 0.6;
 const SELECTED_FILL_OPACITY = 1;
 const HIGHLIGHT_LINE_WIDTH = 2;
+const SELECTION_BBOX_GROUP_SIZE = 100;
+const MAX_PARALLEL_BBOX_REQUESTS = 4;
 
 const TILE_POLYGON_ID_EXPR: unknown[] = ["coalesce", ["get", "uuid"], ["get", "polygonUuid"]];
 
@@ -251,11 +255,7 @@ const fetchSinglePolygonBoundingBox = async (uuid: string): Promise<BBox | null>
   }
 };
 
-const fetchSelectionBoundingBox = async (uuids: string[]): Promise<BBox | null> => {
-  if (uuids.length === 0) {
-    return null;
-  }
-
+const fetchPolygonGroupBoundingBox = async (uuids: string[]): Promise<BBox | null> => {
   try {
     const result = await loadBoundingBox({
       filter: { polygonUuids: uuids },
@@ -274,7 +274,19 @@ const fetchSelectionBoundingBox = async (uuids: string[]): Promise<BBox | null> 
   }
 
   const perPolygonBboxes = await Promise.all(uuids.map(uuid => fetchSinglePolygonBoundingBox(uuid)));
-  return mergeBBoxes(perPolygonBboxes.flatMap(bbox => (bbox == null ? [] : [bbox])));
+  return mergeBBoxes(perPolygonBboxes.filter(isNotNull));
+};
+
+const fetchSelectionBoundingBox = async (uuids: string[]): Promise<BBox | null> => {
+  if (uuids.length === 0) {
+    return null;
+  }
+  const groupBboxes = await mapInGroups(
+    chunk(uuids, SELECTION_BBOX_GROUP_SIZE),
+    MAX_PARALLEL_BBOX_REQUESTS,
+    fetchPolygonGroupBoundingBox
+  );
+  return mergeBBoxes(groupBboxes.filter(isNotNull));
 };
 
 export function usePolygonSelectionZoom({

@@ -1,8 +1,12 @@
+import { chunk } from "lodash";
+
 import { loadSitePolygons } from "@/connections/SitePolygons";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { mapInGroups } from "@/utils/array";
 import Log from "@/utils/log";
 
 const DEFAULT_POLYGON_BATCH_SIZE = 100;
+const MAX_PARALLEL_BATCHES = 4;
 
 type LoadSitePolygonsByUuidBatchParams = {
   entityName: "sites" | "projects";
@@ -19,10 +23,7 @@ export const loadSitePolygonsByUuidBatch = async ({
   errorContext,
   batchSize = DEFAULT_POLYGON_BATCH_SIZE
 }: LoadSitePolygonsByUuidBatchParams): Promise<SitePolygonLightDto[]> => {
-  const polygons: SitePolygonLightDto[] = [];
-
-  for (let offset = 0; offset < polygonUuids.length; offset += batchSize) {
-    const uuidBatch = polygonUuids.slice(offset, offset + batchSize);
+  const batches = await mapInGroups(chunk(polygonUuids, batchSize), MAX_PARALLEL_BATCHES, async uuidBatch => {
     const response = await loadSitePolygons({
       entityName,
       entityUuid,
@@ -34,11 +35,11 @@ export const loadSitePolygonsByUuidBatch = async ({
 
     if (response.loadFailure != null) {
       Log.error(errorContext, { entityName, entityUuid, loadFailure: response.loadFailure });
-      continue;
+      return [];
     }
 
-    polygons.push(...(response.data ?? []));
-  }
+    return response.data ?? [];
+  });
 
-  return polygons;
+  return batches.flat();
 };
