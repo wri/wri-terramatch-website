@@ -127,7 +127,8 @@ export const useSitePolygonFilters = ({ t }: UseSitePolygonFiltersParams) => {
         label: polygonFilters.practice.map(practice => restorationPracticeLabels[practice]),
         onRemove: () => {
           setPolygonFilters(current => ({ ...current, practice: [] }));
-        }
+        },
+        category: t("Restoration Practice")
       });
     }
     if (polygonFilters.targetSys.length > 0) {
@@ -135,7 +136,8 @@ export const useSitePolygonFilters = ({ t }: UseSitePolygonFiltersParams) => {
         label: polygonFilters.targetSys.map(targetSys => targetLandUseLabels[targetSys]),
         onRemove: () => {
           setPolygonFilters(current => ({ ...current, targetSys: [] }));
-        }
+        },
+        category: t("Target Land Use")
       });
     }
     if (polygonFilters.submissionCycle.length > 0) {
