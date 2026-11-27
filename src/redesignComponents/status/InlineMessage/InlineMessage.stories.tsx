@@ -1,6 +1,7 @@
 import { SimpleGrid } from "@chakra-ui/react";
 import type { Meta, StoryObj } from "@storybook/react";
 
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { CheckApprovedIcon, InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
 
 import InlineMessage from "./InlineMessage";
@@ -11,8 +12,7 @@ const meta = {
   parameters: {
     layout: "centered"
   },
-  tags: ["autodocs"],
-  args: { onActionClick: () => {} }
+  tags: ["autodocs"]
 } satisfies Meta<typeof InlineMessage>;
 
 export default meta;
@@ -23,7 +23,7 @@ export const InfoWhite: Story = {
     label: "Info White",
     caption: "caption",
     variant: "info-white",
-    actionLabel: "Label"
+    children: <Button variant="secondary">Label</Button>
   }
 };
 
@@ -32,7 +32,7 @@ export const InfoGrey: Story = {
     label: "Info Grey",
     caption: "caption",
     variant: "info-grey",
-    actionLabel: "Label"
+    children: <Button variant="secondary">Label</Button>
   }
 };
 
@@ -42,7 +42,7 @@ export const FullWidth: Story = {
     caption:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ultrices, nisi vel congue imperdiet, risus felis iaculis metus, sit amet accumsan justo nibh eu odio. Fusce velit augue, bibendum vestibulum elit vel, placerat iaculis dolor. Aliquam tincidunt nunc blandit, consequat magna ut, mollis mi. Morbi ac dictum nisi. Quisque leo neque, vehicula eu lorem ac, convallis pellentesque sem. Proin commodo libero quis nulla tristique, a vehicula sem consectetur. Donec id luctus orci.",
     variant: "info-grey",
-    actionLabel: "Label",
+    children: <Button variant="secondary">Label</Button>,
     size: "full-width"
   }
 };
@@ -52,7 +52,7 @@ export const Success: Story = {
     label: "Success",
     caption: "caption",
     variant: "success",
-    actionLabel: "Label"
+    children: <Button variant="secondary">Label</Button>
   }
 };
 
@@ -61,7 +61,7 @@ export const Warning: Story = {
     label: "Warning",
     caption: "caption",
     variant: "warning",
-    actionLabel: "Label"
+    children: <Button variant="secondary">Label</Button>
   }
 };
 
@@ -70,7 +70,7 @@ export const Error: Story = {
     label: "Error",
     caption: "caption",
     variant: "error",
-    actionLabel: "Label",
+    children: <Button variant="secondary">Label</Button>,
     icon: <InformationRequiredIcon />
   }
 };
@@ -80,8 +80,8 @@ export const ButtonRight: Story = {
     label: "Info White",
     caption: "caption",
     variant: "info-white",
-    actionLabel: "Label",
-    isButtonRight: true
+    children: <Button variant="secondary">Label</Button>,
+    isContentRight: true
   }
 };
 
@@ -90,9 +90,13 @@ export const Small: Story = {
     label: "Info White",
     caption: "caption",
     variant: "info-white",
-    actionLabel: "Label",
+    children: (
+      <Button variant="secondary" size="small">
+        Label
+      </Button>
+    ),
     size: "small",
-    isButtonRight: true
+    isContentRight: true
   }
 };
 
@@ -101,9 +105,13 @@ export const SmallButtonRight: Story = {
     label: "Info White",
     caption: "caption",
     variant: "info-white",
-    actionLabel: "Label",
+    children: (
+      <Button variant="secondary" size="small">
+        Label
+      </Button>
+    ),
     size: "small",
-    isButtonRight: true
+    isContentRight: true
   }
 };
 
@@ -113,9 +121,12 @@ export const NoIconWithButtonIcon: Story = {
     caption: "Mark this factor as complete when you've finished reviewing the response, rationale, and strategies.",
     variant: "info-grey",
     size: "full-width",
-    actionLabel: "Mark complete",
-    isButtonRight: true,
-    buttonLeftIcon: <CheckApprovedIcon className="h-4 w-4" />
+    children: (
+      <Button variant="secondary" leftIcon={<CheckApprovedIcon className="h-4 w-4" />}>
+        Mark complete
+      </Button>
+    ),
+    isContentRight: true
   }
 };
 

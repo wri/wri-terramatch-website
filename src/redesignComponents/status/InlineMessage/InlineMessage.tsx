@@ -8,7 +8,15 @@ import { twMerge } from "tailwind-merge";
 
 import { CheckApprovedIcon, WarningIcon } from "@/redesignComponents/foundations/Icons";
 
-export interface InlineMessageProps extends InlineMessageComponentProps {
+type DeprecatedActionProps =
+  | "onActionClick"
+  | "actionLabel"
+  | "actionButtonVariant"
+  | "isButtonRight"
+  | "buttonLeftIcon"
+  | "buttonRightIcon";
+
+export interface InlineMessageProps extends Omit<InlineMessageComponentProps, DeprecatedActionProps> {
   className?: string;
 }
 
@@ -46,9 +54,8 @@ const InlineMessage: FC<InlineMessageProps> = ({
   caption,
   size,
   icon,
-  onActionClick,
-  actionLabel,
-  isButtonRight,
+  children,
+  isContentRight,
   className
 }) => {
   const resolvedIcon = icon ?? getDefaultIcon(variant);
@@ -61,10 +68,10 @@ const InlineMessage: FC<InlineMessageProps> = ({
         caption={caption}
         size={size}
         icon={resolvedIcon}
-        onActionClick={onActionClick}
-        actionLabel={actionLabel}
-        isButtonRight={isButtonRight}
-      />
+        isContentRight={isContentRight}
+      >
+        {children}
+      </InlineMessageComponent>
     </Box>
   );
 };

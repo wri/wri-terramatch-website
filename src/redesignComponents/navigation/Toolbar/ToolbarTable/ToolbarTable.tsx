@@ -53,14 +53,16 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
   }
 
   const onQueryChange = search?.onQueryChange;
+  const onSearchChange = search?.onChange;
   const onSearchSubmit = search?.onSearchSubmit;
 
-  const handleQueryChange = useCallback(
+  const handleSearchChange = useCallback(
     (query: string) => {
       queryRef.current = query;
       onQueryChange?.(query);
+      onSearchChange?.(query);
     },
-    [onQueryChange]
+    [onQueryChange, onSearchChange]
   );
 
   const handleKeyDown = useCallback(
@@ -101,9 +103,8 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
                         resultsMaxHeight: search.resultsMaxHeight,
                         isLoading: search.isLoading,
                         displayResults: search.displayResults ?? "none",
-                        onQueryChange: handleQueryChange,
                         value: search.value,
-                        onChange: search.onChange,
+                        onChange: handleSearchChange,
                         size: "default"
                       } as SearchProps)}
                       onSelect={search.onSelect as ComponentProps<typeof Search>["onSelect"]}
@@ -131,7 +132,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
 
           <Flex className="min-w-[0] items-center gap-4 mobile:w-full">
             {filters != null && filters.length > 0 ? (
-              <Flex className="text-14 flex-wrap items-center gap-3 text-theme-neutral-900">
+              <Flex className="text-14 text-theme-neutral-900 flex-wrap items-center gap-3">
                 {t("Filter by:")}
 
                 {filters.map((filter, index) => (

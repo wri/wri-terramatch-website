@@ -3,7 +3,7 @@ import type { ComponentProps } from "react";
 
 import Combobox from "./Combobox";
 
-type ComboboxItem = NonNullable<ComponentProps<typeof Combobox>["initialItems"]>[number];
+type ComboboxItem = NonNullable<ComponentProps<typeof Combobox>["items"]>[number];
 
 const meta = {
   title: "Redesign Components/Forms/Input/Combobox",
@@ -64,7 +64,7 @@ export const Default: Story = {
     label: "Combobox",
     caption: "Search and select an option",
     placeholder: "Search...",
-    initialItems: defaultItems
+    items: defaultItems
   }
 };
 
@@ -73,7 +73,7 @@ export const Required: Story = {
     label: "Required selection",
     caption: "Please select one option",
     placeholder: "Search...",
-    initialItems: defaultItems,
+    items: defaultItems,
     required: true
   }
 };
@@ -83,7 +83,7 @@ export const WithError: Story = {
     label: "With Error",
     caption: "Please select an option to continue",
     placeholder: "Search...",
-    initialItems: defaultItems,
+    items: defaultItems,
     errorMessage: "You must select an option to continue",
     required: true
   }
@@ -94,7 +94,7 @@ export const Disabled: Story = {
     label: "Disabled",
     caption: "This combobox is disabled",
     placeholder: "Search...",
-    initialItems: defaultItems,
+    items: defaultItems,
     disabled: true
   }
 };
@@ -104,7 +104,7 @@ export const SmallSize: Story = {
     label: "Small size",
     caption: "Compact combobox",
     placeholder: "Search...",
-    initialItems: defaultItems,
+    items: defaultItems,
     size: "small"
   }
 };
@@ -114,7 +114,7 @@ export const Multiple: Story = {
     label: "Multiple with selected items",
     caption: "Selected values appear as tags",
     placeholder: "Search...",
-    initialItems: defaultItems,
+    items: defaultItems,
     multiple: true,
     showSelectedItems: true
   }

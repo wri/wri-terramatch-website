@@ -6,10 +6,10 @@ import { FC } from "react";
 type ComboboxProps = ComponentProps<typeof WriCombobox>;
 
 const Combobox: FC<ComboboxProps> = props => {
-  const { disabled = false, showSelectedItems = false, value, defaultValue, items, initialItems } = props;
+  const { disabled = false, showSelectedItems = false, value, defaultValue, items } = props;
   if (!disabled || !showSelectedItems) return <WriCombobox {...props} />;
 
-  const options = items ?? initialItems ?? [];
+  const options = items ?? [];
   const selected = (value ?? defaultValue ?? []).map(selectedValue => ({
     value: selectedValue,
     label: options.find(option => option.value === selectedValue)?.label ?? selectedValue

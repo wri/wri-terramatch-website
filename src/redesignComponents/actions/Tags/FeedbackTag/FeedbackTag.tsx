@@ -1,7 +1,19 @@
 import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { Tag } from "@worldresources/wri-design-systems";
+import { getThemedBorderWidth, getThemedRadius, Tag } from "@worldresources/wri-design-systems";
 import React, { FC } from "react";
+
+import { getThemedColor } from "@/lib/theme";
+
+const DISABLED_BORDER_COLOR = getThemedColor("neutral", 400);
+
+const BORDER_COLOR_BY_TYPE: Record<FeedbackTagProps["type"], string> = {
+  "info-white": getThemedColor("neutral", 300),
+  "info-grey": getThemedColor("neutral", 400),
+  success: getThemedColor("success", 300),
+  warning: getThemedColor("warning", 300),
+  error: getThemedColor("error", 300)
+};
 
 export type FeedbackTagProps = {
   type: "info-white" | "info-grey" | "success" | "warning" | "error";
@@ -39,6 +51,14 @@ const FeedbackTag: FC<FeedbackTagProps> = ({
         },
         "& .chakra-tag__startElement": {
           width: "auto !important"
+        },
+        "& .chakra-tag__root": {
+          borderRadius: getThemedRadius(300),
+          ...(size === "default" && {
+            border: `${getThemedBorderWidth(100)} solid ${
+              disabled ? DISABLED_BORDER_COLOR : BORDER_COLOR_BY_TYPE[type]
+            } !important`
+          })
         }
       }}
     >

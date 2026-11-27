@@ -16,6 +16,7 @@ import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer
 import { setPolygonTableHoveredUuid, useSyncPolygonTableSelectionStore } from "@/context/polygonTableInteraction.store";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 
@@ -810,9 +811,11 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
             variant="error"
             label={t("Unable to load polygons")}
             caption={t("Please retry loading polygons.")}
-            actionLabel={t("Retry")}
-            onActionClick={handleRetryLoadPolygons}
-          />
+          >
+            <Button variant="secondary" onClick={handleRetryLoadPolygons}>
+              {t("Retry")}
+            </Button>
+          </InlineMessage>
         )}
         {shouldShowNoResults ? (
           <PolygonNoResults />

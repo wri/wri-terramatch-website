@@ -80,7 +80,7 @@ const ProjectPickerList: FC<ProjectPickerListProps> = ({
           {t("Pick one project")}
         </Text>
       </Flex>
-      <Search placeholder={t("Search project name")} options={[]} displayResults="none" onQueryChange={setQuery} />
+      <Search placeholder={t("Search project name")} options={[]} displayResults="none" onChange={setQuery} />
       {isSearching && visibleProjects.length === 0 ? (
         <Flex
           direction="column"
