@@ -164,13 +164,7 @@ const OrganizationAssignForm = () => {
           />
         )}
       </div>
-      <Form.Footer
-        secondaryButtonProps={{
-          children: "Back",
-          onClick: () => router.back()
-        }}
-        primaryButtonProps={primaryButtonProps}
-      />
+      <Form.Footer primaryButtonProps={primaryButtonProps} />
     </Form>
   );
 };
