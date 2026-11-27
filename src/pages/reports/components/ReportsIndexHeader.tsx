@@ -1,12 +1,15 @@
 import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
+import { uniqBy } from "lodash";
 import { useRouter } from "next/router";
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { useEntityFuzzySearch } from "@/connections/EntityFuzzySearch";
 import { getReportStatusOptions, getUpdateStatusFilterOptions } from "@/constants/options/status";
 import { useReportsContext } from "@/context/reports.provider";
 import { useDate } from "@/hooks/useDate";
+import { useDebounce } from "@/hooks/useDebounce";
 import { useReportsIndexAnalytics } from "@/hooks/useReportsIndexAnalytics";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
@@ -15,7 +18,7 @@ import type { HighLevelSelectorItem } from "@/redesignComponents/Forms/Inputs/Hi
 import { PlusIcon, ReportsIcon } from "@/redesignComponents/foundations/Icons";
 import TabBar from "@/redesignComponents/navigation/TabBar/TabBar";
 import Toolbar from "@/redesignComponents/navigation/Toolbar/Toolbar";
-import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
+import type { ListItemProps, SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
 
@@ -86,6 +89,52 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
   const reportTypeFromQuery = typeof router.query.reportType === "string" ? router.query.reportType : undefined;
 
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+
+  // Suggestions cover the progress reports of every project. Additional reports (SRP, disturbance, financial) are
+  // not part of the fuzzy search, so they get none.
+  const suggestionsEnabled =
+    !entityProfile && source === "project" && viewValue === ALL_PROJECTS_VIEW_VALUE && activeTab === "progress-reports";
+  const [suggestionQuery, setSuggestionQuery] = useState("");
+  const debouncedSetSuggestionQuery = useDebounce(setSuggestionQuery);
+  // One request covers project, site and nursery reports: the backend searches them together.
+  const [, { data: reportResults }] = useEntityFuzzySearch({
+    entity: "reports",
+    search: suggestionQuery,
+    enabled: suggestionsEnabled
+  });
+  // Several reports can belong to the same site or nursery, and they show the same name. One suggestion per name is
+  // enough: picking it filters the table by that name.
+  const suggestionOptions = useMemo<ListItemProps[]>(
+    () =>
+      uniqBy(
+        (reportResults ?? []).flatMap(({ uuid, name }) => (name == null ? [] : [{ id: uuid, label: name }])),
+        "label"
+      ),
+    [reportResults]
+  );
+
+  // The search clears its input right after a pick, which reports an empty query. That query is only an echo of
+  // the pick, so it must not undo the filter the pick applied.
+  const ignoreClearAfterPickRef = useRef(false);
+  const handleSearchQueryChange = useCallback(
+    (query: string) => {
+      if (query === "" && ignoreClearAfterPickRef.current) {
+        ignoreClearAfterPickRef.current = false;
+        return;
+      }
+      ignoreClearAfterPickRef.current = false;
+      if (!suggestionsEnabled || query.trim() === "") onQueryChange?.(query);
+      if (suggestionsEnabled) debouncedSetSuggestionQuery(query);
+    },
+    [onQueryChange, debouncedSetSuggestionQuery, suggestionsEnabled]
+  );
+  const handleSuggestionSelect = useCallback(
+    (option: ListItemProps) => {
+      ignoreClearAfterPickRef.current = true;
+      onQueryChange?.(option.label);
+    },
+    [onQueryChange]
+  );
   const selectedFilters = useMemo(
     () => (entityProfile ? filters : getFiltersForReportsTab(filters, activeTab)),
     [activeTab, entityProfile, filters]
@@ -298,12 +347,13 @@ const ReportsIndexHeader: FC<ReportsIndexHeaderProps> = ({
               ? undefined
               : {
                   placeholder: t("Search"),
-                  options: [],
-                  displayResults: "none",
+                  options: suggestionsEnabled ? suggestionOptions : [],
+                  displayResults: suggestionsEnabled ? "text" : "none",
                   count: reportCount,
                   label: t("Reports"),
                   cacheKey: activeTab,
-                  onQueryChange
+                  onSelect: handleSuggestionSelect,
+                  onQueryChange: handleSearchQueryChange
                 }
           }
           showSearchInput={showSearchInput}

@@ -4409,7 +4409,7 @@ export type EntityFuzzySearchPathParams = {
   /**
    * Entity type to search
    */
-  entity: "sites";
+  entity: "sites" | "nurseries" | "reports";
 };
 
 export type EntityFuzzySearchQueryParams = {

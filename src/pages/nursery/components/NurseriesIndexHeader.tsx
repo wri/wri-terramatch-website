@@ -2,16 +2,18 @@ import { Box, Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
-import { FC, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useRef, useState } from "react";
 
+import { useEntityFuzzySearch } from "@/connections/EntityFuzzySearch";
 import { getStatusOptions, getUpdateStatusFilterOptions } from "@/constants/options/status";
+import { useDebounce } from "@/hooks/useDebounce";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import HighLevelSelector from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector";
 import type { HighLevelSelectorItem } from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector.types";
 import { NurseryIcon, PlusIcon } from "@/redesignComponents/foundations/Icons";
-import type { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
+import type { ListItemProps, SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
 
@@ -30,6 +32,8 @@ type NurseriesIndexHeaderProps = {
   embeddedInProject?: boolean;
   showViewSelector?: boolean;
 };
+
+const ALL_PROJECTS_VIEW = "all-projects";
 
 const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
   nurseryCount,
@@ -50,6 +54,43 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const statusOptions = useMemo(() => getStatusOptions(t), [t]);
   const updateOptions = useMemo(() => getUpdateStatusFilterOptions(t), [t]);
+
+  // Suggestions are offered only where the search covers every nursery the page lists.
+  const suggestionsEnabled = !embeddedInProject && viewValue === ALL_PROJECTS_VIEW;
+  const [suggestionQuery, setSuggestionQuery] = useState("");
+  const debouncedSetSuggestionQuery = useDebounce(setSuggestionQuery);
+  const [, { data: suggestionResults }] = useEntityFuzzySearch({
+    entity: "nurseries",
+    search: suggestionQuery,
+    enabled: suggestionsEnabled
+  });
+  const suggestionOptions = useMemo<ListItemProps[]>(
+    () => (suggestionResults ?? []).flatMap(({ uuid, name }) => (name == null ? [] : [{ id: uuid, label: name }])),
+    [suggestionResults]
+  );
+
+  // The search clears its input right after a pick, which reports an empty query. That query is only an echo of
+  // the pick, so it must not undo the filter the pick applied.
+  const ignoreClearAfterPickRef = useRef(false);
+  const handleSearchQueryChange = useCallback(
+    (query: string) => {
+      if (query === "" && ignoreClearAfterPickRef.current) {
+        ignoreClearAfterPickRef.current = false;
+        return;
+      }
+      ignoreClearAfterPickRef.current = false;
+      if (!suggestionsEnabled || query.trim() === "") onQueryChange(query);
+      if (suggestionsEnabled) debouncedSetSuggestionQuery(query);
+    },
+    [onQueryChange, debouncedSetSuggestionQuery, suggestionsEnabled]
+  );
+  const handleSuggestionSelect = useCallback(
+    (option: ListItemProps) => {
+      ignoreClearAfterPickRef.current = true;
+      onQueryChange(option.label);
+    },
+    [onQueryChange]
+  );
   const activeFilterLabels = useMemo<SelectedFilter[]>(
     () => [
       ...(statuses.length === 0
@@ -108,11 +149,12 @@ const NurseriesIndexHeader: FC<NurseriesIndexHeaderProps> = ({
       classNameContentSearch="w-[19rem] max-w-full mobile:w-auto mobile:min-w-0 mobile:flex-1"
       search={{
         placeholder: t("Search"),
-        options: [],
-        displayResults: "none",
+        options: suggestionsEnabled ? suggestionOptions : [],
+        displayResults: suggestionsEnabled ? "text" : "none",
         count: nurseryCount,
         label: nurseryCount === 1 ? t("Nursery") : t("Nurseries"),
-        onQueryChange
+        onSelect: handleSuggestionSelect,
+        onQueryChange: handleSearchQueryChange
       }}
       selectedFilters={activeFilterLabels}
       showClearFilters={activeFilterLabels.length > 0}
