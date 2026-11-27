@@ -3,7 +3,12 @@ import { useEffect, useMemo, useState } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useBoundingBox } from "@/connections/BoundingBox";
-import { useDashboardProject, useDashboardProjects, useDashboardSitePolygons } from "@/connections/DashboardEntity";
+import {
+  clearDashboardProjectsFailure,
+  useDashboardProject,
+  useDashboardProjects,
+  useDashboardSitePolygons
+} from "@/connections/DashboardEntity";
 import { useHectareRestoration } from "@/connections/DashboardHectareRestoration";
 import { useJobsCreated } from "@/connections/DashboardJobsCreatedConnection";
 import { useTreeRestorationGoal } from "@/connections/DashboardTreeRestorationGoal";
@@ -136,9 +141,14 @@ export const useDashboardData = (filters: any) => {
     filters?.programmes
   ]);
 
-  const [dashboardProjectsLoaded, { data: dashboardProjectsData }] = useDashboardProjects({
-    filter: dashboardProjectsQueryParams
-  });
+  const [dashboardProjectsLoaded, { data: dashboardProjectsData, loadFailure: dashboardProjectsFailure }] =
+    useDashboardProjects({
+      filter: dashboardProjectsQueryParams
+    });
+
+  useEffect(() => {
+    clearDashboardProjectsFailure(dashboardProjectsQueryParams);
+  }, [dashboardProjectsQueryParams]);
 
   const activeCountries = useMemo(() => {
     if (dashboardProjectsData == null || !Array.isArray(dashboardProjectsData)) {
@@ -417,8 +427,11 @@ export const useDashboardData = (filters: any) => {
         value: Number(calculatedTotals?.totalTreesRestored),
         totalValue: Number(calculatedTotals?.totalTreesRestoredGoal)
       });
+    } else if (dashboardProjectsFailure != null) {
+      setDashboardHeader(prev => prev.map(item => ({ ...item, value: "-" })));
+      setNumberTreesPlanted({ value: 0, totalValue: 0 });
     }
-  }, [calculatedTotals, filters.uuid, hectaresFromPolygons, singleDashboardProject]);
+  }, [calculatedTotals, dashboardProjectsFailure, filters.uuid, hectaresFromPolygons, singleDashboardProject]);
 
   useEffect(() => {
     const areBboxEqual = (a: BBox | undefined, b: BBox | undefined): boolean => {

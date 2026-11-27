@@ -323,14 +323,28 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                         disabled={verifyDisableOption(option.title)}
                       >
                         {props.multiSelect ? (
-                          <Checkbox
-                            name=""
-                            checked={isSelected}
-                            label={option.title}
-                            textClassName={variant.optionLabelClassName}
-                            inputClassName={variant.optionCheckboxClassName}
-                            className={tw("flex flex-row-reverse items-center gap-3", variant.optionClassName)}
-                          />
+                          <div
+                            className={tw(
+                              "relative flex flex-row-reverse items-center justify-between gap-3",
+                              variant.optionClassName
+                            )}
+                          >
+                            <span className="w-full">
+                              <Text
+                                as="span"
+                                variant="text-body-600"
+                                className={tw("max-w-[365px]", variant.optionLabelClassName)}
+                              >
+                                {t(option.title)}
+                              </Text>
+                            </span>
+                            <Checkbox
+                              name=""
+                              checked={isSelected}
+                              readOnly
+                              inputClassName={variant.optionCheckboxClassName}
+                            />
+                          </div>
                         ) : (
                           <div className="flex items-center gap-2">
                             {option.prefix != null ? <span className="shrink-0">{option.prefix}</span> : null}
