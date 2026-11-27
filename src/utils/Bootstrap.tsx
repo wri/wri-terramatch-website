@@ -20,6 +20,11 @@ const useRedirect = () => {
   const [loaded, { user, isAdmin, isFunderOrGovernment }] = useMyUser();
   const [orgLoaded, { organisation, organisationId, userStatus }] = useMyOrg();
 
+  // Users that have not joined an organisation yet are restricted to the org assign / pending screens,
+  // so for them we recalculate on every route change to catch client side navigation.
+  const isOrgRestricted = organisationId == null || userStatus === "pending";
+  const restrictedPath = isOrgRestricted ? router.asPath : undefined;
+
   return useMemo(() => {
     if (!loaded || !orgLoaded) return;
 
@@ -58,12 +63,9 @@ const useRedirect = () => {
 
       matcher.when(isAdmin)?.ensure("/admin");
 
-      matcher.if(
-        organisationId == null,
-        () => matcher.ensure("/organization/assign"),
-        () => matcher.exact("/organization")?.redirect(`/organization/${organisationId}`)
-      );
+      matcher.when(organisationId == null)?.ensure("/organization/assign");
       matcher.when(userStatus === "pending")?.ensure("/organization/status/pending");
+      matcher.exact("/organization")?.redirect(`/organization/${organisationId}`);
       matcher.if(
         organisation?.status === "draft",
         () => matcher.ensure("/organization/create"),
@@ -87,11 +89,11 @@ const useRedirect = () => {
       } else throw error;
     }
 
-    // Ignoring changes to router. This should only calculate on initial page load, or when something
-    // important about the current user changes. Where the user can navigate to from there is
-    // determined by the navigational items available to them on the page.
+    // Ignoring changes to router (except for org restricted users, via restrictedPath). This should only
+    // calculate on initial page load, or when something important about the current user changes. Where
+    // the user can navigate to from there is determined by the navigational items available to them on the page.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loaded, orgLoaded, organisation, organisationId, user, userStatus]);
+  }, [loaded, orgLoaded, organisation, organisationId, user, userStatus, restrictedPath]);
 };
 
 const useLanguageTransition = () => {
