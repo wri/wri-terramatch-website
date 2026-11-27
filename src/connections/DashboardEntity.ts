@@ -14,6 +14,7 @@ import {
   DashboardProjectsLightDto,
   DashboardSitePolygonsLightDto
 } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
+import { resolveUrl } from "@/generated/v3/utils";
 import ApiSlice from "@/store/apiSlice";
 
 const dashboardProjectsConnection = v3Resource("dashboardProjects", dashboardEntityIndex)
@@ -58,6 +59,13 @@ const dashboardImpactStoryConnection = v3Resource("dashboardImpactStories", dash
     if (id != null) ApiSlice.pruneCache("dashboardImpactStories", [id]);
   })
   .buildConnection();
+
+export const clearDashboardProjectsFailure = (filter: DashboardEntityIndexQueryParams) => {
+  const variables = { pathParams: { entity: "dashboardProjects" as const }, queryParams: filter };
+  if (dashboardEntityIndex.fetchFailedSelector(variables)(ApiSlice.currentState) == null) return;
+
+  ApiSlice.clearPending(resolveUrl(dashboardEntityIndex.url, variables), dashboardEntityIndex.method);
+};
 
 export const useDashboardProjects = connectionHook(dashboardProjectsConnection);
 export const useDashboardProject = connectionHook(dashboardProjectConnection);
